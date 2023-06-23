@@ -5,9 +5,9 @@ project(firmware_analyzer)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
 
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM 15 REQUIRED CONFIG)
 
-find_package(Clang REQUIRED CONFIG)
+find_package(Clang 15 REQUIRED CONFIG)
 
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
