@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     name: "Automatic Harness Generation for EDK2"
     steps:
-      - name: Grab source code
-        uses: actions/checkout@v3
-        with:
-          repository: cglosner/fuzz-edk2
-          path: edk2
+      # - name: Grab source code
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: cglosner/fuzz-edk2
+      #     path: edk2
 
       - name: Checkout Current repo
         uses: actions/checkout@v3
@@ -20,12 +20,12 @@ jobs:
           packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov clang libclang-dev cmake
           version: 1.0
           
-      - name: Create the compilation database
-        run: |
-          cd edk2
-          make -C "BaseTools"
-          source edksetup.sh
-          bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANG38
+      # - name: Create the compilation database
+      #   run: |
+      #     cd edk2
+      #     make -C "BaseTools"
+      #     source edksetup.sh
+      #     bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANG38
 
       - name: Create build directory
         run: |
@@ -41,13 +41,13 @@ jobs:
         run: |
           make
           
-      - name: Run firmware analyzer
-        run: |
-          ./firmware_analyzer -p edk2/ edk2/  
+      # - name: Run firmware analyzer
+      #   run: |
+      #     ./firmware_analyzer -p edk2/ edk2/  
     
-      - name: Generate Harness with CodeGenerator
-        run: |
-          python3 generate_code.py
+      # - name: Generate Harness with CodeGenerator
+      #   run: |
+      #     python3 generate_code.py
 
       #- name: "centrifuge(src) => [capabilities]"
       #  run: |
