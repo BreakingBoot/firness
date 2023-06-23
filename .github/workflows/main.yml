@@ -17,7 +17,7 @@ jobs:
       - name: Install required fuzzing packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov clang libclang-dev cmake
+          packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov clang-15 libclang-15-dev cmake
           version: 1.0
           
       # - name: Create the compilation database
