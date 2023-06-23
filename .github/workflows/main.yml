@@ -11,15 +11,13 @@ jobs:
           repository: cglosner/fuzz-edk2
           path: edk2
 
-      - name: Checkout Current rpo
+      - name: Checkout Current repo
         uses: actions/checkout@v3
-        with:
-          repository: cglosner/auto-harness-generation
           
       - name: Install required fuzzing packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov
+          packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov clang libclang-dev cmake
           version: 1.0
           
       - name: Create the compilation database
@@ -29,9 +27,19 @@ jobs:
           source edksetup.sh
           bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANG38
 
-      - name: Compile firmware analyzer
+      - name: Create build directory
         run: |
-          clang++ -I/usr/lib/clang/15.0.7/include -I/usr/lib/llvm-15/include -L/usr/lib/llvm-15/lib $(llvm-config-15 --cxxflags) $(llvm-config-15 --ldflags --libs --system-libs) -lclang -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat AnalyzeEDK2.cpp -o firmware_analyzer
+          mkdir build
+
+      - name: Run CMake
+        working-directory: build
+        run: |
+          cmake ..
+
+      - name: Build
+        working-directory: build
+        run: |
+          make
           
       - name: Run firmware analyzer
         run: |
