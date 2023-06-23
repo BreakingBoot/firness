@@ -1,0 +1,55 @@
+name: Auto-Harness Generation
+on: [workflow_dispatch]
+jobs:
+  Centrifuge:
+    runs-on: ubuntu-latest
+    name: "Automatic Harness Generation for EDK2"
+    steps:
+      - name: Grab source code
+        uses: actions/checkout@v3
+        with:
+          repository: cglosner/fuzz-edk2
+          path: edk2
+
+      - name: Checkout Current rpo
+        uses: actions/checkout@v3
+        with:
+          repository: cglosner/auto-harness-generation
+          
+      - name: Install required fuzzing packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: apt-utils fusefat wget tar python3 git acpica-tools python3-distutils uuid-dev nasm python-is-python3 gcc-multilib make g++ lcov
+          version: 1.0
+          
+      - name: Create the compilation database
+        run: |
+          cd edk2
+          make -C "BaseTools"
+          source edksetup.sh
+          bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANG38
+
+      - name: Compile firmware analyzer
+        run: |
+          clang++ -I/usr/lib/clang/15.0.7/include -I/usr/lib/llvm-15/include -L/usr/lib/llvm-15/lib $(llvm-config-15 --cxxflags) $(llvm-config-15 --ldflags --libs --system-libs) -lclang -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangDriver -lclangEdit -lclangFrontend -lclangFrontendTool -lclangLex -lclangParse -lclangSema -lclangEdit -lclangRewrite -lclangRewriteFrontend -lclangStaticAnalyzerFrontend -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangSerialization -lclangToolingCore -lclangTooling -lclangFormat AnalyzeEDK2.cpp -o firmware_analyzer
+          
+      - name: Run firmware analyzer
+        run: |
+          ./firmware_analyzer -p edk2/ edk2/  
+    
+      - name: Generate Harness with CodeGenerator
+        run: |
+          python3 generate_code.py
+
+      #- name: "centrifuge(src) => [capabilities]"
+      #  run: |
+      #    pwd
+      #    ls -ltr
+      #    echo "discovering capabilities" $(mkdir -v capabilities)
+      #    echo "capabilities">capabilities/artifact.txt
+
+      #- name: 'upload capabilities'
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: capabilities
+      #    path: capabilities      
