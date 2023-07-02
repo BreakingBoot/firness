@@ -28,58 +28,115 @@ std::vector<Service> get_results()
     return results;
 }
 
-int main(int argc, const char **argv)
+std::set<std::string> read_input()
 {
-    if (argc < 2)
-    {
-        llvm::errs() << "Usage: " << argv[0] << " <dir>\n";
-        return 1;
+    // Create a JSON object
+    nlohmann::json in;
+
+    // Open the file
+    std::ifstream inputFile("services_to_harness.json");
+
+    // Check if file was opened correctly
+    if (!inputFile.is_open()) {
+        std::cerr << "Could not open the file - 'yourfile.json'" << std::endl;
     }
 
-    fs::path rootPath(argv[3]);
-    if (!fs::exists(rootPath) || !fs::is_directory(rootPath))
-    {
-        llvm::errs() << "Error: '" << rootPath << "' is not a directory.\n";
-        return 1;
-    }
+    // Parse the file into the JSON object
+    inputFile >> in;
 
-    int totalResult = 0;
+    // Close the file
+    inputFile.close();
 
-    for (auto &p : fs::recursive_directory_iterator(rootPath))
+    // Create a set to store the elements
+    std::set<std::string> return_set;
+
+    // Check if the JSON object has the key "HarnessServices" and if its value is an array
+    if(in.contains("HarnessServices") && in["HarnessServices"].is_array())
     {
-        if (p.path().extension() == ".c") // Adjust this if needed
+        // Iterate over the JSON array and insert each element into the set
+        for(const auto& elem : in["HarnessServices"])
         {
-            std::vector<std::string> args = {
-                argv[0],
-                argv[1],
-                argv[2],
-                p.path().string(),
-            };
-            int argcFake = args.size();
-            const char **argvFake = new const char *[argcFake];
-            for (int i = 0; i < argcFake; ++i)
-            {
-                argvFake[i] = args[i].c_str();
-            }
-
-            Expected<CommonOptionsParser> ExpectedOptions =
-                CommonOptionsParser::create(argcFake, argvFake, MyToolCategory);
-            if (!ExpectedOptions)
-            {
-                llvm::errs() << ExpectedOptions.takeError();
-                delete[] argvFake;
-                return 1;
-            }
-            CommonOptionsParser &OptionsParser = ExpectedOptions.get();
-            ClangTool Tool(OptionsParser.getCompilations(),
-                           OptionsParser.getSourcePathList());
-            int result = Tool.run(newFrontendActionFactory<Action>().get());
-            totalResult += result;
-
-            delete[] argvFake;
+            return_set.insert(elem.get<std::string>());
         }
     }
+    else
+    {
+        std::cerr << "JSON object does not contain a 'HarnessServices' array" << std::endl;
+    }
 
+    return return_set;
+}
+
+std::vector<std::string> files_to_parse(std::string compile_commands)
+{
+    // Create a JSON object
+    nlohmann::json in;
+
+    // Open the file
+    std::ifstream inputFile(compile_commands+"/compile_commands.json");
+
+    // Check if file was opened correctly
+    if (!inputFile.is_open()) {
+        std::cerr << "Could not open the file - 'compile_commands.json'" << std::endl;
+    }
+
+    // Parse the file into the JSON object
+    inputFile >> in;
+
+    // Close the file
+    inputFile.close();
+
+    // Create a set to store the elements
+    std::vector<std::string> file_list;
+    for(auto entry: in)
+    {
+        file_list.push_back(entry["file"]);
+    }
+
+    return file_list;
+
+}
+
+
+int main(int argc, const char **argv)
+{
+    int totalResult = 0;
+    input = read_input();
+    std::vector<std::string> input_files = files_to_parse((std::string)argv[2]);
+
+    for (auto p : input_files)
+    {
+
+        std::vector<std::string> args = {
+            argv[0],
+            argv[1],
+            argv[2],
+            p,
+        };
+        int argcFake = args.size();
+        const char **argvFake = new const char *[argcFake];
+        for (int i = 0; i < argcFake; ++i)
+        {
+            argvFake[i] = args[i].c_str();
+        }
+
+        Expected<CommonOptionsParser> ExpectedOptions =
+            CommonOptionsParser::create(argcFake, argvFake, MyToolCategory);
+        if (!ExpectedOptions)
+        {
+            llvm::errs() << ExpectedOptions.takeError();
+            delete[] argvFake;
+            return 1;
+        }
+        CommonOptionsParser &OptionsParser = ExpectedOptions.get();
+        ClangTool Tool(OptionsParser.getCompilations(),
+                       OptionsParser.getSourcePathList());
+        int result = Tool.run(newFrontendActionFactory<Action>().get());
+        totalResult += result;
+        Includes.clear();
+
+        delete[] argvFake;
+    }
     Analysis all_analysis;
     all_analysis.ServiceInfo = output_results;
     all_analysis.Includes = Includes;

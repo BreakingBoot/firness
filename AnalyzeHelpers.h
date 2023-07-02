@@ -78,5 +78,6 @@ struct Analysis
 
 std::vector<Service> output_results;
 std::vector<std::string> Includes;
+std::set<std::string> input;
 
 #endif
