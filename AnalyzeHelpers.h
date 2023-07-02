@@ -22,6 +22,10 @@
 #include <cctype>
 #include<bits/stdc++.h>
 
+namespace fs = std::filesystem;
+using namespace clang;
+using namespace clang::tooling;
+
 struct Parameter
 {
     std::string Variable;
@@ -65,5 +69,14 @@ struct Service
         return score;
     }
 };
+
+struct Analysis
+{
+    std::vector<Service> ServiceInfo;
+    std::vector<std::string> Includes;
+};
+
+std::vector<Service> output_results;
+std::vector<std::string> Includes;
 
 #endif

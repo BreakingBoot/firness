@@ -1,6 +1,9 @@
 #ifndef _ACTION_H_
 #define _ACTION_H_
 
+#include "AnalyzeHelpers.h"
+#include "Consumer.h"
+
 class Action : public clang::ASTFrontendAction
 {
 public:

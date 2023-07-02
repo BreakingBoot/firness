@@ -5,7 +5,7 @@ import json
 class CodeGeneration:
 
     def __init__(self, analyzed_services, function_grouping):
-        self.analyzed_services = analyzed_services["ServicesInfo"]
+        self.analyzed_services = analyzed_services["ServiceInfo"]
         self.includes = analyzed_services["Includes"]
         self.case_definitions = self.create_case_definitions()
         self.function_grouping = function_grouping

@@ -1,10 +1,6 @@
 #include "AnalyzeHelpers.h"
-
-namespace fs = std::filesystem;
-using namespace clang;
-using namespace clang::tooling;
-
-std::vector<Service> FirmwareVisitor::results;
+#include "JSONHelpers.h"
+#include "Action.h"
 
 static llvm::cl::OptionCategory MyToolCategory("my-tool options");
 
@@ -12,13 +8,13 @@ std::vector<Service> get_results()
 {
     std::vector<Service> results;
     std::vector<std::string> merged;
-    for (Service serv : FirmwareVisitor::results)
+    for (Service serv : output_results)
     {
         if (std::find(merged.begin(), merged.end(), serv.Service) == merged.end())
         {
             merged.push_back(serv.Service);
             Service maxService = serv;
-            for(Service inner_serv : FirmwareVisitor::results)
+            for(Service inner_serv : output_results)
             {
                 if ((inner_serv.get_score() > maxService.get_score()) && (inner_serv.Service == serv.Service))
                 {
@@ -77,16 +73,24 @@ int main(int argc, const char **argv)
             CommonOptionsParser &OptionsParser = ExpectedOptions.get();
             ClangTool Tool(OptionsParser.getCompilations(),
                            OptionsParser.getSourcePathList());
-            int result = Tool.run(newFrontendActionFactory<FirmwareAction>().get());
+            int result = Tool.run(newFrontendActionFactory<Action>().get());
             totalResult += result;
 
             delete[] argvFake;
         }
     }
 
-    generate_json("all_service_results.json", FirmwareVisitor::results);
+    Analysis all_analysis;
+    all_analysis.ServiceInfo = output_results;
+    all_analysis.Includes = Includes;
 
-    generate_json("compressed_service_results.json", get_results());
+    generate_json("all_service_results.json", all_analysis);
+
+    Analysis compressed_analysis;
+    compressed_analysis.ServiceInfo = get_results();
+    compressed_analysis.Includes = Includes;
+
+    generate_json("compressed_service_results.json", compressed_analysis);
 
     return totalResult;
 }
