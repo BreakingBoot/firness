@@ -313,7 +313,7 @@ bool Visitor::VisitCallExpr(CallExpr *CallExpression)
     totalParamsCount = 0;
     if (foundCallExpr && !(currentService.Service).empty())
     {
-        Visitor::results.push_back(currentService);
+        results.push_back(currentService);
     }
     foundFunction = false;
     isProtocol = false;

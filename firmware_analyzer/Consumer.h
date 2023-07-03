@@ -13,7 +13,7 @@ public:
     virtual void HandleTranslationUnit(clang::ASTContext &Context)
     {
         visitor.TraverseDecl(Context.getTranslationUnitDecl());
-        Visitor::results = visitor.getResults();
+        output_results = visitor.getResults();
     }
 
     Visitor &getVisitor() { return visitor; }

@@ -2,6 +2,10 @@
 #include "JSONHelpers.h"
 #include "Action.h"
 
+std::vector<Service> output_results;
+std::vector<std::string> Includes;
+std::set<std::string> input;
+
 static llvm::cl::OptionCategory MyToolCategory("my-tool options");
 
 std::vector<Service> get_results()

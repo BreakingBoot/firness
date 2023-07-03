@@ -34,9 +34,8 @@ public:
 
     bool VisitCallExpr(CallExpr *CallExpression);
 
-    static std::vector<Service> results;
-
 private:
+    std::vector<Service> results;
     bool isProtocol = false;
     int paramCount = 0;
     bool isParam = false;

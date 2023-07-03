@@ -76,8 +76,8 @@ struct Analysis
     std::vector<std::string> Includes;
 };
 
-std::vector<Service> output_results;
-std::vector<std::string> Includes;
-std::set<std::string> input;
+extern std::vector<Service> output_results;
+extern std::vector<std::string> Includes;
+extern std::set<std::string> input;
 
 #endif
