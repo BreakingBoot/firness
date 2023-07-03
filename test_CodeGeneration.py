@@ -3,13 +3,10 @@ import json
 
 
 
-f = open('sample_input.json')
+f = open('compressed_service_results.json')
 data = json.load(f)
 f.close()
 
-f = open('well_formed_types.json')
-well_formed = json.load(f)
-f.close()
 
-generate = gen(data, well_formed, 'TestCodeGeneration')
+generate = gen(data, 'TestCodeGeneration')
 generate.generate_function_harness()

@@ -8,18 +8,18 @@ class Consumer : public clang::ASTConsumer
 {
 public:
     explicit Consumer(ASTContext *Context, std::set<std::string> input)
-        : Visitor(Context, input) {}
+        : visitor(Context, input) {}
 
     virtual void HandleTranslationUnit(clang::ASTContext &Context)
     {
-        Visitor.TraverseDecl(Context.getTranslationUnitDecl());
-        Visitor::results = Visitor.getResults();
+        visitor.TraverseDecl(Context.getTranslationUnitDecl());
+        Visitor::results = visitor.getResults();
     }
 
-    Visitor &getVisitor() { return Visitor; }
+    Visitor &getVisitor() { return visitor; }
 
 private:
-    Visitor Visitor;
+    Visitor visitor;
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include "Visitor.h"
-#include "AnalyzeHelpers.h"
 
 bool Visitor::VisitImplicitCastExpr(ImplicitCastExpr *castExpr)
 {

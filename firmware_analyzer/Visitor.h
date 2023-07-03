@@ -1,6 +1,8 @@
 #ifndef _VISITOR_H_
 #define _VISITOR_H_
 
+#include "AnalyzeHelpers.h"
+
 class Visitor : public RecursiveASTVisitor<Visitor>
 {
 public:
