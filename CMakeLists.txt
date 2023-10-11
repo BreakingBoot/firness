@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(firmware_analyzer VERSION 1.0)
+project(firmware-analyzer VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
 
-find_package(LLVM 15 REQUIRED CONFIG)
+#find_package(LLVM 15 REQUIRED CONFIG)
 
 # find_package(Clang 15 REQUIRED CONFIG)
 
@@ -16,5 +16,4 @@ include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
-add_subdirectory(firmware_analyzer)
-
+add_subdirectory(firmware-analyzer)

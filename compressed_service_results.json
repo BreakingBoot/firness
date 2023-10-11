@@ -1,0 +1,228 @@
+{
+    "Includes": [],
+    "ServiceInfo": [
+        {
+            "Parameters": [
+                {
+                    "CallValue": "VariablePpi",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "const EFI_PEI_READ_ONLY_VARIABLE2_PPI",
+                    "Variable": "VariablePpi"
+                },
+                {
+                    "CallValue": "VariableName",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "const CHAR16",
+                    "Variable": "VariableName"
+                },
+                {
+                    "CallValue": "VariableGuid",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "const EFI_GUID",
+                    "Variable": "VariableGuid"
+                },
+                {
+                    "CallValue": "NULL",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINT32",
+                    "Variable": ""
+                },
+                {
+                    "CallValue": "&Size",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINTN",
+                    "Variable": "Size"
+                },
+                {
+                    "CallValue": "Buffer",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "void",
+                    "Variable": "Buffer"
+                }
+            ],
+            "Service": "GetVariable",
+            "ServiceDefName": "",
+            "ServiceGUID": "",
+            "ServiceType": ""
+        },
+        {
+            "Parameters": [
+                {
+                    "CallValue": "Variable",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "CHAR16",
+                    "Variable": "Variable"
+                },
+                {
+                    "CallValue": "Variable",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "EFI_GUID",
+                    "Variable": "Variable"
+                },
+                {
+                    "CallValue": "Variable",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "UINT32",
+                    "Variable": "Variable"
+                },
+                {
+                    "CallValue": "Variable",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "UINTN",
+                    "Variable": "Variable"
+                },
+                {
+                    "CallValue": "Variable",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "void",
+                    "Variable": "Variable"
+                }
+            ],
+            "Service": "SetVariable",
+            "ServiceDefName": "",
+            "ServiceGUID": "",
+            "ServiceType": "Runtime"
+        },
+        {
+            "Parameters": [
+                {
+                    "CallValue": "&NameSize",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINTN",
+                    "Variable": "NameSize"
+                },
+                {
+                    "CallValue": "FoundVarName",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "CHAR16",
+                    "Variable": "FoundVarName"
+                },
+                {
+                    "CallValue": "&FoundVarGuid",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "EFI_GUID",
+                    "Variable": "FoundVarGuid"
+                }
+            ],
+            "Service": "GetNextVariableName",
+            "ServiceDefName": "",
+            "ServiceGUID": "FoundVarGuid",
+            "ServiceType": "Runtime"
+        },
+        {
+            "Parameters": [
+                {
+                    "CallValue": "CapsuleHeaderArray",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "EFI_CAPSULE_HEADER ",
+                    "Variable": "CapsuleHeaderArray"
+                },
+                {
+                    "CallValue": "CapsuleCount",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "UINTN",
+                    "Variable": "CapsuleCount"
+                },
+                {
+                    "CallValue": "ScatterGatherList",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "EFI_PHYSICAL_ADDRESS",
+                    "Variable": "ScatterGatherList"
+                }
+            ],
+            "Service": "UpdateCapsule",
+            "ServiceDefName": "",
+            "ServiceGUID": "",
+            "ServiceType": "Runtime"
+        },
+        {
+            "Parameters": [
+                {
+                    "CallValue": "CapsuleHeaderArray",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "EFI_CAPSULE_HEADER ",
+                    "Variable": "CapsuleHeaderArray"
+                },
+                {
+                    "CallValue": "CapsuleCount",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "UINTN",
+                    "Variable": "CapsuleCount"
+                },
+                {
+                    "CallValue": "MaximumCapsuleSize",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINT64",
+                    "Variable": "MaximumCapsuleSize"
+                },
+                {
+                    "CallValue": "ResetType",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "EFI_RESET_TYPE",
+                    "Variable": "ResetType"
+                }
+            ],
+            "Service": "QueryCapsuleCapabilities",
+            "ServiceDefName": "",
+            "ServiceGUID": "",
+            "ServiceType": "Runtime"
+        },
+        {
+            "Parameters": [
+                {
+                    "CallValue": "Attributes",
+                    "Fuzzable": "",
+                    "Identifier": "",
+                    "Type": "UINT32",
+                    "Variable": "Attributes"
+                },
+                {
+                    "CallValue": "MaximumVariableStorageSize",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINT64",
+                    "Variable": "MaximumVariableStorageSize"
+                },
+                {
+                    "CallValue": "RemainingVariableStorageSize",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINT64",
+                    "Variable": "RemainingVariableStorageSize"
+                },
+                {
+                    "CallValue": "MaximumVariableSize",
+                    "Fuzzable": "",
+                    "Identifier": "*",
+                    "Type": "UINT64",
+                    "Variable": "MaximumVariableSize"
+                }
+            ],
+            "Service": "QueryVariableInfo",
+            "ServiceDefName": "",
+            "ServiceGUID": "",
+            "ServiceType": "Runtime"
+        }
+    ]
+}

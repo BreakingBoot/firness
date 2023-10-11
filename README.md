@@ -26,3 +26,6 @@ bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANG38
 ninja -j6
 bin/test-scan -p /home/gl055/Research/Bootloaders/src/edk2/ /home/gl055/Research/Bootloaders/src/edk2/MdeModulePkg/Application/Demo1_Bob/Demo1_Bob.c
 
+```
+sudo docker build -t fimware-analyzer .
+```
