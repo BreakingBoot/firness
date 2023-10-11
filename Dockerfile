@@ -36,11 +36,21 @@ RUN wget -q https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-15.0.
 # Setup and compile it
 RUN cd llvm-15.0.7 \
     && mkdir build && cd build \
-    && cmake -G Ninja ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -DCMAKE_BUILD_TYPE=Debug -DLLVM_ENABLE_RTTI=ON \
+    && cmake -G Ninja ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_RTTI=ON \
     && ninja -j4
 
+ENV PATH /llvm-source/llvm-15.0.7/build/bin:$PATH
 
-# COPY firmware-analyzer /llvm/tools/clang/tools/
+COPY analyze.sh /llvm-source
+
+RUN apt install -y bear
+
+RUN git clone https://github.com/tianocore/edk2.git \
+    && cd edk2 \
+    && git submodule update --init --recursive \
+    && make -C BaseTools \
+    && source edksetup.sh
+    && bear -- build OvmfPkg/OvmfPkgX86.dsc -t CLANGPDB -a X64
 
 # Set the default shell command
 CMD ["bash"]
