@@ -43,13 +43,22 @@ ENV PATH /llvm-source/llvm-15.0.7/build/bin:$PATH
 
 COPY analyze.sh /llvm-source
 
-RUN apt install -y bear
+RUN apt-get install -y bear \
+    uuid-dev \
+    acpica-tools \
+    libjansson-dev \
+    python3-distutils \
+    nasm \
+    python-is-python3 \
+    gcc-multilib \
+    g++
+
 
 RUN git clone https://github.com/tianocore/edk2.git \
     && cd edk2 \
     && git submodule update --init --recursive \
     && make -C BaseTools \
-    && source edksetup.sh
+    && source edksetup.sh \
     && bear -- build OvmfPkg/OvmfPkgX86.dsc -t CLANGPDB -a X64
 
 # Set the default shell command
