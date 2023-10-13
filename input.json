@@ -1,0 +1,4 @@
+{
+    "HarnessServices": ["GetVariable",
+                    "SetVariable"]
+}

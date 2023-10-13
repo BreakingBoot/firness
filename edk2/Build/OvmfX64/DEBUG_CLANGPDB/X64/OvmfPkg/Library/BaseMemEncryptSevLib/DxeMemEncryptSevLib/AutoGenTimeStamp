@@ -1,0 +1,10 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/DxeSnpSystemRamValidate.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SnpPageStateChangeInternal.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/DxeMemEncryptSevLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/DxeMemEncryptSevLibInternal.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/DxeMemEncryptSevLib/DEBUG/AutoGen.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/MemEncryptSevLib.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/PeiDxeVirtualMemory.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/PeiDxeMemEncryptSevLibInternal.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.h

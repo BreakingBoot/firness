@@ -1,0 +1,65 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsSetInfo.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsWrite.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseMkDir.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseRelease.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseStatFs.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsClose.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseForget.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsGetPosition.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseOpenOrCreate.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseGetAttr.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseRead.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseOpenDir.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/DriverBinding.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseUnlink.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsFlush.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseFsync.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseRename.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseWrite.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseInit.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseSetAttr.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseFlush.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsGetInfo.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseOpen.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsSetPosition.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsOpen.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsDelete.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/AutoGen.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsOpenVolume.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/SimpleFsRead.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/Helpers.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/FuseLookup.obj.deps
+
+               

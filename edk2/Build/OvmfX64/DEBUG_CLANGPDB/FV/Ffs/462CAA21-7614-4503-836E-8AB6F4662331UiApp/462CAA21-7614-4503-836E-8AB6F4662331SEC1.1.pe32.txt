@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/462CAA21-7614-4503-836E-8AB6F4662331UiApp/462CAA21-7614-4503-836E-8AB6F4662331SEC1.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/UiApp.efi

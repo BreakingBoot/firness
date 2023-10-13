@@ -1,0 +1,11 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe/OUTPUT/AtaPassThruExecute.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe/OUTPUT/AtaBus.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe/OUTPUT/ComponentName.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe/OUTPUT/AutoGen.obj.deps
+
+               

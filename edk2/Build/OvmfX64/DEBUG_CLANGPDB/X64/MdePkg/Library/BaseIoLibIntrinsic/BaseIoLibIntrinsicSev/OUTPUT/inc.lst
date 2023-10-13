@@ -1,0 +1,9 @@
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/DEBUG
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Test/UnitTest/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Test/Mock/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/MipiSysTLib/mipisyst/library/include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64

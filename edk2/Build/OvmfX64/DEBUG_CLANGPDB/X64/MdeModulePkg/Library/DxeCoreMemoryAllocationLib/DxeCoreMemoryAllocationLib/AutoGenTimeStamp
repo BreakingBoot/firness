@@ -1,0 +1,5 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib/DEBUG/AutoGen.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationServices.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryProfileLibNull.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/DxeCoreMemoryAllocationLib/MemoryAllocationLib.c

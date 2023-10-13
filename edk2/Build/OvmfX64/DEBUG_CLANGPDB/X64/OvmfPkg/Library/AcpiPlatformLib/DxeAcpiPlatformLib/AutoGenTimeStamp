@@ -1,0 +1,6 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/AcpiPlatformLib/BootScript.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/AcpiPlatformLib/QemuFwCfgAcpi.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/AcpiPlatformLib/PciDecoding.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib/DEBUG/AutoGen.h

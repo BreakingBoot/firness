@@ -1,0 +1,21 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/PeiMemEncryptSevLib/OUTPUT/PeiMemEncryptSevLibInternal.obj:   /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/PeiMemEncryptSevLibInternal.c \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/PeiMemEncryptSevLib/DEBUG/AutoGen.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/DebugLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Include/Library/MemEncryptSevLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Include/WorkArea.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/ConfidentialComputingGuestAttr.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Tpm20.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Tpm12.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Register/Amd/Cpuid.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Register/Amd/Msr.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Register/Intel/ArchitecturalMsr.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Register/Amd/Fam17Msr.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Include/Register/Cpuid.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Register/Intel/Cpuid.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h
+
+# Updated 

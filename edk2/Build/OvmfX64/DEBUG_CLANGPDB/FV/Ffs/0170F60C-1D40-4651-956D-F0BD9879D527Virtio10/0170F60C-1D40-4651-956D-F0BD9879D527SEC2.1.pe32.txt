@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/0170F60C-1D40-4651-956D-F0BD9879D527Virtio10/0170F60C-1D40-4651-956D-F0BD9879D527SEC2.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Virtio10Dxe/Virtio10/OUTPUT/Virtio10.efi

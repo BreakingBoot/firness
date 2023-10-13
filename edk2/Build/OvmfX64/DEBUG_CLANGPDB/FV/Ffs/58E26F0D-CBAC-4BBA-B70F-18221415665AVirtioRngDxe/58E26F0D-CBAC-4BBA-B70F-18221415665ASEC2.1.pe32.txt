@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/58E26F0D-CBAC-4BBA-B70F-18221415665AVirtioRngDxe/58E26F0D-CBAC-4BBA-B70F-18221415665ASEC2.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioRngDxe/VirtioRng/OUTPUT/VirtioRngDxe.efi

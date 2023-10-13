@@ -1,0 +1,13 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.nasm.trim.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxAcpiTable.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/AutoGen.obj.deps
+
+               

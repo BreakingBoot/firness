@@ -1,0 +1,12 @@
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Test/UnitTest/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Test/Mock/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/MipiSysTLib/mipisyst/library/include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Test/Mock/Include
+-I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include

@@ -1,0 +1,4 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuFwCfgS3Lib/QemuFwCfgS3PeiDxe.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuFwCfgS3Lib/QemuFwCfgS3Dxe.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg/DEBUG/AutoGen.h

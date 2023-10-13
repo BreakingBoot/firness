@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/E4F61863-FE2C-4b56-A8F4-08519BC439DFVlanConfigDxe/E4F61863-FE2C-4b56-A8F4-08519BC439DFSEC4.ver

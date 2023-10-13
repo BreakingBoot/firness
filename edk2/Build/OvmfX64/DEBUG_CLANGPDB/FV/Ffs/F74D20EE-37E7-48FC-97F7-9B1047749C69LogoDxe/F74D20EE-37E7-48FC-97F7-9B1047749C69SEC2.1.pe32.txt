@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/F74D20EE-37E7-48FC-97F7-9B1047749C69LogoDxe/F74D20EE-37E7-48FC-97F7-9B1047749C69SEC2.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Logo/LogoDxe/OUTPUT/LogoDxe.efi

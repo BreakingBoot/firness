@@ -1,0 +1,15 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/CcExitVeHandler.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/CcExitLib.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/CcExitVcHandler.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/CcInstruction.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/SecCcExitVcHandler.obj.deps
+
+               

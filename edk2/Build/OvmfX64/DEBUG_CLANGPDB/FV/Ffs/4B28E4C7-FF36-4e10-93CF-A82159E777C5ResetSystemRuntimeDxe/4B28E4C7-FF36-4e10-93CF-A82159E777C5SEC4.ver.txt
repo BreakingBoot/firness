@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4B28E4C7-FF36-4e10-93CF-A82159E777C5ResetSystemRuntimeDxe/4B28E4C7-FF36-4e10-93CF-A82159E777C5SEC4.ver

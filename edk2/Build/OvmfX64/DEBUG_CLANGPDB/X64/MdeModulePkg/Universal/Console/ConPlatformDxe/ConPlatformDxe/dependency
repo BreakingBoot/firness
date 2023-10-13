@@ -1,0 +1,9 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe/OUTPUT/ConPlatform.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe/OUTPUT/ComponentName.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe/OUTPUT/AutoGen.obj.deps
+
+               

@@ -1,0 +1,4 @@
+gCommandLineDefines: {'ARCH': 'X64'}
+BuildOptionPcd: []
+Active Platform: /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/OvmfPkgX64.dsc
+Flash Image Definition: /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/OvmfPkgX64.fdf

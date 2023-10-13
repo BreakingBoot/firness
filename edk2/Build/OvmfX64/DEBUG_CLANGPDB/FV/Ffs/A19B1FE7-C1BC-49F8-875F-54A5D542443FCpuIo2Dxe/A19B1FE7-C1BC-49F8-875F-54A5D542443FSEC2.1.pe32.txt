@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/A19B1FE7-C1BC-49F8-875F-54A5D542443FCpuIo2Dxe/A19B1FE7-C1BC-49F8-875F-54A5D542443FSEC2.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe/OUTPUT/CpuIo2Dxe.efi

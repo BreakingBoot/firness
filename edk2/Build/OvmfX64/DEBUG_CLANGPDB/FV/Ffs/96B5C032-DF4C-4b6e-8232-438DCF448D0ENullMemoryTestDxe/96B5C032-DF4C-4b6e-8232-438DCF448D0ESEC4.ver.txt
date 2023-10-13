@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/96B5C032-DF4C-4b6e-8232-438DCF448D0ENullMemoryTestDxe/96B5C032-DF4C-4b6e-8232-438DCF448D0ESEC4.ver

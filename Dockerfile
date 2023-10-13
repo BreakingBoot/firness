@@ -56,15 +56,28 @@ RUN apt-get install -y bear \
     nasm \
     python-is-python3 \
     gcc-multilib \
-    g++
+    g++ \
+    software-properties-common \
+    apt-utils \
+    cryptsetup \
+    apt-transport-https \
+    sudo \
+    lcov \
+    virtualenv \
+    device-tree-compiler \
+    mono-devel \
+    python3-venv \
+    locales \
+    gnupg \
+    ca-certificates
 
 
-RUN git clone https://github.com/tianocore/edk2.git \
-    && cd edk2 \
-    && git submodule update --init --recursive \
-    && make -C BaseTools \
-    && /bin/bash -c "source edksetup.sh && bear -- build -p OvmfPkg/OvmfPkgX64.dsc -t GCC5 -a X64"
-    #&& bear -- build -p OvmfPkg/OvmfPkgX64.dsc -t CLANGPDB -a X64
+# RUN git clone https://github.com/tianocore/edk2.git \
+#     && cd edk2 \
+#     && git submodule update --init --recursive \
+#     && make -C BaseTools
+#     #&& /bin/bash -c "source edksetup.sh && bear -- build -p OvmfPkg/OvmfPkgX64.dsc -t CLANGPDB -a X64"
+#     #&& bear -- build -p OvmfPkg/OvmfPkgX64.dsc -t CLANGPDB -a X64
 
 # Set the default shell command
 CMD ["bash"]

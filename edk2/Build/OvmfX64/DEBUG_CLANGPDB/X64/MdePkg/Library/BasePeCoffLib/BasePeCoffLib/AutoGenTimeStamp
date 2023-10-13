@@ -1,0 +1,5 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePeCoffLib/BasePeCoff.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePeCoffLib/PeCoffLoaderEx.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePeCoffLib/BasePeCoffLib/DEBUG/AutoGen.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePeCoffLib/BasePeCoffLibInternals.h

@@ -1,0 +1,11 @@
+
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib/OUTPUT/QemuFwCfgAcpi.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib/OUTPUT/BootScript.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib/OUTPUT/PciDecoding.obj.deps
+
+-include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib/OUTPUT/DxeAcpiPlatformLib.obj.deps
+
+               

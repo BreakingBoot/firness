@@ -1,0 +1,6 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X86BaseCpuLib.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X86CpuFlushTlb.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/DEBUG/AutoGen.h

@@ -1,0 +1,9 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ArchExceptionHandler.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib.inf
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiDxeSmmCpuException.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/SecPeiExceptionHandlerAsm.nasm
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuException.c
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/DEBUG/AutoGen.h
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ArchInterruptDefs.h

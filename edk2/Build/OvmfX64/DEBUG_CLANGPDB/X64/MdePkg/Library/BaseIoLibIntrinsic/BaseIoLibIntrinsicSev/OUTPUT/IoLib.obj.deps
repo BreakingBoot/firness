@@ -1,0 +1,12 @@
+/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/IoLib.obj:   /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/DEBUG/AutoGen.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicInternal.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/IoLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/DebugLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/RegisterFilterLib.h \
+  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibTdx.h
+
+# Updated 

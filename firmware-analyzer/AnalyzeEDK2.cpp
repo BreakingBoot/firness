@@ -32,32 +32,22 @@ std::vector<Service> get_results()
     return results;
 }
 
-std::set<std::string> read_input()
+std::set<std::string> read_input(const std::string& filename)
 {
-    // Create a JSON object
     nlohmann::json in;
+    std::ifstream inputFile(filename);
 
-    // Open the file
-    std::ifstream inputFile("services_to_harness.json");
-
-    // Check if file was opened correctly
     if (!inputFile.is_open()) {
-        std::cerr << "Could not open the file - 'yourfile.json'" << std::endl;
+        std::cerr << "Could not open the file - '" << filename << "'" << std::endl;
     }
 
-    // Parse the file into the JSON object
     inputFile >> in;
-
-    // Close the file
     inputFile.close();
 
-    // Create a set to store the elements
     std::set<std::string> return_set;
 
-    // Check if the JSON object has the key "HarnessServices" and if its value is an array
     if(in.contains("HarnessServices") && in["HarnessServices"].is_array())
     {
-        // Iterate over the JSON array and insert each element into the set
         for(const auto& elem : in["HarnessServices"])
         {
             return_set.insert(elem.get<std::string>());
@@ -71,26 +61,19 @@ std::set<std::string> read_input()
     return return_set;
 }
 
-std::vector<std::string> files_to_parse(std::string compile_commands)
+
+std::vector<std::string> files_to_parse(const std::string& compile_commands)
 {
-    // Create a JSON object
     nlohmann::json in;
+    std::ifstream inputFile(compile_commands + "/compile_commands.json");
 
-    // Open the file
-    std::ifstream inputFile(compile_commands+"/compile_commands.json");
-
-    // Check if file was opened correctly
     if (!inputFile.is_open()) {
         std::cerr << "Could not open the file - 'compile_commands.json'" << std::endl;
     }
 
-    // Parse the file into the JSON object
     inputFile >> in;
-
-    // Close the file
     inputFile.close();
 
-    // Create a set to store the elements
     std::vector<std::string> file_list;
     for(auto entry: in)
     {
@@ -98,15 +81,23 @@ std::vector<std::string> files_to_parse(std::string compile_commands)
     }
 
     return file_list;
-
 }
 
 
 int main(int argc, const char **argv)
 {
+        if(argc < 3)
+    {
+        std::cerr << "Usage: " << argv[0] << " <functions_filename> <source_code_path>" << std::endl;
+        return 1;
+    }
+
+    const std::string functionsFilename = argv[1];
+    const std::string sourceCodePath = argv[2];
+
     int totalResult = 0;
-    input = read_input();
-    std::vector<std::string> input_files = files_to_parse((std::string)argv[2]);
+    auto input = read_input(functionsFilename);
+    std::vector<std::string> input_files = files_to_parse(sourceCodePath);
 
     for (auto p : input_files)
     {
