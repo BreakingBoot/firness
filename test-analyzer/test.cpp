@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <algorithm>
 #include <set>
 #include <string>
 #include <regex>
@@ -16,7 +18,7 @@
 #include "clang/AST/Decl.h"
 #include "clang/AST/Type.h"
 #include "clang/AST/TypeLoc.h"
-
+#include <nlohmann/json.hpp>
 
 #include "clang/Lex/Lexer.h"
 
@@ -28,6 +30,7 @@ using namespace clang::tooling;
 std::set<std::string> FunctionNames = {"SetVariable", "GetVariable", "CopyMem"}; // Replace with your target function names
 std::map<VarDecl*, std::stack<Expr*>> VarAssignments;
 std::map<CallExpr*, std::map<VarDecl*, std::stack<Expr*>>> CallExprMap;
+std::map<std::string, std::map<std::string, std::stack<std::string>>> CallMap;
 
 class VarDeclVisitor : public RecursiveASTVisitor<VarDeclVisitor> {
 public:
@@ -135,7 +138,7 @@ public:
         std::regex paramRegex(R"(\b(IN\s+OUT|OUT\s+IN|IN|OUT)\b\s+[\w_]+\s+\**\s*[\w_]+)");
 
         std::smatch match;
-        size_t index = 0;
+        int index = 0;
 
         std::string::const_iterator searchStart(FuncText.cbegin());
         while (std::regex_search(searchStart, FuncText.cend(), match, paramRegex)) {
@@ -331,6 +334,85 @@ public:
         return found;
     }
 
+    std::string getSourceCode(Expr *E)
+    {
+        if (!E) return "";
+        SourceManager &SM = Context->getSourceManager();
+        const LangOptions &LangOpts = Context->getLangOpts();
+        CharSourceRange Range = CharSourceRange::getTokenRange(E->getSourceRange());
+        std::string ExprText = Lexer::getSourceText(Range, SM, LangOpts).str();
+
+        return ExprText;
+    }
+
+    std::string reduceWhitespace(const std::string& str) {
+        // Replace all sequences of whitespace with a single space
+        std::string result = std::regex_replace(str, std::regex("\\s+"), " ");
+
+        // Trim leading and trailing spaces if desired
+        if (!result.empty() && result[0] == ' ') {
+            result.erase(result.begin());
+        }
+        if (!result.empty() && result[result.size() - 1] == ' ') {
+            result.erase(result.end() - 1);
+        }
+
+        return result;
+    }
+
+    std::map<std::string, std::stack<std::string>> GetVarDeclMap(std::map<VarDecl*, std::stack<Expr*>> OriginalMap)
+    {
+        std::map<std::string, std::stack<std::string>> ConvertedMap;
+
+        for(auto& pair : OriginalMap)
+        {
+            VarDecl* VD = pair.first;
+
+            std::stack<Expr*> ExprStack = pair.second;
+            std::stack<std::string> StringStack;
+            while(!ExprStack.empty())
+            {
+                Expr* exprValue = ExprStack.top();
+                ExprStack.pop();
+                std::string exprString = reduceWhitespace(getSourceCode(exprValue));
+                StringStack.push(exprString);
+            }
+            ConvertedMap[VD->getNameAsString()] = StringStack;
+        }
+        return ConvertedMap;
+    }
+
+    bool AddToSourceCodeMap(Expr* EX)
+    {
+        if (!EX) return false;
+        bool found = false;
+
+        // Get the function Call as a String
+        std::string CallExprString;
+        if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
+            if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
+                CallExprString = FD->getNameAsString();
+                CallMap[CallExprString] = GetVarDeclMap(VarDeclMap);
+                return true;
+            }
+        }
+        else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(EX)) {
+            CallExprString = MemExpr->getMemberNameInfo().getName().getAsString();
+            CallMap[CallExprString] = GetVarDeclMap(VarDeclMap);
+            return true;
+        }
+        for (Stmt *child : EX->children()) {
+            if (Expr *childExpr = dyn_cast<Expr>(child)) {
+                if(AddToSourceCodeMap(childExpr))
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        return found;
+    }
+
 
     bool VisitCallExpr(CallExpr *Call) {
         if(doesCallMatch(Call, *this->Context))
@@ -338,6 +420,7 @@ public:
             VarDeclMap.clear();
             HandleMatchingExpr(Call, *this->Context);
             CallExprMap[Call] = VarDeclMap;
+            AddToSourceCodeMap(Call);
         }
         return true;
     }
@@ -363,72 +446,125 @@ private:
 };
 
 class FindNamedFunctionAction : public clang::ASTFrontendAction {
-private:
-    clang::SourceManager* SM = nullptr;
-
 public:
     std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
         clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
-        SM = &Compiler.getSourceManager();
         return std::unique_ptr<clang::ASTConsumer>(
             new FindNamedFunctionConsumer(&Compiler.getASTContext()));
-    }
-
-    clang::SourceManager& getSourceManager() {
-        assert(SM && "SourceManager is not initialized!");
-        return *SM;
     }
 };
 
 
-std::string getSourceCode(Expr *E, SourceManager &SM) {
-    SourceRange range = E->getSourceRange();
-
-    if (!E) {
-        llvm::outs() << "E is nullptr!\n";
-        return "";
-    }
-    
-    // Adjust the range if tokens are expanded from a macro
-    // if (range.getBegin().isMacroID())
-    //     range.setBegin(SM.getExpansionRange(range.getBegin()).getBegin());
-    // if (range.getEnd().isMacroID())
-    //     range.setEnd(SM.getExpansionRange(range.getEnd()).getEnd());
-    
-    const char* beginData = SM.getCharacterData(range.getBegin());
-    const char* endData = SM.getCharacterData(range.getEnd());
-    if (endData < beginData) {
-        llvm::outs() << "Invalid range!\n";
-        return "";
-    }
-    if(!beginData || !endData) {
-        // handle error or return an empty string
-        return "";
-    }
-    llvm::outs() << std::string(beginData, endData + 1);
-    std::string code = std::string(beginData, endData + 1);
-
-    
-    return code;
-}
-
-void printCallExprMap(SourceManager &SM) {
-    for (auto &callEntry : CallExprMap) {
-        llvm::outs() << "CallExpr: " << callEntry.first->getStmtClassName() << "\n";
+void printCallMap(const std::map<std::string, std::map<std::string, std::stack<std::string>>> &calls) {
+    for (const auto &callEntry : calls) {
+        llvm::outs() << "Caller: " << callEntry.first << "\n";
         
-        for (auto &varEntry : callEntry.second) {
-            llvm::outs() << "\tVarDecl: " << varEntry.first->getNameAsString() << "\n";
+        for (const auto &varEntry : callEntry.second) {
+            llvm::outs() << "\tCallee: " << varEntry.first << "\n";
 
-            std::stack<clang::Expr*> &exprStack = varEntry.second;
-            std::stack<clang::Expr*> tempStack = exprStack;  // Copy of the stack to iterate through
-            while ((tempStack.size()-1) > 0) {
-                clang::Expr *expr = tempStack.top();
-                llvm::outs() << "\t\tExpr: " << expr->getExprStmt() << "\n";
+            std::stack<std::string> tempStack = varEntry.second;  // Copy of the stack to iterate through
+            while (!tempStack.empty()) {
+                std::string &exprStr = tempStack.top();
+                llvm::outs() << "\t\tExpr: " << exprStr << "\n";
                 tempStack.pop();
             }
         }
     }
 }
+
+
+std::set<std::string> readAndProcessFile(const std::string& filename) {
+    std::set<std::string> lines;
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        exit(1);
+    }
+    FunctionNames.clear();
+    std::string line;
+    while (std::getline(file, line)) {
+        // Remove leading and trailing whitespace
+        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return !std::isspace(ch); }));
+        line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) { return !std::isspace(ch); }).base(), line.end());
+
+        // Remove extra whitespace between words
+        line = std::regex_replace(line, std::regex("\\s+"), " ");
+
+        if (!line.empty()) {
+            lines.insert(line);
+        }
+    }
+
+    file.close();
+    return lines;
+}
+
+// int main(int argc, const char **argv) {
+//     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
+//     Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
+//     if (!ExpectedParser) {
+//         llvm::errs() << ExpectedParser.takeError();
+//         return 1;
+//     }
+//     CommonOptionsParser &OptionsParser = ExpectedParser.get();
+
+//     ClangTool Tool(OptionsParser.getCompilations(),
+//                    OptionsParser.getSourcePathList());
+
+//     FindNamedFunctionAction Action;
+//     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
+//     printCallExprMap(Action.getSourceManager());
+//     return 0;
+// }
+
+void outputCallExprMapToJSON(std::string filename) {
+    nlohmann::json jsonOutput;
+
+    for (const auto& outerMapEntry : CallMap) {
+        // Create a JSON object for the outer map entry
+        nlohmann::json outerObject;
+        std::string outerKey = outerMapEntry.first;
+        const std::map<std::string, std::stack<std::string>>& innerMap = outerMapEntry.second;
+
+        for (const auto& innerMapEntry : innerMap) {
+            // Create a JSON array for the inner map entry
+            nlohmann::json innerArray;
+            std::string innerKey = innerMapEntry.first;
+            std::stack<std::string> tempStack = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
+
+            while (!tempStack.empty()) {
+                innerArray.push_back(tempStack.top());
+                tempStack.pop();
+            }
+
+            // Since stack is LIFO (Last-In First-Out), we need to reverse the array
+            // to maintain the original order of the elements in the JSON output
+            std::reverse(innerArray.begin(), innerArray.end());
+
+            outerObject[innerKey] = innerArray;
+        }
+
+        jsonOutput[outerKey] = outerObject;
+    }
+
+    // Write the JSON object to a file
+    std::ofstream outFile(filename);
+    outFile << jsonOutput.dump(4); // Indent the JSON output for readability
+    outFile.close();
+}
+
+
+// Define command-line options for filename and source code
+static llvm::cl::opt<std::string> InputFileName(
+    "f", llvm::cl::desc("Specify the input filename"), llvm::cl::value_desc("filename"));
+
+static llvm::cl::opt<std::string> OutputFileName(
+    "o", llvm::cl::desc("Specify the output filename"), llvm::cl::value_desc("filename"));
+
+static llvm::cl::opt<std::string> SourceCode(
+    "s", llvm::cl::desc("Specify the source code"), llvm::cl::value_desc("source_code"));
+
 
 int main(int argc, const char **argv) {
     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
@@ -437,13 +573,60 @@ int main(int argc, const char **argv) {
         llvm::errs() << ExpectedParser.takeError();
         return 1;
     }
+
     CommonOptionsParser &OptionsParser = ExpectedParser.get();
 
-    ClangTool Tool(OptionsParser.getCompilations(),
-                   OptionsParser.getSourcePathList());
+    // Get the filename and source code from command-line options
+    std::string input_filename = InputFileName.getValue();
+    std::string output_filename = OutputFileName.getValue();
+    llvm::outs() << "Input file: " << input_filename << "\n";
+    llvm::outs() << "Output file: " << output_filename << "\n";
 
-    FindNamedFunctionAction Action;
+    // Use the filename to create a ClangTool instance
+    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
+    if(!input_filename.empty())
+        readAndProcessFile(input_filename);
+
     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-    printCallExprMap(Action.getSourceManager());
+    printCallMap(CallMap);
+    if(!output_filename.empty())
+        outputCallExprMapToJSON(output_filename);
+
     return 0;
 }
+
+// static llvm::cl::opt<std::string> CompilationDatabasePath(
+//     "p", llvm::cl::desc("Specify the compilation database path"), llvm::cl::value_desc("path"));
+
+// int main(int argc, const char **argv) {
+//     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
+//     Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
+//     if (!ExpectedParser) {
+//         llvm::errs() << ExpectedParser.takeError();
+//         return 1;
+//     }
+
+//     CommonOptionsParser &OptionsParser = ExpectedParser.get();
+
+//     // Get the compilation database path from the command-line option
+//     std::string compilationDatabasePath = CompilationDatabasePath.getValue();
+
+//     // Create a ClangTool instance with the compilation database
+//     ClangTool Tool(CompilationDatabase::loadFromDirectory(compilationDatabasePath, OptionsParser.getCompilations()));
+
+//     FindNamedFunctionAction Action;
+//     Tool.runToolOnCode(newFrontendActionFactory<FindNamedFunctionAction>().get());
+
+//     // Analyze each file in the compilation database
+//     for (const auto &file : Tool.getFiles()) {
+//         Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get(), file);
+//         printCallExprMap(Action.getSourceManager());
+//     }
+
+//     return 0;
+// }
+
+
+
+
+
