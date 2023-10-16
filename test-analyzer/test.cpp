@@ -27,10 +27,18 @@ using namespace clang;
 using namespace clang::driver;
 using namespace clang::tooling;
 
+enum class ParameterDirection {
+    IN,
+    OUT,
+    IN_OUT,
+    UNKNOWN,
+    DIRECT
+};
+
 std::set<std::string> FunctionNames = {"SetVariable", "GetVariable", "CopyMem"}; // Replace with your target function names
-std::map<VarDecl*, std::stack<Expr*>> VarAssignments;
-std::map<CallExpr*, std::map<VarDecl*, std::stack<Expr*>>> CallExprMap;
-std::map<std::string, std::map<std::string, std::stack<std::string>>> CallMap;
+std::map<VarDecl*, std::stack<std::pair<Expr*, ParameterDirection>>> VarAssignments;
+std::map<CallExpr*, std::map<VarDecl*, std::pair<Expr*, ParameterDirection>>> CallExprMap;
+std::map<std::string, std::map<std::string, std::string>> CallMap;
 
 class VarDeclVisitor : public RecursiveASTVisitor<VarDeclVisitor> {
 public:
@@ -40,14 +48,14 @@ public:
     bool VisitVarDecl(VarDecl *VD)
     {
         // If the VarDecl has an initializer, store it; otherwise, store nullptr.
-        VarAssignments[VD].push(VD->hasInit() ? VD->getInit() : nullptr);
+        VarAssignments[VD].push(std::make_pair((VD->hasInit() ? VD->getInit() : nullptr), ParameterDirection::UNKNOWN));
         return true;
     }
     
     // 
     // Responsible for getting all Tracing the function definitions
     // 
-    int DoesFunctionAssign(int Param, CallExpr *CE) {
+    ParameterDirection DoesFunctionAssign(int Param, CallExpr *CE) {
         // Get the callee expression
         Expr *Callee = CE->getCallee()->IgnoreCasts();
 
@@ -130,10 +138,10 @@ public:
                 }
             }
         }
-        return 1;
+        return ParameterDirection::UNKNOWN;
     }
 
-    int DetermineArgumentType(int Param, std::string FuncText) {
+    ParameterDirection DetermineArgumentType(int Param, std::string FuncText) {
         // Check for presence of "IN" and "OUT" qualifiers
         std::regex paramRegex(R"(\b(IN\s+OUT|OUT\s+IN|IN|OUT)\b\s+[\w_]+\s+\**\s*[\w_]+)");
 
@@ -145,19 +153,19 @@ public:
             if (index == Param) {
                 std::string qualifier = match[1].str();
                 // Check the matched string
-                if (qualifier == "IN") return 1;
-                else if (qualifier == "IN OUT" || qualifier == "OUT IN") return 0;
-                else if (qualifier == "OUT") return -1;
+                if (qualifier == "IN") return ParameterDirection::IN;
+                else if (qualifier == "IN OUT" || qualifier == "OUT IN") return ParameterDirection::IN_OUT;
+                else if (qualifier == "OUT") return ParameterDirection::OUT;
             }
             searchStart = match.suffix().first;
             index++;
         }
 
         // If nth parameter doesn't exist, return false by default
-        return 1;
+        return ParameterDirection::UNKNOWN;
     }
 
-    int HandleTypedefArgs(int Param, TypedefDecl *typedefDecl) {
+    ParameterDirection HandleTypedefArgs(int Param, TypedefDecl *typedefDecl) {
         ASTContext &Ctx = typedefDecl->getASTContext();
         SourceManager &SM = Ctx.getSourceManager();
         const LangOptions &LangOpts = Ctx.getLangOpts();
@@ -194,12 +202,7 @@ public:
                     if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(UO->getSubExpr())) {
                         if (VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
                             if (VarAssignments.find(VD) != VarAssignments.end()) {
-                                int DoesAssign = DoesFunctionAssign(i, CE);
-                                // Add the assignment if its an OUT variable,
-                                if(DoesAssign <= 0)
-                                {
-                                    VarAssignments[VD].push(CE); // Store as unassigned
-                                }
+                                VarAssignments[VD].push(std::make_pair(CE, DoesFunctionAssign(i, CE))); 
                             }
                         }
                     }
@@ -218,7 +221,7 @@ public:
             if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(LHS)) {
                 if (VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
                     if (VarAssignments.find(VD) != VarAssignments.end()) {
-                        VarAssignments[VD].push(BO->getRHS());
+                        VarAssignments[VD].push(std::make_pair(BO->getRHS(), ParameterDirection::DIRECT));
                     }
                 }
             }
@@ -247,7 +250,7 @@ public:
     }
 
     
-    void HandleMatchingExpr(Stmt *S, ASTContext &Ctx)
+    void HandleMatchingExpr(Stmt *S, ASTContext &Ctx, Expr* CurrentExpr)
     {
         if (!S) return;
 
@@ -256,24 +259,28 @@ public:
                 if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
                     // From here, VD represents the declaration of 'Variable'.
                     // You can then extract any needed information from VD.
-                    VarDeclMap[VD] = VarAssignments[VD];
+                    // If the top Expr in the stack of VarAssignments[VD]
+                    // is the same as the current CallExpr then get the second one
+                    if(VarAssignments[VD].top().first == CurrentExpr)
+                        VarAssignments[VD].pop();
+                    VarDeclMap[VD] = VarAssignments[VD].top();
                 }
             }
             else if (StringLiteral *SL = dyn_cast<StringLiteral>(child)) {
                 // For simplicity, I am assuming a fictional 'Var' representing the variable where the string literal might be stored.
                 // You would typically associate a StringLiteral to a specific VarDecl based on context.
                 VarDecl *Var = createPlaceholderVarDecl(Ctx, SL); 
-                VarDeclMap[Var].push(SL);
+                VarDeclMap[Var] = std::make_pair(SL, ParameterDirection::DIRECT);
             } 
             else if (IntegerLiteral *IL = dyn_cast<IntegerLiteral>(child)) {
                 // For simplicity, I am assuming a fictional 'Var' representing the variable where the integer literal might be stored.
                 // You would typically associate an IntegerLiteral to a specific VarDecl based on context.
                 VarDecl *Var = createPlaceholderVarDecl(Ctx, IL); 
-                VarDeclMap[Var].push(IL);
+                VarDeclMap[Var] = std::make_pair(IL, ParameterDirection::DIRECT);
             } 
             else
             {
-                HandleMatchingExpr(child, Ctx);
+                HandleMatchingExpr(child, Ctx, CurrentExpr);
             }
         }
         
@@ -360,24 +367,16 @@ public:
         return result;
     }
 
-    std::map<std::string, std::stack<std::string>> GetVarDeclMap(std::map<VarDecl*, std::stack<Expr*>> OriginalMap)
+    std::map<std::string, std::string> GetVarDeclMap(std::map<VarDecl*, std::pair<Expr*, ParameterDirection>> OriginalMap)
     {
-        std::map<std::string, std::stack<std::string>> ConvertedMap;
+        std::map<std::string, std::string> ConvertedMap;
 
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
 
-            std::stack<Expr*> ExprStack = pair.second;
-            std::stack<std::string> StringStack;
-            while(!ExprStack.empty())
-            {
-                Expr* exprValue = ExprStack.top();
-                ExprStack.pop();
-                std::string exprString = reduceWhitespace(getSourceCode(exprValue));
-                StringStack.push(exprString);
-            }
-            ConvertedMap[VD->getNameAsString()] = StringStack;
+            std::pair<Expr*, ParameterDirection> ExprPair = pair.second;
+            ConvertedMap[VD->getNameAsString()] = reduceWhitespace(getSourceCode(ExprPair.first));;
         }
         return ConvertedMap;
     }
@@ -418,7 +417,7 @@ public:
         if(doesCallMatch(Call, *this->Context))
         {
             VarDeclMap.clear();
-            HandleMatchingExpr(Call, *this->Context);
+            HandleMatchingExpr(Call, *this->Context, Call);
             CallExprMap[Call] = VarDeclMap;
             AddToSourceCodeMap(Call);
         }
@@ -428,7 +427,7 @@ public:
 
 private:
     ASTContext *Context;
-    std::map<VarDecl*, std::stack<Expr*>> VarDeclMap;
+    std::map<VarDecl*, std::pair<Expr*, ParameterDirection>> VarDeclMap;
 };
 
 class FindNamedFunctionConsumer : public clang::ASTConsumer {
@@ -455,19 +454,15 @@ public:
 };
 
 
-void printCallMap(const std::map<std::string, std::map<std::string, std::stack<std::string>>> &calls) {
+void printCallMap(const std::map<std::string, std::map<std::string, std::string>> &calls) {
     for (const auto &callEntry : calls) {
         llvm::outs() << "Caller: " << callEntry.first << "\n";
         
         for (const auto &varEntry : callEntry.second) {
             llvm::outs() << "\tCallee: " << varEntry.first << "\n";
 
-            std::stack<std::string> tempStack = varEntry.second;  // Copy of the stack to iterate through
-            while (!tempStack.empty()) {
-                std::string &exprStr = tempStack.top();
-                llvm::outs() << "\t\tExpr: " << exprStr << "\n";
-                tempStack.pop();
-            }
+            std::string var = varEntry.second;  // Copy of the stack to iterate through
+            llvm::outs() << "\t\tExpr: " << var << "\n";
         }
     }
 }
@@ -525,24 +520,16 @@ void outputCallExprMapToJSON(std::string filename) {
         // Create a JSON object for the outer map entry
         nlohmann::json outerObject;
         std::string outerKey = outerMapEntry.first;
-        const std::map<std::string, std::stack<std::string>>& innerMap = outerMapEntry.second;
+        const std::map<std::string, std::string>& innerMap = outerMapEntry.second;
 
         for (const auto& innerMapEntry : innerMap) {
             // Create a JSON array for the inner map entry
-            nlohmann::json innerArray;
+            //nlohmann::json innerArray;
             std::string innerKey = innerMapEntry.first;
-            std::stack<std::string> tempStack = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
+            std::string temp = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
+            //innerArray.push_back(tempStack.top());
 
-            while (!tempStack.empty()) {
-                innerArray.push_back(tempStack.top());
-                tempStack.pop();
-            }
-
-            // Since stack is LIFO (Last-In First-Out), we need to reverse the array
-            // to maintain the original order of the elements in the JSON output
-            std::reverse(innerArray.begin(), innerArray.end());
-
-            outerObject[innerKey] = innerArray;
+            outerObject[innerKey] = temp;
         }
 
         jsonOutput[outerKey] = outerObject;
