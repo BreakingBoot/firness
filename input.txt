@@ -1,0 +1,3 @@
+SetVariable
+GetVariable
+CopyMem

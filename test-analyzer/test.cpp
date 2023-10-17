@@ -486,7 +486,7 @@ public:
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
-            Argument_AST Clang_Arg;
+            Argument_AST Clang_Arg = pair.second;
             Argument String_Arg;
             String_Arg.data_type = VD->getType().getAsString();
             String_Arg.variable = VD->getNameAsString();

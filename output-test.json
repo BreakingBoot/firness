@@ -1,0 +1,13 @@
+{
+    "CopyMem": {
+        "CompressionSource": "(VOID *)((UINT8 *)CompressionSection + sizeof (EFI_COMPRESSION_SECTION))",
+        "DstBuffer": "AllocatePages (EFI_SIZE_TO_PAGES (DstBufferSize))",
+        "DstBufferSize": "UncompressedLength"
+    },
+    "GetVariable": {
+        "DataSize": "sizeof (MemoryData)",
+        "Variable": "PeiServicesLocatePpi ( &gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&Variable )",
+        "placeholder_int": "",
+        "placeholder_string": "EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME"
+    }
+}
