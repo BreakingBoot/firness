@@ -5,6 +5,7 @@
 #include <string>
 #include <regex>
 #include <clang/AST/ASTConsumer.h>
+#include <clang/AST/ParentMap.h>
 #include "clang/AST/ParentMapContext.h"
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Frontend/FrontendActions.h>
@@ -35,10 +36,63 @@ enum class ParameterDirection {
     DIRECT
 };
 
-std::set<std::string> FunctionNames = {"SetVariable", "GetVariable", "CopyMem"}; // Replace with your target function names
+struct Argument {
+    std::string data_type;
+    std::string variable;
+    std::string assignment;
+    std::string usage;
+
+    // Function to clear the Argument object
+    void clear() {
+        data_type.clear();
+        variable.clear();
+        assignment.clear();
+        usage.clear();
+    }
+};
+
+struct Argument_AST {
+    Expr* Arg;
+    Expr* Assignment;
+    int ArgNum;
+    ParameterDirection direction;
+
+    void clear() {
+        Arg = nullptr;
+        Assignment = nullptr;
+        ArgNum = 0;
+        direction = ParameterDirection::UNKNOWN; 
+    }
+};
+
+typedef std::map<VarDecl*, Argument_AST> VarMap;
+
+
+struct Call {
+    std::string Function;
+    std::map<std::string, Argument> Arguments;
+
+    // Function to clear the Call object
+    void clear() {
+        Function.clear();
+        for (auto& pair : Arguments) {
+            pair.second.clear();
+        }
+        Arguments.clear();
+    }
+};
+
+struct VariableManager {
+    std::stack<Expr*> InFlow;
+    Stmt* S;
+    std::stack<Expr*> OutFlow;
+};
+
+std::set<std::string> FunctionNames;
 std::map<VarDecl*, std::stack<std::pair<Expr*, ParameterDirection>>> VarAssignments;
-std::map<CallExpr*, std::map<VarDecl*, std::pair<Expr*, ParameterDirection>>> CallExprMap;
-std::map<std::string, std::map<std::string, std::string>> CallMap;
+std::map<CallExpr*, VarMap> CallExprMap;
+std::vector<Call> CallMap;
+
 
 class VarDeclVisitor : public RecursiveASTVisitor<VarDeclVisitor> {
 public:
@@ -249,54 +303,112 @@ public:
         llvm::outs() << E->getStmtClassName() << ": " << ExprText << "\n";
     }
 
-    
-    void HandleMatchingExpr(Stmt *S, ASTContext &Ctx, Expr* CurrentExpr)
-    {
+    unsigned getLineNumber(Expr *E, ASTContext &Ctx) {
+        SourceManager &SM = Ctx.getSourceManager();
+        SourceLocation Loc = E->getExprLoc();
+        if (Loc.isValid()) {
+            return SM.getExpansionLineNumber(Loc);
+        }
+        return 0; // Return an invalid line number or handle the error as suitable
+    }
+
+    // Assume ParameterDirection is an enum with values INPUT and OUTPUT
+    Expr* getMostRelevantAssignment(VarDecl* var, int exprLineNumber, ASTContext &Ctx) {
+        std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = VarAssignments[var];
+
+        // This loop checks the assignments from the most recent (top of the stack) to the earliest.
+        while (!assignmentsStack.empty() && assignmentsStack.top().first != nullptr) {
+            std::pair<clang::Expr *, ParameterDirection> assignmentInfo = assignmentsStack.top();
+
+            Expr* assignmentExpr = assignmentInfo.first;
+            ParameterDirection direction = assignmentInfo.second;
+
+            // Retrieve the line number of the assignmentExpr.
+            int assignmentLineNumber = getLineNumber(assignmentExpr, Ctx);
+
+            // If the direction indicates it's an assignment and it's before our expression of interest
+            if ((direction == ParameterDirection::OUT || direction == ParameterDirection::IN_OUT || direction == ParameterDirection::DIRECT)&& assignmentLineNumber < exprLineNumber) {
+                return assignmentExpr;
+            }
+
+            // Move to the next (earlier) assignment in the stack
+            assignmentsStack.pop();
+        }
+
+        // Handle the case where no assignment is found, if necessary.
+        return nullptr;
+    }
+
+    void HandleMatchingExpr(CallExpr* CE, ASTContext &Ctx) {
+        for (unsigned i = 0; i < CE->getNumArgs(); i++) {
+            ParseArg(CE->getArg(i), Ctx, CE, CE->getArg(i), i);
+        }   
+    }
+
+    void ParseArg(Stmt *S, ASTContext &Ctx, Expr* CurrentExpr, Expr* CallArg, int ParamNum) {
         if (!S) return;
 
         for (Stmt *child : S->children()) {
             if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(child)) {
                 if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
-                    // From here, VD represents the declaration of 'Variable'.
-                    // You can then extract any needed information from VD.
                     // If the top Expr in the stack of VarAssignments[VD]
                     // is the same as the current CallExpr then get the second one
-                    if(VarAssignments[VD].top().first == CurrentExpr)
+                    while (!VarAssignments[VD].empty() && VarAssignments[VD].top().first == CurrentExpr) {
                         VarAssignments[VD].pop();
-                    VarDeclMap[VD] = VarAssignments[VD].top();
+                    }
+                    
+                    // If stack is empty after popping, you might want to handle it here
+                    if (VarAssignments[VD].empty()) {
+                        continue;  // or some other default action
+                    }
+
+                    // Fetch the most relevant assignment for this variable usage
+                    Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, getLineNumber(CurrentExpr, Ctx), Ctx);
+
+                    if (mostRelevantAssignment) {
+                        Argument_AST Arg;
+                        Arg.Assignment = mostRelevantAssignment;
+                        Arg.Arg = CallArg;
+                        Arg.ArgNum = ParamNum;
+                        Arg.direction = VarAssignments[VD].top().second;
+                        VarDeclMap[VD] = Arg;
+                    }
                 }
             }
             else if (StringLiteral *SL = dyn_cast<StringLiteral>(child)) {
-                // For simplicity, I am assuming a fictional 'Var' representing the variable where the string literal might be stored.
-                // You would typically associate a StringLiteral to a specific VarDecl based on context.
-                VarDecl *Var = createPlaceholderVarDecl(Ctx, SL); 
-                VarDeclMap[Var] = std::make_pair(SL, ParameterDirection::DIRECT);
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
+                Argument_AST Arg;
+                Arg.Assignment = SL;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = ParameterDirection::DIRECT;
+                VarDeclMap[Var] = Arg;
             } 
             else if (IntegerLiteral *IL = dyn_cast<IntegerLiteral>(child)) {
-                // For simplicity, I am assuming a fictional 'Var' representing the variable where the integer literal might be stored.
-                // You would typically associate an IntegerLiteral to a specific VarDecl based on context.
                 VarDecl *Var = createPlaceholderVarDecl(Ctx, IL); 
-                VarDeclMap[Var] = std::make_pair(IL, ParameterDirection::DIRECT);
-            } 
-            else
-            {
-                HandleMatchingExpr(child, Ctx, CurrentExpr);
+                Argument_AST Arg;
+                Arg.Assignment = IL;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = ParameterDirection::DIRECT;
+                VarDeclMap[Var] = Arg;            } 
+            else {
+                ParseArg(child, Ctx, CurrentExpr, CallArg, ParamNum);
             }
-        }
-        
+        }   
     }
 
     VarDecl* createPlaceholderVarDecl(ASTContext &Ctx, Stmt *literal) {
         // Get a unique name for the placeholder VarDecl
         // Note: This is just an example naming convention.
-        std::string name = "placeholder_";
+        std::string name = "__CONSTANT_";
         QualType type;
 
         if (isa<StringLiteral>(literal)) {
-            name += "string";
+            name += "STRING__";
             type = Ctx.getPointerType(Ctx.getWCharType());  // Assuming it's a wide string
         } else if (isa<IntegerLiteral>(literal)) {
-            name += "int";
+            name += "INT__";
             type = Ctx.IntTy;
         } else {
             return nullptr;  // Unsupported literal type
@@ -367,21 +479,26 @@ public:
         return result;
     }
 
-    std::map<std::string, std::string> GetVarDeclMap(std::map<VarDecl*, std::pair<Expr*, ParameterDirection>> OriginalMap)
+    std::map<std::string, Argument> GetVarDeclMap(VarMap OriginalMap)
     {
-        std::map<std::string, std::string> ConvertedMap;
-
+        std::map<std::string, Argument> ConvertedMap;
+        std::string arg_ID = "Arg_";
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
-
-            std::pair<Expr*, ParameterDirection> ExprPair = pair.second;
-            ConvertedMap[VD->getNameAsString()] = reduceWhitespace(getSourceCode(ExprPair.first));;
+            Argument_AST Clang_Arg;
+            Argument String_Arg;
+            String_Arg.data_type = VD->getType().getAsString();
+            String_Arg.variable = VD->getNameAsString();
+            String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
+            String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg)); // FIX
+            arg_ID += Clang_Arg.ArgNum;
+            ConvertedMap[arg_ID] = String_Arg;
         }
         return ConvertedMap;
     }
 
-    bool AddToSourceCodeMap(Expr* EX)
+    bool GenCallInfo(Expr* EX)
     {
         if (!EX) return false;
         bool found = false;
@@ -391,18 +508,20 @@ public:
         if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 CallExprString = FD->getNameAsString();
-                CallMap[CallExprString] = GetVarDeclMap(VarDeclMap);
+                CallInfo.Function = CallExprString;
+                CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
                 return true;
             }
         }
         else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(EX)) {
             CallExprString = MemExpr->getMemberNameInfo().getName().getAsString();
-            CallMap[CallExprString] = GetVarDeclMap(VarDeclMap);
+            CallInfo.Function = CallExprString;
+            CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
         }
         for (Stmt *child : EX->children()) {
             if (Expr *childExpr = dyn_cast<Expr>(child)) {
-                if(AddToSourceCodeMap(childExpr))
+                if(GenCallInfo(childExpr))
                 {
                     found = true;
                     break;
@@ -417,9 +536,11 @@ public:
         if(doesCallMatch(Call, *this->Context))
         {
             VarDeclMap.clear();
-            HandleMatchingExpr(Call, *this->Context, Call);
+            CallInfo.clear();
+            HandleMatchingExpr(Call, *this->Context);
             CallExprMap[Call] = VarDeclMap;
-            AddToSourceCodeMap(Call);
+            GenCallInfo(Call);
+            CallMap.push_back(CallInfo);
         }
         return true;
     }
@@ -427,7 +548,8 @@ public:
 
 private:
     ASTContext *Context;
-    std::map<VarDecl*, std::pair<Expr*, ParameterDirection>> VarDeclMap;
+    VarMap VarDeclMap;
+    Call CallInfo;
 };
 
 class FindNamedFunctionConsumer : public clang::ASTConsumer {
@@ -454,22 +576,23 @@ public:
 };
 
 
-void printCallMap(const std::map<std::string, std::map<std::string, std::string>> &calls) {
+void printCallMap(const std::vector<Call> &calls) {
     for (const auto &callEntry : calls) {
-        llvm::outs() << "Caller: " << callEntry.first << "\n";
+        llvm::outs() << "Function: " << callEntry.Function << "\n";
         
-        for (const auto &varEntry : callEntry.second) {
-            llvm::outs() << "\tCallee: " << varEntry.first << "\n";
-
-            std::string var = varEntry.second;  // Copy of the stack to iterate through
-            llvm::outs() << "\t\tExpr: " << var << "\n";
+        for (const auto &varEntry : callEntry.Arguments) {
+            llvm::outs() << "\tArgument: " << varEntry.first << "\n";
+            Argument Arg = varEntry.second;
+            llvm::outs() << "\t\tArg_Type: " << Arg.data_type << "\n";
+            llvm::outs() << "\t\tArg_Name: " << Arg.variable << "\n";
+            llvm::outs() << "\t\tArg_Assign: " << Arg.assignment << "\n";
+            llvm::outs() << "\t\tArg_Usage: " << Arg.usage << "\n";
         }
     }
 }
 
 
-std::set<std::string> readAndProcessFile(const std::string& filename) {
-    std::set<std::string> lines;
+void readAndProcessFile(const std::string& filename) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
@@ -487,12 +610,11 @@ std::set<std::string> readAndProcessFile(const std::string& filename) {
         line = std::regex_replace(line, std::regex("\\s+"), " ");
 
         if (!line.empty()) {
-            lines.insert(line);
+            FunctionNames.insert(line);
         }
     }
 
     file.close();
-    return lines;
 }
 
 // int main(int argc, const char **argv) {
@@ -513,33 +635,33 @@ std::set<std::string> readAndProcessFile(const std::string& filename) {
 //     return 0;
 // }
 
-void outputCallExprMapToJSON(std::string filename) {
-    nlohmann::json jsonOutput;
+// void outputCallExprMapToJSON(std::string filename) {
+//     nlohmann::json jsonOutput;
 
-    for (const auto& outerMapEntry : CallMap) {
-        // Create a JSON object for the outer map entry
-        nlohmann::json outerObject;
-        std::string outerKey = outerMapEntry.first;
-        const std::map<std::string, std::string>& innerMap = outerMapEntry.second;
+//     for (const auto& outerMapEntry : CallMap) {
+//         // Create a JSON object for the outer map entry
+//         nlohmann::json outerObject;
+//         std::string outerKey = outerMapEntry.first;
+//         const std::map<std::string, std::string>& innerMap = outerMapEntry.second;
 
-        for (const auto& innerMapEntry : innerMap) {
-            // Create a JSON array for the inner map entry
-            //nlohmann::json innerArray;
-            std::string innerKey = innerMapEntry.first;
-            std::string temp = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
-            //innerArray.push_back(tempStack.top());
+//         for (const auto& innerMapEntry : innerMap) {
+//             // Create a JSON array for the inner map entry
+//             //nlohmann::json innerArray;
+//             std::string innerKey = innerMapEntry.first;
+//             std::string temp = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
+//             //innerArray.push_back(tempStack.top());
 
-            outerObject[innerKey] = temp;
-        }
+//             outerObject[innerKey] = temp;
+//         }
 
-        jsonOutput[outerKey] = outerObject;
-    }
+//         jsonOutput[outerKey] = outerObject;
+//     }
 
-    // Write the JSON object to a file
-    std::ofstream outFile(filename);
-    outFile << jsonOutput.dump(4); // Indent the JSON output for readability
-    outFile.close();
-}
+//     // Write the JSON object to a file
+//     std::ofstream outFile(filename);
+//     outFile << jsonOutput.dump(4); // Indent the JSON output for readability
+//     outFile.close();
+// }
 
 
 // Define command-line options for filename and source code
@@ -573,11 +695,10 @@ int main(int argc, const char **argv) {
     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
     if(!input_filename.empty())
         readAndProcessFile(input_filename);
-
     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
     printCallMap(CallMap);
-    if(!output_filename.empty())
-        outputCallExprMapToJSON(output_filename);
+    // if(!output_filename.empty())
+    //     outputCallExprMapToJSON(output_filename);
 
     return 0;
 }
