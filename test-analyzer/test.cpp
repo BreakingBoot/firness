@@ -492,8 +492,7 @@ public:
             String_Arg.variable = VD->getNameAsString();
             String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
             String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg)); // FIX
-            arg_ID += Clang_Arg.ArgNum;
-            ConvertedMap[arg_ID] = String_Arg;
+            ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
         }
         return ConvertedMap;
     }
