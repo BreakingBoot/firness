@@ -41,6 +41,7 @@ struct Argument {
     std::string variable;
     std::string assignment;
     std::string usage;
+    std::string assignment_type;
 
     // Function to clear the Argument object
     void clear() {
@@ -65,6 +66,8 @@ struct Argument_AST {
     }
 };
 
+typedef std::pair<Expr*, ParameterDirection> Assignment;
+
 typedef std::map<VarDecl*, Argument_AST> VarMap;
 
 struct Call {
@@ -82,7 +85,7 @@ struct Call {
 };
 
 std::set<std::string> FunctionNames;
-std::map<VarDecl*, std::stack<std::pair<Expr*, ParameterDirection>>> VarAssignments;
+std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::vector<Call> CallMap;
 
@@ -366,6 +369,15 @@ public:
                         Arg.direction = VarAssignments[VD].top().second;
                         VarDeclMap[VD] = Arg;
                     }
+                    else
+                    {
+                        Argument_AST Arg;
+                        Arg.Assignment = nullptr;
+                        Arg.Arg = CallArg;
+                        Arg.ArgNum = ParamNum;
+                        Arg.direction = VarAssignments[VD].top().second;
+                        VarDeclMap[VD] = Arg;
+                    }
                 }
             }
             else if (StringLiteral *SL = dyn_cast<StringLiteral>(child)) {
@@ -472,6 +484,25 @@ public:
         return result;
     }
 
+    std::string GetAssignmentType(ParameterDirection dir)
+    {
+        switch(dir)
+        {
+            case ParameterDirection::DIRECT:
+                return "DIRECT";
+            case ParameterDirection::UNKNOWN:
+                return "UNKNOWN";
+            case ParameterDirection::IN:
+                return "IN";
+            case ParameterDirection::OUT:
+                return "OUT";
+            case ParameterDirection::IN_OUT:
+                return "IN_OUT";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
     std::map<std::string, Argument> GetVarDeclMap(VarMap OriginalMap)
     {
         std::map<std::string, Argument> ConvertedMap;
@@ -484,7 +515,8 @@ public:
             String_Arg.data_type = VD->getType().getAsString();
             String_Arg.variable = VD->getNameAsString();
             String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
-            String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg)); // FIX
+            String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg));
+            String_Arg.assignment_type = GetAssignmentType(Clang_Arg.direction);
             ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
         }
         return ConvertedMap;
@@ -578,6 +610,7 @@ void printCallMap(const std::vector<Call> &calls) {
             llvm::outs() << "\t\tArg_Type: " << Arg.data_type << "\n";
             llvm::outs() << "\t\tArg_Name: " << Arg.variable << "\n";
             llvm::outs() << "\t\tArg_Assign: " << Arg.assignment << "\n";
+            llvm::outs() << "\t\tArg_Assign: " << Arg.assignment_type << "\n";
             llvm::outs() << "\t\tArg_Usage: " << Arg.usage << "\n";
         }
     }
@@ -609,24 +642,6 @@ void readAndProcessFile(const std::string& filename) {
     file.close();
 }
 
-// int main(int argc, const char **argv) {
-//     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
-//     Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
-//     if (!ExpectedParser) {
-//         llvm::errs() << ExpectedParser.takeError();
-//         return 1;
-//     }
-//     CommonOptionsParser &OptionsParser = ExpectedParser.get();
-
-//     ClangTool Tool(OptionsParser.getCompilations(),
-//                    OptionsParser.getSourcePathList());
-
-//     FindNamedFunctionAction Action;
-//     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-//     printCallExprMap(Action.getSourceManager());
-//     return 0;
-// }
-
 void outputCallExprMapToJSON(const std::string& filename) {
     nlohmann::json jsonOutput;
 
@@ -643,6 +658,7 @@ void outputCallExprMapToJSON(const std::string& filename) {
             argObject["data_type"] = arg.data_type;
             argObject["variable"] = arg.variable;
             argObject["assignment"] = arg.assignment;
+            argObject["assignment_type"] = arg.assignment_type;
             argObject["usage"] = arg.usage;
 
             callObject["Arguments"][argumentPair.first] = argObject;
@@ -666,40 +682,6 @@ static llvm::cl::opt<std::string> InputFileName(
 static llvm::cl::opt<std::string> OutputFileName(
     "o", llvm::cl::desc("Specify the output filename"), llvm::cl::value_desc("filename"));
 
-static llvm::cl::opt<std::string> SourceCode(
-    "s", llvm::cl::desc("Specify the source code"), llvm::cl::value_desc("source_code"));
-
-
-int main(int argc, const char **argv) {
-    llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
-    Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
-    if (!ExpectedParser) {
-        llvm::errs() << ExpectedParser.takeError();
-        return 1;
-    }
-
-    CommonOptionsParser &OptionsParser = ExpectedParser.get();
-
-    // Get the filename and source code from command-line options
-    std::string input_filename = InputFileName.getValue();
-    std::string output_filename = OutputFileName.getValue();
-    llvm::outs() << "Input file: " << input_filename << "\n";
-    llvm::outs() << "Output file: " << output_filename << "\n";
-
-    // Use the filename to create a ClangTool instance
-    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
-    if(!input_filename.empty())
-        readAndProcessFile(input_filename);
-    Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-    // printCallMap(CallMap);
-    if(!output_filename.empty())
-        outputCallExprMapToJSON(output_filename);
-
-    return 0;
-}
-
-// static llvm::cl::opt<std::string> CompilationDatabasePath(
-//     "p", llvm::cl::desc("Specify the compilation database path"), llvm::cl::value_desc("path"));
 
 // int main(int argc, const char **argv) {
 //     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
@@ -711,23 +693,70 @@ int main(int argc, const char **argv) {
 
 //     CommonOptionsParser &OptionsParser = ExpectedParser.get();
 
-//     // Get the compilation database path from the command-line option
-//     std::string compilationDatabasePath = CompilationDatabasePath.getValue();
+//     // Get the filename and source code from command-line options
+//     std::string input_filename = InputFileName.getValue();
+//     std::string output_filename = OutputFileName.getValue();
+//     llvm::outs() << "Input file: " << input_filename << "\n";
+//     llvm::outs() << "Output file: " << output_filename << "\n";
 
-//     // Create a ClangTool instance with the compilation database
-//     ClangTool Tool(CompilationDatabase::loadFromDirectory(compilationDatabasePath, OptionsParser.getCompilations()));
+//     // Use the filename to create a ClangTool instance
+//     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
+//     if(!input_filename.empty())
+//         readAndProcessFile(input_filename);
+//     else
+//         FunctionNames = {"GetVariable", "SetVariable"};
+//     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
 
-//     FindNamedFunctionAction Action;
-//     Tool.runToolOnCode(newFrontendActionFactory<FindNamedFunctionAction>().get());
-
-//     // Analyze each file in the compilation database
-//     for (const auto &file : Tool.getFiles()) {
-//         Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get(), file);
-//         printCallExprMap(Action.getSourceManager());
-//     }
+//     if(!output_filename.empty())
+//         outputCallExprMapToJSON(output_filename);
+//     else
+//         printCallMap(CallMap);
 
 //     return 0;
 // }
+
+int main(int argc, const char **argv) {
+    llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
+    Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
+    if (!ExpectedParser) {
+        llvm::errs() << ExpectedParser.takeError();
+        return 1;
+    }
+    
+    CommonOptionsParser &OptionsParser = ExpectedParser.get();
+
+    // Get the compilation database path from the command-line option
+    std::string compilationDatabasePath = CompilationDatabasePath.getValue();
+    std::string input_filename = InputFileName.getValue();
+    std::string output_filename = OutputFileName.getValue();
+    std::string ErrorMessage;
+    std::unique_ptr<clang::tooling::CompilationDatabase> UniqueCompilDB = CompilationDatabase::loadFromDirectory(compilationDatabasePath, ErrorMessage);
+    if (!UniqueCompilDB) {
+        llvm::errs() << "Error loading the compilation database: " << ErrorMessage << "\n";
+        return 1;
+    }
+    std::shared_ptr<clang::tooling::CompilationDatabase> SharedCompilDB = std::move(UniqueCompilDB);
+
+    // Provide SharedCompilDB and the source paths to ClangTool's constructor
+    ClangTool Tool(*SharedCompilDB, OptionsParser.getSourcePathList());
+
+    Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
+    if(!input_filename.empty())
+        readAndProcessFile(input_filename);
+    else
+        FunctionNames = {"GetVariable", "SetVariable"};
+    // Analyze each file in the compilation database
+    for (const auto &file : OptionsParser.getSourcePathList()) {
+        Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
+    }
+
+    if(!output_filename.empty())
+        outputCallExprMapToJSON(output_filename);
+    else
+        printCallMap(CallMap);
+
+    return 0;
+}
 
 
 
