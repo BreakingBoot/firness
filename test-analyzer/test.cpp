@@ -67,7 +67,6 @@ struct Argument_AST {
 
 typedef std::map<VarDecl*, Argument_AST> VarMap;
 
-
 struct Call {
     std::string Function;
     std::map<std::string, Argument> Arguments;
@@ -80,12 +79,6 @@ struct Call {
         }
         Arguments.clear();
     }
-};
-
-struct VariableManager {
-    std::stack<Expr*> InFlow;
-    Stmt* S;
-    std::stack<Expr*> OutFlow;
 };
 
 std::set<std::string> FunctionNames;
@@ -634,33 +627,36 @@ void readAndProcessFile(const std::string& filename) {
 //     return 0;
 // }
 
-// void outputCallExprMapToJSON(std::string filename) {
-//     nlohmann::json jsonOutput;
+void outputCallExprMapToJSON(const std::string& filename) {
+    nlohmann::json jsonOutput;
 
-//     for (const auto& outerMapEntry : CallMap) {
-//         // Create a JSON object for the outer map entry
-//         nlohmann::json outerObject;
-//         std::string outerKey = outerMapEntry.first;
-//         const std::map<std::string, std::string>& innerMap = outerMapEntry.second;
+    // Iterate over the CallMap
+    for (const auto& call : CallMap) {
+        // Create a JSON object for each call
+        nlohmann::json callObject;
+        callObject["Function"] = call.Function;
 
-//         for (const auto& innerMapEntry : innerMap) {
-//             // Create a JSON array for the inner map entry
-//             //nlohmann::json innerArray;
-//             std::string innerKey = innerMapEntry.first;
-//             std::string temp = innerMapEntry.second; // Copying the stack to temp to pop without modifying the original
-//             //innerArray.push_back(tempStack.top());
+        for (const auto& argumentPair : call.Arguments) {
+            // Create a JSON object for each argument
+            nlohmann::json argObject;
+            const Argument& arg = argumentPair.second;
+            argObject["data_type"] = arg.data_type;
+            argObject["variable"] = arg.variable;
+            argObject["assignment"] = arg.assignment;
+            argObject["usage"] = arg.usage;
 
-//             outerObject[innerKey] = temp;
-//         }
+            callObject["Arguments"][argumentPair.first] = argObject;
+        }
 
-//         jsonOutput[outerKey] = outerObject;
-//     }
+        // Add the call object to the JSON output
+        jsonOutput.push_back(callObject);
+    }
 
-//     // Write the JSON object to a file
-//     std::ofstream outFile(filename);
-//     outFile << jsonOutput.dump(4); // Indent the JSON output for readability
-//     outFile.close();
-// }
+    // Write the JSON object to a file
+    std::ofstream outFile(filename);
+    outFile << jsonOutput.dump(4); // Indent the JSON output for readability
+    outFile.close();
+}
 
 
 // Define command-line options for filename and source code
@@ -695,9 +691,9 @@ int main(int argc, const char **argv) {
     if(!input_filename.empty())
         readAndProcessFile(input_filename);
     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-    printCallMap(CallMap);
-    // if(!output_filename.empty())
-    //     outputCallExprMapToJSON(output_filename);
+    // printCallMap(CallMap);
+    if(!output_filename.empty())
+        outputCallExprMapToJSON(output_filename);
 
     return 0;
 }

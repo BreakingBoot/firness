@@ -1,13 +1,54 @@
-{
-    "CopyMem": {
-        "CompressionSource": "(VOID *)((UINT8 *)CompressionSection + sizeof (EFI_COMPRESSION_SECTION))",
-        "DstBuffer": "AllocatePages (EFI_SIZE_TO_PAGES (DstBufferSize))",
-        "DstBufferSize": "UncompressedLength"
+[
+    {
+        "Arguments": {
+            "Arg_0": {
+                "assignment": "PeiServicesLocatePpi ( &gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&Variable )",
+                "data_type": "EFI_PEI_READ_ONLY_VARIABLE2_PPI *",
+                "usage": "Variable",
+                "variable": "Variable"
+            },
+            "Arg_1": {
+                "assignment": "EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME",
+                "data_type": "wchar_t *",
+                "usage": "EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME",
+                "variable": "__CONSTANT_STRING__"
+            },
+            "Arg_3": {
+                "assignment": "",
+                "data_type": "int",
+                "usage": "NULL",
+                "variable": "__CONSTANT_INT__"
+            },
+            "Arg_4": {
+                "assignment": "sizeof (MemoryData)",
+                "data_type": "UINTN",
+                "usage": "&DataSize",
+                "variable": "DataSize"
+            }
+        },
+        "Function": "GetVariable"
     },
-    "GetVariable": {
-        "DataSize": "sizeof (MemoryData)",
-        "Variable": "PeiServicesLocatePpi ( &gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **)&Variable )",
-        "placeholder_int": "",
-        "placeholder_string": "EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME"
+    {
+        "Arguments": {
+            "Arg_0": {
+                "assignment": "AllocatePages (EFI_SIZE_TO_PAGES (DstBufferSize))",
+                "data_type": "UINT8 *",
+                "usage": "DstBuffer",
+                "variable": "DstBuffer"
+            },
+            "Arg_1": {
+                "assignment": "(VOID *)((UINT8 *)CompressionSection + sizeof (EFI_COMPRESSION_SECTION))",
+                "data_type": "void *",
+                "usage": "CompressionSource",
+                "variable": "CompressionSource"
+            },
+            "Arg_2": {
+                "assignment": "UncompressedLength",
+                "data_type": "UINT32",
+                "usage": "DstBufferSize",
+                "variable": "DstBufferSize"
+            }
+        },
+        "Function": "CopyMem"
     }
-}
+]
