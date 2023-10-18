@@ -33,7 +33,8 @@ enum class ParameterDirection {
     OUT,
     IN_OUT,
     UNKNOWN,
-    DIRECT
+    DIRECT,
+    INDIRECT
 };
 
 struct Argument {
@@ -379,6 +380,10 @@ public:
                         VarDeclMap[VD] = Arg;
                     }
                 }
+                // else
+                // {
+                //     llvm::outs() << getSourceCode(CallArg) << "\n";
+                // }
             }
             else if (StringLiteral *SL = dyn_cast<StringLiteral>(child)) {
                 VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
@@ -396,7 +401,30 @@ public:
                 Arg.Arg = CallArg;
                 Arg.ArgNum = ParamNum;
                 Arg.direction = ParameterDirection::DIRECT;
-                VarDeclMap[Var] = Arg;            } 
+                VarDeclMap[Var] = Arg;            
+            }
+            else if (UnaryExprOrTypeTraitExpr *UETTE = dyn_cast<UnaryExprOrTypeTraitExpr>(child)) {
+                if (UETTE->getKind() == UETT_SizeOf) {
+                    // It's a sizeof expression.
+                    // Handle or further process the operand of the sizeof operation.
+                    VarDecl *Var = createPlaceholderVarDecl(Ctx, UETTE); 
+                    Argument_AST Arg;
+                    Arg.Assignment = UETTE;
+                    Arg.Arg = CallArg;
+                    Arg.ArgNum = ParamNum;
+                    Arg.direction = ParameterDirection::DIRECT;
+                    VarDeclMap[Var] = Arg;  
+                }
+            } 
+            else if (CallExpr* CE = dyn_cast<CallExpr>(child)) {
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, CE); 
+                Argument_AST Arg;
+                Arg.Assignment = CE;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = ParameterDirection::INDIRECT;
+                VarDeclMap[Var] = Arg;  
+            }
             else {
                 ParseArg(child, Ctx, CurrentExpr, CallArg, ParamNum);
             }
@@ -415,6 +443,22 @@ public:
         } else if (isa<IntegerLiteral>(literal)) {
             name += "INT__";
             type = Ctx.IntTy;
+        } else if (UnaryExprOrTypeTraitExpr *sizeofExpr = dyn_cast<UnaryExprOrTypeTraitExpr>(literal)){
+            if (sizeofExpr->getKind() == UETT_SizeOf) {
+                name += "SIZEOF__";
+                // Get the type of the expression argument if it's a type
+                if (sizeofExpr->isArgumentType()) {
+                    type = sizeofExpr->getArgumentType();
+                } else {
+                    // If the argument is an expression, get its type
+                    type = sizeofExpr->getArgumentExpr()->getType();
+                }
+            } else {
+                return nullptr;  // Unsupported unary expression or type trait
+            }
+        } else if (CallExpr *CE = dyn_cast<CallExpr>(literal)) {
+            name = "__INDIRECT_CALL__";
+            type = CE->getCallReturnType(Ctx);
         } else {
             return nullptr;  // Unsupported literal type
         }
@@ -498,6 +542,8 @@ public:
                 return "OUT";
             case ParameterDirection::IN_OUT:
                 return "IN_OUT";
+            case ParameterDirection::INDIRECT:
+                return "INDIRECT";
             default:
                 return "UNKNOWN";
         }
@@ -682,38 +728,14 @@ static llvm::cl::opt<std::string> InputFileName(
 static llvm::cl::opt<std::string> OutputFileName(
     "o", llvm::cl::desc("Specify the output filename"), llvm::cl::value_desc("filename"));
 
-
-// int main(int argc, const char **argv) {
-//     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
-//     Expected<CommonOptionsParser> ExpectedParser = CommonOptionsParser::create(argc, argv, ToolingSampleCategory);
-//     if (!ExpectedParser) {
-//         llvm::errs() << ExpectedParser.takeError();
-//         return 1;
-//     }
-
-//     CommonOptionsParser &OptionsParser = ExpectedParser.get();
-
-//     // Get the filename and source code from command-line options
-//     std::string input_filename = InputFileName.getValue();
-//     std::string output_filename = OutputFileName.getValue();
-//     llvm::outs() << "Input file: " << input_filename << "\n";
-//     llvm::outs() << "Output file: " << output_filename << "\n";
-
-//     // Use the filename to create a ClangTool instance
-//     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
-//     if(!input_filename.empty())
-//         readAndProcessFile(input_filename);
-//     else
-//         FunctionNames = {"GetVariable", "SetVariable"};
-//     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-
-//     if(!output_filename.empty())
-//         outputCallExprMapToJSON(output_filename);
-//     else
-//         printCallMap(CallMap);
-
-//     return 0;
-// }
+clang::tooling::ClangTool createClangTool(CommonOptionsParser &OptionsParser) {
+    try {
+        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles());
+    }
+    catch (...) {
+        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
+    }
+}
 
 int main(int argc, const char **argv) {
     llvm::cl::OptionCategory ToolingSampleCategory("Tooling Sample");
@@ -722,33 +744,23 @@ int main(int argc, const char **argv) {
         llvm::errs() << ExpectedParser.takeError();
         return 1;
     }
-    
+
     CommonOptionsParser &OptionsParser = ExpectedParser.get();
 
-    // Get the compilation database path from the command-line option
-    std::string compilationDatabasePath = CompilationDatabasePath.getValue();
+    // Get the filename and source code from command-line options
     std::string input_filename = InputFileName.getValue();
     std::string output_filename = OutputFileName.getValue();
-    std::string ErrorMessage;
-    std::unique_ptr<clang::tooling::CompilationDatabase> UniqueCompilDB = CompilationDatabase::loadFromDirectory(compilationDatabasePath, ErrorMessage);
-    if (!UniqueCompilDB) {
-        llvm::errs() << "Error loading the compilation database: " << ErrorMessage << "\n";
-        return 1;
-    }
-    std::shared_ptr<clang::tooling::CompilationDatabase> SharedCompilDB = std::move(UniqueCompilDB);
+    llvm::outs() << "Input file: " << input_filename << "\n";
+    llvm::outs() << "Output file: " << output_filename << "\n";
 
-    // Provide SharedCompilDB and the source paths to ClangTool's constructor
-    ClangTool Tool(*SharedCompilDB, OptionsParser.getSourcePathList());
+    // Use the filename to create a ClangTool instance
+    ClangTool Tool = createClangTool(OptionsParser);
 
-    Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
     if(!input_filename.empty())
         readAndProcessFile(input_filename);
     else
-        FunctionNames = {"GetVariable", "SetVariable"};
-    // Analyze each file in the compilation database
-    for (const auto &file : OptionsParser.getSourcePathList()) {
-        Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
-    }
+        FunctionNames = {"GetVariable", "SetVariable", "CopyMem"};
+    Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
 
     if(!output_filename.empty())
         outputCallExprMapToJSON(output_filename);
@@ -757,8 +769,3 @@ int main(int argc, const char **argv) {
 
     return 0;
 }
-
-
-
-
-
