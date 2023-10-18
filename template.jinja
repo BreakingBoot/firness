@@ -1,0 +1,14 @@
+{% for function_name, function_blocks in function_dict.items() %}
+void {{ function_name }}_Wrapper(int case_num) {
+    switch (case_num) {
+        {% for block in function_blocks %}
+        case {{ loop.index0 }}:
+            {{ function_name }}({{ block.arguments|map(attribute='assignment')|join(', ') }});
+            break;
+        {% endfor %}
+        default:
+            // Handle unexpected case
+            break;
+    }
+}
+{% endfor %}
