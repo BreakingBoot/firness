@@ -69,7 +69,7 @@ struct Argument_AST {
 
 typedef std::pair<Expr*, ParameterDirection> Assignment;
 
-typedef std::map<VarDecl*, Argument_AST> VarMap;
+typedef std::map<VarDecl*, std::vector<Argument_AST>> VarMap;
 
 struct Call {
     std::string Function;
@@ -167,7 +167,7 @@ public:
                         TypedefNameDecl *TDN = TDT->getDecl();
                         llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
                     } else {
-                        llvm::outs() << "Function pointer call without typedef.\n";
+                        llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
                     }
                 }
             } 
@@ -338,97 +338,101 @@ public:
 
     void HandleMatchingExpr(CallExpr* CE, ASTContext &Ctx) {
         for (unsigned i = 0; i < CE->getNumArgs(); i++) {
-            ParseArg(CE->getArg(i), Ctx, CE, CE->getArg(i), i);
-        }   
+            ParseArg(CE->getArg(i)->IgnoreCasts(), Ctx, CE, CE->getArg(i), i);
+        }
     }
 
     void ParseArg(Stmt *S, ASTContext &Ctx, Expr* CurrentExpr, Expr* CallArg, int ParamNum) {
         if (!S) return;
 
-        for (Stmt *child : S->children()) {
-            if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(child)) {
-                if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
-                    // If the top Expr in the stack of VarAssignments[VD]
-                    // is the same as the current CallExpr then get the second one
-                    while (!VarAssignments[VD].empty() && VarAssignments[VD].top().first == CurrentExpr) {
-                        VarAssignments[VD].pop();
-                    }
-                    
-                    // If stack is empty after popping, you might want to handle it here
-                    if (VarAssignments[VD].empty()) {
-                        continue;  // or some other default action
-                    }
-
-                    // Fetch the most relevant assignment for this variable usage
-                    Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, getLineNumber(CurrentExpr, Ctx), Ctx);
-
-                    if (mostRelevantAssignment) {
-                        Argument_AST Arg;
-                        Arg.Assignment = mostRelevantAssignment;
-                        Arg.Arg = CallArg;
-                        Arg.ArgNum = ParamNum;
-                        Arg.direction = VarAssignments[VD].top().second;
-                        VarDeclMap[VD] = Arg;
-                    }
-                    else
-                    {
-                        Argument_AST Arg;
-                        Arg.Assignment = nullptr;
-                        Arg.Arg = CallArg;
-                        Arg.ArgNum = ParamNum;
-                        Arg.direction = VarAssignments[VD].top().second;
-                        VarDeclMap[VD] = Arg;
-                    }
+        if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(S)) {
+            if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
+                // If the top Expr in the stack of VarAssignments[VD]
+                // is the same as the current CallExpr then get the second one
+                while (!VarAssignments[VD].empty() && VarAssignments[VD].top().first == CurrentExpr) {
+                    VarAssignments[VD].pop();
                 }
-                // else
-                // {
-                //     llvm::outs() << getSourceCode(CallArg) << "\n";
-                // }
-            }
-            else if (StringLiteral *SL = dyn_cast<StringLiteral>(child)) {
-                VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
-                Argument_AST Arg;
-                Arg.Assignment = SL;
-                Arg.Arg = CallArg;
-                Arg.ArgNum = ParamNum;
-                Arg.direction = ParameterDirection::DIRECT;
-                VarDeclMap[Var] = Arg;
-            } 
-            else if (IntegerLiteral *IL = dyn_cast<IntegerLiteral>(child)) {
-                VarDecl *Var = createPlaceholderVarDecl(Ctx, IL); 
-                Argument_AST Arg;
-                Arg.Assignment = IL;
-                Arg.Arg = CallArg;
-                Arg.ArgNum = ParamNum;
-                Arg.direction = ParameterDirection::DIRECT;
-                VarDeclMap[Var] = Arg;            
-            }
-            else if (UnaryExprOrTypeTraitExpr *UETTE = dyn_cast<UnaryExprOrTypeTraitExpr>(child)) {
-                if (UETTE->getKind() == UETT_SizeOf) {
-                    // It's a sizeof expression.
-                    // Handle or further process the operand of the sizeof operation.
-                    VarDecl *Var = createPlaceholderVarDecl(Ctx, UETTE); 
+                    
+                // If stack is empty after popping, you might want to handle it here
+                if (VarAssignments[VD].empty()) {
+                    return;  // or some other default action
+                }
+
+                // Fetch the most relevant assignment for this variable usage
+                Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, getLineNumber(CurrentExpr, Ctx), Ctx);
+
+                if (mostRelevantAssignment) {
                     Argument_AST Arg;
-                    Arg.Assignment = UETTE;
+                    Arg.Assignment = mostRelevantAssignment;
                     Arg.Arg = CallArg;
                     Arg.ArgNum = ParamNum;
-                    Arg.direction = ParameterDirection::DIRECT;
-                    VarDeclMap[Var] = Arg;  
+                    Arg.direction = VarAssignments[VD].top().second;
+                    VarDeclMap[VD].push_back(Arg);
                 }
-            } 
-            else if (CallExpr* CE = dyn_cast<CallExpr>(child)) {
-                VarDecl *Var = createPlaceholderVarDecl(Ctx, CE); 
+                else
+                {
+                    Argument_AST Arg;
+                    Arg.Assignment = nullptr;
+                    Arg.Arg = CallArg;
+                    Arg.ArgNum = ParamNum;
+                    Arg.direction = VarAssignments[VD].top().second;
+                    VarDeclMap[VD].push_back(Arg);
+                }
+                return;
+            }
+            // else
+            // {
+            //     llvm::outs() << getSourceCode(CallArg) << "\n";
+            // }
+        }
+        else if (StringLiteral *SL = dyn_cast<StringLiteral>(S)) {
+            VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
+            Argument_AST Arg;
+            Arg.Assignment = SL;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = ParameterDirection::DIRECT;
+            VarDeclMap[Var].push_back(Arg);
+            return;
+        } 
+        else if (IntegerLiteral *IL = dyn_cast<IntegerLiteral>(S)) {
+            VarDecl *Var = createPlaceholderVarDecl(Ctx, IL); 
+            Argument_AST Arg;
+            Arg.Assignment = IL;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = ParameterDirection::DIRECT;
+            VarDeclMap[Var].push_back(Arg);     
+            return;       
+        }
+        else if (UnaryExprOrTypeTraitExpr *UETTE = dyn_cast<UnaryExprOrTypeTraitExpr>(S)) {
+            if (UETTE->getKind() == UETT_SizeOf) {
+                // It's a sizeof expression.
+                // Handle or further process the operand of the sizeof operation.
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, UETTE); 
                 Argument_AST Arg;
-                Arg.Assignment = CE;
+                Arg.Assignment = UETTE;
                 Arg.Arg = CallArg;
                 Arg.ArgNum = ParamNum;
-                Arg.direction = ParameterDirection::INDIRECT;
-                VarDeclMap[Var] = Arg;  
+                Arg.direction = ParameterDirection::DIRECT;
+                VarDeclMap[Var].push_back(Arg);  
+                return;
             }
-            else {
-                ParseArg(child, Ctx, CurrentExpr, CallArg, ParamNum);
-            }
-        }   
+        } 
+        else if (CallExpr* CE = dyn_cast<CallExpr>(S)) {
+            VarDecl *Var = createPlaceholderVarDecl(Ctx, CE); 
+            Argument_AST Arg;
+            Arg.Assignment = CE;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = ParameterDirection::INDIRECT;
+            VarDeclMap[Var].push_back(Arg);  
+            return;
+        }
+        for (Stmt *child : S->children()) {
+            ParseArg(child, Ctx, CurrentExpr, CallArg, ParamNum);
+        }
+        return;
     }
 
     VarDecl* createPlaceholderVarDecl(ASTContext &Ctx, Stmt *literal) {
@@ -556,14 +560,16 @@ public:
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
-            Argument_AST Clang_Arg = pair.second;
-            Argument String_Arg;
-            String_Arg.data_type = VD->getType().getAsString();
-            String_Arg.variable = VD->getNameAsString();
-            String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
-            String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg));
-            String_Arg.assignment_type = GetAssignmentType(Clang_Arg.direction);
-            ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
+            for(Argument_AST Clang_Arg : pair.second)
+            {
+                Argument String_Arg;
+                String_Arg.data_type = VD->getType().getAsString();
+                String_Arg.variable = VD->getNameAsString();
+                String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
+                String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg));
+                String_Arg.assignment_type = GetAssignmentType(Clang_Arg.direction);
+                ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
+            }
         }
         return ConvertedMap;
     }
@@ -754,7 +760,9 @@ int main(int argc, const char **argv) {
     llvm::outs() << "Output file: " << output_filename << "\n";
 
     // Use the filename to create a ClangTool instance
-    ClangTool Tool = createClangTool(OptionsParser);
+    //ClangTool Tool = createClangTool(OptionsParser);
+    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles());
+    //ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
 
     if(!input_filename.empty())
         readAndProcessFile(input_filename);
