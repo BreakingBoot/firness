@@ -730,10 +730,10 @@ static llvm::cl::opt<std::string> OutputFileName(
 
 clang::tooling::ClangTool createClangTool(CommonOptionsParser &OptionsParser) {
     try {
-        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles());
+        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
     }
     catch (...) {
-        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
+        return clang::tooling::ClangTool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles());
     }
 }
 

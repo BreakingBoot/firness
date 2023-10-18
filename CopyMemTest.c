@@ -43,6 +43,8 @@ int main ()
     Acpi->UID = 10;
     Acpi->HID = 20;
     Com = 0;
+    char* walker = "abababa";
+    CopyMem (walker, &Acpi->UID, (sizeof (UINT32)));
     CopyMem (&Com, &Acpi->UID, (sizeof (UINT32)));
     CopyMem (&Com, &Acpi->UID, Ascii(sizeof (UINT32)));
     return 0;
