@@ -107,7 +107,7 @@ struct Call {
 
 std::set<std::string> FunctionNames;
 std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
-std::map<RecordDecl*, TypeData> FinalTypes;
+std::map<std::string, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 std::vector<Call> CallMap;
@@ -401,10 +401,10 @@ public:
 
     ParameterDirection HandleParameterDirection(ParameterDirection VariableDirection, CallExpr* CE, Expr* Arg)
     {
-        if((VariableDirection == ParameterDirection::DIRECT) && (CallArgMap[CE][Arg] == ParameterDirection::IN))
-        {
-            return ParameterDirection::IN_DIRECT;
-        }
+        // if((VariableDirection == ParameterDirection::DIRECT) && (CallArgMap[CE][Arg] == ParameterDirection::IN))
+        // {
+        //     return ParameterDirection::IN_DIRECT;
+        // }
         return CallArgMap[CE][Arg];
     }
 
@@ -641,11 +641,11 @@ public:
     }
 
     void processRecord(RecordDecl *RD) {
-        if (!RD || (varRecordInfo.find(RD) == varRecordInfo.end()) || (FinalTypes.find(RD) != FinalTypes.end())) {
+        if (!RD || (varRecordInfo.find(RD) == varRecordInfo.end()) || (FinalTypes.find(varRecordInfo[RD].TypeName) != FinalTypes.end())) {
             return;
         }
-        if((FinalTypes.find(RD) == FinalTypes.end())) {
-            FinalTypes[RD] = varRecordInfo[RD];
+        if((FinalTypes.find(varRecordInfo[RD].TypeName) == FinalTypes.end())) {
+            FinalTypes[varRecordInfo[RD].TypeName] = varRecordInfo[RD];
         }
         //
         for (auto field : RD->fields()) {
@@ -681,7 +681,7 @@ public:
         // Check if it's a record type (i.e., a struct or class type).
         if (const RecordType *RT = dyn_cast<RecordType>(QT)) {
             // Get the RecordDecl for the record type.
-            if(FinalTypes.find(RT->getDecl()) == FinalTypes.end())
+            if(FinalTypes.find(QT.getAsString()) == FinalTypes.end())
                 processRecord(RT->getDecl());
         } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
             // Get the TypedefNameDecl for the typedef type.
