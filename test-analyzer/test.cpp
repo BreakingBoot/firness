@@ -34,7 +34,8 @@ enum class ParameterDirection {
     IN_OUT,
     UNKNOWN,
     DIRECT,
-    INDIRECT
+    INDIRECT,
+    IN_DIRECT
 };
 
 struct Argument {
@@ -42,7 +43,8 @@ struct Argument {
     std::string variable;
     std::string assignment;
     std::string usage;
-    std::string assignment_type;
+    std::string arg_dir;
+    std::string arg_type;
 
     // Function to clear the Argument object
     void clear() {
@@ -50,6 +52,8 @@ struct Argument {
         variable.clear();
         assignment.clear();
         usage.clear();
+        arg_dir.clear();
+        arg_type.clear();
     }
 };
 
@@ -66,6 +70,22 @@ struct Argument_AST {
         direction = ParameterDirection::UNKNOWN; 
     }
 };
+
+struct FieldInfo {
+    std::string Name;
+    std::string Type;
+    FieldDecl* FieldType;
+};
+struct TypeData {
+    std::string TypeName;
+    TypedefDecl* TypeDec;
+    RecordDecl *record;
+    std::vector<FieldInfo> Fields;
+};
+
+std::map<TypedefDecl*, TypeData> varTypeInfo;
+std::map<RecordDecl*, TypeData> varRecordInfo;
+
 
 typedef std::pair<Expr*, ParameterDirection> Assignment;
 
@@ -87,7 +107,9 @@ struct Call {
 
 std::set<std::string> FunctionNames;
 std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
+std::map<RecordDecl*, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
+std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 std::vector<Call> CallMap;
 
 
@@ -96,17 +118,45 @@ public:
     explicit VarDeclVisitor(ASTContext *Context)
         : Context(Context) {}
 
-    bool VisitVarDecl(VarDecl *VD)
-    {
+    bool VisitVarDecl(VarDecl *VD) {
         // If the VarDecl has an initializer, store it; otherwise, store nullptr.
         VarAssignments[VD].push(std::make_pair((VD->hasInit() ? VD->getInit() : nullptr), ParameterDirection::UNKNOWN));
+        return true;
+    }
+
+    bool VisitTypedefDecl(TypedefDecl *TD) {
+        const Type *T = TD->getUnderlyingType().getTypePtr();
+        // Check if it's an ElaboratedType
+        if (const ElaboratedType *ET = dyn_cast<ElaboratedType>(T)) {
+            // Get the RecordType from the ElaboratedType
+            const RecordType *RT = dyn_cast<RecordType>(ET->getNamedType().getTypePtr());
+            if (RT) {
+                // Get the RecordDecl from the RecordType
+                RecordDecl *RD = RT->getDecl();
+                if (RD->isThisDeclarationADefinition()) {
+                    TypeData Type_Data;
+                    Type_Data.TypeName = TD->getNameAsString();
+                    Type_Data.record = RD;
+                    Type_Data.TypeDec = TD;
+                    for (auto Field : RD->fields()) {
+                        FieldInfo Field_Info;
+                        Field_Info.FieldType = Field;
+                        Field_Info.Name = Field->getNameAsString();
+                        Field_Info.Type = Field->getType().getAsString();
+                        Type_Data.Fields.push_back(Field_Info);
+                    }
+                    varTypeInfo[TD] = Type_Data;
+                    varRecordInfo[RD] = Type_Data;
+                }
+            }
+        }
         return true;
     }
     
     // 
     // Responsible for getting all Tracing the function definitions
     // 
-    ParameterDirection DoesFunctionAssign(int Param, CallExpr *CE) {
+    ParameterDirection DoesFunctionAssign(int Param, CallExpr *CE, Expr* Arg) {
         // Get the callee expression
         Expr *Callee = CE->getCallee()->IgnoreCasts();
 
@@ -148,7 +198,7 @@ public:
                                 // For IN/OUT declerations on the arguments 
                                 TypedefNameDecl *TypedefNameDeclaration = TDT->getDecl();
                                 if (auto *TypedefDeclaration = dyn_cast<TypedefDecl>(TypedefNameDeclaration)) {
-                                    return HandleTypedefArgs(Param, TypedefDeclaration);
+                                    return HandleTypedefArgs(Param, TypedefDeclaration, Arg, CE);
                                 }
                             }
                         }
@@ -184,7 +234,7 @@ public:
                         CharSourceRange Range = CharSourceRange::getTokenRange(FuncRange);
                         std::string FuncText = Lexer::getSourceText(Range, SM, LangOpts).str();
 
-                        return DetermineArgumentType(Param, FuncText);
+                        return DetermineArgumentType(Param, FuncText, Arg, CE);
                     }
                 }
             }
@@ -192,7 +242,7 @@ public:
         return ParameterDirection::UNKNOWN;
     }
 
-    ParameterDirection DetermineArgumentType(int Param, std::string FuncText) {
+    ParameterDirection DetermineArgumentType(int Param, std::string FuncText, Expr* Arg, CallExpr* CE) {
         // Check for presence of "IN" and "OUT" qualifiers
         std::regex paramRegex(R"(\b(IN\s+OUT|OUT\s+IN|IN|OUT)\b\s+[\w_]+\s+\**\s*[\w_]+)");
 
@@ -204,19 +254,26 @@ public:
             if (index == Param) {
                 std::string qualifier = match[1].str();
                 // Check the matched string
-                if (qualifier == "IN") return ParameterDirection::IN;
-                else if (qualifier == "IN OUT" || qualifier == "OUT IN") return ParameterDirection::IN_OUT;
-                else if (qualifier == "OUT") return ParameterDirection::OUT;
+                if (qualifier == "IN"){
+                    CallArgMap[CE][Arg] = ParameterDirection::IN;
+                    return ParameterDirection::IN;
+                }else if (qualifier == "IN OUT" || qualifier == "OUT IN") {
+                    CallArgMap[CE][Arg] = ParameterDirection::IN_OUT;
+                    return ParameterDirection::IN_OUT;
+                }else if (qualifier == "OUT") {
+                    CallArgMap[CE][Arg] = ParameterDirection::OUT;
+                    return ParameterDirection::OUT;
+                }
             }
             searchStart = match.suffix().first;
             index++;
         }
-
+        CallArgMap[CE][Arg] = ParameterDirection::UNKNOWN;
         // If nth parameter doesn't exist, return false by default
         return ParameterDirection::UNKNOWN;
     }
 
-    ParameterDirection HandleTypedefArgs(int Param, TypedefDecl *typedefDecl) {
+    ParameterDirection HandleTypedefArgs(int Param, TypedefDecl *typedefDecl, Expr* Arg, CallExpr *CE) {
         ASTContext &Ctx = typedefDecl->getASTContext();
         SourceManager &SM = Ctx.getSourceManager();
         const LangOptions &LangOpts = Ctx.getLangOpts();
@@ -239,7 +296,7 @@ public:
         CharSourceRange Range = CharSourceRange::getTokenRange(SourceRange(StartLoc, EndLoc));
         std::string FuncText = Lexer::getSourceText(Range, SM, LangOpts).str();
 
-        return DetermineArgumentType(Param, FuncText);
+        return DetermineArgumentType(Param, FuncText, Arg, CE);
     }
 
     //
@@ -253,7 +310,7 @@ public:
                     if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(UO->getSubExpr())) {
                         if (VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
                             if (VarAssignments.find(VD) != VarAssignments.end()) {
-                                VarAssignments[VD].push(std::make_pair(CE, DoesFunctionAssign(i, CE))); 
+                                VarAssignments[VD].push(std::make_pair(CE, DoesFunctionAssign(i, CE, CE->getArg(i)))); 
                             }
                         }
                     }
@@ -342,6 +399,15 @@ public:
         }
     }
 
+    ParameterDirection HandleParameterDirection(ParameterDirection VariableDirection, CallExpr* CE, Expr* Arg)
+    {
+        if((VariableDirection == ParameterDirection::DIRECT) && (CallArgMap[CE][Arg] == ParameterDirection::IN))
+        {
+            return ParameterDirection::IN_DIRECT;
+        }
+        return CallArgMap[CE][Arg];
+    }
+
     void ParseArg(Stmt *S, ASTContext &Ctx, Expr* CurrentExpr, Expr* CallArg, int ParamNum) {
         if (!S) return;
 
@@ -366,7 +432,7 @@ public:
                     Arg.Assignment = mostRelevantAssignment;
                     Arg.Arg = CallArg;
                     Arg.ArgNum = ParamNum;
-                    Arg.direction = VarAssignments[VD].top().second;
+                    Arg.direction = HandleParameterDirection(VarAssignments[VD].top().second, dyn_cast<CallExpr>(CurrentExpr), CallArg);
                     VarDeclMap[VD].push_back(Arg);
                 }
                 else
@@ -375,15 +441,11 @@ public:
                     Arg.Assignment = nullptr;
                     Arg.Arg = CallArg;
                     Arg.ArgNum = ParamNum;
-                    Arg.direction = VarAssignments[VD].top().second;
+                    Arg.direction = HandleParameterDirection(VarAssignments[VD].top().second, dyn_cast<CallExpr>(CurrentExpr), CallArg);
                     VarDeclMap[VD].push_back(Arg);
                 }
                 return;
             }
-            // else
-            // {
-            //     llvm::outs() << getSourceCode(CallArg) << "\n";
-            // }
         }
         else if (StringLiteral *SL = dyn_cast<StringLiteral>(S)) {
             VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
@@ -391,7 +453,7 @@ public:
             Arg.Assignment = SL;
             Arg.Arg = CallArg;
             Arg.ArgNum = ParamNum;
-            Arg.direction = ParameterDirection::DIRECT;
+            Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
             VarDeclMap[Var].push_back(Arg);
             return;
         } 
@@ -401,7 +463,7 @@ public:
             Arg.Assignment = IL;
             Arg.Arg = CallArg;
             Arg.ArgNum = ParamNum;
-            Arg.direction = ParameterDirection::DIRECT;
+            Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
             VarDeclMap[Var].push_back(Arg);     
             return;       
         }
@@ -414,7 +476,7 @@ public:
                 Arg.Assignment = UETTE;
                 Arg.Arg = CallArg;
                 Arg.ArgNum = ParamNum;
-                Arg.direction = ParameterDirection::DIRECT;
+                Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
                 VarDeclMap[Var].push_back(Arg);  
                 return;
             }
@@ -425,7 +487,7 @@ public:
             Arg.Assignment = CE;
             Arg.Arg = CallArg;
             Arg.ArgNum = ParamNum;
-            Arg.direction = ParameterDirection::INDIRECT;
+            Arg.direction = HandleParameterDirection(ParameterDirection::INDIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
             VarDeclMap[Var].push_back(Arg);  
             return;
         }
@@ -548,6 +610,8 @@ public:
                 return "IN_OUT";
             case ParameterDirection::INDIRECT:
                 return "INDIRECT";
+            case ParameterDirection::IN_DIRECT:
+                return "IN_DIRECT";
             default:
                 return "UNKNOWN";
         }
@@ -560,6 +624,7 @@ public:
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
+            GetVarStruct(VD);
             for(Argument_AST Clang_Arg : pair.second)
             {
                 Argument String_Arg;
@@ -567,11 +632,64 @@ public:
                 String_Arg.variable = VD->getNameAsString();
                 String_Arg.assignment = reduceWhitespace(getSourceCode(Clang_Arg.Assignment));
                 String_Arg.usage = reduceWhitespace(getSourceCode(Clang_Arg.Arg));
-                String_Arg.assignment_type = GetAssignmentType(Clang_Arg.direction);
+                String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
+                String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
             }
         }
         return ConvertedMap;
+    }
+
+    void processRecord(RecordDecl *RD) {
+        if (!RD || (varRecordInfo.find(RD) == varRecordInfo.end()) || (FinalTypes.find(RD) != FinalTypes.end())) {
+            return;
+        }
+        if((FinalTypes.find(RD) == FinalTypes.end())) {
+            FinalTypes[RD] = varRecordInfo[RD];
+        }
+        //
+        for (auto field : RD->fields()) {
+            QualType fieldQT = field->getType();
+            while (fieldQT->isAnyPointerType() || fieldQT->isReferenceType()) {
+                fieldQT = fieldQT->getPointeeType();
+            }
+            fieldQT = fieldQT.getCanonicalType();
+
+            if (const RecordType *fieldRT = dyn_cast<RecordType>(fieldQT)) {
+                processRecord(fieldRT->getDecl());
+            } else if (const TypedefType *fieldTDT = dyn_cast<TypedefType>(fieldQT)) {
+                //TypedefNameDecl *fieldTND = fieldTDT->getDecl();
+                // Handle typedef types if necessary...
+            }
+        }
+    }
+
+    void GetVarStruct(VarDecl *VD) {
+        if (!VD) {
+            return;
+        }
+        QualType QT = VD->getType();
+
+        // Work through any typedefs or other sugar to get to the ultimate
+        // underlying type.
+        while (QT->isAnyPointerType() || QT->isReferenceType()) {
+            QT = QT->getPointeeType();
+        }
+        QT = QT.getCanonicalType();
+
+        // Now, QT should be the actual type of the variable, without any typedefs or other sugar.
+        // Check if it's a record type (i.e., a struct or class type).
+        if (const RecordType *RT = dyn_cast<RecordType>(QT)) {
+            // Get the RecordDecl for the record type.
+            if(FinalTypes.find(RT->getDecl()) == FinalTypes.end())
+                processRecord(RT->getDecl());
+        } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
+            // Get the TypedefNameDecl for the typedef type.
+            TypedefNameDecl *TND = TDT->getDecl();
+            llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
+                        << TND->getNameAsString() << "\n";
+            // Now, you can do whatever you need with the TypedefNameDecl.
+        }
     }
 
     bool GenCallInfo(Expr* EX)
@@ -662,7 +780,7 @@ void printCallMap(const std::vector<Call> &calls) {
             llvm::outs() << "\t\tArg_Type: " << Arg.data_type << "\n";
             llvm::outs() << "\t\tArg_Name: " << Arg.variable << "\n";
             llvm::outs() << "\t\tArg_Assign: " << Arg.assignment << "\n";
-            llvm::outs() << "\t\tArg_Assign: " << Arg.assignment_type << "\n";
+            llvm::outs() << "\t\tArg_Direction: " << Arg.arg_dir << "\n";
             llvm::outs() << "\t\tArg_Usage: " << Arg.usage << "\n";
         }
     }
@@ -695,6 +813,7 @@ void readAndProcessFile(const std::string& filename) {
 }
 
 void outputCallExprMapToJSON(const std::string& filename) {
+    std::string file_path = filename + "/call-database.json";
     nlohmann::json jsonOutput;
 
     // Iterate over the CallMap
@@ -710,7 +829,8 @@ void outputCallExprMapToJSON(const std::string& filename) {
             argObject["data_type"] = arg.data_type;
             argObject["variable"] = arg.variable;
             argObject["assignment"] = arg.assignment;
-            argObject["assignment_type"] = arg.assignment_type;
+            argObject["arg_dir"] = arg.arg_dir;
+            argObject["arg_type"] = arg.arg_type;
             argObject["usage"] = arg.usage;
 
             callObject["Arguments"][argumentPair.first] = argObject;
@@ -721,11 +841,36 @@ void outputCallExprMapToJSON(const std::string& filename) {
     }
 
     // Write the JSON object to a file
-    std::ofstream outFile(filename);
+    std::ofstream outFile(file_path);
     outFile << jsonOutput.dump(4); // Indent the JSON output for readability
     outFile.close();
 }
 
+void writeToJson(const std::string &filename) {
+    std::string file_path = filename + "/types.json";
+    nlohmann::json j;
+
+    for (const auto& pair : FinalTypes) {
+        const TypeData& typeData = pair.second;
+        nlohmann::json typeJson;
+        typeJson["TypeName"] = typeData.TypeName;
+
+        nlohmann::json fieldsJson;
+        for (const FieldInfo& fieldInfo : typeData.Fields) {
+            nlohmann::json fieldJson;
+            fieldJson["Name"] = fieldInfo.Name;
+            fieldJson["Type"] = fieldInfo.Type;
+            fieldsJson.push_back(fieldJson);
+        }
+        typeJson["Fields"] = fieldsJson;
+
+        j.push_back(typeJson);
+    }
+
+    std::ofstream file(file_path);
+    file << j.dump(4);  // 4 spaces for indentation
+    file.close();
+}
 
 // Define command-line options for filename and source code
 static llvm::cl::opt<std::string> InputFileName(
@@ -771,7 +916,10 @@ int main(int argc, const char **argv) {
     Tool.run(newFrontendActionFactory<FindNamedFunctionAction>().get());
 
     if(!output_filename.empty())
+    {
         outputCallExprMapToJSON(output_filename);
+        writeToJson(output_filename);
+    }
     else
         printCallMap(CallMap);
 
