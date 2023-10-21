@@ -16,5 +16,4 @@ include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
-add_subdirectory(firmware-analyzer)
-add_subdirectory(test-analyzer)
+add_subdirectory(firness)

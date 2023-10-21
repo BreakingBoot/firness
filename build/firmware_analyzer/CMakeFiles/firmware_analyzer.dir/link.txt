@@ -1,1 +1,0 @@
-/usr/bin/c++  -frtti CMakeFiles/firmware_analyzer.dir/AnalyzeEDK2.cpp.o CMakeFiles/firmware_analyzer.dir/Visitor.cpp.o -o firmware_analyzer   -L/usr/lib/llvm-15/lib  -Wl,-rpath,/usr/lib/llvm-15/lib -lclangAST -lclangASTMatchers -lclangBasic -lclangFrontend -lclangSerialization -lclangTooling 
