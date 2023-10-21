@@ -1,14 +1,27 @@
-class VarDeclVisitor : public RecursiveASTVisitor<VarDeclVisitor> {
+#ifndef __VARIABLEFLOW_H__
+#define __VARIABLEFLOW_H__
+
+#include "PassHelpers.h"
+
+using namespace PassHelpers;
+
+class VariableFlow : public RecursiveASTVisitor<VariableFlow> {
 public:
-    explicit VarDeclVisitor(ASTContext *Context)
+    explicit VariableFlow(ASTContext *Context)
         : Context(Context) {}
 
+    /*
+        Adds all Variable declerations to the VarAssignment map
+    */
     bool VisitVarDecl(VarDecl *VD) {
         // If the VarDecl has an initializer, store it; otherwise, store nullptr.
         VarAssignments[VD].push(std::make_pair((VD->hasInit() ? VD->getInit() : nullptr), ParameterDirection::UNKNOWN));
         return true;
     }
 
+    /*
+        s
+    */
     bool VisitTypedefDecl(TypedefDecl *TD) {
         const Type *T = TD->getUnderlyingType().getTypePtr();
         // Check if it's an ElaboratedType
@@ -225,3 +238,5 @@ public:
 private:
     ASTContext *Context;
 };
+
+#endif

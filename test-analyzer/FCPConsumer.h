@@ -1,3 +1,10 @@
+#ifndef __FCP_CONSUMER_H__
+#define __FCP_CONSUMER_H__
+
+#include "VariableFlow.h"
+#include "CallSiteAnalysis.h"
+#include "FileOperationHelpers.h"
+
 class FCPConsumer : public clang::ASTConsumer {
 public:
     explicit FCPConsumer(ASTContext *Context)
@@ -8,6 +15,8 @@ public:
         FunctionVisitor.TraverseDecl(Context.getTranslationUnitDecl());
     }
 private:
-    VarDeclVisitor VariableVisitor;
-    CallExprVisitor FunctionVisitor;
+    VariableFlow VariableVisitor;
+    CallSiteAnalysis FunctionVisitor;
 };
+
+#endif 

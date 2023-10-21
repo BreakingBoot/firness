@@ -1,6 +1,23 @@
-    
+#ifndef __PASS_HELPERS_H__
+#define __PASS_HELPERS_H__
+
+#include "Globals.h"
 
 namespace PassHelpers {
+
+    /*
+        Get the source code level string of the given Expr
+    */
+    std::string getSourceCode(Expr *E, ASTContext &Context)
+    {
+        if (!E) return "";
+        SourceManager &SM = Context.getSourceManager();
+        const LangOptions &LangOpts = Context.getLangOpts();
+        CharSourceRange Range = CharSourceRange::getTokenRange(E->getSourceRange());
+        std::string ExprText = Lexer::getSourceText(Range, SM, LangOpts).str();
+
+        return ExprText;
+    }
 
     /*
         Print out the given expression to stdout
@@ -23,20 +40,6 @@ namespace PassHelpers {
     }
 
     /*
-        Get the source code level string of the given Expr
-    */
-    std::string getSourceCode(Expr *E, ASTContext &Context)
-    {
-        if (!E) return "";
-        SourceManager &SM = Context.getSourceManager();
-        const LangOptions &LangOpts = Context.getLangOpts();
-        CharSourceRange Range = CharSourceRange::getTokenRange(E->getSourceRange());
-        std::string ExprText = Lexer::getSourceText(Range, SM, LangOpts).str();
-
-        return ExprText;
-    }
-
-    /*
         Eliminates the extra whitespace for new lines//extra spaces
         in a given string
     */
@@ -55,3 +58,5 @@ namespace PassHelpers {
     }
 
 }; // PassHelpers namespace
+
+#endif

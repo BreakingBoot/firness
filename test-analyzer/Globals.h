@@ -1,3 +1,7 @@
+// #ifndef __GLOBALS_H__
+// #define __GLOBALS_H_
+#pragma once
+
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -27,6 +31,7 @@
 using namespace clang;
 using namespace clang::driver;
 using namespace clang::tooling;
+
 
 enum class ParameterDirection {
     IN,
@@ -83,14 +88,6 @@ struct TypeData {
     std::vector<FieldInfo> Fields;
 };
 
-std::map<TypedefDecl*, TypeData> varTypeInfo;
-std::map<RecordDecl*, TypeData> varRecordInfo;
-
-
-typedef std::pair<Expr*, ParameterDirection> Assignment;
-
-typedef std::map<VarDecl*, std::vector<Argument_AST>> VarMap;
-
 struct Call {
     std::string Function;
     std::map<std::string, Argument> Arguments;
@@ -105,9 +102,19 @@ struct Call {
     }
 };
 
-std::set<std::string> FunctionNames;
-std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
-std::map<std::string, TypeData> FinalTypes;
-std::map<CallExpr*, VarMap> CallExprMap;
-std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
-std::vector<Call> CallMap;
+
+typedef std::pair<Expr*, ParameterDirection> Assignment;
+typedef std::map<VarDecl*, std::vector<Argument_AST>> VarMap;
+
+
+extern std::map<TypedefDecl*, TypeData> varTypeInfo;
+extern std::map<RecordDecl*, TypeData> varRecordInfo;
+
+extern std::set<std::string> FunctionNames;
+extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
+extern std::map<std::string, TypeData> FinalTypes;
+extern std::map<CallExpr*, VarMap> CallExprMap;
+extern std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
+extern std::vector<Call> CallMap;
+
+// #endif

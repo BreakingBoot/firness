@@ -1,3 +1,7 @@
+#ifndef __FILE_OP_HELPERS_H__
+#define __FILE_OP_HELPERS_H__
+
+#include "Globals.h"
 #include <nlohmann/json.hpp>
 
 
@@ -7,11 +11,11 @@ namespace FileOps {
         gathered from the analysis to a json output file called types
 
     */
-    void outputTypeStructs(const std::string &filename) {
+    void outputTypeStructs(const std::string &filename, std::map<std::string, TypeData> final) {
         std::string file_path = filename + "/types.json";
         nlohmann::json j;
 
-        for (const auto& pair : FinalTypes) {
+        for (const auto& pair : final) {
             const TypeData& typeData = pair.second;
             nlohmann::json typeJson;
             typeJson["TypeName"] = typeData.TypeName;
@@ -71,12 +75,12 @@ namespace FileOps {
             - __CONSTANT_INT__
             - __CONSTANT_STRING__
     */
-    void outputCallMap(const std::string& filename) {
+    void outputCallMap(const std::string& filename, std::vector<Call> callMap) {
         std::string file_path = filename + "/call-database.json";
         nlohmann::json jsonOutput;
 
         // Iterate over the CallMap
-        for (const auto& call : CallMap) {
+        for (const auto& call : callMap) {
             // Create a JSON object for each call
             nlohmann::json callObject;
             callObject["Function"] = call.Function;
@@ -129,7 +133,7 @@ namespace FileOps {
         Read input file that contains the functions to analyze
         and store them in the FunctionNames set
     */
-    void processFunctionNames(const std::string& filename) {
+    std::set<std::string> processFunctionNames(const std::string& filename) {
         std::ifstream file(filename);
 
         if (!file.is_open()) {
@@ -152,5 +156,8 @@ namespace FileOps {
         }
 
         file.close();
+        return FunctionNames;
     }
 }; // FileOps namespace
+
+#endif

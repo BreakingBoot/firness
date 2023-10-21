@@ -1,3 +1,14 @@
+#include "FCPAction.h"
+
+std::map<TypedefDecl*, TypeData> varTypeInfo;
+std::map<RecordDecl*, TypeData> varRecordInfo;
+
+std::set<std::string> FunctionNames;
+std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
+std::map<std::string, TypeData> FinalTypes;
+std::map<CallExpr*, VarMap> CallExprMap;
+std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
+std::vector<Call> CallMap;
 
 
 // Define command-line options for input file and output dir
@@ -28,7 +39,7 @@ int main(int argc, const char **argv) {
     //ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList()); // For Single file input
 
     if(!input_filename.empty())
-        processFunctionNames(input_filename);
+        FunctionNames = FileOps::processFunctionNames(input_filename);
     else
     {
         llvm::errs() << "Missing Input File\n";
@@ -38,11 +49,11 @@ int main(int argc, const char **argv) {
 
     if(!output_filename.empty())
     {
-        outputCallMap(output_filename);
-        outputTypeStruct(output_filename);
+        FileOps::outputCallMap(output_filename, CallMap);
+        FileOps::outputTypeStructs(output_filename, FinalTypes);
     }
     else
-        printCallMap(CallMap);
+        FileOps::printCallMap(CallMap);
 
     return 0;
 }
