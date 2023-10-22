@@ -20,7 +20,19 @@ public:
     }
 
     /*
-        s
+        Capture all of the Enums because they are considered constants
+    */
+   bool VisitEnumDecl(EnumDecl* ED)
+   {
+        for (auto it = ED->enumerator_begin(); it != ED->enumerator_end(); ++it) {
+            EnumConstants.push_back((*it)->getNameAsString());
+        }
+
+        return true;
+   }
+
+    /*
+        Capture all of the custom structures 
     */
     bool VisitTypedefDecl(TypedefDecl *TD) {
         const Type *T = TD->getUnderlyingType().getTypePtr();

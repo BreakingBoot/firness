@@ -5,6 +5,24 @@
 
 namespace PassHelpers {
 
+    class OperatorCheckVisitor : public clang::RecursiveASTVisitor<OperatorCheckVisitor> {
+    public:
+        bool containsMulOrAdd = false;
+
+        bool VisitBinaryOperator(clang::BinaryOperator* binaryOp) {
+            if (binaryOp->getOpcode() == clang::BO_Mul || binaryOp->getOpcode() == clang::BO_Add) {
+                containsMulOrAdd = true;
+            }
+            return true;
+        }
+    };
+
+    bool checkForMulOrAdd(Stmt *stmt) {
+        OperatorCheckVisitor visitor;
+        visitor.TraverseStmt(stmt);
+        return visitor.containsMulOrAdd;
+    }
+
     /*
         Get the source code level string of the given Expr
     */
@@ -17,6 +35,35 @@ namespace PassHelpers {
         std::string ExprText = Lexer::getSourceText(Range, SM, LangOpts).str();
 
         return ExprText;
+    }
+
+    /*
+        Responsible for checking if the argument is all well-defined data
+    */
+    bool checkOperand(Expr *operand, ASTContext &Ctx, const std::vector<std::string> &DefinesList, 
+            const std::vector<std::string> &EnumList) {
+        std::string literalString = getSourceCode(operand, Ctx); 
+
+        // Check if any string in PreDefinedConstants is a substring of literalString
+        for (const std::string& predefined : DefinesList) {
+            if (literalString.find(predefined) != std::string::npos) {
+                return true;
+            }
+        }
+
+        for (const std::string& enums_defs : EnumList) {
+            if (literalString.find(enums_defs) != std::string::npos) {
+                return true;
+            }
+        }
+
+        if(auto *BO = dyn_cast<BinaryOperator>(operand)){
+            // Recursively check both the left-hand and right-hand operands
+            return checkOperand(BO->getLHS(), Ctx, DefinesList, EnumList) && 
+                checkOperand(BO->getRHS(), Ctx, DefinesList, EnumList);
+        }
+        
+        return false;
     }
 
     /*

@@ -89,6 +89,17 @@ public:
                 return;
             }
         }
+        else if(BinaryOperator *BO = dyn_cast<BinaryOperator>(S))
+        {
+            VarDecl *Var = createPlaceholderVarDecl(Ctx, BO);
+            Argument_AST Arg;
+            Arg.Assignment = BO;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+            VarDeclMap[Var].push_back(Arg);
+            return;
+        }
         else if (StringLiteral *SL = dyn_cast<StringLiteral>(S)) {
             VarDecl *Var = createPlaceholderVarDecl(Ctx, SL);
             Argument_AST Arg;
@@ -152,9 +163,6 @@ public:
         if (isa<StringLiteral>(literal)) {
             name += "STRING__";
             type = Ctx.getPointerType(Ctx.getWCharType());
-        } else if (isa<IntegerLiteral>(literal)) {
-            name += "INT__";
-            type = Ctx.IntTy;
         } else if (UnaryExprOrTypeTraitExpr *sizeofExpr = dyn_cast<UnaryExprOrTypeTraitExpr>(literal)){
             if (sizeofExpr->getKind() == UETT_SizeOf) {
                 name += "SIZEOF__";
@@ -168,6 +176,50 @@ public:
             } else {
                 return nullptr; 
             }
+        } else if(auto *BO = dyn_cast<BinaryOperator>(literal)){
+            if(BO->getOpcode() == BO_Or)
+            {
+                name += "INT__";
+            }
+            /*else
+            {
+                bool isSubstring = checkOperand(BO, Ctx, PreDefinedConstants, EnumConstants);
+                
+                if (isSubstring) {
+                    name += "INT__";
+                }
+            }*/
+            type = Ctx.IntTy;
+        } else if (isa<IntegerLiteral>(literal)) {
+            // Get the string representation of the literal
+            std::string literalString = getSourceCode(dyn_cast<IntegerLiteral>(literal), Ctx); 
+
+            // Check if any string in PreDefinedConstants is a substring of literalString
+            bool isSubstring = false;
+            for (const std::string& enums_defs : EnumConstants) {
+                if (literalString.find(enums_defs) != std::string::npos) {
+                    isSubstring = true;
+                    break;
+                }
+            }
+
+            if (isSubstring) {
+                name += "INT__";
+            }
+            else
+            {
+                for (const std::string& predefined : PreDefinedConstants) {
+                    if (literalString.find(predefined) != std::string::npos) {
+                        isSubstring = true;
+                        break;
+                    }
+                }
+
+                if (isSubstring) {
+                    name += "MAYBE_INT__";
+                }
+            }
+            type = Ctx.IntTy;
         } else if (CallExpr *CE = dyn_cast<CallExpr>(literal)) {
             name = "__INDIRECT_CALL__";
             type = CE->getCallReturnType(Ctx);

@@ -1,5 +1,3 @@
-// #ifndef __GLOBALS_H__
-// #define __GLOBALS_H_
 #pragma once
 
 #include <iostream>
@@ -23,6 +21,7 @@
 #include "clang/AST/Decl.h"
 #include "clang/AST/Type.h"
 #include "clang/AST/TypeLoc.h"
+#include "clang/Lex/Preprocessor.h"
 
 
 #include "clang/Lex/Lexer.h"
@@ -116,5 +115,6 @@ extern std::map<std::string, TypeData> FinalTypes;
 extern std::map<CallExpr*, VarMap> CallExprMap;
 extern std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 extern std::vector<Call> CallMap;
-
-// #endif
+extern std::vector<std::string> PreDefinedConstants;
+extern std::vector<std::string> EnumConstants;
+extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
