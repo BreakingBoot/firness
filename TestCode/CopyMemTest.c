@@ -6,6 +6,10 @@
 #define UINT16 uint16_t
 #define UINT8 uint8_t
 
+#define ONE 0
+#define TWO 1
+#define THREE 3
+
 #define SOME_STRING "abababab"
 typedef struct {
   UINT32  Data1;
@@ -54,8 +58,8 @@ int main ()
     Acpi->HID = 20;
     Com = 0;
     char* walker = "SOME_STRING";
-    CopyMem (walker, &Acpi->UID, (sizeof (EFI_GUID)));
-    CopyMem (&Com, &Acpi->UID, (sizeof (UINT32)));
+    CopyMem (walker, &Acpi->UID, (sizeof (EFI_GUID))+ 10);
+    CopyMem (&Com, &Acpi->UID, (ONE | TWO | THREE));
     CopyMem (&Com, &Acpi->UID, Ascii(sizeof (UINT32)));
     return 0;
 }
