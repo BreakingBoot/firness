@@ -110,6 +110,78 @@ namespace FileOps {
     }
 
     /*
+        Prints all of the call site information obtained from the
+        pass to a json file call call-database
+        "Arguments": {
+            "Arg_0": {
+                "arg_dir": "",
+                "arg_type": "",
+                "assignment": "",
+                "data_type": "",
+                "usage": "",
+                "variable": ""
+            },
+            "Arg_1": {
+                "arg_dir": "",
+                "arg_type": "",
+                "assignment": "",
+                "data_type": "",
+                "usage": "",
+                "variable": ""
+            },
+            "Arg_2": {
+                "arg_dir": "IN/OUT/IN_OUT",
+                "arg_type": "",
+                "assignment": "", -> Last assignment that happened
+                "data_type": "",
+                "usage": "", -> source code of call arg
+                "variable": ""
+            }
+        },
+        "Function": "FuncName"
+
+        data_type and arg_type are both included incase a cast to VOID happens
+        other than the built in variables I also included 3 more types for
+        the cases of constants being directly used:
+            - __CONSTANT_SIZEOF__
+            - __CONSTANT_INT__
+            - __CONSTANT_STRING__
+    */
+    void outputGeneratorMap(const std::string& filename, std::vector<Call> GenMap) {
+        std::string file_path = filename + "/generator-database.json";
+        nlohmann::json jsonOutput;
+
+        // Iterate over the CallMap
+        for (const auto& call : GenMap) {
+            // Create a JSON object for each call
+            nlohmann::json callObject;
+            callObject["Function"] = call.Function;
+
+            for (const auto& argumentPair : call.Arguments) {
+                // Create a JSON object for each argument
+                nlohmann::json argObject;
+                const Argument& arg = argumentPair.second;
+                argObject["data_type"] = arg.data_type;
+                argObject["variable"] = arg.variable;
+                argObject["assignment"] = arg.assignment;
+                argObject["arg_dir"] = arg.arg_dir;
+                argObject["arg_type"] = arg.arg_type;
+                argObject["usage"] = arg.usage;
+
+                callObject["Arguments"][argumentPair.first] = argObject;
+            }
+
+            // Add the call object to the JSON output
+            jsonOutput.push_back(callObject);
+        }
+
+        // Write the JSON object to a file
+        std::ofstream outFile(file_path);
+        outFile << jsonOutput.dump(4);
+        outFile.close();
+    }
+
+    /*
         Debugging function to print the Arg Map to stdout
     */
     void printCallMap(const std::vector<Call> &calls) {

@@ -80,11 +80,16 @@ struct FieldInfo {
     std::string Type;
     FieldDecl* FieldType;
 };
+
 struct TypeData {
     std::string TypeName;
-    TypedefDecl* TypeDec;
-    RecordDecl *record;
+    TypedefDecl* TypeDec = nullptr;
+    RecordDecl* record = nullptr;
     std::vector<FieldInfo> Fields;
+
+    TypeData() = default;
+    TypeData(const std::string& typeName, TypedefDecl* typeDec, RecordDecl* rec)
+        : TypeName(typeName), TypeDec(typeDec), record(rec) {}
 };
 
 struct Call {
@@ -118,3 +123,4 @@ extern std::vector<Call> CallMap;
 extern std::vector<std::string> PreDefinedConstants;
 extern std::vector<std::string> EnumConstants;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
+extern std::vector<Call> GeneratorMap;

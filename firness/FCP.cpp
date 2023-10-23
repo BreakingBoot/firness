@@ -12,6 +12,7 @@ std::vector<Call> CallMap;
 std::vector<std::string> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
 std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
+std::vector<Call> GeneratorMap;
 
 
 // Define command-line options for input file and output dir
@@ -54,6 +55,7 @@ int main(int argc, const char **argv) {
     {
         FileOps::outputCallMap(output_filename, CallMap);
         FileOps::outputTypeStructs(output_filename, FinalTypes);
+        FileOps::outputGeneratorMap(output_filename, GeneratorMap);
     }
     else
         FileOps::printCallMap(CallMap);

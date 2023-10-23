@@ -1,14 +1,14 @@
-#ifndef __CALLSITEANALYSIS_H__
-#define __CALLSITEANALYSIS_H__
+#ifndef __GENERATOR_ANALYSIS_H__
+#define __GENERATOR_ANALYSIS_H__
 
 #include "PassHelpers.h"
 
-class CallSiteAnalysis : public RecursiveASTVisitor<CallSiteAnalysis> {
+class GeneratorAnalysis : public RecursiveASTVisitor<GeneratorAnalysis> {
 public:
-    explicit CallSiteAnalysis(ASTContext *Context)
+    explicit GeneratorAnalysis(ASTContext *Context)
         : Context(Context) {}
 
-    // Assume ParameterDirection is an enum with values INPUT and OUTPUT
+   // Assume ParameterDirection is an enum with values INPUT and OUTPUT
     Expr* getMostRelevantAssignment(VarDecl* var, int exprLineNumber, ASTContext &Ctx) {
         std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = VarAssignments[var];
 
@@ -43,10 +43,6 @@ public:
 
     ParameterDirection HandleParameterDirection(ParameterDirection VariableDirection, CallExpr* CE, Expr* Arg)
     {
-        // if((VariableDirection == ParameterDirection::DIRECT) && (CallArgMap[CE][Arg] == ParameterDirection::IN))
-        // {
-        //     return ParameterDirection::IN_DIRECT;
-        // }
         return CallArgMap[CE][Arg];
     }
 
@@ -236,42 +232,6 @@ public:
     }
 
     /*
-        Checks if a given function call matches a function
-        from the FunctionNames set
-    */
-    bool doesCallMatch(Expr *E, ASTContext &Ctx) {
-        if (!E) return false;
-        bool found = false;
-
-        // Check for direct function calls
-        if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(E)) {
-            if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
-                if (FunctionNames.count(FD->getNameAsString())) {
-                    return true;
-                }
-            }
-        }
-        else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(E)) {
-            // If the Function Pointer Called matches the one we are looking for
-            if (FunctionNames.count(MemExpr->getMemberNameInfo().getName().getAsString())) {
-                return true;
-            }
-        }
-
-        for (Stmt *child : E->children()) {
-            if (Expr *childExpr = dyn_cast<Expr>(child)) {
-                if(doesCallMatch(childExpr, Ctx))
-                {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        return found;
-    }
-
-
-    /*
         Convert the direction flow of data to string
     */
     std::string GetAssignmentType(ParameterDirection dir)
@@ -307,7 +267,6 @@ public:
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
-            GetVarStruct(VD);
             for(Argument_AST Clang_Arg : pair.second)
             {
                 Argument String_Arg;
@@ -323,67 +282,6 @@ public:
         return ConvertedMap;
     }
 
-    /*
-        This is the recursion to handle grabbing the sub types
-        It also makes sure the sub types are only added once to the map
-    */
-    void processRecord(RecordDecl *RD) {
-        if (!RD || (varRecordInfo.find(RD) == varRecordInfo.end()) || (FinalTypes.find(varRecordInfo[RD].TypeName) != FinalTypes.end())) {
-            return;
-        }
-        // Copy the Info from the list generated during variable analysis
-        if((FinalTypes.find(varRecordInfo[RD].TypeName) == FinalTypes.end())) {
-            FinalTypes.insert(std::make_pair(varRecordInfo[RD].TypeName, varRecordInfo[RD]));
-        }
-        // Analyze the sub types of the struct and determine if they also need to be
-        //      considered
-        for (auto field : RD->fields()) {
-            QualType fieldQT = field->getType();
-            while (fieldQT->isAnyPointerType() || fieldQT->isReferenceType()) {
-                fieldQT = fieldQT->getPointeeType();
-            }
-            fieldQT = fieldQT.getCanonicalType();
-
-            if (const RecordType *fieldRT = dyn_cast<RecordType>(fieldQT)) {
-                processRecord(fieldRT->getDecl());
-            } /*else if (const TypedefType *fieldTDT = dyn_cast<TypedefType>(fieldQT)) {
-                TypedefNameDecl *fieldTND = fieldTDT->getDecl();
-                This isn't needed for edk2 use case
-            }*/
-        }
-    }
-
-    /*
-        For each Variable Type that is used in generating the calls
-        I grab those types structures and any sub types that may also be structures
-    */
-    void GetVarStruct(VarDecl *VD) {
-        if (!VD) {
-            return;
-        }
-        QualType QT = VD->getType();
-
-        // Work through any typedefs to get to the ultimate
-        // underlying type.
-        while (QT->isAnyPointerType() || QT->isReferenceType()) {
-            QT = QT->getPointeeType();
-        }
-        QT = QT.getCanonicalType();
-
-        // Now, QT should be the actual type of the variable, without any typedefs
-        // Check if it's a record type (i.e., a struct or class type).
-        if (const RecordType *RT = dyn_cast<RecordType>(QT)) {
-            // Get the RecordDecl for the record type.
-            if(FinalTypes.find(QT.getAsString()) == FinalTypes.end())
-                processRecord(RT->getDecl());
-        } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
-            // Get the TypedefNameDecl for the typedef type.
-            TypedefNameDecl *TND = TDT->getDecl();
-            llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
-                        << TND->getNameAsString() << "\n";
-            // This is never reached, but I keep incase it is needed in future analysis            
-        }
-    }
 
     /*
         Generate the call info by converting the Clang AST
@@ -421,23 +319,144 @@ public:
         return found;
     }
 
-    /*
-        Visit Every Call Expr and add its info to the 
-        Call Map if the function name matches
-    */
-    bool VisitCallExpr(CallExpr *Call) {
-        if(doesCallMatch(Call, *this->Context))
+    ParameterDirection DoesFunctionAssign(int Param, CallExpr *CE, Expr* Arg) {
+        // Get the callee expression
+        Expr *Callee = CE->getCallee()->IgnoreCasts();
+
+        // Check if it's a member expression
+        if (auto *MemExpr = dyn_cast<MemberExpr>(Callee)) {
+            Expr *Base = MemExpr->getBase()->IgnoreCasts();
+            
+            if (auto *DeclRef = dyn_cast<DeclRefExpr>(Base)) {
+                ValueDecl *VD = DeclRef->getDecl();
+                    
+                // Get the type of VD and strip away any typedefs
+                QualType QT = VD->getType();
+                if (QT->isPointerType()) {
+                    QT = QT->getPointeeType();
+                }
+
+                // Strip away any typedefs
+                while (auto *TDT = dyn_cast<TypedefType>(QT)) {
+                    QT = TDT->getDecl()->getUnderlyingType();
+                }
+                const Type *underlyingType = QT.getTypePtr();
+
+                // If it's an elaborated type, drill down further
+                // Needed for EDK2 since they have multiple levels
+                // e.g. typedef struct _EFI_PEI_READ_ONLY_VARIABLE2_PPI EFI_PEI_READ_ONLY_VARIABLE2_PPI;
+                if (auto *ET = dyn_cast<ElaboratedType>(underlyingType)) {
+                    underlyingType = ET->getNamedType().getTypePtr();
+                }
+                
+                // Assuming it's a record type (like a struct or class)
+                // Commonplace in EDK2
+                if (auto *RTD = dyn_cast<RecordType>(underlyingType)) {
+                    // Iterate over the members of the struct/class
+                }
+            }
+        } else if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Callee)) {
+            ValueDecl *VD = DRE->getDecl();
+            QualType QT = VD->getType();
+
+            // Check for function pointer calls
+            if (const PointerType *PT = QT->getAs<PointerType>()) {
+                QualType PointeeType = PT->getPointeeType();
+                if (PointeeType->isFunctionType()) {
+                    if (const TypedefType *TDT = PointeeType->getAs<TypedefType>()) {
+                        TypedefNameDecl *TDN = TDT->getDecl();
+                        llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
+                    } else {
+                        llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
+                    }
+                }
+            } 
+            // Check for direct function calls
+            else if (QT->isFunctionType()) {
+                // Currently just printing off the function definition
+                if (FunctionDecl *Func = dyn_cast<FunctionDecl>(VD)) {
+                    
+                }
+            }
+        }
+        return ParameterDirection::UNKNOWN;
+    }
+
+
+    bool CheckType(const Expr *arg)
+    {
+        if((isa<UnaryOperator>(arg) || isa<BinaryOperator>(arg) || isa<MemberExpr>(arg) ||
+            isa<CallExpr>(arg) || isa<StringLiteral>(arg) || isa<UnaryExprOrTypeTraitExpr>(arg) || 
+            isa<IntegerLiteral>(arg) || isa<CharacterLiteral>(arg) ||
+            isa<FloatingLiteral>(arg) || isa<CStyleCastExpr>(arg) || isa<DeclRefExpr>(arg) ||
+            isa<ArraySubscriptExpr>(arg) || isa<ConditionalOperator>(arg) || isa<InitListExpr>(arg) ||
+            isa<CompoundLiteralExpr>(arg) || isa<CXXThisExpr>(arg) ||
+            isa<TypeTraitExpr>(arg) || isa<CXXTypeidExpr>(arg) || isa<LambdaExpr>(arg)) && !isa<CXXOperatorCallExpr>(arg))
         {
-            VarDeclMap.clear();
-            CallInfo.clear();
-            HandleMatchingExpr(Call, *this->Context);
-            CallExprMap[Call] = VarDeclMap;
-            GenCallInfo(Call);
-            CallMap.push_back(CallInfo);
+            return true;
+        }
+        return false;
+    }
+
+    /*
+        Handle gathering all functions that return and/or OUT one of the variables of interest
+    */
+    bool VisitCallExpr(CallExpr *Call)
+    {
+        // Check if the call expression is found in CallArgMap
+        if (CallArgMap.find(Call) != CallArgMap.end()) {
+            // Iterate through the argument-direction map for this call expression
+            for (auto& argDirPair : CallArgMap[Call]) {
+                if(auto* arg = dyn_cast<Expr>(argDirPair.first))
+                {
+                    ParameterDirection dir = argDirPair.second;
+                    
+                    // Check if the argument direction is IN or IN_OUT
+                    if (dir == ParameterDirection::OUT || dir == ParameterDirection::IN_OUT) {
+                        // Assuming the argument has a method to get its type as a string
+                        if (!CheckType(arg)) {
+                            continue;
+                        }
+                        QualType qt = arg->getType();
+                        if(!qt.isNull())
+                        {
+                            // Work through any typedefs to get to the ultimate
+                            // underlying type.
+                            while (qt->isAnyPointerType() || qt->isReferenceType()) {
+                                qt = qt->getPointeeType();
+                            }
+                            qt = qt.getCanonicalType();
+
+                            // Now, QT should be the actual type of the variable, without any typedefs
+                            // Check if it's a record type (i.e., a struct or class type).
+                            if (const RecordType *RT = dyn_cast<RecordType>(qt)) {
+                                // Get the RecordDecl for the record type.
+                                if(!qt.getAsString().empty())
+                                {
+                                    if(FinalTypes.find(qt.getAsString()) != FinalTypes.end())
+                                    {
+                                        HandleMatchingExpr(Call, *this->Context);
+                                        GeneratorFunctionsMap[Call] = VarDeclMap;
+                                        if(GenCallInfo(Call))
+                                            GeneratorMap.push_back(CallInfo);
+                                        VarDeclMap.clear();
+                                        CallInfo.clear();
+                                        return true;
+                                    }
+                                }
+                            } else if (const TypedefType *TDT = dyn_cast<TypedefType>(qt)) {
+                                // Get the TypedefNameDecl for the typedef type.
+                                TypedefNameDecl *TND = TDT->getDecl();
+                                llvm::outs() << TND->getNameAsString() << "\n";
+                            //     // This is never reached, but I keep incase it is needed in future analysis            
+                            }
+                        }
+                    }
+                }
+            }
         }
         return true;
     }
-
 
 private:
     ASTContext *Context;
