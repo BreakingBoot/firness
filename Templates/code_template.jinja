@@ -1,14 +1,39 @@
-{% for function_name, function_blocks in function_dict.items() %}
-void {{ function_name }}_Wrapper(int case_num) {
-    switch (case_num) {
-        {% for block in function_blocks %}
-        case {{ loop.index0 }}:
-            {{ function_name }}({{ block.arguments|map(attribute='assignment')|join(', ') }});
+{%- for function, arguments_dict in functions.items() %}
+EFI_STATUS
+EFIAPI
+Fuzz{{ function }}(
+    IN INPUT_BUFFER *Input,
+    IN EFI_SYSTEM_TABLE  *SystemTable
+) {
+    {%- for arg_key, arguments in arguments_dict.items() %}
+        {%- if arguments[0].variable == "__FUZZABLE__" %}
+    {{ arguments[0].arg_type }} arg_{{ loop.index }} = ReadInput();
+        {%- elif "__CONSTANT" in arguments[0].variable %}
+    {{ arguments[0].arg_type }} arg_{{ loop.index }};
+    switch({{ arg_key }}) {
+        {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
+        {%- for argument in arguments %}
+        case {{ argument.variable.split('_')[-1] }}:
+            arg_{{ loop.index }} = {{ argument.usage }};
             break;
-        {% endfor %}
-        default:
-            // Handle unexpected case
-            break;
+        {%- endfor %}
     }
+        {%- elif "EFI_GUID" in arguments[0].data_type %}
+    {{ arguments[0].arg_type }} arg_{{ loop.index }};
+    switch({{ loop.index }}) {
+        {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
+        {%- for argument in arguments %}
+        case {{ argument.variable.split('_')[-1] }}:
+            arg_{{ loop.index }} = {{ argument.usage }};
+            break;
+        {%- endfor %}
+    }
+        {%- endif %}
+    {%- endfor %}
+    {{ function }}(
+        {%- for arg_key, arguments in arguments_dict.items() %}
+        arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
+        {%- endfor %}
+    );
 }
-{% endfor %}
+{%- endfor %}

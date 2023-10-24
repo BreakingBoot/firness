@@ -1,0 +1,57 @@
+{#
+    INPUTS:
+        uuid - the applications uuid
+        sources - source files that are needed
+        guids - the Driver guids needed to locate them
+        protocols - used to locate protocols
+#}
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Firness
+  FILE_GUID                      = {{ uuid }}
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FirnessMain
+
+#
+#  This flag specifies whether HII resource section is generated into PE image.
+#
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+{%- for source in sources %}
+  {{ source }}
+{%- endfor %}
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiLib
+  PcdLib
+  BaseMemoryLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DxeServicesTableLib
+  HobLib
+  DebugLib
+  BaseLib
+
+[Guids]
+{%- for guid in guids %}
+  {{ guid }}
+{%- endfor %}
+
+[Protocols]
+{%- for protocol_guid in protocols %}
+  {{ protocol_guid }}
+{%- endfor %}

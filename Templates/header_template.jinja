@@ -1,19 +1,8 @@
-{% for include in includes %}#include "{{ include }}"
-{% endfor %}
-
-{% for define in case_definitions %}#define {{ define }} {{ loop.index0 }}
-{% endfor %}
-
+{%- for function, arguments_dict in functions.items() %}
 EFI_STATUS
 EFIAPI
-{{ function_name }}(
-    IN INPUT_BUFFER *Input
-    );
-{% for function in analyzed_services %}
-EFI_STATUS
-EFIAPI
-Fuzz{{ function["Service"] }}(
+Fuzz{{ function }}(
     IN INPUT_BUFFER *Input,
     IN EFI_SYSTEM_TABLE  *SystemTable
-    );
-{% endfor %}
+);
+{%- endfor %}
