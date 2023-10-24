@@ -426,6 +426,16 @@ public:
         Call Map if the function name matches
     */
     bool VisitCallExpr(CallExpr *Call) {
+
+        // Check if any of the arguments are references to the functions of interest
+        // This happens when converting the function pointers during UEFI -> OS transition
+        for (unsigned i = 0; i < Call->getNumArgs(); ++i) {
+            Expr* Arg = Call->getArg(i);
+            if (doesCallMatch(Arg, *this->Context)) {
+                return true;  // Skip this CallExpr if an argument refers to a function of interest
+            }
+        }
+        
         if(doesCallMatch(Call, *this->Context))
         {
             VarDeclMap.clear();
