@@ -1,5 +1,6 @@
 import json
 import argparse
+import uuid
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
 from typing import List, Dict, Any
@@ -31,7 +32,9 @@ class FunctionBlock:
         self.arguments = arguments
         self.function = function
 
-function_template = Dict[str, FunctionBlock]
+function_template = {}
+protocol_guids = []
+driver_guids = []
 
 #
 # Load in the function call database and perform frequency analysis across
@@ -55,7 +58,7 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
     most_common_param_counts = {}
     for function, function_blocks in function_dict.items():
         param_counts = Counter(len(fb.arguments) for fb in function_blocks)
-        most_common_param_counts[function] = param_counts.most_common(1)[0][0]
+        most_common_param_counts[function] = param_counts.most_common(1)[0][0]            
 
     # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
     filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
@@ -65,6 +68,8 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
 
     # Step 1: Collect data_type statistics for arg_type of "void *"
     for function, function_blocks in filtered_function_dict.items():
+        if function not in function_template:
+            function_template[function] = function_blocks[0]
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 if contains_void_star(argument.arg_type):
@@ -92,6 +97,21 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
         ]
 
     return filtered_function_dict
+
+def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
+    with open(json_file, 'r') as file:
+        raw_data = json.load(file)
+
+    function_dict = defaultdict(list)
+    for raw_function_block in raw_data:
+        arguments = {
+            arg_key: Argument(**raw_argument)
+            for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
+        }
+        function_block = FunctionBlock(arguments, raw_function_block.get('Function'))
+        function_dict[function_block.function].append(function_block)
+
+    return function_dict
 
 
 def get_dominant_data_types(data_type_counter_dict):
@@ -160,6 +180,9 @@ def pre_process_data(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str,
             type_set = {argument.variable for argument in arguments}
             # Check if any argument has 'efi_guid' in its arg_type
             efi_guid_present = any('efi_guid' in argument.arg_type.lower() for argument in arguments)
+            protocol_guids.extend([argument.variable for argument in arguments if ('efi_guid' in argument.arg_type.lower() and 'protocolguid' in argument.variable.lower()) ])
+            driver_guids.extend([argument.variable for argument in arguments if ('efi_guid' in argument.arg_type.lower() and 'protocolguid' not in argument.variable.lower())])
+
             if len(type_set) == 1 or efi_guid_present:  # All arguments have the same type or 'efi_guid' is present
                 filtered_args_dict[function][arg_key] = arguments  # Keep these arguments
 
@@ -211,9 +234,24 @@ def get_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, Lis
 def generate_code(function_dict: Dict[str, List[FunctionBlock]], types_dict: Dict[str, List[FieldInfo]]):
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template('Templates/code_template.jinja')
-    code = template.render(function_dict=function_dict)
+    code = template.render(functions=function_dict)
     with open("output_code.c", 'w') as f:
         f.write(code)
+
+def generate_header(function_dict: Dict[str, List[FunctionBlock]]):
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template('Templates/header_template.jinja')
+    code = template.render(functions=function_dict)
+    with open("output_code.h", 'w') as f:
+        f.write(code)
+
+def generate_inf():
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template('Templates/inf_template.jinja')
+    code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids, sources=["Firness.c", "Helpers.c"])
+    with open("output_code.inf", 'w') as f:
+        f.write(code)
+
 
 def write_to_file(data: Dict[str, Dict[str, List[Argument]]], file_path: str):
     serializable_data = {k: {arg_key: [object_to_dict(arg) for arg in arg_list] for arg_key, arg_list in v.items()} for k, v in data.items()}
@@ -232,6 +270,43 @@ def print_filtered_args_dict(filtered_args_dict: Dict[str, List[FunctionBlock]])
                 print(f'      Data Type: {argument.data_type}')
                 print(f'      Usage: {argument.usage}')
                 print(f'      Variable: {argument.variable}')
+
+def print_template(template: Dict[str, FunctionBlock]) -> None:
+    for function, function_block in template.items():
+        print(f'Function: {function}')
+        for arg_key, argument in function_block.arguments.items():
+            print(f'    Argument Key: {arg_key}')
+            print(f'      Arg Dir: {argument.arg_dir}')
+            print(f'      Arg Type: {argument.arg_type}')
+            print(f'      Assignment: {argument.assignment}')
+            print(f'      Data Type: {argument.data_type}')
+            print(f'      Usage: {argument.usage}')
+            print(f'      Variable: {argument.variable}')
+
+def get_generators(known_inputs: Dict[str, List[FunctionBlock]], 
+                   generators: Dict[str, List[FunctionBlock]], 
+                   function_template: Dict[str, FunctionBlock]) -> Dict[str, List[FunctionBlock]]:
+
+    matching_generators = {}  # Dictionary to store the matching generators
+    for func_name, generator_blocks in generators.items():
+        for generator_block in generator_blocks:
+            for arg_key, argument in generator_block.arguments.items():
+                # Check if argument direction is OUT
+                if argument.arg_dir == "OUT":
+                    # Look for a matching argument in function_template
+                    for func_temp_name, func_temp_block in function_template.items():
+                        for ft_arg_key, ft_argument in func_temp_block.arguments.items():
+                            # Check if argument types match and the argument is missing from known_inputs
+                            if (argument.arg_type == ft_argument.arg_type and 
+                                    ft_arg_key not in known_inputs[func_temp_name].keys()):
+                                # If matching generator is found, add it to the matching_generators dictionary
+                                if func_name not in matching_generators:
+                                    matching_generators[func_name] = []
+                                matching_generators[func_name].append(generator_block)
+                                # Optionally, break early if a match is found (depends on your use case)
+                                break
+
+    return matching_generators
 
 def merge_fuzzable_known(
         known_inputs: Dict[str, Dict[str, List[Argument]]],
@@ -265,16 +340,19 @@ def main():
 
     args = parser.parse_args()
 
-    generators = load_data(args.generator_file)
+    generators = load_generators(args.generator_file)
     data = load_data(args.data_file)
     pre_processed_data = pre_process_data(data)
     directly_fuzzable = get_fuzzable(data)
     merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
     # print_filtered_args_dict(directly_fuzzable)
     types = load_types(args.types_file)
+    matching_generators = get_generators(merged_data, generators, function_template)
     write_to_file(merged_data, args.output_file)
 
-    generate_code(data, types)
+    generate_code(merged_data, types)
+    generate_header(merged_data)
+    generate_inf()
 
 if __name__ == '__main__':
     main()
