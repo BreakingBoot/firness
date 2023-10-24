@@ -31,6 +31,8 @@ class FunctionBlock:
         self.arguments = arguments
         self.function = function
 
+function_template = Dict[str, FunctionBlock]
+
 #
 # Load in the function call database and perform frequency analysis across
 # the function calls to make sure to only keep the function calls that have
@@ -208,9 +210,10 @@ def get_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, Lis
 
 def generate_code(function_dict: Dict[str, List[FunctionBlock]], types_dict: Dict[str, List[FieldInfo]]):
     env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('template.jinja')
+    template = env.get_template('Templates/code_template.jinja')
     code = template.render(function_dict=function_dict)
-    print(code)
+    with open("output_code.c", 'w') as f:
+        f.write(code)
 
 def write_to_file(data: Dict[str, Dict[str, List[Argument]]], file_path: str):
     serializable_data = {k: {arg_key: [object_to_dict(arg) for arg in arg_list] for arg_key, arg_list in v.items()} for k, v in data.items()}
@@ -252,6 +255,7 @@ def merge_fuzzable_known(
     return merged_data
 
 
+
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
     parser.add_argument('-d', '--data-file', dest='data_file', default='tmp/call-database.json', help='Path to the data file (default: tmp/call-database.json)')
@@ -270,7 +274,7 @@ def main():
     types = load_types(args.types_file)
     write_to_file(merged_data, args.output_file)
 
-    # generate_code(data)
+    generate_code(data, types)
 
 if __name__ == '__main__':
     main()

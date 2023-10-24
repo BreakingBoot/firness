@@ -9,7 +9,7 @@ public:
     std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
         clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
         
-        Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>());
+        Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>(Compiler.getSourceManager()));
 
         return std::unique_ptr<clang::ASTConsumer>(
             new FCPConsumer(&Compiler.getASTContext()));

@@ -13,6 +13,7 @@ std::vector<std::string> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
 std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 std::vector<Call> GeneratorMap;
+std::set<std::string> IncludeDirectives;
 
 
 // Define command-line options for input file and output dir
@@ -56,6 +57,7 @@ int main(int argc, const char **argv) {
         FileOps::outputCallMap(output_filename, CallMap);
         FileOps::outputTypeStructs(output_filename, FinalTypes);
         FileOps::outputGeneratorMap(output_filename, GeneratorMap);
+        FileOps::outputIncludes(output_filename, IncludeDirectives);
     }
     else
         FileOps::printCallMap(CallMap);

@@ -22,8 +22,8 @@
 #include "clang/AST/Type.h"
 #include "clang/AST/TypeLoc.h"
 #include "clang/Lex/Preprocessor.h"
-
-
+#include <clang/Basic/Diagnostic.h>
+#include <clang/Lex/PPCallbacks.h>
 #include "clang/Lex/Lexer.h"
 
 
@@ -121,6 +121,7 @@ extern std::map<CallExpr*, VarMap> CallExprMap;
 extern std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 extern std::vector<Call> CallMap;
 extern std::vector<std::string> PreDefinedConstants;
+extern std::set<std::string> IncludeDirectives;
 extern std::vector<std::string> EnumConstants;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
