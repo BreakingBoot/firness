@@ -10,6 +10,13 @@ scalable_params = [
     "char"
 ]
 
+ignore_constant_keywords = [
+    "max",
+    "size",
+    "length",
+    "min"
+]
+
 class Argument:
     def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str):
         self.arg_dir = arg_dir
@@ -84,6 +91,18 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
 
     return filtered_function_dict
 
+
+def get_dominant_data_types(data_type_counter_dict):
+    dominant_data_types = {
+        function: {
+            arg_key: max(data_type_counter, key=data_type_counter.get)
+            for arg_key, data_type_counter in arg_keys_dict.items()
+            if sum(data_type_counter.values()) * 0.9 <= data_type_counter[max(data_type_counter, key=data_type_counter.get)]
+        }
+        for function, arg_keys_dict in data_type_counter_dict.items()
+    }
+    return dominant_data_types
+
 class FieldInfo:
     def __init__(self, name, type):
         self.name = name
@@ -122,7 +141,11 @@ def pre_process_data(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str,
     for function, function_blocks in function_dict.items():
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
-                if argument.arg_dir == "IN" and (argument.variable == "__CONSTANT_STRING__" or argument.variable == "__CONSTANT_INT__"):
+                should_ignore_constant = any(keyword in argument.usage.lower() for keyword in ignore_constant_keywords)
+                if not should_ignore_constant and (((argument.arg_dir == "IN" or argument.arg_dir == "IN_OUT") and 
+                      ((argument.variable == "__CONSTANT_STRING__" or argument.variable == "__CONSTANT_INT__") 
+                       and not contains_void_star(argument.arg_type))) or "efi_guid" in argument.arg_type.lower()):
+                    
                     # Check if arg.usage is already in the set for this function and arg_key
                     if argument.usage not in usage_seen[function][arg_key]:
                         collected_args_dict[function][arg_key].append(argument)
@@ -133,7 +156,9 @@ def pre_process_data(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str,
         for arg_key, arguments in arg_keys_dict.items():
             # Check if all arguments have the same type
             type_set = {argument.variable for argument in arguments}
-            if len(type_set) == 1:  # All arguments have the same type
+            # Check if any argument has 'efi_guid' in its arg_type
+            efi_guid_present = any('efi_guid' in argument.arg_type.lower() for argument in arguments)
+            if len(type_set) == 1 or efi_guid_present:  # All arguments have the same type or 'efi_guid' is present
                 filtered_args_dict[function][arg_key] = arguments  # Keep these arguments
 
     return filtered_args_dict
@@ -164,11 +189,11 @@ def get_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, Lis
             for arg_key, argument in function_block.arguments.items():
                 arg_type = argument.arg_type.lower()
                 is_scalable = any(param.lower() in arg_type for param in scalable_params)
-                if argument.arg_dir == "IN" and is_scalable and (argument.variable != "__CONSTANT_INT__" and argument.variable != "__CONSTANT_STRING__"):
-                    scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, argument.variable)
+                if (argument.arg_dir == "IN" or argument.arg_dir == "IN_OUT") and is_scalable and (argument.variable != "__CONSTANT_INT__" and argument.variable != "__CONSTANT_STRING__"):
+                    scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, "__FUZZABLE__")
                     new_arguments[arg_key] = scalable_arg
                 elif contains_void_star(argument.arg_type) and len(void_star_data_type_counter[arg_key]) > 5:
-                    scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, argument.variable)
+                    scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, "__FUZZABLE__")
                     new_arguments[arg_key] = scalable_arg
 
 
@@ -205,6 +230,27 @@ def print_filtered_args_dict(filtered_args_dict: Dict[str, List[FunctionBlock]])
                 print(f'      Usage: {argument.usage}')
                 print(f'      Variable: {argument.variable}')
 
+def merge_fuzzable_known(
+        known_inputs: Dict[str, Dict[str, List[Argument]]],
+        directly_fuzzable: Dict[str, List[FunctionBlock]]
+    ) -> Dict[str, List[FunctionBlock]]:
+
+    merged_data = defaultdict(lambda: defaultdict(list))
+
+    # Process known_inputs data
+    for function, arguments_dict in known_inputs.items():
+        for arg_key, arguments_list in arguments_dict.items():
+                merged_data[function][arg_key] = arguments_list
+
+    # Process directly_fuzzable data
+    for function, function_blocks in directly_fuzzable.items():
+        for function_block in function_blocks:
+            for arg_key, argument in function_block.arguments.items():
+                if arg_key not in merged_data[function].keys():
+                    merged_data[function][arg_key].append(argument)
+
+    return merged_data
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
@@ -219,9 +265,10 @@ def main():
     data = load_data(args.data_file)
     pre_processed_data = pre_process_data(data)
     directly_fuzzable = get_fuzzable(data)
-    print_filtered_args_dict(directly_fuzzable)
+    merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
+    # print_filtered_args_dict(directly_fuzzable)
     types = load_types(args.types_file)
-    write_to_file(pre_processed_data, args.output_file)
+    write_to_file(merged_data, args.output_file)
 
     # generate_code(data)
 
