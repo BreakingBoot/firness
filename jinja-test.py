@@ -1,6 +1,8 @@
 import json
 import argparse
 import uuid
+import os
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
 from typing import List, Dict, Any
@@ -28,8 +30,9 @@ class Argument:
         self.variable = variable
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, Argument], function: str):
+    def __init__(self, arguments: Dict[str, Argument], function: str, service: str):
         self.arguments = arguments
+        self.service = service
         self.function = function
 
 function_template = {}
@@ -51,7 +54,7 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
             arg_key: Argument(**raw_argument)
             for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
         }
-        function_block = FunctionBlock(arguments, raw_function_block.get('Function'))
+        function_block = FunctionBlock(arguments, raw_function_block.get('Function'), raw_function_block.get('Service'))
         function_dict[function_block.function].append(function_block)
 
     # Determine the most common number of parameters for each function
@@ -74,6 +77,13 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
             for arg_key, argument in function_block.arguments.items():
                 if contains_void_star(argument.arg_type):
                     void_star_data_type_counter[arg_key].update([argument.data_type])
+
+                # Add a check for the services and if there is no service in the template add it
+                if function_template[function].service == "" and not function_block.service == "":
+                    function_template[function].service = function_block.service
+            if "protocol" in function_block.arguments["Arg_0"].arg_type.lower():
+                function_template[function].service = "protocol"
+
 
     # Step 2: Determine dominant data_type for each arg_key
     dominant_data_types = {}
@@ -108,7 +118,7 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
             arg_key: Argument(**raw_argument)
             for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
         }
-        function_block = FunctionBlock(arguments, raw_function_block.get('Function'))
+        function_block = FunctionBlock(arguments, raw_function_block.get('Function'), raw_function_block.get('Service'))
         function_dict[function_block.function].append(function_block)
 
     return function_dict
@@ -224,32 +234,39 @@ def get_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, Lis
 
             # Create a new FunctionBlock with the filtered arguments and append it to filtered_args_dict[function]
             if new_arguments:
-                new_function_block = FunctionBlock(new_arguments, function_block.function)
+                new_function_block = FunctionBlock(new_arguments, function_block.function, function_block.service)
                 filtered_args_dict[function].append(new_function_block)
                 break
 
     return filtered_args_dict
 
 
-def generate_code(function_dict: Dict[str, List[FunctionBlock]], types_dict: Dict[str, List[FieldInfo]]):
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('Templates/code_template.jinja')
+def generate_main(function_dict: Dict[str, List[FunctionBlock]], harness_folder):
+    env = Environment(loader=FileSystemLoader('./Templates/'))
+    template = env.get_template('Firness_main_template.jinja')
     code = template.render(functions=function_dict)
-    with open("output_code.c", 'w') as f:
+    with open(f'{harness_folder}/FirnessMain.c', 'w') as f:
         f.write(code)
 
-def generate_header(function_dict: Dict[str, List[FunctionBlock]]):
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('Templates/header_template.jinja')
-    code = template.render(functions=function_dict)
-    with open("output_code.h", 'w') as f:
+def generate_code(function_dict: Dict[str, List[FunctionBlock]], data_template: Dict[str, FunctionBlock], types_dict: Dict[str, List[FieldInfo]], harness_folder):
+    env = Environment(loader=FileSystemLoader('./Templates/'))
+    template = env.get_template('code_template.jinja')
+    code = template.render(functions=function_dict, services=data_template)
+    with open(f'{harness_folder}/output_code.c', 'w') as f:
         f.write(code)
 
-def generate_inf():
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('Templates/inf_template.jinja')
+def generate_header(function_dict: Dict[str, List[FunctionBlock]], harness_folder):
+    env = Environment(loader=FileSystemLoader('./Templates/'))
+    template = env.get_template('header_template.jinja')
+    code = template.render(functions=function_dict)
+    with open(f'{harness_folder}/output_code.h', 'w') as f:
+        f.write(code)
+
+def generate_inf(harness_folder):
+    env = Environment(loader=FileSystemLoader('./Templates/'))
+    template = env.get_template('inf_template.jinja')
     code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids, sources=["Firness.c", "Helpers.c"])
-    with open("output_code.inf", 'w') as f:
+    with open(f'{harness_folder}/output_code.inf', 'w') as f:
         f.write(code)
 
 
@@ -274,6 +291,7 @@ def print_filtered_args_dict(filtered_args_dict: Dict[str, List[FunctionBlock]])
 def print_template(template: Dict[str, FunctionBlock]) -> None:
     for function, function_block in template.items():
         print(f'Function: {function}')
+        print(f'   Service: {function_block.service}')
         for arg_key, argument in function_block.arguments.items():
             print(f'    Argument Key: {arg_key}')
             print(f'      Arg Dir: {argument.arg_dir}')
@@ -329,7 +347,36 @@ def merge_fuzzable_known(
 
     return merged_data
 
+def generate_harness_folder():
+    # Define the outer directory name
+    outer_dir = 'GeneratedHarnesses'
 
+    # Get the current time and format it as Hour_Minute
+    now = datetime.now()
+    time_str = now.strftime('%H_%M')
+
+    # Define the inner directory name based on the current time
+    inner_dir = f'Harness_{time_str}'
+
+    # Combine the outer and inner directory names to get the full path
+    full_path = os.path.join(outer_dir, inner_dir)
+
+    # Check if the outer directory exists, if not create it
+    if not os.path.exists(outer_dir):
+        os.makedirs(outer_dir)
+
+    # Create the inner directory (this will create it regardless of whether it already exists)
+    os.makedirs(full_path, exist_ok=True)  # exist_ok=True will prevent an error if the directory already exists
+
+    # Return the full path of the inner directory
+    return full_path
+
+def generate_harness(merged_data: Dict[str, List[FunctionBlock]], template: Dict[str, FunctionBlock], types: Dict[str, List[FieldInfo]]):
+    harness_folder = generate_harness_folder()
+    generate_main(merged_data, harness_folder)
+    generate_code(merged_data, template, types, harness_folder)
+    generate_header(merged_data, harness_folder)
+    generate_inf(harness_folder)
 
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
@@ -346,13 +393,12 @@ def main():
     directly_fuzzable = get_fuzzable(data)
     merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
     # print_filtered_args_dict(directly_fuzzable)
+    print_template(function_template)
     types = load_types(args.types_file)
     matching_generators = get_generators(merged_data, generators, function_template)
     write_to_file(merged_data, args.output_file)
+    generate_harness(merged_data, function_template, types)
 
-    generate_code(merged_data, types)
-    generate_header(merged_data)
-    generate_inf()
 
 if __name__ == '__main__':
     main()
