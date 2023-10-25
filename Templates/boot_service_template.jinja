@@ -1,0 +1,12 @@
+{#
+    This is a template for how to properly call a BootService
+    INPUT: 
+        function
+        arguments_dict
+#}
+
+    Status = SystemTable->BootServices->{{ function }}({%- for arg_key, arguments in arguments_dict.items() %}
+                    {%- set arg_prefix = "&" if "void" in arguments[0].arg_type else "" %}
+                    {{ arg_prefix }}arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
+                    {%- endfor %}
+                );

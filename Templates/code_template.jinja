@@ -1,3 +1,11 @@
+{#
+    This is the main template which is responsible for
+    generating the function harnesses.
+    INPUT:
+        functions
+        services
+
+#}
 {%- for function, arguments_dict in functions.items() %}
 EFI_STATUS
 EFIAPI
@@ -5,35 +13,58 @@ Fuzz{{ function }}(
     IN INPUT_BUFFER *Input,
     IN EFI_SYSTEM_TABLE  *SystemTable
 ) {
+    EFI_STATUS Status = EFI_SUCCESS;
+
     {%- for arg_key, arguments in arguments_dict.items() %}
+        {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINT8" %}
         {%- if arguments[0].variable == "__FUZZABLE__" %}
-    {{ arguments[0].arg_type }} arg_{{ loop.index }} = ReadInput();
+    {{ arg_type }} *arg_{{ loop.index }} = NULL;
+    ReadBytes(&Input, 1, &arg_{{ loop.index }});
         {%- elif "__CONSTANT" in arguments[0].variable %}
-    {{ arguments[0].arg_type }} arg_{{ loop.index }};
-    switch({{ arg_key }}) {
+    {%- set arg_index = 'arg_' ~ loop.index %}
+    {{ arg_type }} {{ arg_index }};
+    UINT8 *{{ arg_index }}_choice = NULL;
+    ReadBytes(&Input, 1, &{{ arg_index }}_choice);
+    switch({{ arg_index }}_choice % {{ arguments | length }}) {
         {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
         {%- for argument in arguments %}
-        case {{ argument.variable.split('_')[-1] }}:
-            arg_{{ loop.index }} = {{ argument.usage }};
+        case {{ loop.index }}:
+            {{ arg_index }} = {{ argument.usage }};
             break;
         {%- endfor %}
     }
         {%- elif "EFI_GUID" in arguments[0].data_type %}
-    {{ arguments[0].arg_type }} arg_{{ loop.index }};
-    switch({{ loop.index }}) {
+    {%- set arg_index = 'arg_' ~ loop.index %}
+    {{ arg_type }} {{ arg_index }};
+    UINT8 *{{ arg_index }}_choice = NULL;
+    ReadBytes(&Input, 1, &{{ arg_index }}_choice);
+    switch({{ arg_index }}_choice % {{ arguments | length }}) {
         {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
         {%- for argument in arguments %}
-        case {{ argument.variable.split('_')[-1] }}:
-            arg_{{ loop.index }} = {{ argument.usage }};
+        case {{ loop.index }}:
+            {{ arg_index }} = {{ argument.usage }};
             break;
         {%- endfor %}
     }
         {%- endif %}
+        
     {%- endfor %}
-    {{ function }}(
-        {%- for arg_key, arguments in arguments_dict.items() %}
-        arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
-        {%- endfor %}
-    );
+    {%- if "protocol" in services[function].service %}
+        {% include 'protocol_template.jinja' %}
+    {%- elif "gBS" in services[function].service %}
+        {% include 'boot_service_template.jinja' %}
+    {%- elif "gRT" in services[function].service %}
+        {% include 'runtime_service_template.jinja' %}
+    {%- else %}
+        Status = {{ function }}(
+            {%- for arg_key, arguments in arguments_dict.items() %}
+            {%- set arg_prefix = "&" if "void" in arguments[0].arg_type else "" %}
+            {{ arg_prefix }}arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
+            {%- endfor %}
+        );
+    {%- endif %}
+    
+    return Status;
 }
+
 {%- endfor %}
