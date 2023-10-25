@@ -39,9 +39,8 @@ int main(int argc, const char **argv) {
     std::string output_filename = OutputFileName.getValue();
 
     // Use the filename to create a ClangTool instance
-    //ClangTool Tool = createClangTool(OptionsParser);
     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles()); // For compilation database input
-    //ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList()); // For Single file input
+    // ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList()); // For Single file input
 
     if(!input_filename.empty())
         FunctionNames = FileOps::processFunctionNames(input_filename);

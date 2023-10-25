@@ -94,11 +94,13 @@ struct TypeData {
 
 struct Call {
     std::string Function;
+    std::string Service;
     std::map<std::string, Argument> Arguments;
 
     // Function to clear the Call object
     void clear() {
         Function.clear();
+        Service.clear();
         for (auto& pair : Arguments) {
             pair.second.clear();
         }

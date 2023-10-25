@@ -100,6 +100,7 @@ namespace FileOps {
             // Create a JSON object for each call
             nlohmann::json callObject;
             callObject["Function"] = call.Function;
+            callObject["Service"] = call.Service;
 
             for (const auto& argumentPair : call.Arguments) {
                 // Create a JSON object for each argument
@@ -172,6 +173,7 @@ namespace FileOps {
             // Create a JSON object for each call
             nlohmann::json callObject;
             callObject["Function"] = call.Function;
+            callObject["Service"] = call.Service;
 
             for (const auto& argumentPair : call.Arguments) {
                 // Create a JSON object for each argument
@@ -203,6 +205,7 @@ namespace FileOps {
     void printCallMap(const std::vector<Call> &calls) {
         for (const auto &callEntry : calls) {
             llvm::outs() << "Function: " << callEntry.Function << "\n";
+            llvm::outs() << "Service: " << callEntry.Service << "\n";
             
             for (const auto &varEntry : callEntry.Arguments) {
                 llvm::outs() << "\tArgument: " << varEntry.first << "\n";

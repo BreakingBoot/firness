@@ -88,6 +88,17 @@ public:
                 }
                 return;
             }
+            else if (FunctionDecl *FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
+                // New handling code for FunctionDecl...
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE); 
+                Argument_AST Arg;
+                Arg.Assignment = DRE;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                VarDeclMap[Var].push_back(Arg);
+                return;
+            }
         }
         else if(BinaryOperator *BO = dyn_cast<BinaryOperator>(S))
         {
@@ -223,7 +234,19 @@ public:
         } else if (CallExpr *CE = dyn_cast<CallExpr>(literal)) {
             name = "__INDIRECT_CALL__";
             type = CE->getCallReturnType(Ctx);
-        } else {
+        } else if (auto *DRE = dyn_cast<DeclRefExpr>(literal)){
+            if(auto *FD = dyn_cast<FunctionDecl>(DRE->getDecl()))
+            {
+                name = "__FUNCTION_PTR__";
+                type = FD->getReturnType();
+            }
+            else
+            {
+                return nullptr;
+            }
+        }
+        else
+        {
             return nullptr;
         }
 
@@ -406,6 +429,8 @@ public:
         else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(EX)) {
             CallExprString = MemExpr->getMemberNameInfo().getName().getAsString();
             CallInfo.Function = CallExprString;
+            if (auto *Base = dyn_cast<Expr>(MemExpr->getBase()))
+                CallInfo.Service = getSourceCode(Base, *this->Context);            
             CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
         }
@@ -435,7 +460,7 @@ public:
                 return true;  // Skip this CallExpr if an argument refers to a function of interest
             }
         }
-        
+
         if(doesCallMatch(Call, *this->Context))
         {
             VarDeclMap.clear();
