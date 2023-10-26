@@ -15,6 +15,11 @@ Fuzz{{ function }}(
 ) {
     EFI_STATUS Status = EFI_SUCCESS;
 
+    {%- if "protocol" in services[function].service %}
+        {%- set protocol_variable = "ProtocolVariable" %}
+        {{ arguments_dict['Arg_0'].arg_type }} {{ protocol_variable }};
+    {%- endif %}
+
     {%- for arg_key, arguments in arguments_dict.items() %}
         {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINT8" %}
         {%- if arguments[0].variable == "__FUZZABLE__" %}
@@ -27,6 +32,19 @@ Fuzz{{ function }}(
     ReadBytes(&Input, 1, &{{ arg_index }}_choice);
     switch({{ arg_index }}_choice % {{ arguments | length }}) {
         {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
+        {%- for argument in arguments %}
+        case {{ loop.index }}:
+            {{ arg_index }} = {{ argument.usage }};
+            break;
+        {%- endfor %}
+    }
+        {%- elif "__FUNCTION_PTR__" in arguments[0].variable %}
+    {%- set arg_index = 'arg_' ~ loop.index %}
+    VOID* {{ arg_index }};
+    UINT8 *{{ arg_index }}_choice = NULL;
+    ReadBytes(&Input, 1, &{{ arg_index }}_choice);
+    switch({{ arg_index }}_choice % {{ arguments | length }}) {
+        {# Assume that constants are formatted as __FUNCTION_PTR__ #}
         {%- for argument in arguments %}
         case {{ loop.index }}:
             {{ arg_index }} = {{ argument.usage }};
@@ -47,7 +65,7 @@ Fuzz{{ function }}(
         {%- endfor %}
     }
         {%- endif %}
-        
+
     {%- endfor %}
     {%- if "protocol" in services[function].service %}
         {% include 'protocol_template.jinja' %}
