@@ -28,12 +28,29 @@ class Argument:
         self.data_type = data_type
         self.usage = usage
         self.variable = variable
+    
+    def to_dict(self):
+        return {
+            'Arg Dir': self.arg_dir,
+            'Arg Type': self.arg_type,
+            'Assignment': self.assignment,
+            'Data Type': self.data_type,
+            'Usage': self.usage,
+            'Variable': self.variable
+        }
 
 class FunctionBlock:
     def __init__(self, arguments: Dict[str, Argument], function: str, service: str):
         self.arguments = arguments
         self.service = service
         self.function = function
+
+    def to_dict(self):
+        return {
+            'arguments': {key: arg.to_dict() for key, arg in self.arguments.items()},
+            'service': self.service,
+            'function': self.function
+        }
 
 function_template = {}
 protocol_guids = []
@@ -81,8 +98,10 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
                 # Add a check for the services and if there is no service in the template add it
                 if function_template[function].service == "" and not function_block.service == "":
                     function_template[function].service = function_block.service
-            if "protocol" in function_block.arguments["Arg_0"].arg_type.lower():
-                function_template[function].service = "protocol"
+            if len(function_block.arguments) > 0:
+                print(len(function_block.arguments))
+                if "protocol" in function_block.arguments["Arg_0"].arg_type.lower():
+                    function_template[function].service = "protocol"
 
 
     # Step 2: Determine dominant data_type for each arg_key
@@ -175,13 +194,15 @@ def pre_process_data(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str,
             for arg_key, argument in function_block.arguments.items():
                 should_ignore_constant = any(keyword in argument.usage.lower() for keyword in ignore_constant_keywords)
                 if not should_ignore_constant and (((argument.arg_dir == "IN" or argument.arg_dir == "IN_OUT") and 
-                      ((argument.variable == "__CONSTANT_STRING__" or argument.variable == "__CONSTANT_INT__") 
+                      ((argument.variable == "__CONSTANT_STRING__" or argument.variable == "__CONSTANT_INT__" or argument.variable == "__FUNCTION_PTR__") 
                        and not contains_void_star(argument.arg_type))) or "efi_guid" in argument.arg_type.lower()):
                     
                     # Check if arg.usage is already in the set for this function and arg_key
                     if argument.usage not in usage_seen[function][arg_key]:
                         collected_args_dict[function][arg_key].append(argument)
                         usage_seen[function][arg_key].add(argument.usage)  # Update the set with the new arg.usage value
+                #elif "protocol" in argument.arg_type.lower() and len(collected_args_dict[function][arg_key]) == 0:
+                #    collected_args_dict[function][arg_key].append(argument)
 
     # Step 2: Filter arguments based on type consistency
     for function, arg_keys_dict in collected_args_dict.items():
@@ -270,14 +291,19 @@ def generate_inf(harness_folder):
         f.write(code)
 
 
-def write_to_file(data: Dict[str, Dict[str, List[Argument]]], file_path: str):
-    serializable_data = {k: {arg_key: [object_to_dict(arg) for arg in arg_list] for arg_key, arg_list in v.items()} for k, v in data.items()}
-    with open(file_path, 'w') as file:
-        json.dump(serializable_data, file, indent=4)
+def write_to_file(filtered_args_dict: Dict[str, List[FunctionBlock]], filename: str) -> None:
+    output_dict = {
+        function: [function_block.to_dict() for function_block in function_blocks]
+        for function, function_blocks in filtered_args_dict.items()
+    }
+
+    with open(filename, 'w') as f:
+        json.dump(output_dict, f, indent=4)
 
 def print_filtered_args_dict(filtered_args_dict: Dict[str, List[FunctionBlock]]) -> None:
     for function, function_blocks in filtered_args_dict.items():
         print(f'Function: {function}')
+        print(f'   Service: {function_block.service}')
         for idx, function_block in enumerate(function_blocks, 1):
             for arg_key, argument in function_block.arguments.items():
                 print(f'    Argument Key: {arg_key}')
@@ -310,7 +336,7 @@ def get_generators(known_inputs: Dict[str, List[FunctionBlock]],
         for generator_block in generator_blocks:
             for arg_key, argument in generator_block.arguments.items():
                 # Check if argument direction is OUT
-                if argument.arg_dir == "OUT":
+                if argument.arg_dir == "OUT" or argument.arg_dir == "IN_OUT":
                     # Look for a matching argument in function_template
                     for func_temp_name, func_temp_block in function_template.items():
                         for ft_arg_key, ft_argument in func_temp_block.arguments.items():
@@ -371,6 +397,11 @@ def generate_harness_folder():
     # Return the full path of the inner directory
     return full_path
 
+def write_to_file_output(data: Dict[str, Dict[str, List[Argument]]], file_path: str):
+    serializable_data = {k: {arg_key: [object_to_dict(arg) for arg in arg_list] for arg_key, arg_list in v.items()} for k, v in data.items()}
+    with open(file_path, 'w') as file:
+        json.dump(serializable_data, file, indent=4)
+
 def generate_harness(merged_data: Dict[str, List[FunctionBlock]], template: Dict[str, FunctionBlock], types: Dict[str, List[FieldInfo]]):
     harness_folder = generate_harness_folder()
     generate_main(merged_data, harness_folder)
@@ -396,7 +427,7 @@ def main():
     print_template(function_template)
     types = load_types(args.types_file)
     matching_generators = get_generators(merged_data, generators, function_template)
-    write_to_file(merged_data, args.output_file)
+    write_to_file_output(merged_data, args.output_file)
     generate_harness(merged_data, function_template, types)
 
 

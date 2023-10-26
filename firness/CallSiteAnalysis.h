@@ -99,6 +99,16 @@ public:
                 VarDeclMap[Var].push_back(Arg);
                 return;
             }
+            else if (EnumConstantDecl *ECD = dyn_cast<EnumConstantDecl>(DRE->getDecl())) {
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE);  // Assuming this function creates a placeholder VarDecl for the enum value
+                Argument_AST Arg;
+                Arg.Assignment = DRE;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                VarDeclMap[Var].push_back(Arg);
+                return;
+            }
         }
         else if(BinaryOperator *BO = dyn_cast<BinaryOperator>(S))
         {
@@ -239,6 +249,11 @@ public:
             {
                 name = "__FUNCTION_PTR__";
                 type = FD->getReturnType();
+            }
+            else if(EnumConstantDecl *ECD = dyn_cast<EnumConstantDecl>(DRE->getDecl()))
+            {
+                name = "__ENUM_ARG__";
+                type = ECD->getType();
             }
             else
             {
@@ -430,7 +445,9 @@ public:
             CallExprString = MemExpr->getMemberNameInfo().getName().getAsString();
             CallInfo.Function = CallExprString;
             if (auto *Base = dyn_cast<Expr>(MemExpr->getBase()))
-                CallInfo.Service = getSourceCode(Base, *this->Context);            
+            {
+                CallInfo.Service = getSourceCode(Base, *this->Context);
+            }
             CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
         }

@@ -448,7 +448,7 @@ public:
                                 // Get the TypedefNameDecl for the typedef type.
                                 TypedefNameDecl *TND = TDT->getDecl();
                                 llvm::outs() << TND->getNameAsString() << "\n";
-                            //     // This is never reached, but I keep incase it is needed in future analysis            
+                                // This is never reached, but I keep incase it is needed in future analysis            
                             }
                         }
                     }
