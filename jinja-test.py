@@ -1,6 +1,7 @@
 import json
 import argparse
 import uuid
+import re
 import os
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
@@ -10,7 +11,15 @@ from typing import List, Dict, Any
 
 scalable_params = [
     "int",
-    "char"
+    "char",
+    "bool",
+    "uint",
+    "long",
+    "short",
+    "float",
+    "double",
+    "size_t",
+    "ssize_t"
 ]
 
 ignore_constant_keywords = [
@@ -78,12 +87,20 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
     most_common_param_counts = {}
     for function, function_blocks in function_dict.items():
         param_counts = Counter(len(fb.arguments) for fb in function_blocks)
-        most_common_param_counts[function] = param_counts.most_common(1)[0][0]            
+        most_common_param_counts[function] = param_counts.most_common(1)[0][0]
+
+    services_params = {}
+    for function, function_blocks in function_dict.items():
+        for fb in function_blocks:
+            if fb.service != "":
+                services_params[function] = True
+                break
 
     # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
-    filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
-                              for function, function_blocks in function_dict.items()}
-
+    # modify the filter to handle keep the functions if they have services set
+    filtered_function_dict = {function: [fb for fb in function_blocks if (services_params[function] and fb.service != "") or (not services_params[function] and len(fb.arguments) == most_common_param_counts[function])]
+                            for function, function_blocks in function_dict.items()}
+    
     void_star_data_type_counter = defaultdict(Counter)
 
     # Step 1: Collect data_type statistics for arg_type of "void *"
@@ -99,7 +116,6 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
                 if function_template[function].service == "" and not function_block.service == "":
                     function_template[function].service = function_block.service
             if len(function_block.arguments) > 0:
-                print(len(function_block.arguments))
                 if "protocol" in function_block.arguments["Arg_0"].arg_type.lower():
                     function_template[function].service = "protocol"
 
@@ -143,6 +159,39 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
     return function_dict
 
 
+def handle_type_mismatch(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, List[FunctionBlock]]:
+    # Step 1: Collect data_type statistics for arg_type of "void *"
+    void_star_data_type_counter = defaultdict(Counter)
+    for function, function_blocks in function_dict.items():
+        for function_block in function_blocks:
+            for arg_key, argument in function_block.arguments.items():
+                if contains_void_star(argument.arg_type):
+                    void_star_data_type_counter[arg_key].update([argument.data_type])
+
+    # Step 2: Determine dominant data_type for each arg_key
+    dominant_data_types = {}
+    for arg_key, data_type_counter in void_star_data_type_counter.items():
+        total = sum(data_type_counter.values())
+        for data_type, count in data_type_counter.items():
+            if count / total >= 0.9:
+                dominant_data_types[arg_key] = data_type
+                break
+
+    # Step 3: Filter out FunctionBlock instances with differing data_type for dominant arg_keys
+    for function, function_blocks in function_dict.items():
+        function_dict[function] = [
+            fb for fb in function_blocks
+            if all(
+                arg_key not in dominant_data_types or
+                argument.data_type == dominant_data_types[arg_key]
+                for arg_key, argument in fb.arguments.items()
+                if contains_void_star(argument.arg_type)
+            )
+        ]
+
+    return function_dict
+
+
 def get_dominant_data_types(data_type_counter_dict):
     dominant_data_types = {
         function: {
@@ -179,6 +228,50 @@ def load_types(json_file: str) -> Dict[str, List[FieldInfo]]:
         type_data_list[type_data_dict['TypeName']] = fields_list
     return type_data_list
 
+def is_fuzzable_type(type: List[FieldInfo]) -> bool:
+    is_fuzzable = False
+
+    for field_info in type:
+        is_scalable = any(param.lower() in field_info.type.lower() for param in scalable_params)
+        if is_scalable:
+            is_fuzzable = True
+        else:
+            is_fuzzable = False
+
+    return is_fuzzable
+
+
+def variable_fuzzable(pre_processed_input: Dict[str, List[FunctionBlock]], types: Dict[str, List[FieldInfo]]) -> Dict[str, List[FunctionBlock]]:
+    # for all of the functionblock argument data_types, check the types structure for the matching type
+    # if the type is found and all of the fields are scalars, then add it to the create a new argument
+    # and have the variable be __FUZZABLE_STRUCT__ and add it to the list
+    post_processed_input = defaultdict(list)
+    pattern = r"[ * &]"
+    for function, function_blocks in pre_processed_input.items():
+        new_arguments = {}
+        for function_block in function_blocks:
+            for arg_key, argument in function_block.arguments.items():
+                is_scalable = any(param.lower() in argument.arg_type.lower() for param in scalable_params)
+                if argument.arg_dir == "IN" and not is_scalable:
+                    if not contains_void_star(argument.arg_type):
+                        if is_fuzzable_type(types[argument.arg_type]):
+                            scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, "__FUZZABLE_ARG_STRUCT__")
+                            new_arguments[arg_key] = scalable_arg
+                        elif is_fuzzable_type(types[argument.data_type]):
+                            scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, "__FUZZABLE_DATA_STRUCT__")
+                            new_arguments[arg_key] = scalable_arg
+                    elif not contains_void_star(argument.data_type):
+                        if is_fuzzable_type(types[argument.data_type]):
+                            scalable_arg = Argument(argument.arg_dir, argument.arg_type, "", argument.data_type, argument.usage, "__FUZZABLE_DATA_STRUCT__")
+                            new_arguments[arg_key] = scalable_arg
+
+            # Create a new FunctionBlock with the filtered arguments and append it to filtered_args_dict[function]
+            if new_arguments:
+                new_function_block = FunctionBlock(new_arguments, function_block.function, function_block.service)
+                post_processed_input[function].append(new_function_block)
+                break
+
+    return post_processed_input
 #
 # Filters out any arguments that are not IN and CONSTANT values, but making sure
 # to not keep duplicates
@@ -272,7 +365,7 @@ def generate_main(function_dict: Dict[str, List[FunctionBlock]], harness_folder)
 def generate_code(function_dict: Dict[str, List[FunctionBlock]], data_template: Dict[str, FunctionBlock], types_dict: Dict[str, List[FieldInfo]], harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
     template = env.get_template('code_template.jinja')
-    code = template.render(functions=function_dict, services=data_template)
+    code = template.render(functions=function_dict, services=data_template, types=types_dict)
     with open(f'{harness_folder}/output_code.c', 'w') as f:
         f.write(code)
 
@@ -303,8 +396,8 @@ def write_to_file(filtered_args_dict: Dict[str, List[FunctionBlock]], filename: 
 def print_filtered_args_dict(filtered_args_dict: Dict[str, List[FunctionBlock]]) -> None:
     for function, function_blocks in filtered_args_dict.items():
         print(f'Function: {function}')
-        print(f'   Service: {function_block.service}')
         for idx, function_block in enumerate(function_blocks, 1):
+            print(f'   Service: {function_block.service}')
             for arg_key, argument in function_block.arguments.items():
                 print(f'    Argument Key: {arg_key}')
                 print(f'      Arg Dir: {argument.arg_dir}')
@@ -326,6 +419,16 @@ def print_template(template: Dict[str, FunctionBlock]) -> None:
             print(f'      Data Type: {argument.data_type}')
             print(f'      Usage: {argument.usage}')
             print(f'      Variable: {argument.variable}')
+
+# write the template to a file
+def write_template(template: Dict[str, FunctionBlock], filename: str) -> None:
+    output_dict = {
+        function: function_block.to_dict()
+        for function, function_block in template.items()
+    }
+
+    with open(filename, 'w') as f:
+        json.dump(output_dict, f, indent=4)
 
 def get_generators(known_inputs: Dict[str, List[FunctionBlock]], 
                    generators: Dict[str, List[FunctionBlock]], 
@@ -409,6 +512,25 @@ def generate_harness(merged_data: Dict[str, List[FunctionBlock]], template: Dict
     generate_header(merged_data, harness_folder)
     generate_inf(harness_folder)
 
+def merge_all_data(matching_generators: Dict[str, List[FunctionBlock]], 
+                   fuzzable_structs: Dict[str, List[FunctionBlock]], 
+                   merged_data: Dict[str, List[FunctionBlock]],
+                   function_template: Dict[str, FunctionBlock]) -> Dict[str, List[FunctionBlock]]:
+    
+    for function, function_block in function_template.items():
+        for arg_key, argument in function_block.arguments.items():
+            if argument.arg_dir == "OUT":
+                merged_data[function][arg_key].append(argument)
+    
+    for function, function_blocks in fuzzable_structs.items():
+        for function_block in function_blocks:
+            for arg_key, argument in function_block.arguments.items():
+                    merged_data[function][arg_key].append(argument)             
+    
+    return merged_data
+
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
     parser.add_argument('-d', '--data-file', dest='data_file', default='tmp/call-database.json', help='Path to the data file (default: tmp/call-database.json)')
@@ -424,11 +546,24 @@ def main():
     directly_fuzzable = get_fuzzable(data)
     merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
     # print_filtered_args_dict(directly_fuzzable)
-    print_template(function_template)
+    write_template(function_template, 'template.json')
     types = load_types(args.types_file)
+
+    # These two are treated together because we want to use generators to handle any
+    # input argument that isn't either directly fuzzable or of a known input
+    # we will primarily use generators to handle the more compilicated structs
+    # (i.e. more than one level of integrated structs) and the basic structs
+    # that have all scalable fields will be directly generated with random input
     matching_generators = get_generators(merged_data, generators, function_template)
-    write_to_file_output(merged_data, args.output_file)
-    generate_harness(merged_data, function_template, types)
+    fuzzable_structs = variable_fuzzable(data, types)
+
+    # merge matching_generators and fuzzable_structs and merge_data
+    # this will be the final data that is used to generate the harness
+    final_data = merge_all_data(matching_generators, fuzzable_structs, merged_data, function_template)
+
+
+    write_to_file_output(final_data, args.output_file)
+    generate_harness(final_data, function_template, types)
 
 
 if __name__ == '__main__':

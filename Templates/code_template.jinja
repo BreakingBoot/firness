@@ -64,14 +64,33 @@ Fuzz{{ function }}(
             break;
         {%- endfor %}
     }
+        {%- elif arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__') %}
+        {%- set arg_index = 'arg_' ~ loop.index %}
+        {%- if "ARG" in arguments[0].variable %}
+        {%- set search_type =  arguments[0].arg_type %}
+        {%- else %}
+        {%- set search_type =  arguments[0].data_type %}
         {%- endif %}
-
+    {{ search_type }} {{ arg_index }};
+    {%- for field_info in types[search_type] %}
+    ReadBytes(&Input, sizeof({{ arg_index }}.{{ field_info.name }}), &{{ arg_index }}.{{ field_info.name }});
+    {%- endfor %}
+    {%- elif arguments[0].arg_dir == 'OUT' %}
+    {%- set arg_index = 'arg_' ~ loop.index %}
+    {%- if '*' in arguments[0].arg_type %}
+    {%- set arg_type = arguments[0].arg_type.replace('*', '') %}
+    {{ arg_type }} {{ arg_index }};
+    {%- else %}
+    {%- set arg_type = arguments[0].arg_type %}
+    {{ arg_type }} {{ arg_index }};
+    {%- endif %}
+        {%- endif %}
     {%- endfor %}
     {%- if "protocol" in services[function].service %}
         {% include 'protocol_template.jinja' %}
-    {%- elif "gBS" in services[function].service %}
+    {%- elif "BS" in services[function].service or "Boot" in services[function].service %}
         {% include 'boot_service_template.jinja' %}
-    {%- elif "gRT" in services[function].service %}
+    {%- elif "RT" in services[function].service or "Runtime" in services[function].service %}
         {% include 'runtime_service_template.jinja' %}
     {%- else %}
         Status = {{ function }}(
