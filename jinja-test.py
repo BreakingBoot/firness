@@ -61,6 +61,16 @@ class FunctionBlock:
             'function': self.function
         }
 
+class FieldInfo:
+    def __init__(self, name, type):
+        self.name = name
+        self.type = type
+
+def object_to_dict(obj):
+    if isinstance(obj, str):
+        return obj 
+    return obj.__dict__
+
 function_template = {}
 protocol_guids = []
 driver_guids = []
@@ -159,59 +169,6 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
     return function_dict
 
 
-def handle_type_mismatch(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, List[FunctionBlock]]:
-    # Step 1: Collect data_type statistics for arg_type of "void *"
-    void_star_data_type_counter = defaultdict(Counter)
-    for function, function_blocks in function_dict.items():
-        for function_block in function_blocks:
-            for arg_key, argument in function_block.arguments.items():
-                if contains_void_star(argument.arg_type):
-                    void_star_data_type_counter[arg_key].update([argument.data_type])
-
-    # Step 2: Determine dominant data_type for each arg_key
-    dominant_data_types = {}
-    for arg_key, data_type_counter in void_star_data_type_counter.items():
-        total = sum(data_type_counter.values())
-        for data_type, count in data_type_counter.items():
-            if count / total >= 0.9:
-                dominant_data_types[arg_key] = data_type
-                break
-
-    # Step 3: Filter out FunctionBlock instances with differing data_type for dominant arg_keys
-    for function, function_blocks in function_dict.items():
-        function_dict[function] = [
-            fb for fb in function_blocks
-            if all(
-                arg_key not in dominant_data_types or
-                argument.data_type == dominant_data_types[arg_key]
-                for arg_key, argument in fb.arguments.items()
-                if contains_void_star(argument.arg_type)
-            )
-        ]
-
-    return function_dict
-
-
-def get_dominant_data_types(data_type_counter_dict):
-    dominant_data_types = {
-        function: {
-            arg_key: max(data_type_counter, key=data_type_counter.get)
-            for arg_key, data_type_counter in arg_keys_dict.items()
-            if sum(data_type_counter.values()) * 0.9 <= data_type_counter[max(data_type_counter, key=data_type_counter.get)]
-        }
-        for function, arg_keys_dict in data_type_counter_dict.items()
-    }
-    return dominant_data_types
-
-class FieldInfo:
-    def __init__(self, name, type):
-        self.name = name
-        self.type = type
-
-def object_to_dict(obj):
-    if isinstance(obj, str):
-        return obj 
-    return obj.__dict__
 
 #
 # Load in the structures
@@ -321,7 +278,7 @@ def contains_void_star(s):
 # by more than 5 since the assumption is that means the function is most likely manipulating data, not structures
 # themselves
 # 
-def get_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, List[FunctionBlock]]:
+def get_directly_fuzzable(function_dict: Dict[str, List[FunctionBlock]]) -> Dict[str, List[FunctionBlock]]:
     filtered_args_dict = defaultdict(list)
 
     for function, function_blocks in function_dict.items():
@@ -529,6 +486,21 @@ def merge_all_data(matching_generators: Dict[str, List[FunctionBlock]],
     
     return merged_data
 
+def collect_all_function_arguments(function_dict: Dict[str, List[FunctionBlock]],
+                                   types: Dict[str, List[FieldInfo]]) -> Dict[str, List[FunctionBlock]]:
+    # Collect all of the arguments to be passed to the template
+
+    # Step 1: Collect the constant arguments
+    constant_arguments = pre_process_data(function_dict)
+
+    # Step 2: Collect the fuzzable arguments
+    fuzzable_arguments = get_directly_fuzzable(function_dict)
+
+    # Step 3: collect the generator functions
+    generators = get_generators(constant_arguments, fuzzable_arguments, function_template)
+
+    # Step 4: Collect the fuzzable structs
+    fuzzable_structs = variable_fuzzable(function_dict, types)
 
 
 def main():
@@ -542,28 +514,31 @@ def main():
 
     generators = load_generators(args.generator_file)
     data = load_data(args.data_file)
-    pre_processed_data = pre_process_data(data)
-    directly_fuzzable = get_fuzzable(data)
-    merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
-    # print_filtered_args_dict(directly_fuzzable)
-    write_template(function_template, 'template.json')
     types = load_types(args.types_file)
+
+    # pre_processed_data = pre_process_data(data)
+    # directly_fuzzable = get_directly_fuzzable(data)
+    # merged_data = merge_fuzzable_known(pre_processed_data, directly_fuzzable)
+    # print_filtered_args_dict(directly_fuzzable)
+    # write_template(function_template, 'template.json')
+    
 
     # These two are treated together because we want to use generators to handle any
     # input argument that isn't either directly fuzzable or of a known input
     # we will primarily use generators to handle the more compilicated structs
     # (i.e. more than one level of integrated structs) and the basic structs
     # that have all scalable fields will be directly generated with random input
-    matching_generators = get_generators(merged_data, generators, function_template)
-    fuzzable_structs = variable_fuzzable(data, types)
+    # matching_generators = get_generators(merged_data, generators, function_template)
+    # fuzzable_structs = variable_fuzzable(data, types)
 
     # merge matching_generators and fuzzable_structs and merge_data
     # this will be the final data that is used to generate the harness
-    final_data = merge_all_data(matching_generators, fuzzable_structs, merged_data, function_template)
+    # final_data = merge_all_data(matching_generators, fuzzable_structs, merged_data, function_template)
 
+    processed_data = collect_all_function_arguments(data, types)
 
-    write_to_file_output(final_data, args.output_file)
-    generate_harness(final_data, function_template, types)
+    write_to_file_output(processed_data, args.output_file)
+    generate_harness(processed_data, function_template, types)
 
 
 if __name__ == '__main__':
