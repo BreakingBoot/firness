@@ -32,5 +32,5 @@ All of the dependencies are included in the included docker which can be built a
 
 ```
 sudo docker build -t fimware-analyzer .
-sudo docker run -it -v ./:/llvm-source/llvm-15.0.7/clang-tools-extra/firmware-analyzer firmware-analyzer
+sudo docker run -it -v ./:/llvm-source/llvm-15.0.7/clang-tools-extra/firness firness
 ```
