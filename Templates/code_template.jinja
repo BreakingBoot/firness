@@ -76,6 +76,9 @@ Fuzz{{ function }}(
     ReadBytes(&Input, sizeof({{ arg_index }}.{{ field_info.name }}), &{{ arg_index }}.{{ field_info.name }});
     {%- endfor %}
     {%- elif arguments[0].arg_dir == 'OUT' %}
+    /*
+        Output Variable Declerations
+    */
     {%- set arg_index = 'arg_' ~ loop.index %}
     {%- if '*' in arguments[0].arg_type %}
     {%- set arg_type = arguments[0].arg_type.replace('*', '') %}
@@ -93,7 +96,10 @@ Fuzz{{ function }}(
     {%- elif "RT" in services[function].service or "Runtime" in services[function].service %}
         {% include 'runtime_service_template.jinja' %}
     {%- else %}
-        Status = {{ function }}(
+    /*
+        Direct Function Call
+    */
+    Status = {{ function }}(
             {%- for arg_key, arguments in function_block.arguments.items() %}
             {%- set arg_prefix = "&" if "void" in arguments[0].arg_type else "" %}
             {{ arg_prefix }}arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
@@ -104,4 +110,4 @@ Fuzz{{ function }}(
     return Status;
 }
 
-{%- endfor %}
+{% endfor %}
