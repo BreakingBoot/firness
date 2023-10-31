@@ -24,7 +24,7 @@ public:
                             StringRef RelativePath, 
                             const Module * Imported, 
                             SrcMgr::CharacteristicKind FileType) override {
-
+        // Need to also track the function calls -> include directives
         IncludeDirectives.insert(FileName.str());
     }
 

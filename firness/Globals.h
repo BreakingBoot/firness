@@ -96,6 +96,7 @@ struct Call {
     std::string Function;
     std::string Service;
     std::map<std::string, Argument> Arguments;
+    std::set<std::string> includes;
 
     // Function to clear the Call object
     void clear() {
@@ -105,6 +106,7 @@ struct Call {
             pair.second.clear();
         }
         Arguments.clear();
+        includes.clear();
     }
 };
 

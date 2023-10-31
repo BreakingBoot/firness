@@ -9,6 +9,8 @@ public:
     std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
         clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
         
+        IncludeDirectives.clear();
+
         Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>(Compiler.getSourceManager()));
 
         return std::unique_ptr<clang::ASTConsumer>(

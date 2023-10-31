@@ -485,6 +485,7 @@ public:
             HandleMatchingExpr(Call, *this->Context);
             CallExprMap[Call] = VarDeclMap;
             GenCallInfo(Call);
+            CallInfo.includes = IncludeDirectives;
             CallMap.push_back(CallInfo);
         }
         return true;

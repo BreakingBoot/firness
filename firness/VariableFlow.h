@@ -153,15 +153,26 @@ public:
     }
 
     ParameterDirection DetermineArgumentType(int Param, std::string FuncText, Expr* Arg, CallExpr* CE) {
-        // Check for presence of "IN" and "OUT" qualifiers
-        std::regex paramRegex(R"(\b(IN\s+OUT|OUT\s+IN|IN|OUT)\b\s+[\w_]+\s+\**\s*[\w_]+)");
+        std::vector<std::string> parameters;
+        size_t pos = 0;
+        size_t found;
+        while ((found = FuncText.find(",", pos)) != std::string::npos) {
+            parameters.push_back(FuncText.substr(pos, found - pos));
+            pos = found + 1;
+        }
+        // Add the last parameter (no trailing comma)
+        parameters.push_back(FuncText.substr(pos));
 
-        std::smatch match;
-        int index = 0;
+        if (Param < parameters.size()) {
+            std::string param = parameters[Param];
+            
 
-        std::string::const_iterator searchStart(FuncText.cbegin());
-        while (std::regex_search(searchStart, FuncText.cend(), match, paramRegex)) {
-            if (index == Param) {
+            // Now you can analyze 'param' to determine the direction
+            // use regular expressions to find "IN" and "OUT" qualifiers in 'param'.
+            std::regex paramRegex(R"(\b(IN\s*OUT|OUT\s*IN|IN|OUT)\b\s+[\w_]+\s*\**\s*[\w_]+)");
+            if(std::regex_search(param, paramRegex)) {
+                std::smatch match;
+                std::regex_search(param, match, paramRegex);
                 std::string qualifier = match[1].str();
                 // Check the matched string
                 if (qualifier == "IN"){
@@ -175,8 +186,7 @@ public:
                     return ParameterDirection::OUT;
                 }
             }
-            searchStart = match.suffix().first;
-            index++;
+
         }
         CallArgMap[CE][Arg] = ParameterDirection::UNKNOWN;
         // If nth parameter doesn't exist, return false by default
@@ -214,13 +224,14 @@ public:
     //
     bool VisitCallExpr(CallExpr *CE) {
         for (unsigned i = 0; i < CE->getNumArgs(); ++i) {
+            ParameterDirection direction = DoesFunctionAssign(i, CE, CE->getArg(i));
             Expr *Arg = CE->getArg(i)->IgnoreCasts();
             if (UnaryOperator *UO = dyn_cast<UnaryOperator>(Arg)) {
                 if (UO->getOpcode() == UO_AddrOf) {
                     if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(UO->getSubExpr())) {
                         if (VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl())) {
                             if (VarAssignments.find(VD) != VarAssignments.end()) {
-                                VarAssignments[VD].push(std::make_pair(CE, DoesFunctionAssign(i, CE, CE->getArg(i)))); 
+                                VarAssignments[VD].push(std::make_pair(CE, direction)); 
                             }
                         }
                     }

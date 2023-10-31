@@ -438,7 +438,10 @@ public:
                                         HandleMatchingExpr(Call, *this->Context);
                                         GeneratorFunctionsMap[Call] = VarDeclMap;
                                         if(GenCallInfo(Call))
+                                        {
+                                            CallInfo.includes = IncludeDirectives;
                                             GeneratorMap.push_back(CallInfo);
+                                        }
                                         VarDeclMap.clear();
                                         CallInfo.clear();
                                         return true;
