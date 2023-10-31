@@ -6,7 +6,7 @@
         services
 
 #}
-{%- for function, arguments_dict in functions.items() %}
+{%- for function, function_block in functions.items() %}
 EFI_STATUS
 EFIAPI
 Fuzz{{ function }}(
@@ -17,10 +17,10 @@ Fuzz{{ function }}(
 
     {%- if "protocol" in services[function].service %}
         {%- set protocol_variable = "ProtocolVariable" %}
-        {{ arguments_dict['Arg_0'].arg_type }} {{ protocol_variable }};
+        {{ function_block['Arg_0'][0].arg_type }} {{ protocol_variable }};
     {%- endif %}
 
-    {%- for arg_key, arguments in arguments_dict.items() %}
+    {%- for arg_key, arguments in function_block.arguments.items() %}
         {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINT8" %}
         {%- if arguments[0].variable == "__FUZZABLE__" %}
     {{ arg_type }} *arg_{{ loop.index }} = NULL;
@@ -94,7 +94,7 @@ Fuzz{{ function }}(
         {% include 'runtime_service_template.jinja' %}
     {%- else %}
         Status = {{ function }}(
-            {%- for arg_key, arguments in arguments_dict.items() %}
+            {%- for arg_key, arguments in function_block.arguments.items() %}
             {%- set arg_prefix = "&" if "void" in arguments[0].arg_type else "" %}
             {{ arg_prefix }}arg_{{ loop.index }}{%- if not loop.last %}, {% endif %}
             {%- endfor %}
