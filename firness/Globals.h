@@ -46,6 +46,7 @@ struct Argument {
     std::string data_type;
     std::string variable;
     std::string assignment;
+    std::vector<std::string> potential_outputs;
     std::string usage;
     std::string arg_dir;
     std::string arg_type;
@@ -58,6 +59,7 @@ struct Argument {
         usage.clear();
         arg_dir.clear();
         arg_type.clear();
+        potential_outputs.clear();
     }
 };
 

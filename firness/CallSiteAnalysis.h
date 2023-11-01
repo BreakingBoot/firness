@@ -351,14 +351,75 @@ public:
                 Argument String_Arg;
                 String_Arg.data_type = VD->getType().getAsString();
                 String_Arg.variable = VD->getNameAsString();
+                std::vector<std::string> potentialOutputs = GetPotentialOutputs(Clang_Arg.Arg);
+                if(potentialOutputs.size() > 1)
+                {
+                    String_Arg.potential_outputs = potentialOutputs;
+                    String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
+                }
+                else
+                {
+                    String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
+                }
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
-                String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
             }
         }
         return ConvertedMap;
+    }
+
+    void PrintPotentialOutputs(const std::vector<std::string>& potentialOutputs) {
+        for (const std::string& output : potentialOutputs) {
+            llvm::outs() << "Potential Output: " << output << "\n";
+        }
+    }
+
+
+    bool isWhitespace(const std::string& str) {
+        for (char c : str) {
+            if (!std::isspace(static_cast<unsigned char>(c))) {
+                return false; 
+            }
+        }
+        return true;
+    }
+
+    std::vector<std::string> GetPotentialOutputs(Expr *E) {
+        std::vector<std::string> potentialOutputs;
+
+        if (auto *BO = dyn_cast<BinaryOperator>(E->IgnoreCasts())) {
+            if (BO->getOpcode() == BO_Or) {
+                Expr *lhs = BO->getLHS();
+                Expr *rhs = BO->getRHS();
+
+                // Recursively check left-hand side and right-hand side
+                auto leftOutputs = GetPotentialOutputs(lhs->IgnoreCasts()->IgnoreParens());
+                auto rightOutputs = GetPotentialOutputs(rhs->IgnoreCasts()->IgnoreParens());
+
+                // Combine the potential outputs from both sides
+                for(const std::string &left : leftOutputs)
+                {
+                    for (const std::string &right : rightOutputs) {
+                        potentialOutputs.push_back(left + " | " + right);
+                    }
+                }
+            }
+        } else if (ConditionalOperator *condOp = dyn_cast<ConditionalOperator>(E->IgnoreCasts())) {
+            // Process true and false expressions
+            auto trueOutputs = GetPotentialOutputs(condOp->getTrueExpr());
+            auto falseOutputs = GetPotentialOutputs(condOp->getFalseExpr());
+
+            // Add the potential outputs from both branches
+            potentialOutputs.insert(potentialOutputs.end(), trueOutputs.begin(), trueOutputs.end());
+            potentialOutputs.insert(potentialOutputs.end(), falseOutputs.begin(), falseOutputs.end());
+        } else {
+            // This is a leaf node or non-conditional expression, add it to potential outputs
+            potentialOutputs.push_back(getSourceCode(E, *this->Context));
+        }
+
+        return potentialOutputs;
     }
 
     /*
@@ -461,6 +522,20 @@ public:
             }
         }
         return found;
+    }
+
+    void CheckConditional(ConditionalOperator *CO) {
+        Expr *condition = CO->getCond();
+        Expr *trueExpr = CO->getTrueExpr();
+        Expr *falseExpr = CO->getFalseExpr();
+
+        std::string conditionString = getSourceCode(condition, *this->Context);
+        std::string trueExprString = getSourceCode(trueExpr, *this->Context);
+        std::string falseExprString = getSourceCode(falseExpr, *this->Context);
+
+        llvm::outs() << "Conditional Operator: " << conditionString << "\n";
+        llvm::outs() << "True Expr: " << trueExprString << "\n";
+        llvm::outs() << "False Expr: " << falseExprString << "\n";
     }
 
     /*

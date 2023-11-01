@@ -97,6 +97,7 @@ namespace FileOps {
                 argObject["arg_dir"] = arg.arg_dir;
                 argObject["arg_type"] = arg.arg_type;
                 argObject["usage"] = arg.usage;
+                argObject["potential_outputs"] = arg.potential_outputs;
 
                 callObject["Arguments"][argumentPair.first] = argObject;
             }
