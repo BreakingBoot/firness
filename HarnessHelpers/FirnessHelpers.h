@@ -24,7 +24,7 @@ ReadBytes(
   *outputBuffer = AllocateZeroPool(sizeof(UINT8) * numBytes);
   if (*outputBuffer == NULL) 
   {
-    return EFI_ERRIR;
+    return EFI_ERROR;
   }
 
   // Determine the actual number of bytes to extract
