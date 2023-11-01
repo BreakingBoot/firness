@@ -402,6 +402,8 @@ public:
                 for(const std::string &left : leftOutputs)
                 {
                     for (const std::string &right : rightOutputs) {
+                        if(reduceWhitespace(right) == "0")
+                            continue;
                         potentialOutputs.push_back(left + " | " + right);
                     }
                 }
