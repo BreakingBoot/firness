@@ -56,7 +56,6 @@ int main(int argc, const char **argv) {
         FileOps::outputCallMap(output_filename, CallMap);
         FileOps::outputTypeStructs(output_filename, FinalTypes);
         FileOps::outputGeneratorMap(output_filename, GeneratorMap);
-        FileOps::outputIncludes(output_filename, IncludeDirectives);
     }
     else
         FileOps::printCallMap(CallMap);

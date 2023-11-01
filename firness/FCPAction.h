@@ -11,6 +11,9 @@ public:
         
         IncludeDirectives.clear();
 
+        // Suppress the error related to 'AutoGen.h' file
+        Compiler.getDiagnostics().setSuppressAllDiagnostics(true);
+
         Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>(Compiler.getSourceManager()));
 
         return std::unique_ptr<clang::ASTConsumer>(

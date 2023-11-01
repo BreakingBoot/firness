@@ -7,22 +7,6 @@
 
 namespace FileOps {
     /*
-        Responsible for outputting the include statements collected accross all files analyzed
-    */
-    void outputIncludes(const std::string &filename, const std::set<std::string>& includes)
-    {
-        std::string file_path = filename + "/includes.json";
-        nlohmann::json j = nlohmann::json::array();
-
-        for (const auto& str : includes) {
-            j.push_back(str);
-        }
-
-        std::ofstream file(file_path);
-        file << j.dump(4); 
-        file.close();
-    }
-    /*
         Responsible for writing the structure type information
         gathered from the analysis to a json output file called types
 
