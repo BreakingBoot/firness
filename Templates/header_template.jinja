@@ -1,4 +1,13 @@
-{%- for function, arguments_dict in functions.items() %}
+#ifndef __FIRNESS_HARNESSES__
+#define __FIRNESS_HARNESSES__
+
+{%- for include in includes %}
+#include <{{ include }}>
+{%- endfor %}
+#include "FirnessHelpers.h"
+
+{% for function, arguments_dict in functions.items() %}
+
 EFI_STATUS
 EFIAPI
 Fuzz{{ function }}(
@@ -6,3 +15,5 @@ Fuzz{{ function }}(
     IN EFI_SYSTEM_TABLE  *SystemTable
 );
 {%- endfor %}
+
+#endif

@@ -75,8 +75,8 @@ def object_to_dict(obj):
 
 function_template = {}
 current_args_dict = defaultdict(list)
-protocol_guids = []
-driver_guids = []
+protocol_guids = set()
+driver_guids = set()
 
 #
 # Load in the function call database and perform frequency analysis across
@@ -176,6 +176,16 @@ def get_intersect(input_data: Dict[str, List[FunctionBlock]],
     return pre_processed_data
 
 #
+# Get the union between all of the includes between all functions
+#
+def get_union(pre_processed_data: Dict[str, FunctionBlock]) -> List[str]:
+    union = []
+    for function, function_block in pre_processed_data.items():
+        union = list(set(union) | set(function_block.includes))
+    return union
+              
+
+#
 # Load in the structures
 #
 def load_types(json_file: str) -> Dict[str, List[FieldInfo]]:
@@ -263,6 +273,13 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 should_ignore_constant = any(keyword in argument[0].usage.lower() for keyword in ignore_constant_keywords)
+                for arg in argument:
+                    if 'efi_guid' in arg.arg_type.lower():
+                        if 'protocolguid' in arg.variable.lower():
+                            protocol_guids.add(arg.variable)  # Add to the protocol_guids set
+                        else:
+                            driver_guids.add(arg.variable)    # Add to the driver_guids set
+
                 if not should_ignore_constant and (((argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and 
                       ((argument[0].variable == "__CONSTANT_STRING__" or 
                         argument[0].variable == "__CONSTANT_INT__" or 
@@ -327,21 +344,23 @@ def generate_code(function_dict: Dict[str, FunctionBlock], data_template: Dict[s
     env = Environment(loader=FileSystemLoader('./Templates/'))
     template = env.get_template('code_template.jinja')
     code = template.render(functions=function_dict, services=data_template, types=types_dict)
-    with open(f'{harness_folder}/output_code.c', 'w') as f:
+    with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
         f.write(code)
 
-def generate_header(function_dict: Dict[str, List[FunctionBlock]], harness_folder):
+def generate_header(function_dict: Dict[str, List[FunctionBlock]], 
+                    all_includes: List[str], 
+                    harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
     template = env.get_template('header_template.jinja')
-    code = template.render(functions=function_dict)
-    with open(f'{harness_folder}/output_code.h', 'w') as f:
+    code = template.render(functions=function_dict, includes=all_includes)
+    with open(f'{harness_folder}/FirnessHarnesses.h', 'w') as f:
         f.write(code)
 
 def generate_inf(harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
     template = env.get_template('inf_template.jinja')
-    code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids, sources=["Firness.c", "Helpers.c"])
-    with open(f'{harness_folder}/output_code.inf', 'w') as f:
+    code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids)
+    with open(f'{harness_folder}/FirnessHarnesses.inf', 'w') as f:
         f.write(code)
 
 
@@ -419,9 +438,9 @@ def generate_harness_folder():
     # Define the outer directory name
     outer_dir = 'GeneratedHarnesses'
 
-    # Get the current time and format it as Hour_Minute
+    # Get the date and time in the formate MM_DD_YYYY_HH_MM
     now = datetime.now()
-    time_str = now.strftime('%H_%M')
+    time_str = now.strftime('%m_%d_%Y_%H_%M')
 
     # Define the inner directory name based on the current time
     inner_dir = f'Harness_{time_str}'
@@ -434,7 +453,7 @@ def generate_harness_folder():
         os.makedirs(outer_dir)
 
     # Create the inner directory (this will create it regardless of whether it already exists)
-    os.makedirs(full_path, exist_ok=True)  # exist_ok=True will prevent an error if the directory already exists
+    os.makedirs(full_path, exist_ok=True)
 
     # Return the full path of the inner directory
     return full_path
@@ -451,11 +470,15 @@ def write_to_file_output(data: Dict[str, List[FunctionBlock]], file_path: str):
     with open(file_path, 'w') as file:
         json.dump(serializable_data, file, indent=4)
 
-def generate_harness(merged_data: Dict[str, FunctionBlock], template: Dict[str, FunctionBlock], types: Dict[str, List[FieldInfo]]):
-    harness_folder = generate_harness_folder()
+def generate_harness(merged_data: Dict[str, FunctionBlock], 
+                     template: Dict[str, FunctionBlock], 
+                     types: Dict[str, List[FieldInfo]], 
+                     all_includes: List[str],
+                     harness_folder: str):
+    
     generate_main(merged_data, harness_folder)
     generate_code(merged_data, template, types, harness_folder)
-    generate_header(merged_data, harness_folder)
+    generate_header(merged_data, all_includes, harness_folder)
     generate_inf(harness_folder)
 
 
@@ -483,6 +506,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     # Collect all of the arguments to be passed to the template
     pre_processed_data = initialize_data()
     pre_processed_data = get_intersect(input_data, pre_processed_data)
+
     # Step 1: Collect the constant arguments
     pre_processed_data = collect_known_constants(input_data, pre_processed_data)
 
@@ -506,13 +530,13 @@ def main():
     parser.add_argument('-d', '--data-file', dest='data_file', default='tmp/call-database.json', help='Path to the data file (default: tmp/call-database.json)')
     parser.add_argument('-g', '--generator-file', dest='generator_file', default='tmp/generator-database.json', help='Path to the generator file (default: tmp/generator-database.json)')
     parser.add_argument('-t', '--types-file', dest='types_file', default='tmp/types.json', help='Path to the types file (default: tmp/types.json)')
-    parser.add_argument('-o', '--output-file', dest='output_file', default='output.json', help='Path to the output file (default: output.json)')
 
     args = parser.parse_args()
 
     generators = load_generators(args.generator_file)
     data = load_data(args.data_file)
     types = load_types(args.types_file)
+    harness_folder = generate_harness_folder()
     
     # These two are treated together because we want to use generators to handle any
     # input argument that isn't either directly fuzzable or of a known input
@@ -521,9 +545,10 @@ def main():
     # that have all scalable fields will be directly generated with random input
 
     processed_data = collect_all_function_arguments(data, types, generators)
+    all_includes = get_union(processed_data)
 
-    write_to_file(processed_data, args.output_file)
-    generate_harness(processed_data, function_template, types)
+    write_to_file(processed_data, f'{harness_folder}/processed_data.json')
+    generate_harness(processed_data, function_template, types, all_includes, harness_folder)
 
 
 if __name__ == '__main__':

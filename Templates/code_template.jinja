@@ -4,9 +4,14 @@
     INPUT:
         functions
         services
-
 #}
+#include "FirnessHarnesses.h"
+
 {%- for function, function_block in functions.items() %}
+/*
+    This is a harness for fuzzing the {{ services[function].service }} service
+    called {{ function }}.
+*/
 EFI_STATUS
 EFIAPI
 Fuzz{{ function }}(
