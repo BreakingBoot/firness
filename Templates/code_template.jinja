@@ -27,10 +27,11 @@ Fuzz{{ function }}(
 
     {%- for arg_key, arguments in function_block.arguments.items() %}
         {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINT8" %}
+        {%- if "IN" in arguments[0].arg_dir %}
         {%- if arguments[0].variable == "__FUZZABLE__" %}
     {{ arg_type }} *arg_{{ loop.index }} = NULL;
     ReadBytes(&Input, 1, &arg_{{ loop.index }});
-        {%- elif "__CONSTANT" in arguments[0].variable %}
+        {%- elif "__CONSTANT" in arguments[0].variable or "__ENUM_ARG__" in arguments[0].variable %}
     {%- set arg_index = 'arg_' ~ loop.index %}
     {{ arg_type }} {{ arg_index }};
     UINT8 *{{ arg_index }}_choice = NULL;
@@ -39,7 +40,11 @@ Fuzz{{ function }}(
         {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
         {%- for argument in arguments %}
         case {{ loop.index }}:
+            {%- if argument.usage == "" %}
+            {{ arg_index }} = NULL;
+            {%- else %}
             {{ arg_index }} = {{ argument.usage }};
+            {%- endif %}
             break;
         {%- endfor %}
     }
@@ -65,7 +70,7 @@ Fuzz{{ function }}(
         {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
         {%- for argument in arguments %}
         case {{ loop.index }}:
-            {{ arg_index }} = {{ argument.usage }};
+            {{ arg_index }} = &{{ argument.variable }};
             break;
         {%- endfor %}
     }
@@ -80,6 +85,7 @@ Fuzz{{ function }}(
     {%- for field_info in types[search_type] %}
     ReadBytes(&Input, sizeof({{ arg_index }}.{{ field_info.name }}), &{{ arg_index }}.{{ field_info.name }});
     {%- endfor %}
+    {%- endif %}
     {%- elif arguments[0].arg_dir == 'OUT' %}
     /*
         Output Variable Declerations

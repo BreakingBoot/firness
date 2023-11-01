@@ -71,6 +71,11 @@ class FieldInfo:
         self.name = name
         self.type = type
 
+class TypeDef:
+    def __init__(self, name, type):
+        self.name = name
+        self.type = type
+
 def object_to_dict(obj):
     if isinstance(obj, str):
         return obj 
@@ -246,7 +251,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                 added_struct = False
                 if len(pre_processed_data[function].arguments.setdefault(arg_key, [])) > 0:
                     if pre_processed_data[function].arguments.get(arg_key)[0].variable == "__FUZZABLE__" or contains_fuzzable_arg:
-                        break
+                        continue
 
                 if argument[0].arg_dir == "IN" and not is_scalable:
                     if not contains_void_star(argument[0].arg_type):
@@ -262,6 +267,13 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                             current_args_dict[function].append(arg_key)
 
     return pre_processed_data
+
+#
+# This function will ignore the cast statements in the argument usage
+#
+def ignore_cast(usage: str) -> str:
+    return re.sub(r"\(.*?\)", "", usage)
+
 #
 # Filters out any arguments that are not IN and CONSTANT values, but making sure
 # to not keep duplicates
@@ -287,21 +299,28 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                         argument[0].variable == "__CONSTANT_INT__" or 
                         argument[0].variable == "__FUNCTION_PTR__" or
                         argument[0].variable == "__ENUM_ARG__") 
-                       and not contains_void_star(argument[0].arg_type))) or "efi_guid" in argument[0].arg_type.lower()):
+                       and not contains_void_star(argument[0].arg_type))) or 
+                       ("efi_guid" in argument[0].arg_type.lower() and argument[0].assignment == "" and argument[0].variable.startswith("g"))):
 
                     # Check if arg.usage is already in the set for this function and arg_key
                     if len(argument[0].potential_outputs) > 1:
                         for argument_value in argument[0].potential_outputs:
-                            if argument_value not in usage_seen[function][arg_key]:
+                            if ignore_cast(argument_value) not in usage_seen[function][arg_key]:
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment, argument[0].data_type, argument_value, argument[0].variable, [])
                                 pre_processed_data[function].arguments.setdefault(arg_key, []).append(new_arg)
                                 current_args_dict[function].append(arg_key)
-                                usage_seen[function][arg_key].add(argument_value)
-                    elif argument[0].usage not in usage_seen[function][arg_key]:
+                                usage_seen[function][arg_key].add(ignore_cast(argument_value))
+                    elif ignore_cast(argument[0].usage) not in usage_seen[function][arg_key]:
                         pre_processed_data[function].arguments.setdefault(arg_key, []).append(argument[0])
                         current_args_dict[function].append(arg_key)
-                        usage_seen[function][arg_key].add(argument[0].usage)  # Update the set with the new arg.usage value
-
+                        usage_seen[function][arg_key].add(ignore_cast(argument[0].usage))  # Update the set with the new arg.usage value
+    # Step 2: Filter out arguments with less than 3 different values
+    for function, function_block in pre_processed_data.items():
+        for arg_key, argument in function_block.arguments.items():
+            if len(argument) < 3:
+                for arg in argument:
+                    argument.remove(arg)
+                current_args_dict[function].remove(arg_key)
     return pre_processed_data
 
 def contains_void_star(s):
@@ -311,7 +330,7 @@ def contains_void_star(s):
 # 
 # Get fuzzable saves the arguments that take scalar inputs and also saves void * inputs that vary argument type
 # by more than 5 since the assumption is that means the function is most likely manipulating data, not structures
-# themselves
+# themselves. 
 # 
 def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                           pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
@@ -328,21 +347,26 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
             for arg_key, argument in function_block.arguments.items():
                 arg_type = argument[0].arg_type.lower()
                 is_scalable = any(param.lower() in arg_type for param in scalable_params)
-                if (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and is_scalable and (arg_key not in current_args_dict[function])and (arg_key not in current_args_dict[function]) and (argument[0].variable != "__CONSTANT_INT__" and argument[0].variable != "__CONSTANT_STRING__"):
+                if (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and is_scalable and (arg_key not in current_args_dict[function]):
                     scalable_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
                     current_args_dict[function].append(arg_key)
                     pre_processed_data[function].arguments.setdefault(arg_key, []).append(scalable_arg)
-                    break
+                    continue
                 elif contains_void_star(argument[0].arg_type) and (arg_key not in current_args_dict[function]) and len(void_star_data_type_counter[arg_key]) > 5:
                     scalable_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
                     current_args_dict[function].append(arg_key)
                     pre_processed_data[function].arguments.setdefault(arg_key, []).append(scalable_arg)
-                    break
+                    continue
+                elif (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and (arg_key not in current_args_dict[function]) and any(param.lower() in argument[0].data_type for param in scalable_params):
+                    scalable_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
+                    current_args_dict[function].append(arg_key)
+                    pre_processed_data[function].arguments.setdefault(arg_key, []).append(scalable_arg)
+                    continue
 
     return pre_processed_data
 
 
-def generate_main(function_dict: Dict[str, List[FunctionBlock]], harness_folder):
+def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
     template = env.get_template('Firness_main_template.jinja')
     code = template.render(functions=function_dict)
@@ -356,7 +380,7 @@ def generate_code(function_dict: Dict[str, FunctionBlock], data_template: Dict[s
     with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
         f.write(code)
 
-def generate_header(function_dict: Dict[str, List[FunctionBlock]], 
+def generate_header(function_dict: Dict[str, FunctionBlock], 
                     all_includes: List[str], 
                     harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
