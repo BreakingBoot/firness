@@ -403,8 +403,9 @@ public:
                 {
                     for (const std::string &right : rightOutputs) {
                         if(reduceWhitespace(right) == "0")
-                            continue;
-                        potentialOutputs.push_back(left + " | " + right);
+                            potentialOutputs.push_back(left);
+                        else
+                            potentialOutputs.push_back(left + " | " + right);
                     }
                 }
             }
