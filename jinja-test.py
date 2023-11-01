@@ -1,6 +1,7 @@
 import json
 import argparse
 import uuid
+import ast
 import re
 import os
 from datetime import datetime
@@ -30,12 +31,13 @@ ignore_constant_keywords = [
 ]
 
 class Argument:
-    def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str):
+    def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str, potential_outputs: List[str] = []):
         self.arg_dir = arg_dir
         self.arg_type = arg_type
         self.assignment = assignment
         self.data_type = data_type
         self.usage = usage
+        self.potential_outputs = potential_outputs
         self.variable = variable
     
     def to_dict(self):
@@ -45,6 +47,7 @@ class Argument:
             'Assignment': self.assignment,
             'Data Type': self.data_type,
             'Usage': self.usage,
+            'Potential Values': self.potential_outputs,
             'Variable': self.variable
         }
 
@@ -183,7 +186,6 @@ def get_union(pre_processed_data: Dict[str, FunctionBlock]) -> List[str]:
     for function, function_block in pre_processed_data.items():
         union = list(set(union) | set(function_block.includes))
     return union
-              
 
 #
 # Load in the structures
@@ -249,13 +251,13 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                 if argument[0].arg_dir == "IN" and not is_scalable:
                     if not contains_void_star(argument[0].arg_type):
                         if is_fuzzable_type(types[remove_ref_symbols(argument[0].arg_type)]):
-                            struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_ARG_STRUCT__")
+                            struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_ARG_STRUCT__", argument[0].potential_outputs)
                             pre_processed_data[function].arguments.setdefault(arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
                             added_struct = True
                     if not contains_void_star(argument[0].data_type) and not added_struct:
                         if is_fuzzable_type(types[remove_ref_symbols(argument[0].data_type)]):
-                            struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_DATA_STRUCT__")
+                            struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_DATA_STRUCT__", argument[0].potential_outputs)
                             pre_processed_data[function].arguments.setdefault(arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
 
@@ -288,7 +290,14 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                        and not contains_void_star(argument[0].arg_type))) or "efi_guid" in argument[0].arg_type.lower()):
 
                     # Check if arg.usage is already in the set for this function and arg_key
-                    if argument[0].usage not in usage_seen[function][arg_key]:
+                    if len(argument[0].potential_outputs) > 1:
+                        for argument_value in argument[0].potential_outputs:
+                            if argument_value not in usage_seen[function][arg_key]:
+                                new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment, argument[0].data_type, argument_value, argument[0].variable, [])
+                                pre_processed_data[function].arguments.setdefault(arg_key, []).append(new_arg)
+                                current_args_dict[function].append(arg_key)
+                                usage_seen[function][arg_key].add(argument_value)
+                    elif argument[0].usage not in usage_seen[function][arg_key]:
                         pre_processed_data[function].arguments.setdefault(arg_key, []).append(argument[0])
                         current_args_dict[function].append(arg_key)
                         usage_seen[function][arg_key].add(argument[0].usage)  # Update the set with the new arg.usage value
@@ -454,6 +463,9 @@ def generate_harness_folder():
 
     # Create the inner directory (this will create it regardless of whether it already exists)
     os.makedirs(full_path, exist_ok=True)
+    
+    # Copy the FirnessHelper.h to the full path
+    os.system(f'cp HarnessHelpers/* {full_path}')
 
     # Return the full path of the inner directory
     return full_path
