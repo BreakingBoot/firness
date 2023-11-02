@@ -22,7 +22,12 @@ scalable_params = [
     "size_t",
     "ssize_t"
 ]
-
+services_map = {
+    "BS": "BootServices",
+    "RT": "RuntimeServices",
+    "protocol": "Protocols",
+    "other": "OtherFunctions"
+}
 known_contant_variables = [
     "__CONSTANT_STRING__",
     "__CONSTANT_INT__",
@@ -92,11 +97,81 @@ def is_whitespace(s: str) -> bool:
     return len(s.strip()) == 0
 
 #
+# load in the functions to be harnessed
+#
+def load_functions(function_file: str) -> Dict[str, List[str]]:
+    # Load in the functions to be harnessed from the txt file
+    # They are classified into 3 categories: OtherFunctions, BootServices, and RuntimeServices
+    with open(function_file, 'r') as file:
+        data = file.readlines()
+    function_dict = defaultdict(list)
+    current_service = ""
+    for line in data:
+        if line.startswith("["):
+            current_service = line.strip().replace("[", "").replace("]", "")
+        else:
+            function_dict[current_service].append(line.strip())
+    return function_dict
+
+def write_sorted_data(sorted_data: Dict[str, Dict[int, List[FunctionBlock]]], filename: str) -> None:
+    output_dict = {
+        function: {
+            arg_num: [function_block.to_dict() for function_block in function_blocks]
+            for arg_num, function_blocks in arg_num_pairs.items()
+        }
+        for function, arg_num_pairs in sorted_data.items()
+    }
+
+    with open(filename, 'w') as f:
+        json.dump(output_dict, f, indent=4)
+
+def sort_data(input_data: Dict[str, List[FunctionBlock]],
+              harness_functions: Dict[str, List[str]]) -> Dict[str, List[FunctionBlock]]:
+    sorted_data = {}
+    # Determine the most common number of parameters for each function
+    most_common_param_counts = {}
+    for function, function_blocks in input_data.items():
+        param_counts = Counter(len(fb.arguments) for fb in function_blocks)
+        most_common_param_counts[function] = param_counts
+
+    # group the data based on the number of parameters
+    # and add a check for the parameters themselves
+    # i.e. if there are multiple functions with the same number of parameters
+    # then the arg_dir and arg_type must match
+    for function, param_counts in most_common_param_counts.items():
+        sorted_data[function] = {}
+        if len(param_counts) != 1:
+            for function_block in input_data[function]:
+                sorted_data[function].setdefault(len(function_block.arguments), []).append(function_block)
+        else:
+            sorted_data[function].setdefault(param_counts.most_common(1)[0][0], []).extend(input_data[function])
+
+    # now loop through the sorted data and keep the groups of elements that have a corresponding service
+    # in the harness_functions dictionary
+    filtered_data = defaultdict(list)
+    for function, arg_num_pairs in sorted_data.items():
+        for _, function_blocks in arg_num_pairs.items():
+            if not any(function in harness_functions[function_type] for function_type in harness_functions.keys()):
+                continue
+            arg_num_match = False
+            for function_block in function_blocks:
+                if any(keys in function_block.service for keys in services_map.keys()):
+                    arg_num_match = True
+                    break
+            if arg_num_match:
+                filtered_data.setdefault(function, []).extend(function_blocks)
+            elif function in harness_functions["OtherFunctions"]:
+                filtered_data.setdefault(function, []).extend(function_blocks)
+
+    return filtered_data
+
+#
 # Load in the function call database and perform frequency analysis across
 # the function calls to make sure to only keep the function calls that have
 # the same type of input args
 #
-def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
+def load_data(json_file: str,
+              harness_functions: Dict[str, List[str]]) -> Dict[str, List[FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -109,19 +184,16 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
         function_block = FunctionBlock(arguments, raw_function_block.get('Function'), raw_function_block.get('Service'), raw_function_block.get('Include'))
         function_dict[function_block.function].append(function_block)
 
-    # Determine the most common number of parameters for each function
-    most_common_param_counts = {}
-    for function, function_blocks in function_dict.items():
-        param_counts = Counter(len(fb.arguments) for fb in function_blocks)
-        most_common_param_counts[function] = param_counts.most_common(1)[0][0]
+    
 
-    # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
-    filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
-                            for function, function_blocks in function_dict.items()}
+    # Check if there is a single most common number of parameters for each function
+    # and if not then take the one which has a service matching the harness_functions.keys()
+    # note that if RT is in the service name, then it is a runtime service and BS is a boot service
+    filtered_function_dict = sort_data(function_dict, harness_functions)
 
     void_star_data_type_counter = defaultdict(Counter)
 
-    # Step 1: Collect data_type statistics for arg_type of "void *"
+    # Collect data_type statistics for arg_type of "void *"
     for function, function_blocks in filtered_function_dict.items():
         if function not in function_template:
             function_template[function] = function_blocks[0]
@@ -131,33 +203,11 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
                     void_star_data_type_counter[arg_key].update([argument[0].data_type])
 
                 # Add a check for the services and if there is no service in the template add it
-                if function == "ConvertPointer":
-                    print(function_block.service)
                 if is_whitespace(function_template[function].service) and not is_whitespace(function_block.service):
                     function_template[function].service = function_block.service
             if len(function_block.arguments) > 0:
                 if "protocol" in function_block.arguments["Arg_0"][0].arg_type.lower():
                     function_template[function].service = "protocol"
-
-    # Step 2: Determine dominant data_type for each arg_key
-    dominant_data_types = {}
-    for arg_key, data_type_counter in void_star_data_type_counter.items():
-        total = sum(data_type_counter.values())
-        for data_type, count in data_type_counter.items():
-            if count / total >= 0.9:
-                dominant_data_types[arg_key] = data_type
-
-    # Step 3: Filter out FunctionBlock instances with differing data_type for dominant arg_keys
-    for function, function_blocks in filtered_function_dict.items():
-        filtered_function_dict[function] = [
-            fb for fb in function_blocks
-            if all(
-                arg_key not in dominant_data_types or
-                argument[0].data_type == dominant_data_types[arg_key]
-                for arg_key, argument in fb.arguments.items()
-                if contains_void_star(argument[0].arg_type)
-            )
-        ]
 
     return filtered_function_dict
 
@@ -520,13 +570,9 @@ def generate_harness_folder():
     return full_path
 
 def write_to_file_output(data: Dict[str, List[FunctionBlock]], file_path: str):
-    serializable_data = {
-        func: {
-            arg_key: [arg.to_dict() for arg in arg_list] 
-            for arg_key, arg_list in func_block.arguments.items()
-        } 
-        for func, func_block in data.items()
-    }
+    serializable_data = {}
+    for function, function_blocks in data.items():
+        serializable_data.setdefault(function, []).extend([function_block.to_dict() for function_block in function_blocks])
     
     with open(file_path, 'w') as file:
         json.dump(serializable_data, file, indent=4)
@@ -593,11 +639,13 @@ def main():
     parser.add_argument('-g', '--generator-file', dest='generator_file', default='tmp/generator-database.json', help='Path to the generator file (default: tmp/generator-database.json)')
     parser.add_argument('-t', '--types-file', dest='types_file', default='tmp/types.json', help='Path to the types file (default: tmp/types.json)')
     parser.add_argument('-a', '--alias-file', dest='alias_file', default='tmp/aliases.json', help='Path to the typedef aliases file (default: tmp/aliases.json)')
+    parser.add_argument('-i', '--input-file', dest='input_file', default='input.txt', help='Path to the input file (default: input.txt)')
 
     args = parser.parse_args()
 
     generators = load_generators(args.generator_file)
-    data = load_data(args.data_file)
+    harness_functions = load_functions(args.input_file)
+    data = load_data(args.data_file, harness_functions)
     types = load_types(args.types_file)
     aliases = load_aliases(args.alias_file)
     harness_folder = generate_harness_folder()
