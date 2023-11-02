@@ -60,13 +60,17 @@ public:
                 }
             }
         }
+        else if(T->getTypeClassName() == "Typedef")
+        {
+           SingleTypedefs.insert(std::make_pair(TD->getNameAsString(), TD->getUnderlyingType().getAsString()));
+        }
         return true;
     }
     
     // 
     // Responsible for getting all Tracing the function definitions
     // 
-    ParameterDirection DoesFunctionAssign(int Param, CallExpr *CE, Expr* Arg) {
+    ParameterDirection DoesFunctionAssign(size_t Param, CallExpr *CE, Expr* Arg) {
         // Get the callee expression
         Expr *Callee = CE->getCallee()->IgnoreCasts();
 
@@ -152,7 +156,7 @@ public:
         return ParameterDirection::UNKNOWN;
     }
 
-    ParameterDirection DetermineArgumentType(int Param, std::string FuncText, Expr* Arg, CallExpr* CE) {
+    ParameterDirection DetermineArgumentType(size_t Param, std::string FuncText, Expr* Arg, CallExpr* CE) {
         std::vector<std::string> parameters;
         size_t pos = 0;
         size_t found;
@@ -193,7 +197,7 @@ public:
         return ParameterDirection::UNKNOWN;
     }
 
-    ParameterDirection HandleTypedefArgs(int Param, TypedefDecl *typedefDecl, Expr* Arg, CallExpr *CE) {
+    ParameterDirection HandleTypedefArgs(size_t Param, TypedefDecl *typedefDecl, Expr* Arg, CallExpr *CE) {
         ASTContext &Ctx = typedefDecl->getASTContext();
         SourceManager &SM = Ctx.getSourceManager();
         const LangOptions &LangOpts = Ctx.getLangOpts();
@@ -223,7 +227,7 @@ public:
     // Get all CallExpr for when Variables are set inside functions
     //
     bool VisitCallExpr(CallExpr *CE) {
-        for (unsigned i = 0; i < CE->getNumArgs(); ++i) {
+        for (size_t i = 0; i < CE->getNumArgs(); ++i) {
             ParameterDirection direction = DoesFunctionAssign(i, CE, CE->getArg(i));
             Expr *Arg = CE->getArg(i)->IgnoreCasts();
             if (UnaryOperator *UO = dyn_cast<UnaryOperator>(Arg)) {

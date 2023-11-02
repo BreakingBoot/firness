@@ -23,6 +23,13 @@ scalable_params = [
     "ssize_t"
 ]
 
+known_contant_variables = [
+    "__CONSTANT_STRING__",
+    "__CONSTANT_INT__",
+    "__FUNCTION_PTR__",
+    "__ENUM_ARG__"
+]
+
 ignore_constant_keywords = [
     "max",
     "size",
@@ -67,12 +74,7 @@ class FunctionBlock:
         }
 
 class FieldInfo:
-    def __init__(self, name, type):
-        self.name = name
-        self.type = type
-
-class TypeDef:
-    def __init__(self, name, type):
+    def __init__(self, name: str, type: str):
         self.name = name
         self.type = type
 
@@ -85,6 +87,9 @@ function_template = {}
 current_args_dict = defaultdict(list)
 protocol_guids = set()
 driver_guids = set()
+
+def is_whitespace(s: str) -> bool:
+    return len(s.strip()) == 0
 
 #
 # Load in the function call database and perform frequency analysis across
@@ -126,7 +131,9 @@ def load_data(json_file: str) -> Dict[str, List[FunctionBlock]]:
                     void_star_data_type_counter[arg_key].update([argument[0].data_type])
 
                 # Add a check for the services and if there is no service in the template add it
-                if function_template[function].service == "" and not function_block.service == "":
+                if function == "ConvertPointer":
+                    print(function_block.service)
+                if is_whitespace(function_template[function].service) and not is_whitespace(function_block.service):
                     function_template[function].service = function_block.service
             if len(function_block.arguments) > 0:
                 if "protocol" in function_block.arguments["Arg_0"][0].arg_type.lower():
@@ -169,6 +176,11 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
         function_dict[function_block.function].append(function_block)
 
     return function_dict
+
+def load_aliases(json_file: str) -> Dict[str, str]:
+    with open(json_file, 'r') as file:
+        raw_data = json.load(file)
+    return raw_data
 
 #
 # Get the intersect between all of the includes for each function of the same name
@@ -218,25 +230,37 @@ def filter_guids(guids: List[str]) -> List[str]:
     return filtered_guids
 
 
-def is_fuzzable_type(type: List[FieldInfo]) -> bool:
-    is_fuzzable = False
+def is_fuzzable(type: str, 
+                aliases: Dict[str, str], 
+                typemap: Dict[str, List[FieldInfo]],
+                level: int) -> bool:
+    if level > 2:
+        return False
+    elif any(param.lower() in type.lower() for param in scalable_params):
+        return True # If the type is a scalar, then it is fuzzable
+    elif type in aliases.keys():
+        return is_fuzzable(aliases[type], aliases, typemap, level) # If the type is an alias, then check the alias
+    elif type in typemap.keys():
+        fuzzable = False
+        for field_info in typemap[type]:
+            # If any of the fields are scalars, then the type is fuzzable
+            # one level deep
+            if is_fuzzable(field_info.type, aliases, typemap, level + 1):
+                fuzzable = True
+            else:
+                fuzzable = False
+                break
+        return fuzzable
 
-    for field_info in type:
-        is_scalable = any(param.lower() in field_info.type.lower() or 'efi_guid' in field_info.type.lower() for param in scalable_params)
-        if is_scalable:
-            is_fuzzable = True
-        else:
-            is_fuzzable = False
-            break
-
-    return is_fuzzable
+    return False
 
 def remove_ref_symbols(type: str) -> str:
     return re.sub(r"[ * &]", "", type)
 
 def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]], 
                       types: Dict[str, List[FieldInfo]],
-                      pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+                      pre_processed_data: Dict[str, FunctionBlock],
+                      aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
     # for all of the functionblock argument data_types, check the types structure for the matching type
     # if the type is found and all of the fields are scalars, then add it to the create a new argument
     # and have the variable be __FUZZABLE_STRUCT__ and add it to the list
@@ -250,18 +274,18 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                 contains_fuzzable_arg = any("__FUZZABLE_ARG_STRUCT__" in arg.variable for arg in pre_processed_data[function].arguments.setdefault(arg_key, []))
                 added_struct = False
                 if len(pre_processed_data[function].arguments.setdefault(arg_key, [])) > 0:
-                    if pre_processed_data[function].arguments.get(arg_key)[0].variable == "__FUZZABLE__" or contains_fuzzable_arg:
+                    if pre_processed_data[function].arguments.get(arg_key)[0].variable in known_contant_variables or contains_fuzzable_arg:
                         continue
 
                 if argument[0].arg_dir == "IN" and not is_scalable:
                     if not contains_void_star(argument[0].arg_type):
-                        if is_fuzzable_type(types[remove_ref_symbols(argument[0].arg_type)]):
+                        if is_fuzzable(remove_ref_symbols(argument[0].arg_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_ARG_STRUCT__", argument[0].potential_outputs)
                             pre_processed_data[function].arguments.setdefault(arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
                             added_struct = True
                     if not contains_void_star(argument[0].data_type) and not added_struct:
-                        if is_fuzzable_type(types[remove_ref_symbols(argument[0].data_type)]):
+                        if is_fuzzable(remove_ref_symbols(argument[0].data_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE_DATA_STRUCT__", argument[0].potential_outputs)
                             pre_processed_data[function].arguments.setdefault(arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
@@ -333,7 +357,8 @@ def contains_void_star(s):
 # themselves. 
 # 
 def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
-                          pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+                          pre_processed_data: Dict[str, FunctionBlock],
+                          aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
 
     for function, function_blocks in input_data.items():
         void_star_data_type_counter = defaultdict(Counter)
@@ -346,7 +371,7 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 arg_type = argument[0].arg_type.lower()
-                is_scalable = any(param.lower() in arg_type for param in scalable_params)
+                is_scalable = any(param.lower() in arg_type or param.lower() in aliases.get(arg_type, "").lower() for param in scalable_params)
                 if (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and is_scalable and (arg_key not in current_args_dict[function]):
                     scalable_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
                     current_args_dict[function].append(arg_key)
@@ -357,7 +382,7 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     current_args_dict[function].append(arg_key)
                     pre_processed_data[function].arguments.setdefault(arg_key, []).append(scalable_arg)
                     continue
-                elif (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and (arg_key not in current_args_dict[function]) and any(param.lower() in argument[0].data_type for param in scalable_params):
+                elif (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and (arg_key not in current_args_dict[function]) and any(param.lower() in argument[0].data_type or param.lower() in aliases.get(argument[0].data_type, "").lower() for param in scalable_params):
                     scalable_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
                     current_args_dict[function].append(arg_key)
                     pre_processed_data[function].arguments.setdefault(arg_key, []).append(scalable_arg)
@@ -424,12 +449,12 @@ def print_template(template: Dict[str, FunctionBlock]) -> None:
         print(f'   Service: {function_block.service}')
         for arg_key, argument in function_block.arguments.items():
             print(f'    Argument Key: {arg_key}')
-            print(f'      Arg Dir: {argument.arg_dir}')
-            print(f'      Arg Type: {argument.arg_type}')
-            print(f'      Assignment: {argument.assignment}')
-            print(f'      Data Type: {argument.data_type}')
-            print(f'      Usage: {argument.usage}')
-            print(f'      Variable: {argument.variable}')
+            print(f'      Arg Dir: {argument[0].arg_dir}')
+            print(f'      Arg Type: {argument[0].arg_type}')
+            print(f'      Assignment: {argument[0].assignment}')
+            print(f'      Data Type: {argument[0].data_type}')
+            print(f'      Usage: {argument[0].usage}')
+            print(f'      Variable: {argument[0].variable}')
 
 # write the template to a file
 def write_template(template: Dict[str, FunctionBlock], filename: str) -> None:
@@ -538,7 +563,8 @@ def add_output_variables(function_template: Dict[str, FunctionBlock],
 
 def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                    types: Dict[str, List[FieldInfo]],
-                                   input_generators: Dict[str, List[FunctionBlock]]) -> Dict[str, FunctionBlock]:
+                                   input_generators: Dict[str, List[FunctionBlock]],
+                                   aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
     # Collect all of the arguments to be passed to the template
     pre_processed_data = initialize_data()
     pre_processed_data = get_intersect(input_data, pre_processed_data)
@@ -547,13 +573,13 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     pre_processed_data = collect_known_constants(input_data, pre_processed_data)
 
     # Step 2: Collect the fuzzable arguments
-    pre_processed_data = get_directly_fuzzable(input_data, pre_processed_data)
+    pre_processed_data = get_directly_fuzzable(input_data, pre_processed_data, aliases)
 
     # Step 3: collect the generator functions
     pre_processed_data = get_generators(pre_processed_data, input_generators, function_template)
 
     # Step 4: Collect the fuzzable structs
-    pre_processed_data = variable_fuzzable(input_data, types, pre_processed_data)
+    pre_processed_data = variable_fuzzable(input_data, types, pre_processed_data, aliases)
 
     # Step 5: Add the output variables
     pre_processed_data = add_output_variables(function_template, pre_processed_data)
@@ -566,12 +592,14 @@ def main():
     parser.add_argument('-d', '--data-file', dest='data_file', default='tmp/call-database.json', help='Path to the data file (default: tmp/call-database.json)')
     parser.add_argument('-g', '--generator-file', dest='generator_file', default='tmp/generator-database.json', help='Path to the generator file (default: tmp/generator-database.json)')
     parser.add_argument('-t', '--types-file', dest='types_file', default='tmp/types.json', help='Path to the types file (default: tmp/types.json)')
+    parser.add_argument('-a', '--alias-file', dest='alias_file', default='tmp/aliases.json', help='Path to the typedef aliases file (default: tmp/aliases.json)')
 
     args = parser.parse_args()
 
     generators = load_generators(args.generator_file)
     data = load_data(args.data_file)
     types = load_types(args.types_file)
+    aliases = load_aliases(args.alias_file)
     harness_folder = generate_harness_folder()
     
     # These two are treated together because we want to use generators to handle any
@@ -580,7 +608,8 @@ def main():
     # (i.e. more than one level of integrated structs) and the basic structs
     # that have all scalable fields will be directly generated with random input
 
-    processed_data = collect_all_function_arguments(data, types, generators)
+    # print_template(function_template)
+    processed_data = collect_all_function_arguments(data, types, generators, aliases)
     all_includes = get_union(processed_data)
 
     write_to_file(processed_data, f'{harness_folder}/processed_data.json')

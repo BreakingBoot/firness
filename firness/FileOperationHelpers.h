@@ -7,6 +7,22 @@
 
 namespace FileOps {
     /*
+        Responsible for writing the typedef aliases
+        gathered from the analysis to a json output file called aliases
+
+    */
+    void outputTypedefs(const std::string &filename, const std::set<std::pair<std::string, std::string>>& types) {
+        std::string file_path = filename + "/aliases.json";
+        nlohmann::json j;
+        for (const auto& pair : types) {
+            j[pair.first] = pair.second;
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+
+    /*
         Responsible for writing the structure type information
         gathered from the analysis to a json output file called types
 

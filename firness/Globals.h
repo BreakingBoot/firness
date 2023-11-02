@@ -121,6 +121,7 @@ extern std::map<TypedefDecl*, TypeData> varTypeInfo;
 extern std::map<RecordDecl*, TypeData> varRecordInfo;
 
 extern std::set<std::string> FunctionNames;
+extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
 extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 extern std::map<std::string, TypeData> FinalTypes;
 extern std::map<CallExpr*, VarMap> CallExprMap;
