@@ -48,6 +48,7 @@ class Argument:
         self.arg_type = arg_type
         self.assignment = assignment
         self.data_type = data_type
+        self.pointer_count = arg_type.count('*')
         self.usage = usage
         self.potential_outputs = potential_outputs
         self.variable = variable
@@ -59,6 +60,7 @@ class Argument:
             'Assignment': self.assignment,
             'Data Type': self.data_type,
             'Usage': self.usage,
+            'Pointer Count': self.pointer_count,
             'Potential Values': self.potential_outputs,
             'Variable': self.variable
         }
@@ -321,7 +323,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 is_scalable = any(param.lower() in argument[0].arg_type.lower() for param in scalable_params)
-                contains_fuzzable_arg = any("__FUZZABLE_ARG_STRUCT__" in arg.variable for arg in pre_processed_data[function].arguments.setdefault(arg_key, []))
+                contains_fuzzable_arg = any("__FUZZABLE_ARG_STRUCT__" in arg.variable or "__FUZZABLE__" in arg.variable or "__ENUM" in arg.variable for arg in pre_processed_data[function].arguments.setdefault(arg_key, []))
                 added_struct = False
                 if len(pre_processed_data[function].arguments.setdefault(arg_key, [])) > 0:
                     if pre_processed_data[function].arguments.get(arg_key)[0].variable in known_contant_variables or contains_fuzzable_arg:
@@ -450,7 +452,8 @@ def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder):
 
 def generate_code(function_dict: Dict[str, FunctionBlock], data_template: Dict[str, FunctionBlock], types_dict: Dict[str, List[FieldInfo]], harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
-    template = env.get_template('code_template.jinja')
+    # template = env.get_template('code_template.jinja')
+    template = env.get_template('working_template.jinja')
     code = template.render(functions=function_dict, services=data_template, types=types_dict)
     with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
         f.write(code)
