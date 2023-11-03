@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Set
 
 
 scalable_params = [
@@ -284,16 +284,6 @@ def load_types(json_file: str) -> Dict[str, List[FieldInfo]]:
         type_data_list[type_data_dict['TypeName']] = fields_list
     return type_data_list
 
-#
-# Filter out the guids that don't start with g and end with guid
-#
-def filter_guids(guids: List[str]) -> List[str]:
-    filtered_guids = []
-    for guid in guids:
-        if guid.startswith('g') and guid.endswith('Guid'):
-            filtered_guids.append(guid)
-    return filtered_guids
-
 
 def is_fuzzable(type: str, 
                 aliases: Dict[str, str], 
@@ -379,7 +369,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
             for arg_key, argument in function_block.arguments.items():
                 should_ignore_constant = any(keyword in argument[0].usage.lower() for keyword in ignore_constant_keywords)
                 for arg in argument:
-                    if 'efi_guid' in arg.arg_type.lower():
+                    if 'efi_guid' in arg.arg_type.lower() and arg.variable.startswith('g') and arg.variable.endswith('Guid'):
                         if 'protocolguid' in arg.variable.lower():
                             protocol_guids.add(arg.variable)  # Add to the protocol_guids set
                         else:
