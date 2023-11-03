@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 
 scalable_params = [
@@ -224,7 +224,7 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
             arg_key: [Argument(**raw_argument)]
             for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
         }
-        function_block = FunctionBlock(arguments, raw_function_block.get('Function'), raw_function_block.get('Service'))
+        function_block = FunctionBlock(arguments, raw_function_block.get('Function'), raw_function_block.get('Service'), raw_function_block.get('Include'))
         function_dict[function_block.function].append(function_block)
     
     # Determine the most common number of parameters for each function
@@ -260,9 +260,12 @@ def get_intersect(input_data: Dict[str, List[FunctionBlock]],
 #
 # Get the union between all of the includes between all functions
 #
-def get_union(pre_processed_data: Dict[str, FunctionBlock]) -> List[str]:
+def get_union(pre_processed_data: Dict[str, FunctionBlock],
+              processed_generators: Dict[str, FunctionBlock]) -> List[str]:
     union = []
     for function, function_block in pre_processed_data.items():
+        union = list(set(union) | set(function_block.includes))
+    for function, function_block in processed_generators.items():
         union = list(set(union) | set(function_block.includes))
     return union
 
@@ -465,7 +468,7 @@ def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder):
 def generate_code(function_dict: Dict[str, FunctionBlock], 
                   data_template: Dict[str, FunctionBlock], 
                   types_dict: Dict[str, List[FieldInfo]], 
-                  generators_dict: Dict[str, List[FunctionBlock]], 
+                  generators_dict: Dict[str, FunctionBlock], 
                   harness_folder):
     env = Environment(loader=FileSystemLoader('./Templates/'))
     # template = env.get_template('code_template.jinja')
@@ -610,7 +613,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      template: Dict[str, FunctionBlock], 
                      types: Dict[str, List[FieldInfo]], 
                      all_includes: List[str],
-                     generators: Dict[str, List[FunctionBlock]],
+                     generators: Dict[str, FunctionBlock],
                      harness_folder: str):
     
     generate_main(merged_data, harness_folder)
@@ -622,6 +625,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
 
 def initialize_data() -> Dict[str, FunctionBlock]:
     initial_data = {}
+    current_args_dict.clear()
     for func, func_block in function_template.items():
         initial_data[func] = FunctionBlock({}, func, func_block.service)
     return initial_data
@@ -653,7 +657,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     pre_processed_data = get_directly_fuzzable(input_data, pre_processed_data, aliases)
 
     # Step 3: collect the generator functions
-    pre_processed_data = get_generators(pre_processed_data, input_generators, function_template, aliases, types)
+    # pre_processed_data = get_generators(pre_processed_data, input_generators, function_template, aliases, types)
 
     # Step 4: Collect the fuzzable structs
     pre_processed_data = variable_fuzzable(input_data, types, pre_processed_data, aliases)
@@ -672,6 +676,45 @@ def clean_harnesses(clean: bool) -> None:
     if clean:
         os.system('rm -rf GeneratedHarnesses')
 
+def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+    generators = {}
+    generators_template = {}
+    current_args_dict.clear()
+    for function, function_blocks in input_generators.items():
+        if function not in generators.keys():
+            generators_template[function] = function_blocks[0]
+            generators[function] = FunctionBlock({}, function, function_blocks[0].service)
+    return generators, generators_template
+    
+
+def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
+                       aliases: Dict[str, str],
+                       types: Dict[str, List[FieldInfo]]) -> Dict[str, List[FunctionBlock]]:
+    # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
+    # for the generator functions
+    
+    # Step 1: Collect the constant arguments
+    # generators = collect_known_constants(generators, generators)
+    generators, generators_tempalate = initialize_generators(input_generators)
+    generators = get_intersect(input_generators, generators)
+
+    # Step 2: Collect the fuzzable arguments
+    generators = get_directly_fuzzable(input_generators, generators, aliases)
+
+    # Step 3: Collect the fuzzable structs
+    generators = variable_fuzzable(input_generators, types, generators, aliases)
+
+    # Step 4: Add the output variables
+    generators = add_output_variables(generators_tempalate, generators)
+
+    # Step 5: Sort the arguments
+    for key, function_block in generators.items():
+        sorted_arguments = {k: function_block.arguments[k] for k in sorted(function_block.arguments.keys())}
+        function_block.arguments = sorted_arguments
+        
+    return generators
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
     parser.add_argument('-d', '--data-file', dest='data_file', default='tmp/call-database.json', help='Path to the data file (default: tmp/call-database.json)')
@@ -689,7 +732,8 @@ def main():
     types = load_types(args.types_file)
     aliases = load_aliases(args.alias_file)
     harness_folder = generate_harness_folder()
-    
+    processed_generators = analyze_generators(generators, aliases, types)
+
     # These two are treated together because we want to use generators to handle any
     # input argument that isn't either directly fuzzable or of a known input
     # we will primarily use generators to handle the more compilicated structs
@@ -698,10 +742,11 @@ def main():
 
     # print_template(function_template)
     processed_data = collect_all_function_arguments(data, types, generators, aliases)
-    all_includes = get_union(processed_data)
+    all_includes = get_union(processed_data, processed_generators)
 
+    write_to_file(processed_generators, f'{harness_folder}/processed_generators.json')
     write_to_file(processed_data, f'{harness_folder}/processed_data.json')
-    generate_harness(processed_data, function_template, types, all_includes, generators, harness_folder)
+    generate_harness(processed_data, function_template, types, all_includes, processed_generators, harness_folder)
 
 
 if __name__ == '__main__':
