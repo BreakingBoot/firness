@@ -610,6 +610,8 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_code(merged_data, template, types, generators, harness_folder)
     generate_header(merged_data, all_includes, harness_folder)
     generate_inf(harness_folder)
+    if not os.path.exists("Firness/"):
+        os.makedirs("Firness/")
     os.system(f'cp {harness_folder}/* Firness/')
 
 
@@ -679,7 +681,7 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
 
 def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
                        aliases: Dict[str, str],
-                       types: Dict[str, List[FieldInfo]]) -> Dict[str, List[FunctionBlock]]:
+                       types: Dict[str, List[FieldInfo]]) -> Dict[str, FunctionBlock]:
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
     
@@ -732,7 +734,8 @@ def main():
 
     # print_template(function_template)
     processed_data = collect_all_function_arguments(data, types, generators, aliases)
-    all_includes = get_union(processed_data, processed_generators)
+    # all_includes = get_union(processed_data, processed_generators)
+    all_includes = get_union(processed_data, {})
 
     write_to_file(processed_generators, f'{harness_folder}/processed_generators.json')
     write_to_file(processed_data, f'{harness_folder}/processed_data.json')
