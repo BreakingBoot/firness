@@ -229,8 +229,9 @@ public:
             }
             else
             {
-                for (const std::string& predefined : PreDefinedConstants) {
-                    if (literalString.find(predefined) != std::string::npos) {
+                for (const auto& predefined : PreDefinedConstants) {
+                    if (literalString.find(predefined.first) != std::string::npos) {
+                        IncludeDirectives.insert(predefined.second.File);
                         isSubstring = true;
                         break;
                     }

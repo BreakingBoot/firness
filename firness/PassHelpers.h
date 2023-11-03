@@ -40,13 +40,13 @@ namespace PassHelpers {
     /*
         Responsible for checking if the argument is all well-defined data
     */
-    bool checkOperand(Expr *operand, ASTContext &Ctx, const std::vector<std::string> &DefinesList, 
+    bool checkOperand(Expr *operand, ASTContext &Ctx, const std::map<std::string, std::string> &DefinesList, 
             const std::vector<std::string> &EnumList) {
         std::string literalString = getSourceCode(operand, Ctx); 
 
         // Check if any string in PreDefinedConstants is a substring of literalString
-        for (const std::string& predefined : DefinesList) {
-            if (literalString.find(predefined) != std::string::npos) {
+        for (const auto& predefined : DefinesList) {
+            if (literalString.find(predefined.first) != std::string::npos) {
                 return true;
             }
         }

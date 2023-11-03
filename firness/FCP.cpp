@@ -9,7 +9,7 @@ std::map<std::string, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 std::vector<Call> CallMap;
-std::vector<std::string> PreDefinedConstants;
+std::map<std::string, MacroDef> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
 std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 std::vector<Call> GeneratorMap;
