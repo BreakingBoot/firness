@@ -25,7 +25,12 @@ public:
                             const Module * Imported, 
                             SrcMgr::CharacteristicKind FileType) override {
         // Need to also track the function calls -> include directives
-        IncludeDirectives.insert(FileName.str());
+        // Store the full path and other information as needed.
+        std::string FullPath = SearchPath.str() + "/" + FileName.str();
+
+        IncludeDirectives.insert(FullPath);
+        
+        // IncludeDirectives.insert(FileName.str());
     }
 
 private:
