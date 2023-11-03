@@ -1,0 +1,14 @@
+{#
+    handle output variables
+#}
+
+    /*
+        Output Variable Declerations
+    */
+    {%- if '*' in arguments[0].arg_type %}
+    {%- set arg_type = "UINTN" if arguments[0].arg_type == "void" else arguments[0].arg_type.replace('*', '') %}
+    {{ arg_type }} {{ arg_key }};
+    {%- else %}
+    {%- set arg_type = "UINTN" if arguments[0].arg_type == "void" else arguments[0].arg_type %}
+    {{ arg_type }} {{ arg_key }};
+    {%- endif %}

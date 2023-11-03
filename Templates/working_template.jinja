@@ -25,106 +25,30 @@ Fuzz{{ function }}(
     {{ function_block['Arg_0'][0].arg_type }} {{ protocol_variable }};
     {%- endif %}
 
-    {%- for arg_key, arguments in function_block.arguments.items() %}
-        {%- set arg_key = 'arg_' ~ loop.index %}
-        {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINTN" %}
-        {%- if "IN" in arguments[0].arg_dir %}
-            {%- if arguments[0].variable == "__FUZZABLE__" %}
-                {%- if arguments[0].pointer_count > 1 %}
-                    {%- set arg_type = arguments[0].arg_type[:-1] if "void" not in arguments[0].arg_type else "UINTN" %}
-                {%- endif %}
-    {{ arg_type }} *{{ arg_key }} = NULL;
-    ReadBytes(&Input, 1, &{{ arg_key }});
-    
-            {%- elif "__CONSTANT" in arguments[0].variable or "__ENUM_ARG__" in arguments[0].variable %}
-    
-    {{ arg_type }} {{ arg_key }};
-    UINT8 *{{ arg_key }}_choice = NULL;
-    ReadBytes(&Input, 1, &{{ arg_key }}_choice);
-    switch({{ arg_key }}_choice % {{ arguments | length }}) {
-        {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
-        {%- for argument in arguments %}
-        case {{ loop.index }}:
-            {%- if argument.usage == "" %}
-            {{ arg_key }} = NULL;
-            {%- else %}
-            {{ arg_key }} = {{ argument.usage }};
-            {%- endif %}
-            break;
-        {%- endfor %}
-    }
-            {%- elif "__FUNCTION_PTR__" in arguments[0].variable %}
-    VOID* {{ arg_key }};
-    UINT8 *{{ arg_key }}_choice = NULL;
-    ReadBytes(&Input, 1, &{{ arg_key }}_choice);
-    switch({{ arg_key }}_choice % {{ arguments | length }}) {
-        {# Assume that constants are formatted as __FUNCTION_PTR__ #}
-        {%- for argument in arguments %}
-        case {{ loop.index }}:
-            {{ arg_key }} = {{ argument.usage }};
-            break;
-        {%- endfor %}
-    }
-            {%- elif "EFI_GUID" in arguments[0].data_type %}
-    {{ arg_type }} {{ arg_key }};
-    UINT8 *{{ arg_key }}_choice = NULL;
-    ReadBytes(&Input, 1, &{{ arg_key }}_choice);
-    switch({{ arg_key }}_choice % {{ arguments | length }}) {
-        {# Assume that constants are formatted as __CONSTANT_<VALUE> #}
-        {%- for argument in arguments %}
-        case {{ loop.index }}:
-            {{ arg_key }} = &{{ argument.variable }};
-            break;
-        {%- endfor %}
-    }
-            {%- elif (arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__')) or "__GENERATOR_FUNCTION__" in arguments[0].variable %}
-    {%- for argument in arguments %}
-    {%- if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__') %}
-    {%- if "ARG" in argument.variable %}
-    {%- set search_type =  argument.arg_type.replace('**', '*') %}
-    {%- else %}
-    {%- set search_type =  argument.data_type.replace('**', '*') %}
-    {%- endif %}
-    {{ search_type }} {{ arg_key }};
-    {%- for field_info in types[search_type.replace('*', '').replace(' ', '')] %}
-    ReadBytes(&Input, sizeof({{ arg_key }}.{{ field_info.name }}), &{{ arg_key }}.{{ field_info.name }});
-    {%- endfor %}
-    {%- elif "__GENERATOR_FUNCTION__" in argument.variable %}
-    {{ argument.assignment }}
-    {%- endif %}
-    {%- endfor %}
-    {%- endif %}
+{%- for arg_key, arguments in function_block.arguments.items() %}
+    {%- set arg_type = arguments[0].arg_type if "void" not in arguments[0].arg_type else "UINTN" %}
+{%- if "IN" in arguments[0].arg_dir %}
 
-    {%- elif arguments[0].arg_dir == 'OUT' %}
-    /*
-        Output Variable Declerations
-    */
-    {%- if '*' in arguments[0].arg_type %}
-    {%- set arg_type = arguments[0].arg_type.replace('*', '') %}
-    {{ arg_type }} {{ arg_key }};
-    {%- else %}
-    {%- set arg_type = arguments[0].arg_type %}
-    {{ arg_type }} {{ arg_key }};
-    {%- endif %}
-    {%- endif %}
-    {%- endfor %}
-    {%- if "protocol" in services[function].service %}
-        {% include 'protocol_template.jinja' %}
-    {%- elif "BS" in services[function].service or "Boot" in services[function].service %}
-        {% include 'boot_service_template.jinja' %}
-    {%- elif "RT" in services[function].service or "Runtime" in services[function].service %}
-        {% include 'runtime_service_template.jinja' %}
-    {%- else %}
-    /*
-        Direct Function Call
-    */
-    Status = {{ function }}(
-            {%- for arg_key, arguments in function_block.arguments.items() %}
-            {%- set arg_prefix = "&" if "void" in arguments[0].arg_type or arguments[0].pointer_count > 1 else "" %}
-            {{ arg_prefix }}{{ arg_key }}{%- if not loop.last %}, {% endif %}
-            {%- endfor %}
-        );
-    {%- endif %}
+{%- if arguments[0].variable == "__FUZZABLE__" %}
+    {% include 'fuzzable_var_args.jinja' %}
+{%- elif "__CONSTANT" in arguments[0].variable or "__ENUM_ARG__" in arguments[0].variable %}
+    {% include 'constant_args.jinja' %}
+{%- elif "__FUNCTION_PTR__" in arguments[0].variable %}
+    {% include 'function_ptr_args.jinja' %}
+{%- elif "EFI_GUID" in arguments[0].arg_type %}
+    {% include 'guid_args.jinja' %}
+{%- elif (arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__')) or "__GENERATOR_FUNCTION__" in arguments[0].variable %}
+    {% include 'generator_struct_args.jinja' %}    
+{%- endif %}
+
+{%- elif arguments[0].arg_dir == 'OUT' %}
+
+    {% include 'output_args.jinja' %}
+
+{%- endif %}
+{%- endfor %}
+    
+    {% include 'call_function.jinja' %}
     
     return Status;
 }

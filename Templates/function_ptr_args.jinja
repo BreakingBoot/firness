@@ -1,0 +1,14 @@
+{#
+    function pointer arguments
+#}
+    VOID* {{ arg_key }};
+    UINT8 *{{ arg_key }}_choice = NULL;
+    ReadBytes(&Input, 1, &{{ arg_key }}_choice);
+    switch({{ arg_key }}_choice % {{ arguments | length }}) {
+        {# Assume that constants are formatted as __FUNCTION_PTR__ #}
+        {%- for argument in arguments %}
+        case {{ loop.index }}:
+            {{ arg_key }} = {{ argument.usage }};
+            break;
+        {%- endfor %}
+    }

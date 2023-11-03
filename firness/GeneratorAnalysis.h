@@ -257,6 +257,107 @@ public:
         }
     }
 
+    std::vector<std::string> GetPotentialOutputs(Expr *E) {
+        std::vector<std::string> potentialOutputs;
+
+        if (auto *BO = dyn_cast<BinaryOperator>(E->IgnoreCasts())) {
+            if (BO->getOpcode() == BO_Or) {
+                Expr *lhs = BO->getLHS();
+                Expr *rhs = BO->getRHS();
+
+                // Recursively check left-hand side and right-hand side
+                auto leftOutputs = GetPotentialOutputs(lhs->IgnoreCasts()->IgnoreParens());
+                auto rightOutputs = GetPotentialOutputs(rhs->IgnoreCasts()->IgnoreParens());
+
+                // Combine the potential outputs from both sides
+                for(const std::string &left : leftOutputs)
+                {
+                    for (const std::string &right : rightOutputs) {
+                        if(reduceWhitespace(right) == "0")
+                            potentialOutputs.push_back(left);
+                        else
+                            potentialOutputs.push_back(left + " | " + right);
+                    }
+                }
+            }
+        } else if (ConditionalOperator *condOp = dyn_cast<ConditionalOperator>(E->IgnoreCasts())) {
+            // Process true and false expressions
+            auto trueOutputs = GetPotentialOutputs(condOp->getTrueExpr());
+            auto falseOutputs = GetPotentialOutputs(condOp->getFalseExpr());
+
+            // Add the potential outputs from both branches
+            potentialOutputs.insert(potentialOutputs.end(), trueOutputs.begin(), trueOutputs.end());
+            potentialOutputs.insert(potentialOutputs.end(), falseOutputs.begin(), falseOutputs.end());
+        } else {
+            // This is a leaf node or non-conditional expression, add it to potential outputs
+            potentialOutputs.push_back(getSourceCode(E, *this->Context));
+        }
+
+        return potentialOutputs;
+    }
+
+    /*
+        This is the recursion to handle grabbing the sub types
+        It also makes sure the sub types are only added once to the map
+    */
+    void processRecord(RecordDecl *RD) {
+        if (!RD || (varRecordInfo.find(RD) == varRecordInfo.end()) || (FinalTypes.find(varRecordInfo[RD].TypeName) != FinalTypes.end())) {
+            return;
+        }
+        // Copy the Info from the list generated during variable analysis
+        if((FinalTypes.find(varRecordInfo[RD].TypeName) == FinalTypes.end())) {
+            FinalTypes.insert(std::make_pair(varRecordInfo[RD].TypeName, varRecordInfo[RD]));
+        }
+        // Analyze the sub types of the struct and determine if they also need to be
+        //      considered
+        for (auto field : RD->fields()) {
+            QualType fieldQT = field->getType();
+            while (fieldQT->isAnyPointerType() || fieldQT->isReferenceType()) {
+                fieldQT = fieldQT->getPointeeType();
+            }
+            fieldQT = fieldQT.getCanonicalType();
+
+            if (const RecordType *fieldRT = dyn_cast<RecordType>(fieldQT)) {
+                processRecord(fieldRT->getDecl());
+            } /*else if (const TypedefType *fieldTDT = dyn_cast<TypedefType>(fieldQT)) {
+                TypedefNameDecl *fieldTND = fieldTDT->getDecl();
+                This isn't needed for edk2 use case
+            }*/
+        }
+    }
+
+    /*
+        For each Variable Type that is used in generating the calls
+        I grab those types structures and any sub types that may also be structures
+    */
+    void GetVarStruct(VarDecl *VD) {
+        if (!VD) {
+            return;
+        }
+        QualType QT = VD->getType();
+
+        // Work through any typedefs to get to the ultimate
+        // underlying type.
+        while (QT->isAnyPointerType() || QT->isReferenceType()) {
+            QT = QT->getPointeeType();
+        }
+        QT = QT.getCanonicalType();
+
+        // Now, QT should be the actual type of the variable, without any typedefs
+        // Check if it's a record type (i.e., a struct or class type).
+        if (const RecordType *RT = dyn_cast<RecordType>(QT)) {
+            // Get the RecordDecl for the record type.
+            if(FinalTypes.find(QT.getAsString()) == FinalTypes.end())
+                processRecord(RT->getDecl());
+        } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
+            // Get the TypedefNameDecl for the typedef type.
+            TypedefNameDecl *TND = TDT->getDecl();
+            llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
+                        << TND->getNameAsString() << "\n";
+            // This is never reached, but I keep incase it is needed in future analysis            
+        }
+    }
+
     /*
         Converts the Clang AST map to a string map for output/further analysis
     */
@@ -267,13 +368,23 @@ public:
         for(auto& pair : OriginalMap)
         {
             VarDecl* VD = pair.first;
+            GetVarStruct(VD);
             for(Argument_AST Clang_Arg : pair.second)
             {
                 Argument String_Arg;
                 String_Arg.data_type = VD->getType().getAsString();
                 String_Arg.variable = VD->getNameAsString();
+                std::vector<std::string> potentialOutputs = GetPotentialOutputs(Clang_Arg.Arg);
+                if(potentialOutputs.size() > 1)
+                {
+                    String_Arg.potential_outputs = potentialOutputs;
+                    String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
+                }
+                else
+                {
+                    String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
+                }
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
-                String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;

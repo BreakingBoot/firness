@@ -1,0 +1,8 @@
+{#
+    directly fuzzable variables
+#}
+    {%- if arguments[0].pointer_count > 1 %}
+        {%- set arg_type = arguments[0].arg_type.replace('*', '') if "void" not in arguments[0].arg_type else "UINTN" %}
+    {%- endif %}
+    {{ arg_type }} *{{ arg_key }} = NULL;
+    ReadBytes(&Input, 1, &{{ arg_key }});
