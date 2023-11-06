@@ -6,6 +6,22 @@
 
 
 namespace FileOps {
+    void outputMacros(const std::string &filename, const std::map<std::string, MacroDef>& macros) {
+        std::string file_path = filename + "/macros.json";
+        nlohmann::json j;
+        for (const auto& pair : macros) {
+            const MacroDef& macro = pair.second;
+            nlohmann::json macroJson;
+            macroJson["Name"] = macro.Name;
+            macroJson["File"] = macro.File;
+            macroJson["Value"] = macro.Value;
+            j.push_back(macroJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+    
     /*
         Responsible for writing the typedef aliases
         gathered from the analysis to a json output file called aliases

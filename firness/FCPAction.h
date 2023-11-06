@@ -14,7 +14,7 @@ public:
         // Suppress the error related to 'AutoGen.h' file
         Compiler.getDiagnostics().setSuppressAllDiagnostics(true);
 
-        Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>(Compiler.getSourceManager()));
+        Compiler.getPreprocessor().addPPCallbacks(std::make_unique<FCPCallbacks>(Compiler.getSourceManager(), &Compiler.getASTContext()));
 
         return std::unique_ptr<clang::ASTConsumer>(
             new FCPConsumer(&Compiler.getASTContext()));

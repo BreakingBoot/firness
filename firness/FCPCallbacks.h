@@ -6,13 +6,33 @@
 class FCPCallbacks : public PPCallbacks {
 public:
 
-    explicit FCPCallbacks(SourceManager &SM) : SM(SM) {}
+    explicit FCPCallbacks(SourceManager &SM, ASTContext *Context) : SM(SM), Context(Context) {}
 
-    // void MacroDefined(const Token &MacroNameTok, const MacroDirective *MD) override {
-    //     StringRef MacroName = MacroNameTok.getIdentifierInfo()->getName();
 
-    //     PreDefinedConstants.push_back(MacroName.str());
-    // }
+    std::string filterMacroDefinition(const std::string &name, const std::string &value) {
+        size_t pos = value.find(name);
+        if (pos != std::string::npos) {
+            // Find the space character after the name
+            size_t spacePos = value.find(' ', pos + name.length());
+            std::string filteredValue = value.substr(spacePos + 1);
+
+            // Remove backslashes and spaces from the filteredValue
+            std::string filteredResult;
+            bool foundBackslash = false;
+            for (char c : filteredValue) {
+                if (c == '\\') {
+                    foundBackslash = true;
+                } else if (!isspace(c) || (isspace(c) && !foundBackslash)) {
+                    foundBackslash = false;
+                    filteredResult += c;
+                }
+            }
+
+            return filteredResult;
+        }
+        return value;
+    }
+
     void MacroDefined(const Token &MacroNameTok, const MacroDirective *MD) override {
         StringRef MacroName = MacroNameTok.getIdentifierInfo()->getName();
 
@@ -26,7 +46,11 @@ public:
                 MacroDef mac;
                 mac.Name = MacroName.str();
                 mac.File = FilePath.str();
-                mac.Value = MacroNameTok.getName();
+
+                const LangOptions &LangOpts = Context->getLangOpts();
+                CharSourceRange Range = CharSourceRange::getTokenRange(MD->getMacroInfo()->getDefinitionLoc(), MD->getMacroInfo()->getDefinitionEndLoc());
+                mac.Value = Lexer::getSourceText(Range, SM, LangOpts).str();
+                mac.Value = PassHelpers::reduceWhitespace(filterMacroDefinition(mac.Name, mac.Value));
 
                 PreDefinedConstants[MacroName.str()] = mac;
             }
@@ -53,7 +77,8 @@ public:
     }
 
 private:
-  SourceManager &SM;
+    ASTContext *Context;
+    SourceManager &SM;
 };
 
 #endif

@@ -58,6 +58,7 @@ int main(int argc, const char **argv) {
         FileOps::outputTypeStructs(output_filename, FinalTypes);
         FileOps::outputGeneratorMap(output_filename, GeneratorMap);
         FileOps::outputTypedefs(output_filename, SingleTypedefs);
+        FileOps::outputMacros(output_filename, PreDefinedConstants);
     }
     else
         FileOps::printCallMap(CallMap);
