@@ -17,6 +17,8 @@
         {%- endfor %}
         {%- elif "__GENERATOR_FUNCTION__" in argument.variable %}
             {{ arg_key }} = {{ argument.assignment }}
+            {%- set gen_func=argument.assignment %}
+            {% include 'generator_function_calls.jinja' %}
         {%- endif %}
     {%- else %}
     {%- if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__') %}
@@ -30,7 +32,9 @@
     ReadBytes(&Input, sizeof({{ arg_key }}.{{ field_info.name }}), &{{ arg_key }}.{{ field_info.name }});
         {%- endfor %}
     {%- elif "__GENERATOR_FUNCTION__" in argument.variable %}
-    {{ arguments[0].arg_type.replace('**', '*') }} {{ arg_key }} = {{ argument.assignment }}
+    {# {{ arguments[0].arg_type.replace('**', '*') }} {{ arg_key }} = {{ argument.assignment }} #}
+    {%- set gen_func=argument.assignment %}
+    {% include 'generator_function_calls.jinja' %}
     {%- endif %}
     {%- endif %}
 {%- endfor %}

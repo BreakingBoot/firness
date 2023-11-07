@@ -80,6 +80,12 @@ class FunctionBlock:
             'includes': self.includes
         }
 
+class Macros:
+    def __init__(self, File: str, Name: str, Value: str):
+        self.file = File
+        self.name = Name
+        self.value = Value
+
 class FieldInfo:
     def __init__(self, name: str, type: str):
         self.name = name
@@ -173,7 +179,8 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
 # the same type of input args
 #
 def load_data(json_file: str,
-              harness_functions: Dict[str, List[str]]) -> Dict[str, List[FunctionBlock]]:
+              harness_functions: Dict[str, List[str]],
+              macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -201,6 +208,12 @@ def load_data(json_file: str,
             function_template[function] = function_blocks[0]
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
+                if argument[0].assignment in macros.keys():
+                    argument[0].usage = macros[argument[0].assignment].name
+                    argument[0].assignment = macros[argument[0].assignment].name
+                elif argument[0].usage in macros.keys():
+                    argument[0].assignment = macros[argument[0].usage].name
+                    argument[0].usage = macros[argument[0].usage].name
                 if contains_void_star(argument[0].arg_type):
                     void_star_data_type_counter[arg_key].update([argument[0].data_type])
 
@@ -214,7 +227,7 @@ def load_data(json_file: str,
     return filtered_function_dict
 
 
-def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
+def load_generators(json_file: str, macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -236,6 +249,16 @@ def load_generators(json_file: str) -> Dict[str, List[FunctionBlock]]:
     # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
     filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
                             for function, function_blocks in function_dict.items()}
+    
+    for function, function_blocks in filtered_function_dict.items():
+        for function_block in function_blocks:
+            for _, argument in function_block.arguments.items():
+                if argument[0].assignment in macros.keys():
+                    argument[0].usage = macros[argument[0].assignment].name
+                    argument[0].assignment = macros[argument[0].assignment].name
+                elif argument[0].usage in macros.keys():
+                    argument[0].assignment = macros[argument[0].usage].name
+                    argument[0].usage = macros[argument[0].usage].name
 
     return filtered_function_dict
 
@@ -268,6 +291,17 @@ def get_union(pre_processed_data: Dict[str, FunctionBlock],
     for function, function_block in processed_generators.items():
         union = list(set(union) | set(function_block.includes))
     return union
+
+#
+# Load Macros
+#
+def load_macros(json_file: str) -> Dict[str, Macros]:
+    with open(json_file, 'r') as file:
+        raw_data = json.load(file)
+    macros = defaultdict()
+    for macro in raw_data:
+        macros[macro["Value"]] = Macros(**macro)
+    return macros
 
 #
 # Load in the structures
@@ -649,7 +683,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     pre_processed_data = get_directly_fuzzable(input_data, pre_processed_data, aliases)
 
     # Step 3: collect the generator functions
-    # pre_processed_data = get_generators(pre_processed_data, input_generators, function_template, aliases, types)
+    pre_processed_data = get_generators(pre_processed_data, input_generators, function_template, aliases, types)
 
     # Step 4: Collect the fuzzable structs
     pre_processed_data = variable_fuzzable(input_data, types, pre_processed_data, aliases)
@@ -676,12 +710,16 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
         if function not in generators.keys():
             generators_template[function] = function_blocks[0]
             generators[function] = FunctionBlock({}, function, function_blocks[0].service)
+        elif generators_template[function].service == "":
+            generators_template[function].service = function_blocks[0].service
+            generators[function].service = function_blocks[0].service
     return generators, generators_template
     
 
 def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
+                       input_template: Dict[str, FunctionBlock],
                        aliases: Dict[str, str],
-                       types: Dict[str, List[FieldInfo]]) -> Dict[str, FunctionBlock]:
+                       types: Dict[str, List[FieldInfo]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
     
@@ -703,8 +741,26 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
     for key, function_block in generators.items():
         sorted_arguments = {k: function_block.arguments[k] for k in sorted(function_block.arguments.keys())}
         function_block.arguments = sorted_arguments
+    
+    # Step 6: remove the generators that are missing arguments from both
+    # the input_generators and the generators_template
+    incomplete_generators = []
+    for function, function_block in generators.items():
+        for arg_key, argument in function_block.arguments.items():
+            if len(argument) == 0:
+                incomplete_generators.append(function)
+                break
+
+    for function in incomplete_generators:
+        del generators[function]
+        del input_generators[function]
+        del generators_tempalate[function]
+
+    # Step 7: Combine generators template with the function template
+    input_template.update(generators_tempalate)
+
         
-    return generators
+    return input_generators, generators, input_template
 
 
 def main():
@@ -713,18 +769,20 @@ def main():
     parser.add_argument('-g', '--generator-file', dest='generator_file', default='tmp/generator-database.json', help='Path to the generator file (default: tmp/generator-database.json)')
     parser.add_argument('-t', '--types-file', dest='types_file', default='tmp/types.json', help='Path to the types file (default: tmp/types.json)')
     parser.add_argument('-a', '--alias-file', dest='alias_file', default='tmp/aliases.json', help='Path to the typedef aliases file (default: tmp/aliases.json)')
+    parser.add_argument('-m', '--macro-file', dest='macro_file', default='tmp/macros.json', help='Path to the macros file (default: tmp/macros.json)')
     parser.add_argument('-i', '--input-file', dest='input_file', default='input.txt', help='Path to the input file (default: input.txt)')
     parser.add_argument('-c', '--clean', dest='clean', action='store_true', help='Clean the generator database (default: False)')
 
     args = parser.parse_args()
     clean_harnesses(args.clean)
-    generators = load_generators(args.generator_file)
+    macros = load_macros(args.macro_file)
+    generators = load_generators(args.generator_file, macros)
     harness_functions = load_functions(args.input_file)
-    data = load_data(args.data_file, harness_functions)
+    data = load_data(args.data_file, harness_functions, macros)
     types = load_types(args.types_file)
     aliases = load_aliases(args.alias_file)
     harness_folder = generate_harness_folder()
-    processed_generators = analyze_generators(generators, aliases, types)
+    generators, processed_generators, template = analyze_generators(generators, function_template, aliases, types)
 
     # These two are treated together because we want to use generators to handle any
     # input argument that isn't either directly fuzzable or of a known input
@@ -734,12 +792,13 @@ def main():
 
     # print_template(function_template)
     processed_data = collect_all_function_arguments(data, types, generators, aliases)
+    
     # all_includes = get_union(processed_data, processed_generators)
     all_includes = get_union(processed_data, {})
 
     write_to_file(processed_generators, f'{harness_folder}/processed_generators.json')
     write_to_file(processed_data, f'{harness_folder}/processed_data.json')
-    generate_harness(processed_data, function_template, types, all_includes, processed_generators, harness_folder)
+    generate_harness(processed_data, template, types, all_includes, processed_generators, harness_folder)
 
 
 if __name__ == '__main__':
