@@ -4,10 +4,13 @@ import uuid
 import ast
 import re
 import os
+import code_generation_templates as code_gen
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
 from typing import List, Dict, Any, Tuple, Set
+
+
 
 
 scalable_params = [
@@ -498,6 +501,9 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
     # template = env.get_template('code_template.jinja')
     template = env.get_template('working_template.jinja')
     code = template.render(functions=function_dict, services=data_template, types=types_dict, generators=generators_dict)
+    code_test = code_gen.harness_generator(data_template, function_dict, types_dict, generators_dict)
+    with open(f'{harness_folder}/test.c', 'w') as f:
+        f.write(code_test)
     with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
         f.write(code)
 
