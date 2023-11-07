@@ -6,7 +6,7 @@ import re
 import os
 import code_generation_templates as code_gen
 from datetime import datetime
-from jinja2 import Environment, FileSystemLoader
+# from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
 from typing import List, Dict, Any, Tuple, Set
 
@@ -69,7 +69,7 @@ class Argument:
         }
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: List[str] = []):
+    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = []):
         self.arguments = arguments
         self.service = service
         self.function = function
@@ -99,7 +99,6 @@ def object_to_dict(obj):
         return obj 
     return obj.__dict__
 
-function_template = {}
 current_args_dict = defaultdict(list)
 protocol_guids = set()
 driver_guids = set()
@@ -183,7 +182,7 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
 #
 def load_data(json_file: str,
               harness_functions: Dict[str, List[str]],
-              macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
+              macros: Dict[str, Macros]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -204,6 +203,7 @@ def load_data(json_file: str,
     filtered_function_dict = sort_data(function_dict, harness_functions)
 
     void_star_data_type_counter = defaultdict(Counter)
+    function_template = {}
 
     # Collect data_type statistics for arg_type of "void *"
     for function, function_blocks in filtered_function_dict.items():
@@ -227,10 +227,11 @@ def load_data(json_file: str,
                 if "protocol" in function_block.arguments["Arg_0"][0].arg_type.lower():
                     function_template[function].service = "protocol"
 
-    return filtered_function_dict
+    return filtered_function_dict, function_template
 
 
-def load_generators(json_file: str, macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
+def load_generators(json_file: str, 
+                    macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -298,13 +299,15 @@ def get_union(pre_processed_data: Dict[str, FunctionBlock],
 #
 # Load Macros
 #
-def load_macros(json_file: str) -> Dict[str, Macros]:
+def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
-    macros = defaultdict()
+    macros_val = defaultdict()
+    macros_name = defaultdict()
     for macro in raw_data:
-        macros[macro["Value"]] = Macros(**macro)
-    return macros
+        macros_val[macro["Value"]] = Macros(**macro)
+        macros_name[macro["Name"]] = Macros(**macro)
+    return macros_val, macros_name
 
 #
 # Load in the structures
@@ -400,7 +403,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
     usage_seen = defaultdict(lambda: defaultdict(set))  # Keeps track of arg.usage values seen for each function and arg_key
 
-    # Step 1: Collect all arguments, respecting the unseen filter
+    # Step 1: Collect all arguments
     for function, function_blocks in input_data.items():
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
@@ -486,43 +489,47 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
 
 
 def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder):
-    env = Environment(loader=FileSystemLoader('./Templates/'))
-    template = env.get_template('Firness_main_template.jinja')
-    code = template.render(functions=function_dict)
-    with open(f'{harness_folder}/FirnessMain.c', 'w') as f:
-        f.write(code)
+    # env = Environment(loader=FileSystemLoader('./Templates/'))
+    # template = env.get_template('Firness_main_template.jinja')
+    # code = template.render(functions=function_dict)
+    # with open(f'{harness_folder}/FirnessMain.c', 'w') as f:
+    #     f.write(code)
+    code = code_gen.gen_firness_main(function_dict)
+    code_gen.write_to_file(f'{harness_folder}/FirnessMain.c', code)
 
 def generate_code(function_dict: Dict[str, FunctionBlock], 
                   data_template: Dict[str, FunctionBlock], 
                   types_dict: Dict[str, List[FieldInfo]], 
                   generators_dict: Dict[str, FunctionBlock], 
                   harness_folder):
-    env = Environment(loader=FileSystemLoader('./Templates/'))
+    # env = Environment(loader=FileSystemLoader('./Templates/'))
     # template = env.get_template('code_template.jinja')
-    template = env.get_template('working_template.jinja')
-    code = template.render(functions=function_dict, services=data_template, types=types_dict, generators=generators_dict)
-    code_test = code_gen.harness_generator(data_template, function_dict, types_dict, generators_dict)
-    with open(f'{harness_folder}/test.c', 'w') as f:
-        f.write(code_test)
-    with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
-        f.write(code)
+    # template = env.get_template('working_template.jinja')
+    # code = template.render(functions=function_dict, services=data_template, types=types_dict, generators=generators_dict)
+    # with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
+    #     f.write(code)
+    code = code_gen.harness_generator(data_template, function_dict, types_dict, generators_dict)
+    code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
 def generate_header(function_dict: Dict[str, FunctionBlock], 
                     all_includes: List[str], 
                     harness_folder):
-    env = Environment(loader=FileSystemLoader('./Templates/'))
-    template = env.get_template('header_template.jinja')
-    code = template.render(functions=function_dict, includes=all_includes)
-    with open(f'{harness_folder}/FirnessHarnesses.h', 'w') as f:
-        f.write(code)
+    # env = Environment(loader=FileSystemLoader('./Templates/'))
+    # template = env.get_template('header_template.jinja')
+    # code = template.render(functions=function_dict, includes=all_includes)
+    # with open(f'{harness_folder}/FirnessHarnesses.h', 'w') as f:
+    #     f.write(code)
+    code = code_gen.harness_header(all_includes, function_dict)
+    code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 def generate_inf(harness_folder):
-    env = Environment(loader=FileSystemLoader('./Templates/'))
-    template = env.get_template('inf_template.jinja')
-    code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids)
-    with open(f'{harness_folder}/FirnessHarnesses.inf', 'w') as f:
-        f.write(code)
-
+    # env = Environment(loader=FileSystemLoader('./Templates/'))
+    # template = env.get_template('inf_template.jinja')
+    # code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids)
+    # with open(f'{harness_folder}/FirnessHarnesses.inf', 'w') as f:
+    #     f.write(code)
+    code = code_gen.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids)
+    code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
 def write_to_file(filtered_args_dict: Dict[str, FunctionBlock], filename: str) -> None:
     output_dict = [function_block.to_dict() for function_block in filtered_args_dict.values()]
@@ -655,7 +662,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     os.system(f'cp {harness_folder}/* Firness/')
 
 
-def initialize_data() -> Dict[str, FunctionBlock]:
+def initialize_data(function_template: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
     initial_data = {}
     current_args_dict.clear()
     for func, func_block in function_template.items():
@@ -675,11 +682,13 @@ def add_output_variables(function_template: Dict[str, FunctionBlock],
 
 
 def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
+                                   function_template: Dict[str, FunctionBlock],
                                    types: Dict[str, List[FieldInfo]],
                                    input_generators: Dict[str, List[FunctionBlock]],
-                                   aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
+                                   aliases: Dict[str, str],
+                                   macros: Dict[str, Macros]) -> Dict[str, FunctionBlock]:
     # Collect all of the arguments to be passed to the template
-    pre_processed_data = initialize_data()
+    pre_processed_data = initialize_data(function_template)
     pre_processed_data = get_intersect(input_data, pre_processed_data)
 
     # Step 1: Collect the constant arguments
@@ -696,6 +705,15 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
 
     # Step 5: Add the output variables
     pre_processed_data = add_output_variables(function_template, pre_processed_data)
+
+    # Step 6: add the includes for constants/macro definitions
+    for function, function_block in pre_processed_data.items():
+        for arg_key, arguments in function_block.arguments.items():
+            for arg in arguments:
+                if arg.assignment in macros.keys():
+                    function_block.includes.append(macros[arg.assignment].file)
+                elif arg.usage in macros.keys():
+                    function_block.includes.append(macros[arg.usage].file)
 
     # Step 6: Sort the arguments
     for key, function_block in pre_processed_data.items():
@@ -728,6 +746,7 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
                        types: Dict[str, List[FieldInfo]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
+    output_template = input_template.copy()
     
     # Step 1: Collect the constant arguments
     # generators = collect_known_constants(generators, generators)
@@ -763,10 +782,10 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
         del generators_tempalate[function]
 
     # Step 7: Combine generators template with the function template
-    input_template.update(generators_tempalate)
+    output_template.update(generators_tempalate)
 
         
-    return input_generators, generators, input_template
+    return input_generators, generators, output_template
 
 
 def main():
@@ -781,10 +800,10 @@ def main():
 
     args = parser.parse_args()
     clean_harnesses(args.clean)
-    macros = load_macros(args.macro_file)
-    generators = load_generators(args.generator_file, macros)
+    macros_val, macros_name = load_macros(args.macro_file)
+    generators = load_generators(args.generator_file, macros_val)
     harness_functions = load_functions(args.input_file)
-    data = load_data(args.data_file, harness_functions, macros)
+    data, function_template = load_data(args.data_file, harness_functions, macros_val)
     types = load_types(args.types_file)
     aliases = load_aliases(args.alias_file)
     harness_folder = generate_harness_folder()
@@ -797,7 +816,7 @@ def main():
     # that have all scalable fields will be directly generated with random input
 
     # print_template(function_template)
-    processed_data = collect_all_function_arguments(data, types, generators, aliases)
+    processed_data = collect_all_function_arguments(data, function_template, types, generators, aliases, macros_name)
     
     # all_includes = get_union(processed_data, processed_generators)
     all_includes = get_union(processed_data, {})
