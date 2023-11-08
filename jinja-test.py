@@ -782,7 +782,9 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
         del generators_tempalate[function]
 
     # Step 7: Combine generators template with the function template
-    output_template.update(generators_tempalate)
+    for function, function_block in generators_tempalate.items():
+        if function not in output_template.keys():
+            output_template[function] = function_block
 
         
     return input_generators, generators, output_template

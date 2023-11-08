@@ -75,7 +75,7 @@ def generate_outputs(all_args: Dict[str, List[Argument]],
     tmp = []
     
     for arg_key, arguments in all_args.items():
-        if "OUT" in arguments[0].arg_dir:
+        if "OUT" in arguments[0].arg_dir and not "IN" in arguments[0].arg_dir:
             tmp.extend(declare_var(arg_key, arguments, arg_type_list, False))
     
     if len(tmp) > 0:
@@ -116,12 +116,24 @@ def harness_header(includes: List[str],
 
     return output
 
+# properly add casts to the arguments based off the difference
+# between the argument type and the type tracker type along with
+# the pointer count
 def cast_arg(arg_key:str,
-             arguments: List[Argument]) -> str:
-    if arguments[0].pointer_count > 1:
-        return f"({arg_key} == 0) ? NULL : ({arguments[0].arg_type.replace('**', '*')}){arg_key}"
-    else:
-        return f"({arg_key}_array[0] == 0) ? NULL : {arg_key}_array"
+             arguments: List[Argument],
+             arg_type_list: List[TypeTracker]) -> str:
+    
+    update_arg = ""
+    for arg in arg_type_list:
+        if arg.name == arg_key:
+            if arg.arg_type != arguments[0].arg_type:
+                update_arg += f'({arguments[0].arg_type})'
+            if arguments[0].pointer_count > arg.pointer_count:
+                update_arg += f'&'
+            break
+    update_arg += arg_key
+
+    return update_arg
     
 
 def call_function(function: str, 
@@ -131,6 +143,7 @@ def call_function(function: str,
                   arg_type_list: List[TypeTracker],                    
                   indent: bool) -> List[str]:
     output = []
+
     if "protocol" in services[function].service:
         call_prefix = protocol_variable + "->"
     elif "BS" in services[function].service or "Boot" in services[function].service:
@@ -142,9 +155,7 @@ def call_function(function: str,
     
     output.append(f"Status = {call_prefix}{function}(")
     for arg_key, arguments in function_block.arguments.items():
-        arg_prefix = "&" if arguments[0].pointer_count > 1 else ""
-        arg_prefix = f'(VOID **){arg_prefix}' if "void" in arguments[0].arg_type.lower() else arg_prefix
-        tmp = f"    {arg_prefix}{arg_key},"
+        tmp = f"    {cast_arg(arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
         if arg_key == list(function_block.arguments.keys())[-1]:
             tmp = tmp[:-1]
@@ -152,6 +163,13 @@ def call_function(function: str,
     output.append(f");")
 
     return add_indents(output, indent)
+
+def add_ptrs(arg_type: str,
+             num_ptrs: int) -> str:
+    if num_ptrs == 0:
+        return arg_type
+    else:
+        return add_ptrs(f"{arg_type}*", num_ptrs - 1)
 
 def declare_var(arg_key: str, 
                 arguments: List[Argument],
@@ -162,16 +180,18 @@ def declare_var(arg_key: str,
         print(f"ERROR: {arg_key} has more than 2 pointers")
         return output
     elif arguments[0].pointer_count == 2:
-        arg_type = "UINTN" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
-        arg_type_list.update([TypeTracker(arg_type, arg_key, 1)])
+        arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
+        arg_type_list.append(TypeTracker(arg_type, arg_key, 1))
         # output.append(f'UINT8 *{arg_key}_array = NULL;')
         # output.append(f'ReadBytes(&Input, sizeof({arg_key}_array), &{arg_key}_array);')
         # arg_type = f'{arg_type}[{arg_key}_array[0]]'
     else:
-        arg_type = "UINTN" if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
-        arg_type_list.update([TypeTracker(arg_type, arg_key, arguments[0].pointer_count)])
-    
-    output.append(f"{arg_type} {arg_key} = NULL;")
+        arg_type = add_ptrs("UINTN", arguments[0].pointer_count) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
+        arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count))
+    if arguments[0].pointer_count > 0:
+        output.append(f'{arg_type} {arg_key} = NULL;')
+    else:
+        output.append(f"{arg_type} {arg_key};")
     
     return add_indents(output, indent)
 
@@ -292,17 +312,17 @@ def generator_struct_args(arg_key: str,
             output.append(f'    case {index}:')
             if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__'):
                 for field in types[remove_ref_symbols(argument.arg_type)]:
-                    output.append(f'ReadBytes(&Input, sizeof({field.name}), &{arg_key}.{field.name});')
-            elif "__GENERATOR_FUNCTION__" in argument.variable:
-                output.extend(function_body(generators[argument.assignment], services, protocol_variable, generators, types, True))
+                    output.append(f'ReadBytes(&Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
+            # elif "__GENERATOR_FUNCTION__" in argument.variable:
+            #     output.extend(function_body(generators[argument.assignment], services, protocol_variable, generators, types, True))
             output.append(f'        break;')
         output.append('}')
     else:
         if arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__'):
             for field in types[remove_ref_symbols(arguments[0].arg_type)]:
-                output.append(f'ReadBytes(&Input, sizeof({field.name}), &{arg_key}.{field.name});')
-        elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
-            output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
+                output.append(f'ReadBytes(&Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
+        # elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
+        #     output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
 
     return add_indents(output, indent)
 
@@ -313,7 +333,7 @@ def function_body(function_block: FunctionBlock,
                   types: Dict[str, List[FieldInfo]],
                   indent: bool) -> List[str]:
     output = []
-    arg_type_list = list(TypeTracker)
+    arg_type_list = []
     output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False))
     output.extend(generate_outputs(function_block.arguments, arg_type_list, False))
     output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False))
@@ -389,12 +409,12 @@ def gen_firness_main(functions: Dict[str, FunctionBlock]) -> List[str]:
     output.append("    Input.Length = size;")
     output.append("")
     output.append("    UINT8 *DriverChoice = NULL;")
-    output.append("    ReadBytes(&Input, sizeof(Driver_Choice), &Driver_Choice);")
+    output.append("    ReadBytes(&Input, sizeof(DriverChoice), &DriverChoice);")
     output.append(f'    switch(DriverChoice[0]%{len(functions)})')
     output.append("    {")
     for index, function in enumerate(functions):
         output.append(f'        case {index}:')
-        output.append(f'            Status = Fuzz{function}(Input, SystemTable);')
+        output.append(f'            Status = Fuzz{function}(&Input, SystemTable);')
         output.append("            break;")
     output.append("    }")
 
