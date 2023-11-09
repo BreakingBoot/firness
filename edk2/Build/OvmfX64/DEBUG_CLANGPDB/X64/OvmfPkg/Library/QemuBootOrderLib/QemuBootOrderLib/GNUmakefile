@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = QemuBootOrderLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/QemuBootOrderLib
 PACKAGE_RELATIVE_DIR = Library/QemuBootOrderLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuBootOrderLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1D677A58-C753-4AF1-B552-EFE142DF8F57QemuBootOrderLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/QemuBootOrderLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1D677A58-C753-4AF1-B552-EFE142DF8F57QemuBootOrderLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -234,7 +234,7 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/object_files.lst
 
 
 #
@@ -244,7 +244,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/QemuBootOrderLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/QemuBootOrderLib.lib \
               
 
 #
@@ -322,16 +322,16 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/ExtraRootBusMap.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ExtraRootBusMap.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ExtraRootBusMap.obj : $(WORKSPACE)/OvmfPkg/Library/QemuBootOrderLib/ExtraRootBusMap.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/./ExtraRootBusMap.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuBootOrderLib/ExtraRootBusMap.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/./ExtraRootBusMap.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/QemuBootOrderLib/ExtraRootBusMap.c
 
 $(OUTPUT_DIR)/QemuBootOrderLib.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/QemuBootOrderLib.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/QemuBootOrderLib.obj : $(WORKSPACE)/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/./QemuBootOrderLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/./QemuBootOrderLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib.c
 
 $(OUTPUT_DIR)/QemuBootOrderLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/QemuBootOrderLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/QemuBootOrderLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib/OUTPUT/QemuBootOrderLib.lib @$(OBJECT_FILES_LIST)
 
 
 

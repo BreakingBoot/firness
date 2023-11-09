@@ -1,6 +1,6 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLibInternal.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/MemEncryptSevLib.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecVirtualMemory.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecSnpSystemRamValidate.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SnpPageStateChangeInternal.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/VirtualMemory.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLibInternal.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/MemEncryptSevLib.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecVirtualMemory.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecSnpSystemRamValidate.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SnpPageStateChangeInternal.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/VirtualMemory.obj

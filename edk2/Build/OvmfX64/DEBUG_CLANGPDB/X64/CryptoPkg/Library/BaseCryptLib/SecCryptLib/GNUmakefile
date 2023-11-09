@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = SecCryptLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = CryptoPkg/Library/BaseCryptLib
 PACKAGE_RELATIVE_DIR = Library/BaseCryptLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/3689D343-0D32-4284-8053-BF10537990E8SecCryptLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/3689D343-0D32-4284-8053-BF10537990E8SecCryptLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -209,7 +209,6 @@ VPDTOOL_BUILDRULEFAMILY =  CLANGPDB
 VPDTOOL_GUID =  8C3D856A-9BE6-468E-850A-24F7A8D38E08
 VPDTOOL = BPDG
 
-CC_RESP =  @/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/cc_resp.txt
 
 MAKE_FILE = $(MODULE_BUILD_DIR)/GNUmakefile
 
@@ -280,7 +279,7 @@ INC =  \
     -I$(WORKSPACE)/CryptoPkg/Library/MbedTlsLib/mbedtls/include/mbedtls \
     -I$(WORKSPACE)/CryptoPkg/Library/MbedTlsLib/mbedtls/library
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/object_files.lst
 
 
 #
@@ -290,7 +289,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SecCryptLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SecCryptLib.lib \
               
 
 #
@@ -365,159 +364,159 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptAuthenticodeNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptAuthenticodeNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptAuthenticodeNull.c
-
-$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha1Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha1Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha1Null.c
-
-$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptEcNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptEcNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptEcNull.c
-
-$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaExtNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaExtNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaExtNull.c
-
-$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/SysCall/ConstantTimeClock.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/ConstantTimeClock.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/ConstantTimeClock.c
-
-$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssSignNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaPssSignNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssSignNull.c
-
-$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSm3Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSm3Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSm3Null.c
-
-$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Bn/CryptBnNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Bn/CryptBnNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Bn/CryptBnNull.c
-
-$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptMd5Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptMd5Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptMd5Null.c
+$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptParallelHashNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptParallelHashNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptParallelHashNull.c
 
 $(OUTPUT_DIR)/Pk/CryptDhNull.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Pk/CryptDhNull.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Pk/CryptDhNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptDhNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptDhNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptDhNull.c
-
-$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs5Pbkdf2Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs5Pbkdf2Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs5Pbkdf2Null.c
-
-$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptTsNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptTsNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptTsNull.c
-
-$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptX509Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptX509Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptX509Null.c
-
-$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaPssNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssNull.c
-
-$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptParallelHashNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptParallelHashNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptParallelHashNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptParallelHashNull.c
-
-$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pem/CryptPemNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pem/CryptPemNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pem/CryptPemNull.c
-
-$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha512.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha512.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha512.c
-
-$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs1OaepNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs1OaepNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs1OaepNull.c
-
-$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/SysCall/CrtWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/CrtWrapper.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/CrtWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptDhNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptDhNull.c
 
 $(OUTPUT_DIR)/Pk/CryptPkcs7SignNull.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Pk/CryptPkcs7SignNull.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Pk/CryptPkcs7SignNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7SignNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7SignNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7SignNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7SignNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7SignNull.c
 
-$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaBasicNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaBasicNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaBasicNull.c
-
-$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7VerifyNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyNull.c
-
-$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hmac/CryptHmacNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hmac/CryptHmacNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hmac/CryptHmacNull.c
+$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptEcNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptEcNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptEcNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptEcNull.c
 
 $(OUTPUT_DIR)/SysCall/BaseMemAllocation.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SysCall/BaseMemAllocation.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SysCall/BaseMemAllocation.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/SysCall/BaseMemAllocation.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/BaseMemAllocation.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/BaseMemAllocation.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/BaseMemAllocation.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/BaseMemAllocation.c
 
-$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAeadAesGcmNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Cipher/CryptAeadAesGcmNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAeadAesGcmNull.c
+$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptSha512.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha512.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha512.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha512.c
 
-$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha256Null.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha256Null.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha256Null.c
+$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hmac/CryptHmacNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hmac/CryptHmacNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hmac/CryptHmacNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hmac/CryptHmacNull.c
 
-$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Kdf/CryptHkdfNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Kdf/CryptHkdfNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Kdf/CryptHkdfNull.c
+$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptX509Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptX509Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptX509Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptX509Null.c
 
 $(OUTPUT_DIR)/Pk/CryptPkcs7VerifyEkuNull.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Pk/CryptPkcs7VerifyEkuNull.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Pk/CryptPkcs7VerifyEkuNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyEkuNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7VerifyEkuNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyEkuNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7VerifyEkuNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyEkuNull.c
 
-$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Rand/CryptRandNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Rand/CryptRandNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Rand/CryptRandNull.c
+$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptPkcs5Pbkdf2Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs5Pbkdf2Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs5Pbkdf2Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs5Pbkdf2Null.c
+
+$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptSha1Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha1Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha1Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha1Null.c
+
+$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptPkcs7VerifyNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs7VerifyNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs7VerifyNull.c
+
+$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptRsaPssNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaPssNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssNull.c
+
+$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptTsNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptTsNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptTsNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptTsNull.c
+
+$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Bn/CryptBnNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Bn/CryptBnNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Bn/CryptBnNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Bn/CryptBnNull.c
+
+$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Cipher/CryptAeadAesGcmNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAeadAesGcmNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Cipher/CryptAeadAesGcmNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAeadAesGcmNull.c
+
+$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptSm3Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSm3Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSm3Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSm3Null.c
+
+$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pem/CryptPemNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pem/CryptPemNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pem/CryptPemNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pem/CryptPemNull.c
+
+$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SysCall/CrtWrapper.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/SysCall/CrtWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/CrtWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/CrtWrapper.c
+
+$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptPkcs1OaepNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs1OaepNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptPkcs1OaepNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptPkcs1OaepNull.c
+
+$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptRsaExtNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaExtNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaExtNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaExtNull.c
+
+$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptRsaBasicNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaBasicNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaBasicNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaBasicNull.c
+
+$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptAuthenticodeNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptAuthenticodeNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptAuthenticodeNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptAuthenticodeNull.c
+
+$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SysCall/ConstantTimeClock.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/SysCall/ConstantTimeClock.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SysCall/ConstantTimeClock.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/SysCall/ConstantTimeClock.c
 
 $(OUTPUT_DIR)/Cipher/CryptAesNull.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Cipher/CryptAesNull.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Cipher/CryptAesNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAesNull.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_RESP) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Cipher/CryptAesNull.obj  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAesNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Cipher/CryptAesNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Cipher/CryptAesNull.c
+
+$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Kdf/CryptHkdfNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Kdf/CryptHkdfNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Kdf/CryptHkdfNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Kdf/CryptHkdfNull.c
+
+$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Pk/CryptRsaPssSignNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssSignNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Pk/CryptRsaPssSignNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Pk/CryptRsaPssSignNull.c
+
+$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Rand/CryptRandNull.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Rand/CryptRandNull.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Rand/CryptRandNull.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Rand/CryptRandNull.c
+
+$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptSha256Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha256Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptSha256Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptSha256Null.c
+
+$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash/CryptMd5Null.obj : $(WORKSPACE)/CryptoPkg/Library/BaseCryptLib/Hash/CryptMd5Null.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/Hash/CryptMd5Null.obj $(INC) /home/gl055/Research/Harden/firness/edk2/CryptoPkg/Library/BaseCryptLib/Hash/CryptMd5Null.c
 
 $(OUTPUT_DIR)/SecCryptLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/SecCryptLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SecCryptLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/CryptoPkg/Library/BaseCryptLib/SecCryptLib/OUTPUT/SecCryptLib.lib @$(OBJECT_FILES_LIST)
 
 
 

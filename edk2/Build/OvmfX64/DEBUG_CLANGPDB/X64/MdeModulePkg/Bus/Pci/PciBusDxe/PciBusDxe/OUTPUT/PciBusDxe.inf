@@ -218,24 +218,24 @@ PciBusDxeExtra.uni
 
 [BuildOptions.X64]
 ## @AsBuilt
-##   GCC:DEBUG_CLANGPDB_X64_ASMLINK_FLAGS = /nologo /tiny
-##   GCC:DEBUG_CLANGPDB_X64_DLINK2_FLAGS = 
-##   GCC:DEBUG_CLANGPDB_X64_DTC_FLAGS = -H epapr
-##   GCC:DEBUG_CLANGPDB_X64_DLINK_FLAGS = /NOLOGO /NODEFAULTLIB /IGNORE:4001 /OPT:REF /OPT:ICF=10 /ALIGN:32 /FILEALIGN:32 /Machine:X64 /DLL /ENTRY:$(IMAGE_ENTRY_POINT) /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER /SAFESEH:NO /BASE:0 /DEBUG:GHASH /MLLVM:-exception-model=wineh /lldmap
-##   GCC:DEBUG_CLANGPDB_X64_VFRPP_FLAGS = -x c -E -P -DVFRCOMPILE --include $(MODULE_NAME)StrDefs.h -target x86_64-unknown-windows-gnu
-##   GCC:DEBUG_CLANGPDB_X64_OPTROM_FLAGS = -e
-##   GCC:DEBUG_CLANGPDB_X64_NASM_FLAGS = -f win64
-##   GCC:DEBUG_CLANGPDB_X64_APP_FLAGS = 
-##   GCC:DEBUG_CLANGPDB_X64_ASL_FLAGS = 
-##   GCC:DEBUG_CLANGPDB_X64_PP_FLAGS = -E -x assembler-with-cpp -include AutoGen.h -target x86_64-unknown-windows-gnu
-##   GCC:DEBUG_CLANGPDB_X64_OBJCOPY_FLAGS = 
-##   GCC:DEBUG_CLANGPDB_X64_ASLCC_FLAGS = -x c -m64 -fno-lto -target x86_64-unknown-windows-gnu
-##   GCC:DEBUG_CLANGPDB_X64_SYMRENAME_FLAGS = Symbol renaming not needed for
-##   GCC:DEBUG_CLANGPDB_X64_NASMB_FLAGS = -f bin
 ##   GCC:DEBUG_CLANGPDB_X64_ASLPP_FLAGS = -x c -E -include AutoGen.h -target x86_64-unknown-windows-gnu
 ##   GCC:DEBUG_CLANGPDB_X64_ASLDLINK_FLAGS = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:CONSOLE
 ##   GCC:DEBUG_CLANGPDB_X64_GENFW_FLAGS = --keepexceptiontable
+##   GCC:DEBUG_CLANGPDB_X64_OBJCOPY_FLAGS = 
 ##   GCC:DEBUG_CLANGPDB_X64_DEPS_FLAGS = -MMD -MF $@.deps
-##   GCC:DEBUG_CLANGPDB_X64_VFR_FLAGS = -l -n
 ##   GCC:DEBUG_CLANGPDB_X64_ASM_FLAGS = -c -x assembler -imacros AutoGen.h -m64 -target x86_64-unknown-windows-gnu
 ##   GCC:DEBUG_CLANGPDB_X64_CC_FLAGS = -g -Os -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -include AutoGen.h -fno-common -ffunction-sections -fdata-sections -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -Wno-parentheses-equality -Wno-tautological-compare -Wno-tautological-constant-out-of-range-compare -Wno-empty-body -Wno-unused-const-variable -Wno-varargs -Wno-unknown-warning-option -Wno-unused-but-set-variable -Wno-unused-const-variable -Wno-unaligned-access -Wno-microsoft-enum-forward-reference -fno-stack-protector -funsigned-char -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang -Wno-address -Wno-shift-negative-value -Wno-unknown-pragmas -Wno-incompatible-library-redeclaration -Wno-null-dereference -mno-implicit-float -mms-bitfields -mno-stack-arg-probe -nostdlib -nostdlibinc -fseh-exceptions -m64 "-DEFIAPI=__attribute__((ms_abi))" -mno-red-zone -mcmodel=small -Oz -flto -target x86_64-unknown-windows-gnu -gcodeview  -funwind-tables -D DISABLE_NEW_DEPRECATED_INTERFACES -D TDX_GUEST_SUPPORTED -D ENABLE_MD5_DEPRECATED_INTERFACES
+##   GCC:DEBUG_CLANGPDB_X64_ASMLINK_FLAGS = /nologo /tiny
+##   GCC:DEBUG_CLANGPDB_X64_VFR_FLAGS = -l -n
+##   GCC:DEBUG_CLANGPDB_X64_ASLCC_FLAGS = -x c -m64 -fno-lto -target x86_64-unknown-windows-gnu
+##   GCC:DEBUG_CLANGPDB_X64_APP_FLAGS = 
+##   GCC:DEBUG_CLANGPDB_X64_NASM_FLAGS = -f win64
+##   GCC:DEBUG_CLANGPDB_X64_OPTROM_FLAGS = -e
+##   GCC:DEBUG_CLANGPDB_X64_DTC_FLAGS = -H epapr
+##   GCC:DEBUG_CLANGPDB_X64_SYMRENAME_FLAGS = Symbol renaming not needed for
+##   GCC:DEBUG_CLANGPDB_X64_PP_FLAGS = -E -x assembler-with-cpp -include AutoGen.h -target x86_64-unknown-windows-gnu
+##   GCC:DEBUG_CLANGPDB_X64_VFRPP_FLAGS = -x c -E -P -DVFRCOMPILE --include $(MODULE_NAME)StrDefs.h -target x86_64-unknown-windows-gnu
+##   GCC:DEBUG_CLANGPDB_X64_DLINK_FLAGS = /NOLOGO /NODEFAULTLIB /IGNORE:4001 /OPT:REF /OPT:ICF=10 /ALIGN:32 /FILEALIGN:32 /Machine:X64 /DLL /ENTRY:$(IMAGE_ENTRY_POINT) /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER /SAFESEH:NO /BASE:0 /DEBUG:GHASH /MLLVM:-exception-model=wineh /lldmap
+##   GCC:DEBUG_CLANGPDB_X64_ASL_FLAGS = 
+##   GCC:DEBUG_CLANGPDB_X64_NASMB_FLAGS = -f bin
+##   GCC:DEBUG_CLANGPDB_X64_DLINK2_FLAGS = 

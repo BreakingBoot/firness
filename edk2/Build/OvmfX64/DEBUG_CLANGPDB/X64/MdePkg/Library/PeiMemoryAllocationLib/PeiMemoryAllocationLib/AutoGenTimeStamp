@@ -1,3 +1,3 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib/DEBUG/AutoGen.h
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/PeiMemoryAllocationLib/MemoryAllocationLib.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/PeiMemoryAllocationLib/MemoryAllocationLib.c

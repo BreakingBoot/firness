@@ -1,4 +1,4 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/ResetSystemLib/DxeResetShutdown.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/ResetSystemLib/ResetSystemLib.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/ResetSystemLib/ResetSystemLib.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/ResetSystemLib/DxeResetShutdown.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf

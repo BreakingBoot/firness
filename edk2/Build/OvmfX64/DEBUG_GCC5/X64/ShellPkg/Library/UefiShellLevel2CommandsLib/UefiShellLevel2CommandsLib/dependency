@@ -1,0 +1,35 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Cd.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Map.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Mv.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Cp.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Attrib.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Parse.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/MkDir.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Reset.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/UefiShellLevel2CommandsLib.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/TimeDate.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Rm.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Ls.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Vol.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/AutoGen.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Load.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/Set.obj.deps
+
+               

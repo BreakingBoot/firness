@@ -1,0 +1,15 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/UefiNotTiano.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/Console.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/UefiLibPrint.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/UefiLib.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/UefiDriverModel.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/UefiLib/UefiLib/OUTPUT/Acpi.obj.deps
+
+               

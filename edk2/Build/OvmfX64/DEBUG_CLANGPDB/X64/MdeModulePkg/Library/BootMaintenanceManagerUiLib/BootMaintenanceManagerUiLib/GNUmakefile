@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = BootMaintenanceManagerUiLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Library/BootMaintenanceManagerUiLib
 PACKAGE_RELATIVE_DIR = Library/BootMaintenanceManagerUiLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/CA9E4824-4198-4715-AA22-E2935E703A07BootMaintenanceManagerUiLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/CA9E4824-4198-4715-AA22-E2935E703A07BootMaintenanceManagerUiLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -242,7 +242,7 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/object_files.lst
 
 
 #
@@ -252,7 +252,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/BootMaintenanceManagerUiLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/BootMaintenanceManagerUiLib.lib \
               
 
 #
@@ -331,76 +331,76 @@ $(DEBUG_DIR)/BootMaintenanceManager.c : $(MAKE_FILE)
 $(DEBUG_DIR)/BootMaintenanceManager.c : $(DEBUG_DIR)/AutoGen.h
 $(DEBUG_DIR)/BootMaintenanceManager.c : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
 $(DEBUG_DIR)/BootMaintenanceManager.c : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManager.vfr
-	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManager.vfr > $(OUTPUT_DIR)/BootMaintenanceManager.i
-	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/. $(OUTPUT_DIR)/BootMaintenanceManager.i
-
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUiSupport.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManagerCustomizedUiSupport.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUiSupport.c
-
-$(OUTPUT_DIR)/ConsoleOption.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ConsoleOption.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ConsoleOption.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/ConsoleOption.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/ConsoleOption.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./ConsoleOption.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/ConsoleOption.c
-
-$(OUTPUT_DIR)/BootOption.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootOption.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BootOption.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/BootOption.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootOption.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootOption.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootOption.c
-
-$(OUTPUT_DIR)/BootMaintenanceManager.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootMaintenanceManager.obj : $(DEBUG_DIR)/BootMaintenanceManager.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManager.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/BootMaintenanceManager.c
-
-$(OUTPUT_DIR)/Variable.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Variable.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Variable.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/Variable.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Variable.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./Variable.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Variable.c
-
-$(OUTPUT_DIR)/BootMaintenance.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootMaintenance.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BootMaintenance.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/BootMaintenance.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenance.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenance.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenance.c
-
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUi.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManagerCustomizedUi.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUi.c
-
-$(OUTPUT_DIR)/UpdatePage.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/UpdatePage.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/UpdatePage.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/UpdatePage.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/UpdatePage.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./UpdatePage.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/UpdatePage.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/AutoGen.c
+	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManager.vfr > $(OUTPUT_DIR)/BootMaintenanceManager.i
+	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/. $(OUTPUT_DIR)/BootMaintenanceManager.i
 
 $(OUTPUT_DIR)/BmLib.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/BmLib.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/BmLib.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
 $(OUTPUT_DIR)/BmLib.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BmLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BmLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BmLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BmLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BmLib.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/BootMaintenanceManager.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootMaintenanceManager.obj : $(DEBUG_DIR)/BootMaintenanceManager.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManager.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/DEBUG/BootMaintenanceManager.c
+
+$(OUTPUT_DIR)/ConsoleOption.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ConsoleOption.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ConsoleOption.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/ConsoleOption.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/ConsoleOption.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./ConsoleOption.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/ConsoleOption.c
+
+$(OUTPUT_DIR)/BootMaintenance.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootMaintenance.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BootMaintenance.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/BootMaintenance.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenance.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenance.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenance.c
+
+$(OUTPUT_DIR)/BootOption.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootOption.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BootOption.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/BootOption.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootOption.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootOption.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootOption.c
+
+$(OUTPUT_DIR)/Variable.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Variable.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Variable.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/Variable.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Variable.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./Variable.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Variable.c
+
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUi.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUi.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManagerCustomizedUi.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUi.c
+
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/BootMaintenanceManagerCustomizedUiSupport.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUiSupport.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./BootMaintenanceManagerCustomizedUiSupport.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerCustomizedUiSupport.c
+
+$(OUTPUT_DIR)/UpdatePage.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/UpdatePage.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/UpdatePage.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
+$(OUTPUT_DIR)/UpdatePage.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/UpdatePage.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./UpdatePage.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/UpdatePage.c
 
 $(OUTPUT_DIR)/Data.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Data.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Data.obj : $(DEBUG_DIR)/BootMaintenanceManagerUiLibStrDefs.h
 $(OUTPUT_DIR)/Data.obj : $(WORKSPACE)/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Data.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./Data.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Data.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/./Data.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/BootMaintenanceManagerUiLib/Data.c
 
 $(OUTPUT_DIR)/BootMaintenanceManagerUiLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/BootMaintenanceManagerUiLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/BootMaintenanceManagerUiLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib/OUTPUT/BootMaintenanceManagerUiLib.lib @$(OBJECT_FILES_LIST)
 
 
 

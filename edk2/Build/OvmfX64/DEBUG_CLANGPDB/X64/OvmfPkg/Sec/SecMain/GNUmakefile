@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = SecMain
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Sec
 PACKAGE_RELATIVE_DIR = Sec
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/df1ccef6-f301-4a63-9661-fc6030dcc880SecMain
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/df1ccef6-f301-4a63-9661-fc6030dcc880SecMain
 
 MODULE_ENTRY_POINT = SecMain
 ARCH_ENTRY_POINT = SecMain
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -297,9 +297,9 @@ NASM_INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include/ \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/static_library_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/static_library_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/inc.lst
 
 
 #
@@ -309,7 +309,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -425,31 +425,31 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/SecMain.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SecMain.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SecMain.obj : $(WORKSPACE)/OvmfPkg/Sec/SecMain.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./SecMain.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec/SecMain.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./SecMain.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec/SecMain.c
 
 $(OUTPUT_DIR)/AmdSev.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AmdSev.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AmdSev.obj : $(WORKSPACE)/OvmfPkg/Sec/AmdSev.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./AmdSev.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec/AmdSev.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/./AmdSev.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec/AmdSev.c
 
 $(OUTPUT_DIR)/SecMain.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/SecMain.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/SecMain.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/SecMain.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/SecMain.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/SecMain.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/SecMain.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/SecMain.efi : $(DEBUG_DIR)/SecMain.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/SecMain.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/DEBUG/SecMain.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/SecMain.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -459,10 +459,10 @@ $(OUTPUT_DIR)/SecMain.map : $(OUTPUT_DIR)/SecMain.efi
 $(OUTPUT_DIR)/X64/SecEntry.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/SecEntry.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/SecEntry.obj : $(WORKSPACE)/OvmfPkg/Sec/X64/SecEntry.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec/X64/SecEntry.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec/X64/SecEntry.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Sec/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec/X64/SecEntry.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec/X64/SecEntry.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Sec/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Sec/SecMain/OUTPUT/X64/SecEntry.iii
 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : $(OUTPUT_DIR)/SecMain.map
 	test -f $(OUTPUT_DIR)/SecMain.map && $(CP) $(OUTPUT_DIR)/SecMain.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map

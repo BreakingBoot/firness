@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = TerminalDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Universal/Console/TerminalDxe
 PACKAGE_RELATIVE_DIR = Universal/Console/TerminalDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/9E863906-A40F-4875-977F-5B93FF237FC6TerminalDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/9E863906-A40F-4875-977F-5B93FF237FC6TerminalDxe
 
 MODULE_ENTRY_POINT = InitializeTerminal
 ARCH_ENTRY_POINT = InitializeTerminal
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -258,8 +258,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -269,7 +269,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -363,54 +363,54 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/TerminalConIn.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TerminalConIn.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TerminalConIn.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./TerminalConIn.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c
-
-$(OUTPUT_DIR)/Terminal.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Terminal.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Terminal.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Terminal.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/AutoGen.c
+$(OUTPUT_DIR)/Vtutf8.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Vtutf8.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Vtutf8.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/Vtutf8.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Vtutf8.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Vtutf8.c
 
 $(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/ComponentName.c
-
-$(OUTPUT_DIR)/TerminalConOut.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TerminalConOut.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TerminalConOut.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./TerminalConOut.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-
-$(OUTPUT_DIR)/Vtutf8.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Vtutf8.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Vtutf8.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/Vtutf8.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Vtutf8.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Vtutf8.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/ComponentName.c
 
 $(OUTPUT_DIR)/Ansi.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Ansi.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Ansi.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/Ansi.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Ansi.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Ansi.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Ansi.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Ansi.c
+
+$(OUTPUT_DIR)/Terminal.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Terminal.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Terminal.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./Terminal.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/TerminalConOut.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TerminalConOut.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TerminalConOut.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./TerminalConOut.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
+
+$(OUTPUT_DIR)/TerminalConIn.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TerminalConIn.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TerminalConIn.obj : $(WORKSPACE)/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/./TerminalConIn.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c
 
 $(OUTPUT_DIR)/TerminalDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/TerminalDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/TerminalDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/TerminalDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/TerminalDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/TerminalDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/TerminalDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/TerminalDxe.efi : $(DEBUG_DIR)/TerminalDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/TerminalDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/DEBUG/TerminalDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe/OUTPUT/TerminalDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

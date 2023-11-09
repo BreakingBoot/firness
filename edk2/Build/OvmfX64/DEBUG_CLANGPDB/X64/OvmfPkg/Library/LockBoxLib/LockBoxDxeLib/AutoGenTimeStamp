@@ -1,5 +1,5 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LockBoxLib/LockBoxLib.h
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LockBoxLib/LockBoxDxe.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LockBoxLib/LockBoxLib.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib.inf
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LockBoxLib/LockBoxDxe.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib.inf
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LockBoxLib/LockBoxLib.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LockBoxLib/LockBoxLib.h

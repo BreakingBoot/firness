@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = DxePciLibI440FxQ35
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/DxePciLibI440FxQ35
 PACKAGE_RELATIVE_DIR = Library/DxePciLibI440FxQ35
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/DxePciLibI440FxQ35
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/5360bff6-3911-4495-ae3c-b02ff004b585DxePciLibI440FxQ35
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/DxePciLibI440FxQ35
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/5360bff6-3911-4495-ae3c-b02ff004b585DxePciLibI440FxQ35
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -230,7 +230,7 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/object_files.lst
 
 
 #
@@ -240,7 +240,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/DxePciLibI440FxQ35.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/DxePciLibI440FxQ35.lib \
               
 
 #
@@ -318,11 +318,11 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/PciLib.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/PciLib.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/PciLib.obj : $(WORKSPACE)/OvmfPkg/Library/DxePciLibI440FxQ35/PciLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/./PciLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/DxePciLibI440FxQ35/PciLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/./PciLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/DxePciLibI440FxQ35/PciLib.c
 
 $(OUTPUT_DIR)/DxePciLibI440FxQ35.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/DxePciLibI440FxQ35.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/DxePciLibI440FxQ35.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35/OUTPUT/DxePciLibI440FxQ35.lib @$(OBJECT_FILES_LIST)
 
 
 

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = SecCcExitLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/CcExitLib
 PACKAGE_RELATIVE_DIR = Library/CcExitLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/dafff819-f86c-4cff-a70e-83161e5bcf9aSecCcExitLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/dafff819-f86c-4cff-a70e-83161e5bcf9aSecCcExitLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -254,8 +254,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/UefiCpuPkg/ \
     -I$(WORKSPACE)/UefiCpuPkg/Include/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/object_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/inc.lst
 
 
 #
@@ -265,7 +265,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/SecCcExitLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/SecCcExitLib.lib \
               
 
 #
@@ -343,39 +343,39 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/CcInstruction.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CcInstruction.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CcInstruction.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcInstruction.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcInstruction.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/CcInstruction.c
-
-$(OUTPUT_DIR)/CcExitVcHandler.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CcExitVcHandler.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CcExitVcHandler.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcExitVcHandler.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitVcHandler.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/CcExitVcHandler.c
-
-$(OUTPUT_DIR)/CcExitLib.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CcExitLib.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CcExitLib.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcExitLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/CcExitLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcInstruction.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/CcInstruction.c
 
 $(OUTPUT_DIR)/SecCcExitVcHandler.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SecCcExitVcHandler.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SecCcExitVcHandler.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/SecCcExitVcHandler.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./SecCcExitVcHandler.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/SecCcExitVcHandler.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./SecCcExitVcHandler.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/SecCcExitVcHandler.c
 
 $(OUTPUT_DIR)/CcExitVeHandler.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CcExitVeHandler.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CcExitVeHandler.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcExitVeHandler.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitVeHandler.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/CcExitVeHandler.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitVeHandler.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/CcExitVeHandler.c
+
+$(OUTPUT_DIR)/CcExitVcHandler.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CcExitVcHandler.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CcExitVcHandler.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcExitVcHandler.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitVcHandler.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/CcExitVcHandler.c
+
+$(OUTPUT_DIR)/CcExitLib.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CcExitLib.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CcExitLib.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/CcExitLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/./CcExitLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/CcExitLib.c
 
 $(OUTPUT_DIR)/SecCcExitLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/SecCcExitLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/SecCcExitLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/SecCcExitLib.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/X64/TdVmcallCpuid.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/TdVmcallCpuid.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/TdVmcallCpuid.obj : $(WORKSPACE)/OvmfPkg/Library/CcExitLib/X64/TdVmcallCpuid.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/X64/TdVmcallCpuid.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/X64/TdVmcallCpuid.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/CcExitLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/X64/TdVmcallCpuid.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/X64/TdVmcallCpuid.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/CcExitLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/CcExitLib/SecCcExitLib/OUTPUT/X64/TdVmcallCpuid.iii
 
 
 

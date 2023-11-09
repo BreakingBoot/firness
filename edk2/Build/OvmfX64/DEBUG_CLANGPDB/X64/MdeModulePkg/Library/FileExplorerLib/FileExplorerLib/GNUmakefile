@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = FileExplorerLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Library/FileExplorerLib
 PACKAGE_RELATIVE_DIR = Library/FileExplorerLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/FileExplorerLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4FC9C630-0F90-4053-8F13-264CBD22FC58FileExplorerLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/FileExplorerLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4FC9C630-0F90-4053-8F13-264CBD22FC58FileExplorerLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -234,7 +234,7 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/object_files.lst
 
 
 #
@@ -244,7 +244,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/FileExplorerLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/FileExplorerLib.lib \
               
 
 #
@@ -323,28 +323,28 @@ $(DEBUG_DIR)/FileExplorerVfr.c : $(MAKE_FILE)
 $(DEBUG_DIR)/FileExplorerVfr.c : $(DEBUG_DIR)/AutoGen.h
 $(DEBUG_DIR)/FileExplorerVfr.c : $(DEBUG_DIR)/FileExplorerLibStrDefs.h
 $(DEBUG_DIR)/FileExplorerVfr.c : $(WORKSPACE)/MdeModulePkg/Library/FileExplorerLib/FileExplorerVfr.vfr
-	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/FileExplorerLib/FileExplorerVfr.vfr > $(OUTPUT_DIR)/FileExplorerVfr.i
-	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/. $(OUTPUT_DIR)/FileExplorerVfr.i
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/FileExplorerLibStrDefs.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/AutoGen.c
+	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/FileExplorerLib/FileExplorerVfr.vfr > $(OUTPUT_DIR)/FileExplorerVfr.i
+	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/. $(OUTPUT_DIR)/FileExplorerVfr.i
 
 $(OUTPUT_DIR)/FileExplorerVfr.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/FileExplorerVfr.obj : $(DEBUG_DIR)/FileExplorerVfr.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./FileExplorerVfr.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/FileExplorerVfr.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./FileExplorerVfr.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/FileExplorerVfr.c
 
 $(OUTPUT_DIR)/FileExplorer.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/FileExplorer.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/FileExplorer.obj : $(DEBUG_DIR)/FileExplorerLibStrDefs.h
 $(OUTPUT_DIR)/FileExplorer.obj : $(WORKSPACE)/MdeModulePkg/Library/FileExplorerLib/FileExplorer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./FileExplorer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/FileExplorerLib/FileExplorer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./FileExplorer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/FileExplorerLib/FileExplorer.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/FileExplorerLibStrDefs.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/FileExplorerLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/FileExplorerLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/FileExplorerLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/FileExplorerLib/FileExplorerLib/OUTPUT/FileExplorerLib.lib @$(OBJECT_FILES_LIST)
 
 
 

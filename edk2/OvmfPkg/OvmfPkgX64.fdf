@@ -333,6 +333,7 @@ INF  OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.inf
 !if $(BUILD_SHELL) == TRUE
 INF  ShellPkg/Application/Shell/Shell.inf
 !endif
+INF MdeModulePkg/Firness/FirnessHarnesses.inf
 
 INF MdeModulePkg/Logo/LogoDxe.inf
 

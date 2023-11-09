@@ -1,15 +1,15 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfigDriver.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/DEBUG/VlanConfig.c.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfig.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfigDriver.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/ComponentName.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfig.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfigImpl.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfigImpl.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/AutoGen.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/ComponentName.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/DEBUG/VlanConfig.c.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/AutoGen.obj.deps
 
                

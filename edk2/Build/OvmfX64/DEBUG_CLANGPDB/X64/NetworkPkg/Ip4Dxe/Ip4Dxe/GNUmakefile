@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = Ip4Dxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = NetworkPkg/Ip4Dxe
 PACKAGE_RELATIVE_DIR = Ip4Dxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/9FB1A1F3-3B71-4324-B39A-745CBB015FFFIp4Dxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/9FB1A1F3-3B71-4324-B39A-745CBB015FFFIp4Dxe
 
 MODULE_ENTRY_POINT = Ip4DriverEntryPoint
 ARCH_ENTRY_POINT = Ip4DriverEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -283,8 +283,8 @@ INC =  \
     -I$(WORKSPACE)/NetworkPkg \
     -I$(WORKSPACE)/NetworkPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -294,7 +294,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -404,107 +404,107 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Config2Nv.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2Nv.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Config2Nv.c
+$(OUTPUT_DIR)/Ip4Igmp.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Igmp.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Igmp.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Igmp.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Igmp.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Igmp.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Igmp.c
 
 $(OUTPUT_DIR)/Ip4Driver.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Ip4Driver.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Ip4Driver.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
 $(OUTPUT_DIR)/Ip4Driver.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Driver.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Driver.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Driver.c
-
-$(OUTPUT_DIR)/Ip4Igmp.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Igmp.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Igmp.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Igmp.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Igmp.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Igmp.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Igmp.c
-
-$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/ComponentName.c
-
-$(OUTPUT_DIR)/Ip4Impl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Impl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Impl.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Impl.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Impl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Impl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Impl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Driver.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Driver.c
 
 $(OUTPUT_DIR)/Ip4Common.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Ip4Common.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Ip4Common.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
 $(OUTPUT_DIR)/Ip4Common.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Common.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Common.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Common.c
-
-$(OUTPUT_DIR)/Ip4If.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4If.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4If.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4If.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4If.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4If.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4If.c
-
-$(OUTPUT_DIR)/Ip4Icmp.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Icmp.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Icmp.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Icmp.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Icmp.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Icmp.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Icmp.c
-
-$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Config2Impl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2Impl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Config2Impl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Common.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Common.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/AutoGen.c
 
-$(OUTPUT_DIR)/Ip4Output.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Output.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Output.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Output.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Output.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Output.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Output.c
-
-$(OUTPUT_DIR)/Ip4Route.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Route.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Route.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Route.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Route.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Route.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Route.c
-
-$(OUTPUT_DIR)/Ip4Input.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Input.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ip4Input.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
-$(OUTPUT_DIR)/Ip4Input.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Input.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Input.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Input.c
-
-$(OUTPUT_DIR)/Ip4Config2.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ip4Config2.obj : $(DEBUG_DIR)/Ip4Config2.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Config2.c
+$(OUTPUT_DIR)/Ip4Icmp.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Icmp.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Icmp.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Icmp.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Icmp.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Icmp.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Icmp.c
 
 $(OUTPUT_DIR)/Ip4Option.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Ip4Option.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Ip4Option.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
 $(OUTPUT_DIR)/Ip4Option.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Option.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Option.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Option.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Option.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Option.c
+
+$(OUTPUT_DIR)/Ip4Impl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Impl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Impl.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Impl.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Impl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Impl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Impl.c
+
+$(OUTPUT_DIR)/Ip4Route.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Route.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Route.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Route.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Route.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Route.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Route.c
+
+$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/ComponentName.c
+
+$(OUTPUT_DIR)/Ip4If.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4If.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4If.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4If.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4If.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4If.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4If.c
+
+$(OUTPUT_DIR)/Ip4Input.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Input.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Input.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Input.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Input.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Input.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Input.c
+
+$(OUTPUT_DIR)/Ip4Config2.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Config2.obj : $(DEBUG_DIR)/Ip4Config2.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Config2.c
+
+$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Config2Nv.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Config2Nv.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2Nv.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Config2Nv.c
+
+$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Config2Impl.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Config2Impl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Config2Impl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Config2Impl.c
+
+$(OUTPUT_DIR)/Ip4Output.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ip4Output.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ip4Output.obj : $(DEBUG_DIR)/Ip4DxeStrDefs.h
+$(OUTPUT_DIR)/Ip4Output.obj : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Output.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/./Ip4Output.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Output.c
 
 $(OUTPUT_DIR)/Ip4Dxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/Ip4Dxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/Ip4Dxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/Ip4Dxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/Ip4Dxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Dxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Dxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/Ip4Dxe.efi : $(DEBUG_DIR)/Ip4Dxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Dxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/Ip4Dxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/OUTPUT/Ip4Dxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -515,8 +515,8 @@ $(DEBUG_DIR)/Ip4Config2.c : $(MAKE_FILE)
 $(DEBUG_DIR)/Ip4Config2.c : $(DEBUG_DIR)/AutoGen.h
 $(DEBUG_DIR)/Ip4Config2.c : $(DEBUG_DIR)/Ip4DxeStrDefs.h
 $(DEBUG_DIR)/Ip4Config2.c : $(WORKSPACE)/NetworkPkg/Ip4Dxe/Ip4Config2.vfr
-	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Ip4Dxe/Ip4Config2.vfr > $(OUTPUT_DIR)/Ip4Config2.i
-	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/. $(OUTPUT_DIR)/Ip4Config2.i
+	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Ip4Dxe/Ip4Config2.vfr > $(OUTPUT_DIR)/Ip4Config2.i
+	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG/. $(OUTPUT_DIR)/Ip4Config2.i
 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : $(OUTPUT_DIR)/Ip4Dxe.map
 	test -f $(OUTPUT_DIR)/Ip4Dxe.map && $(CP) $(OUTPUT_DIR)/Ip4Dxe.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map
@@ -527,7 +527,7 @@ $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx : $(OUTPUT_DIR)/Ip4Dxe.depex
 $(FFS_OUTPUT_DIR)/Ip4DxeOffset.raw : $(FFS_OUTPUT_DIR)/Ip4Dxe.offset
 	-test -e $(FFS_OUTPUT_DIR)/Ip4Dxe.offset && GenSec -s EFI_SECTION_RAW -o $(FFS_OUTPUT_DIR)/Ip4DxeOffset.raw $(FFS_OUTPUT_DIR)/Ip4Dxe.offset
 $(FFS_OUTPUT_DIR)/Ip4Dxe.offset : $(DEBUG_DIR)/Ip4Dxe.efi
-	Trim --Vfr-Uni-Offset -o $(FFS_OUTPUT_DIR)/Ip4Dxe.offset --ModuleName=Ip4Dxe --DebugDir=/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG 
+	Trim --Vfr-Uni-Offset -o $(FFS_OUTPUT_DIR)/Ip4Dxe.offset --ModuleName=Ip4Dxe --DebugDir=/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Ip4Dxe/Ip4Dxe/DEBUG 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 : $(OUTPUT_DIR)/Ip4Dxe.efi
 	-test -e $(OUTPUT_DIR)/Ip4Dxe.efi && GenSec -s EFI_SECTION_PE32 -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 $(OUTPUT_DIR)/Ip4Dxe.efi
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui : $(MODULE_DIR)/$(MODULE_FILE)

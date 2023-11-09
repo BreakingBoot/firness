@@ -1,0 +1,14 @@
+-I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/X64
+-I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe
+-I/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg/Include
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg/Test/UnitTest/Include
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg/Test/Mock/Include
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/MipiSysTLib/mipisyst/library/include
+-I/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64
+-I/home/gl055/Research/Harden/firness/edk2/MdeModulePkg
+-I/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Include
+-I/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Test/Mock/Include
+-I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg
+-I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Include

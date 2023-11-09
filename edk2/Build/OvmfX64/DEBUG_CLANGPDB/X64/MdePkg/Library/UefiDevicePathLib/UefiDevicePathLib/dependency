@@ -1,13 +1,13 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathUtilitiesDxeSmm.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathToText.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathFromText.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathUtilitiesDxeSmm.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/UefiDevicePathLib.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathUtilities.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathToText.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/UefiDevicePathLib.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathUtilities.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib/OUTPUT/DevicePathFromText.obj.deps
 
                

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = LoadLinuxLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/LoadLinuxLib
 PACKAGE_RELATIVE_DIR = Library/LoadLinuxLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/eaec1915-65a0-43a9-bf0b-a76438da61dbLoadLinuxLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/eaec1915-65a0-43a9-bf0b-a76438da61dbLoadLinuxLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -247,8 +247,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include/ \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/object_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/inc.lst
 
 
 #
@@ -258,7 +258,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/LoadLinuxLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/LoadLinuxLib.lib \
               
 
 #
@@ -333,27 +333,27 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/LinuxGdt.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/LinuxGdt.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/LinuxGdt.obj : $(WORKSPACE)/OvmfPkg/Library/LoadLinuxLib/LinuxGdt.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/./LinuxGdt.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib/LinuxGdt.c
-
 $(OUTPUT_DIR)/Linux.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Linux.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Linux.obj : $(WORKSPACE)/OvmfPkg/Library/LoadLinuxLib/Linux.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/./Linux.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib/Linux.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/./Linux.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/Linux.c
+
+$(OUTPUT_DIR)/LinuxGdt.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/LinuxGdt.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/LinuxGdt.obj : $(WORKSPACE)/OvmfPkg/Library/LoadLinuxLib/LinuxGdt.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/./LinuxGdt.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/LinuxGdt.c
 
 $(OUTPUT_DIR)/LoadLinuxLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/LoadLinuxLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/LoadLinuxLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/LoadLinuxLib.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/X64/JumpToKernel.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/JumpToKernel.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/JumpToKernel.obj : $(WORKSPACE)/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/LoadLinuxLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/OUTPUT/X64/JumpToKernel.iii
 
 
 

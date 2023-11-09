@@ -1,0 +1,11 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/PlatformInitLib/PlatformInitLib/OUTPUT/Cmos.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/PlatformInitLib/PlatformInitLib/OUTPUT/MemDetect.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/PlatformInitLib/PlatformInitLib/OUTPUT/Platform.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/PlatformInitLib/PlatformInitLib/OUTPUT/IntelTdx.obj.deps
+
+               

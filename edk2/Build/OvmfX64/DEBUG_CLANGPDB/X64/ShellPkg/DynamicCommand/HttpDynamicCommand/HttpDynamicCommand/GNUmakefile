@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = HttpDynamicCommand
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = ShellPkg/DynamicCommand/HttpDynamicCommand
 PACKAGE_RELATIVE_DIR = DynamicCommand/HttpDynamicCommand
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/19618BCE-55AE-09C6-37E9-4CE04084C7A1httpDynamicCommand
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/19618BCE-55AE-09C6-37E9-4CE04084C7A1httpDynamicCommand
 
 MODULE_ENTRY_POINT = HttpCommandInitialize
 ARCH_ENTRY_POINT = HttpCommandInitialize
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -267,8 +267,8 @@ INC =  \
     -I$(WORKSPACE)/ShellPkg \
     -I$(WORKSPACE)/ShellPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/static_library_files.lst
 
 
 #
@@ -278,7 +278,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -378,37 +378,37 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Http.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Http.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Http.obj : $(DEBUG_DIR)/httpDynamicCommandStrDefs.h
-$(OUTPUT_DIR)/Http.obj : $(WORKSPACE)/ShellPkg/DynamicCommand/HttpDynamicCommand/Http.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./Http.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand/Http.c
-
 $(OUTPUT_DIR)/HttpDynamicCommand.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/HttpDynamicCommand.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/HttpDynamicCommand.obj : $(DEBUG_DIR)/httpDynamicCommandStrDefs.h
 $(OUTPUT_DIR)/HttpDynamicCommand.obj : $(WORKSPACE)/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./HttpDynamicCommand.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./HttpDynamicCommand.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand.c
+
+$(OUTPUT_DIR)/Http.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Http.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Http.obj : $(DEBUG_DIR)/httpDynamicCommandStrDefs.h
+$(OUTPUT_DIR)/Http.obj : $(WORKSPACE)/ShellPkg/DynamicCommand/HttpDynamicCommand/Http.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./Http.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/DynamicCommand/HttpDynamicCommand/Http.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/httpDynamicCommandStrDefs.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/httpDynamicCommand.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/httpDynamicCommand.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/httpDynamicCommand.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/httpDynamicCommand.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/httpDynamicCommand.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/httpDynamicCommand.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/httpDynamicCommand.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/httpDynamicCommand.efi : $(DEBUG_DIR)/httpDynamicCommand.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/httpDynamicCommand.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/DEBUG/httpDynamicCommand.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -417,7 +417,7 @@ $(OUTPUT_DIR)/httpDynamicCommand.map : $(OUTPUT_DIR)/httpDynamicCommand.efi
 
 $(OUTPUT_DIR)/httpDynamicCommandhii.lib : $(HII_BINARY_PACKAGES)
 	"$(GENFW)" -o $(OUTPUT_DIR)/$(MODULE_NAME)hii.rc -g $(MODULE_GUID) --hiipackage $(HII_BINARY_PACKAGES) $(GENFW_FLAGS)
-	"$(RC)" /Fo/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommandhii.lib $(OUTPUT_DIR)/$(MODULE_NAME)hii.rc
+	"$(RC)" /Fo/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommandhii.lib $(OUTPUT_DIR)/$(MODULE_NAME)hii.rc
 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : $(OUTPUT_DIR)/httpDynamicCommand.map
 	test -f $(OUTPUT_DIR)/httpDynamicCommand.map && $(CP) $(OUTPUT_DIR)/httpDynamicCommand.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map

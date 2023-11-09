@@ -1,19 +1,19 @@
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 388 "<built-in>" 3
+# 375 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiDxe.h" 1
-# 13 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiDxe.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 1
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
-# 162 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiDxe.h" 1
+# 13 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiDxe.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 1
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
+# 162 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h"
 typedef unsigned long long UINT64;
 
 
@@ -69,8 +69,8 @@ typedef UINT64 UINTN;
 
 
 typedef INT64 INTN;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 2
-# 213 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 2
+# 213 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef struct {
   UINT32 Data1;
   UINT16 Data2;
@@ -109,11 +109,11 @@ struct _LIST_ENTRY {
   LIST_ENTRY *ForwardLink;
   LIST_ENTRY *BackLink;
 };
-# 607 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 607 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef __builtin_ms_va_list VA_LIST;
-# 711 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 711 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN *BASE_LIST;
-# 816 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 816 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 _Static_assert (sizeof (BOOLEAN) == 1, "sizeof (BOOLEAN) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (INT8) == 1, "sizeof (INT8) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (UINT8) == 1, "sizeof (UINT8) does not meet UEFI Specification Data Type requirements");
@@ -142,7 +142,7 @@ _Static_assert (_Alignof (CHAR16) == sizeof (CHAR16), "Alignment of CHAR16 does 
 _Static_assert (_Alignof (INTN) == sizeof (INTN), "Alignment of INTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (UINTN) == sizeof (UINTN), "Alignment of UINTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (void *) == sizeof (void *), "Alignment of VOID * does not meet UEFI Specification Data Type requirements");
-# 852 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 852 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef enum {
   __VerifyUint8EnumValue = 0xff
 } __VERIFY_UINT8_ENUM_SIZE;
@@ -162,9 +162,9 @@ _Static_assert (sizeof (__VERIFY_INT32_ENUM_SIZE) == 4, "Size of enum does not m
 _Static_assert (_Alignof (__VERIFY_UINT8_ENUM_SIZE) == sizeof (__VERIFY_UINT8_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_UINT16_ENUM_SIZE) == sizeof (__VERIFY_UINT16_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_INT32_ENUM_SIZE) == sizeof (__VERIFY_INT32_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
-# 1026 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 1026 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN RETURN_STATUS;
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 2
 
 
 
@@ -204,7 +204,7 @@ typedef UINT64 EFI_PHYSICAL_ADDRESS;
 
 
 typedef UINT64 EFI_VIRTUAL_ADDRESS;
-# 68 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
+# 68 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
 typedef struct {
   UINT16 Year;
   UINT8 Month;
@@ -245,13 +245,13 @@ typedef union {
   EFI_IPv4_ADDRESS v4;
   EFI_IPv6_ADDRESS v6;
 } EFI_IP_ADDRESS;
-# 14 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiDxe.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 1
-# 34 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h" 1
-# 24 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 14 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiDxe.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 1
+# 34 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h" 1
+# 24 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
 
 
@@ -276,7 +276,7 @@ typedef struct {
 
 
 } WIN_CERTIFICATE;
-# 58 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 58 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
   EFI_GUID HashType;
   UINT8 PublicKey[256];
@@ -305,7 +305,7 @@ typedef struct {
 
   UINT8 CertData[1];
 } WIN_CERTIFICATE_UEFI_GUID;
-# 95 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 95 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
 
 
@@ -317,11 +317,11 @@ typedef struct {
 
 
   EFI_GUID HashAlgorithm;
-# 116 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 116 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 } WIN_CERTIFICATE_EFI_PKCS1_15;
 
 extern EFI_GUID gEfiCertTypeRsa2048Sha256Guid;
-# 35 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 2
+# 35 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 2
 
 
 
@@ -465,7 +465,7 @@ typedef struct {
 
   UINT32 Reserved;
 } EFI_TABLE_HEADER;
-# 194 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 194 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
 typedef struct {
 
 
@@ -474,10 +474,10 @@ typedef struct {
 
 
   UINT64 MonotonicCount;
-# 210 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 210 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
   WIN_CERTIFICATE_UEFI_GUID AuthInfo;
 } EFI_VARIABLE_AUTHENTICATION;
-# 221 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 221 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
 typedef struct {
 
 
@@ -489,21 +489,21 @@ typedef struct {
 
   WIN_CERTIFICATE_UEFI_GUID AuthInfo;
 } EFI_VARIABLE_AUTHENTICATION_2;
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
 
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/PcAnsi.h" 1
-# 45 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/PcAnsi.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/PcAnsi.h" 1
+# 45 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/PcAnsi.h"
 extern EFI_GUID gEfiPcAnsiGuid;
 extern EFI_GUID gEfiVT100Guid;
 extern EFI_GUID gEfiVT100PlusGuid;
 extern EFI_GUID gEfiVTUTF8Guid;
 extern EFI_GUID gEfiUartDevicePathGuid;
 extern EFI_GUID gEfiSasDevicePathGuid;
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Bluetooth.h" 1
-# 13 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Bluetooth.h"
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Bluetooth.h" 1
+# 13 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Bluetooth.h"
 #pragma pack(1)
 
 
@@ -542,23 +542,23 @@ typedef struct {
 } BLUETOOTH_LE_ADDRESS;
 
 #pragma pack()
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h" 1
-# 13 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h" 1
-# 14 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h" 1
-# 13 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h" 1
-# 11 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h" 1
-# 11 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h" 1
-# 11 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h" 1
-# 12 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/AcpiAml.h" 1
-# 13 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h" 2
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h" 1
+# 13 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h" 1
+# 14 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h" 1
+# 13 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h" 1
+# 11 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h" 1
+# 11 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h" 1
+# 11 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h" 1
+# 12 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/AcpiAml.h" 1
+# 13 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h" 2
 
 
 
@@ -585,7 +585,7 @@ typedef struct {
   UINT32 CreatorRevision;
 } EFI_ACPI_DESCRIPTION_HEADER;
 #pragma pack()
-# 110 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 110 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 #pragma pack(1)
 
 
@@ -770,7 +770,7 @@ typedef struct {
   UINT8 Desc;
   UINT8 Checksum;
 } EFI_ACPI_END_TAG_DESCRIPTOR;
-# 393 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 393 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 #pragma pack(1)
 
 
@@ -786,7 +786,7 @@ typedef struct {
   UINT8 Reserved;
   UINT32 RsdtAddress;
 } EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 423 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 423 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -829,7 +829,7 @@ typedef struct {
   UINT8 Reserved6;
   UINT32 Flags;
 } EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 492 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 492 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -839,13 +839,13 @@ typedef struct {
   UINT32 Flags;
   UINT8 Reserved[40];
 } EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 512 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 512 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_1_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 547 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 547 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -853,7 +853,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_1_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 563 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 563 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -905,10 +905,10 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_1_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 664 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
+# 664 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi10.h"
 #pragma pack()
-# 12 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h" 2
-# 23 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 12 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h" 2
+# 23 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 #pragma pack(1)
 
 
@@ -940,7 +940,7 @@ typedef struct {
   UINT8 Reserved;
   UINT64 Address;
 } EFI_ACPI_2_0_GENERIC_ADDRESS_STRUCTURE;
-# 72 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 72 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -952,12 +952,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 93 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 93 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_2_0_COMMON_HEADER;
-# 123 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 123 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -1012,7 +1012,7 @@ typedef struct {
   EFI_ACPI_2_0_GENERIC_ADDRESS_STRUCTURE XGpe0Blk;
   EFI_ACPI_2_0_GENERIC_ADDRESS_STRUCTURE XGpe1Blk;
 } EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 223 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 223 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -1024,13 +1024,13 @@ typedef struct {
   UINT8 Version;
   UINT8 Reserved[31];
 } EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 250 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 250 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 289 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 289 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1038,7 +1038,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 305 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 305 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1140,7 +1140,7 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_2_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 417 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 417 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_2_0_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -1148,10 +1148,10 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_2_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 537 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
+# 537 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi20.h"
 #pragma pack()
-# 12 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h" 2
-# 23 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 12 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h" 2
+# 23 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 #pragma pack(1)
 
 
@@ -1173,7 +1173,7 @@ typedef struct {
 } EFI_ACPI_EXTENDED_ADDRESS_SPACE_DESCRIPTOR;
 
 #pragma pack()
-# 58 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 58 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 #pragma pack(1)
 
 
@@ -1186,7 +1186,7 @@ typedef struct {
   UINT8 AccessSize;
   UINT64 Address;
 } EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE;
-# 97 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 97 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -1198,12 +1198,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 118 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 118 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_3_0_COMMON_HEADER;
-# 148 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 148 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -1258,7 +1258,7 @@ typedef struct {
   EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE XGpe0Blk;
   EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE XGpe1Blk;
 } EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 258 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 258 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -1270,13 +1270,13 @@ typedef struct {
   UINT8 Version;
   UINT8 Reserved[31];
 } EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 295 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 295 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_3_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 334 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 334 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1284,7 +1284,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_3_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 350 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 350 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1322,7 +1322,7 @@ typedef struct {
   UINT8 CpeiProcessorOverride;
   UINT8 Reserved[31];
 } EFI_ACPI_3_0_PLATFORM_INTERRUPT_APIC_STRUCTURE;
-# 398 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 398 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1392,14 +1392,14 @@ typedef struct {
   UINT32 GlobalSystemInterrupt;
   UINT32 PlatformInterruptSourceFlags;
 } EFI_ACPI_3_0_PLATFORM_INTERRUPT_SOURCES_STRUCTURE;
-# 477 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 477 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 WarningEnergyLevel;
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_3_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 494 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 494 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -1407,13 +1407,13 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_3_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 511 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 511 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved1;
   UINT64 Reserved2;
 } EFI_ACPI_3_0_SYSTEM_RESOURCE_AFFINITY_TABLE_HEADER;
-# 533 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 533 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1424,7 +1424,7 @@ typedef struct {
   UINT8 ProximityDomain31To8[3];
   UINT8 Reserved[4];
 } EFI_ACPI_3_0_PROCESSOR_LOCAL_APIC_SAPIC_AFFINITY_STRUCTURE;
-# 552 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 552 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1438,14 +1438,14 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved3;
 } EFI_ACPI_3_0_MEMORY_AFFINITY_STRUCTURE;
-# 577 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 577 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64 NumberOfSystemLocalities;
 } EFI_ACPI_3_0_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER;
-# 721 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
+# 721 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi30.h"
 #pragma pack()
-# 12 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h" 2
+# 12 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h" 2
 
 
 
@@ -1462,7 +1462,7 @@ typedef struct {
   UINT8 AccessSize;
   UINT64 Address;
 } EFI_ACPI_4_0_GENERIC_ADDRESS_STRUCTURE;
-# 55 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 55 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -1474,12 +1474,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_4_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 76 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 76 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_4_0_COMMON_HEADER;
-# 106 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 106 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -1534,7 +1534,7 @@ typedef struct {
   EFI_ACPI_4_0_GENERIC_ADDRESS_STRUCTURE XGpe0Blk;
   EFI_ACPI_4_0_GENERIC_ADDRESS_STRUCTURE XGpe1Blk;
 } EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 216 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 216 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -1548,13 +1548,13 @@ typedef struct {
   UINT32 OspmFlags;
   UINT8 Reserved1[24];
 } EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 262 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 262 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 303 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 303 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1562,7 +1562,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 319 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 319 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1600,7 +1600,7 @@ typedef struct {
   UINT8 CpeiProcessorOverride;
   UINT8 Reserved[31];
 } EFI_ACPI_4_0_PLATFORM_INTERRUPT_APIC_STRUCTURE;
-# 367 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 367 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1670,7 +1670,7 @@ typedef struct {
   UINT32 GlobalSystemInterrupt;
   UINT32 PlatformInterruptSourceFlags;
 } EFI_ACPI_4_0_PLATFORM_INTERRUPT_SOURCES_STRUCTURE;
-# 446 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 446 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1701,7 +1701,7 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_4_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 487 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 487 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_4_0_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -1709,13 +1709,13 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_4_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 504 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 504 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved1;
   UINT64 Reserved2;
 } EFI_ACPI_4_0_SYSTEM_RESOURCE_AFFINITY_TABLE_HEADER;
-# 527 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 527 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1726,7 +1726,7 @@ typedef struct {
   UINT8 ProximityDomain31To8[3];
   UINT32 ClockDomain;
 } EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC_SAPIC_AFFINITY_STRUCTURE;
-# 546 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 546 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1740,7 +1740,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved3;
 } EFI_ACPI_4_0_MEMORY_AFFINITY_STRUCTURE;
-# 570 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 570 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1760,12 +1760,12 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64 NumberOfSystemLocalities;
 } EFI_ACPI_4_0_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER;
-# 598 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 598 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 Reserved[8];
 } EFI_ACPI_4_0_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_HEADER;
-# 616 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 616 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -1784,7 +1784,7 @@ typedef struct {
   UINT32 MaximumNumberOfClockDomains;
   UINT64 MaximumPhysicalAddress;
 } EFI_ACPI_4_0_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_HEADER;
-# 643 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 643 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 Revision;
   UINT8 Length;
@@ -1802,7 +1802,7 @@ typedef struct {
   UINT32 BootErrorRegionLength;
   UINT64 BootErrorRegion;
 } EFI_ACPI_4_0_BOOT_ERROR_RECORD_TABLE_HEADER;
-# 669 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 669 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT32 UncorrectableErrorValid : 1;
   UINT32 CorrectableErrorValid : 1;
@@ -1822,7 +1822,7 @@ typedef struct {
   UINT32 DataLength;
   UINT32 ErrorSeverity;
 } EFI_ACPI_4_0_BOOT_ERROR_REGION_STRUCTURE;
-# 701 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 701 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 SectionType[16];
   UINT32 ErrorSeverity;
@@ -1833,12 +1833,12 @@ typedef struct {
   UINT8 FruId[16];
   UINT8 FruText[20];
 } EFI_ACPI_4_0_GENERIC_ERROR_DATA_ENTRY_STRUCTURE;
-# 720 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 720 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 ErrorSourceCount;
 } EFI_ACPI_4_0_HARDWARE_ERROR_SOURCE_TABLE_HEADER;
-# 750 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 750 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT16 Type;
   UINT16 SourceId;
@@ -1867,7 +1867,7 @@ typedef struct {
   UINT32 AddressRegisterMsrAddress;
   UINT32 MiscRegisterMsrAddress;
 } EFI_ACPI_4_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_BANK_STRUCTURE;
-# 798 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 798 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT16 Type : 1;
   UINT16 PollInterval : 1;
@@ -2028,7 +2028,7 @@ typedef struct {
   UINT8 Reserved0[4];
   UINT32 InstructionEntryCount;
 } EFI_ACPI_4_0_ERROR_RECORD_SERIALIZATION_TABLE_HEADER;
-# 1024 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 1024 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 SerializationAction;
   UINT8 Instruction;
@@ -2049,7 +2049,7 @@ typedef struct {
   UINT8 Reserved0[3];
   UINT32 InjectionEntryCount;
 } EFI_ACPI_4_0_ERROR_INJECTION_TABLE_HEADER;
-# 1103 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 1103 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 typedef struct {
   UINT8 InjectionAction;
   UINT8 Instruction;
@@ -2069,10 +2069,10 @@ typedef struct {
   UINT32 TableSize;
   UINT32 EntryCount;
 } EFI_ACPI_4_0_EINJ_TRIGGER_ACTION_TABLE;
-# 1302 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
+# 1302 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi40.h"
 #pragma pack()
-# 14 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h" 2
-# 26 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 14 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h" 2
+# 26 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 #pragma pack(1)
 
 
@@ -2121,7 +2121,7 @@ typedef struct {
   UINT16 TypeDataLength;
 
 } EFI_ACPI_SERIAL_BUS_RESOURCE_DESCRIPTOR;
-# 82 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 82 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   ACPI_LARGE_RESOURCE_HEADER Header;
   UINT8 RevisionId;
@@ -2190,7 +2190,7 @@ typedef struct {
   UINT8 AccessSize;
   UINT64 Address;
 } EFI_ACPI_5_0_GENERIC_ADDRESS_STRUCTURE;
-# 178 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 178 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -2202,12 +2202,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_5_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 199 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 199 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_5_0_COMMON_HEADER;
-# 229 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 229 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -2264,7 +2264,7 @@ typedef struct {
   EFI_ACPI_5_0_GENERIC_ADDRESS_STRUCTURE SleepControlReg;
   EFI_ACPI_5_0_GENERIC_ADDRESS_STRUCTURE SleepStatusReg;
 } EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 345 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 345 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -2278,13 +2278,13 @@ typedef struct {
   UINT32 OspmFlags;
   UINT8 Reserved1[24];
 } EFI_ACPI_5_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 391 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 391 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_5_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 434 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 434 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2292,7 +2292,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_5_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 450 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 450 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2330,7 +2330,7 @@ typedef struct {
   UINT8 CpeiProcessorOverride;
   UINT8 Reserved[31];
 } EFI_ACPI_5_0_PLATFORM_INTERRUPT_APIC_STRUCTURE;
-# 498 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 498 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2400,7 +2400,7 @@ typedef struct {
   UINT32 GlobalSystemInterrupt;
   UINT32 PlatformInterruptSourceFlags;
 } EFI_ACPI_5_0_PLATFORM_INTERRUPT_SOURCES_STRUCTURE;
-# 577 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 577 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2437,7 +2437,7 @@ typedef struct {
   UINT64 ParkedAddress;
   UINT64 PhysicalBaseAddress;
 } EFI_ACPI_5_0_GIC_STRUCTURE;
-# 623 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 623 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2457,7 +2457,7 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_5_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 653 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 653 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_5_0_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -2465,13 +2465,13 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_5_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 670 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 670 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved1;
   UINT64 Reserved2;
 } EFI_ACPI_5_0_SYSTEM_RESOURCE_AFFINITY_TABLE_HEADER;
-# 693 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 693 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2482,7 +2482,7 @@ typedef struct {
   UINT8 ProximityDomain31To8[3];
   UINT32 ClockDomain;
 } EFI_ACPI_5_0_PROCESSOR_LOCAL_APIC_SAPIC_AFFINITY_STRUCTURE;
-# 712 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 712 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2496,7 +2496,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved3;
 } EFI_ACPI_5_0_MEMORY_AFFINITY_STRUCTURE;
-# 736 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 736 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2516,12 +2516,12 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64 NumberOfSystemLocalities;
 } EFI_ACPI_5_0_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER;
-# 764 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 764 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 Reserved[8];
 } EFI_ACPI_5_0_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_HEADER;
-# 782 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 782 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -2540,7 +2540,7 @@ typedef struct {
   UINT32 MaximumNumberOfClockDomains;
   UINT64 MaximumPhysicalAddress;
 } EFI_ACPI_5_0_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_HEADER;
-# 809 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 809 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Revision;
   UINT8 Length;
@@ -2557,7 +2557,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier[12];
 } EFI_ACPI_5_0_RAS_FEATURE_TABLE;
-# 834 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 834 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -2568,7 +2568,7 @@ typedef struct {
   UINT16 NumberOfRASFParameterBlocks;
   UINT32 SetRASCapabilitiesStatus;
 } EFI_ACPI_5_0_RASF_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 859 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 859 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT16 Type;
   UINT16 Version;
@@ -2579,7 +2579,7 @@ typedef struct {
   UINT16 Flags;
   UINT8 RequestedSpeed;
 } EFI_ACPI_5_0_RASF_PATROL_SCRUB_PLATFORM_BLOCK_STRUCTURE;
-# 880 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 880 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier;
@@ -2587,7 +2587,7 @@ typedef struct {
 
 
 } EFI_ACPI_5_0_MEMORY_POWER_STATUS_TABLE;
-# 896 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 896 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -2599,7 +2599,7 @@ typedef struct {
   UINT64 MemoryEnergyConsumed;
   UINT64 ExpectedAveragePowerComsuned;
 } EFI_ACPI_5_0_MPST_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 924 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 924 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 PowerStateValue;
   UINT8 PowerStateInformationIndex;
@@ -2655,7 +2655,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved;
 } EFI_ACPI_5_0_MEMORY_TOPOLOGY_TABLE;
-# 988 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 988 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Reserved;
@@ -2663,7 +2663,7 @@ typedef struct {
   UINT16 Flags;
   UINT16 Reserved1;
 } EFI_ACPI_5_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE;
-# 1006 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1006 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_5_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE Header;
   UINT16 SocketIdentifier;
@@ -2738,7 +2738,7 @@ typedef struct {
 
   UINT32 ImageOffsetY;
 } EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE;
-# 1138 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1138 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT16 Type;
   UINT8 Length;
@@ -2812,14 +2812,14 @@ typedef struct {
 
   UINT64 ExitBootServicesExit;
 } EFI_ACPI_5_0_FPDT_FIRMWARE_BASIC_BOOT_RECORD;
-# 1220 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1220 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_5_0_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
 
 
 } EFI_ACPI_5_0_FPDT_FIRMWARE_BASIC_BOOT_TABLE;
-# 1235 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1235 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_5_0_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
@@ -2890,13 +2890,13 @@ typedef struct {
   UINT32 NonSecurePL2TimerGSIV;
   UINT32 NonSecurePL2TimerFlags;
 } EFI_ACPI_5_0_GENERIC_TIMER_DESCRIPTION_TABLE;
-# 1326 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1326 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 BootErrorRegionLength;
   UINT64 BootErrorRegion;
 } EFI_ACPI_5_0_BOOT_ERROR_RECORD_TABLE_HEADER;
-# 1340 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1340 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT32 UncorrectableErrorValid : 1;
   UINT32 CorrectableErrorValid : 1;
@@ -2916,7 +2916,7 @@ typedef struct {
   UINT32 DataLength;
   UINT32 ErrorSeverity;
 } EFI_ACPI_5_0_BOOT_ERROR_REGION_STRUCTURE;
-# 1372 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1372 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 SectionType[16];
   UINT32 ErrorSeverity;
@@ -2927,12 +2927,12 @@ typedef struct {
   UINT8 FruId[16];
   UINT8 FruText[20];
 } EFI_ACPI_5_0_GENERIC_ERROR_DATA_ENTRY_STRUCTURE;
-# 1391 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1391 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 ErrorSourceCount;
 } EFI_ACPI_5_0_HARDWARE_ERROR_SOURCE_TABLE_HEADER;
-# 1421 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1421 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT16 Type;
   UINT16 SourceId;
@@ -2961,7 +2961,7 @@ typedef struct {
   UINT32 AddressRegisterMsrAddress;
   UINT32 MiscRegisterMsrAddress;
 } EFI_ACPI_5_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_BANK_STRUCTURE;
-# 1469 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1469 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT16 Type : 1;
   UINT16 PollInterval : 1;
@@ -3122,7 +3122,7 @@ typedef struct {
   UINT8 Reserved0[4];
   UINT32 InstructionEntryCount;
 } EFI_ACPI_5_0_ERROR_RECORD_SERIALIZATION_TABLE_HEADER;
-# 1695 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1695 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 SerializationAction;
   UINT8 Instruction;
@@ -3143,7 +3143,7 @@ typedef struct {
   UINT8 Reserved0[3];
   UINT32 InjectionEntryCount;
 } EFI_ACPI_5_0_ERROR_INJECTION_TABLE_HEADER;
-# 1774 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1774 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 InjectionAction;
   UINT8 Instruction;
@@ -3172,7 +3172,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved;
 } EFI_ACPI_5_0_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER;
-# 1821 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 1821 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3219,9 +3219,9 @@ typedef struct {
   EFI_ACPI_5_0_PCCT_GENERIC_SHARED_MEMORY_REGION_COMMAND Command;
   EFI_ACPI_5_0_PCCT_GENERIC_SHARED_MEMORY_REGION_STATUS Status;
 } EFI_ACPI_5_0_PCCT_GENERIC_SHARED_MEMORY_REGION_HEADER;
-# 2118 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
+# 2118 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi50.h"
 #pragma pack()
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h" 2
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h" 2
 
 
 
@@ -3238,7 +3238,7 @@ typedef struct {
   UINT8 AccessSize;
   UINT64 Address;
 } EFI_ACPI_5_1_GENERIC_ADDRESS_STRUCTURE;
-# 59 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 59 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -3250,12 +3250,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_5_1_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 80 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 80 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_5_1_COMMON_HEADER;
-# 110 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 110 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -3313,7 +3313,7 @@ typedef struct {
   EFI_ACPI_5_1_GENERIC_ADDRESS_STRUCTURE SleepControlReg;
   EFI_ACPI_5_1_GENERIC_ADDRESS_STRUCTURE SleepStatusReg;
 } EFI_ACPI_5_1_FIXED_ACPI_DESCRIPTION_TABLE;
-# 235 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 235 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -3327,13 +3327,13 @@ typedef struct {
   UINT32 OspmFlags;
   UINT8 Reserved1[24];
 } EFI_ACPI_5_1_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 281 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 281 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_5_1_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 326 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 326 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3341,7 +3341,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_5_1_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 342 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 342 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3379,7 +3379,7 @@ typedef struct {
   UINT8 CpeiProcessorOverride;
   UINT8 Reserved[31];
 } EFI_ACPI_5_1_PLATFORM_INTERRUPT_APIC_STRUCTURE;
-# 390 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 390 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3449,7 +3449,7 @@ typedef struct {
   UINT32 GlobalSystemInterrupt;
   UINT32 PlatformInterruptSourceFlags;
 } EFI_ACPI_5_1_PLATFORM_INTERRUPT_SOURCES_STRUCTURE;
-# 469 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 469 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3491,7 +3491,7 @@ typedef struct {
   UINT64 GICRBaseAddress;
   UINT64 MPIDR;
 } EFI_ACPI_5_1_GIC_STRUCTURE;
-# 521 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 521 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3502,7 +3502,7 @@ typedef struct {
   UINT8 GicVersion;
   UINT8 Reserved2[3];
 } EFI_ACPI_5_1_GIC_DISTRIBUTOR_STRUCTURE;
-# 543 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 543 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3513,7 +3513,7 @@ typedef struct {
   UINT16 SPICount;
   UINT16 SPIBase;
 } EFI_ACPI_5_1_GIC_MSI_FRAME_STRUCTURE;
-# 562 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 562 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3531,7 +3531,7 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_5_1_SMART_BATTERY_DESCRIPTION_TABLE;
-# 590 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 590 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_5_1_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -3539,13 +3539,13 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_5_1_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 607 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 607 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved1;
   UINT64 Reserved2;
 } EFI_ACPI_5_1_SYSTEM_RESOURCE_AFFINITY_TABLE_HEADER;
-# 631 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 631 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3556,7 +3556,7 @@ typedef struct {
   UINT8 ProximityDomain31To8[3];
   UINT32 ClockDomain;
 } EFI_ACPI_5_1_PROCESSOR_LOCAL_APIC_SAPIC_AFFINITY_STRUCTURE;
-# 650 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 650 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3570,7 +3570,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved3;
 } EFI_ACPI_5_1_MEMORY_AFFINITY_STRUCTURE;
-# 674 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 674 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3593,17 +3593,17 @@ typedef struct {
   UINT32 Flags;
   UINT32 ClockDomain;
 } EFI_ACPI_5_1_GICC_AFFINITY_STRUCTURE;
-# 706 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 706 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64 NumberOfSystemLocalities;
 } EFI_ACPI_5_1_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER;
-# 719 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 719 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 Reserved[8];
 } EFI_ACPI_5_1_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_HEADER;
-# 737 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 737 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -3622,7 +3622,7 @@ typedef struct {
   UINT32 MaximumNumberOfClockDomains;
   UINT64 MaximumPhysicalAddress;
 } EFI_ACPI_5_1_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_HEADER;
-# 764 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 764 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Revision;
   UINT8 Length;
@@ -3639,7 +3639,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier[12];
 } EFI_ACPI_5_1_RAS_FEATURE_TABLE;
-# 789 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 789 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -3650,7 +3650,7 @@ typedef struct {
   UINT16 NumberOfRASFParameterBlocks;
   UINT32 SetRASCapabilitiesStatus;
 } EFI_ACPI_5_1_RASF_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 814 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 814 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT16 Type;
   UINT16 Version;
@@ -3661,7 +3661,7 @@ typedef struct {
   UINT16 Flags;
   UINT8 RequestedSpeed;
 } EFI_ACPI_5_1_RASF_PATROL_SCRUB_PLATFORM_BLOCK_STRUCTURE;
-# 835 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 835 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier;
@@ -3669,7 +3669,7 @@ typedef struct {
 
 
 } EFI_ACPI_5_1_MEMORY_POWER_STATUS_TABLE;
-# 851 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 851 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -3681,7 +3681,7 @@ typedef struct {
   UINT64 MemoryEnergyConsumed;
   UINT64 ExpectedAveragePowerComsuned;
 } EFI_ACPI_5_1_MPST_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 879 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 879 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 PowerStateValue;
   UINT8 PowerStateInformationIndex;
@@ -3737,7 +3737,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved;
 } EFI_ACPI_5_1_MEMORY_TOPOLOGY_TABLE;
-# 943 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 943 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Reserved;
@@ -3745,7 +3745,7 @@ typedef struct {
   UINT16 Flags;
   UINT16 Reserved1;
 } EFI_ACPI_5_1_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE;
-# 961 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 961 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_5_1_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE Header;
   UINT16 SocketIdentifier;
@@ -3820,7 +3820,7 @@ typedef struct {
 
   UINT32 ImageOffsetY;
 } EFI_ACPI_5_1_BOOT_GRAPHICS_RESOURCE_TABLE;
-# 1091 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1091 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT16 Type;
   UINT8 Length;
@@ -3894,14 +3894,14 @@ typedef struct {
 
   UINT64 ExitBootServicesExit;
 } EFI_ACPI_5_1_FPDT_FIRMWARE_BASIC_BOOT_RECORD;
-# 1173 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1173 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_5_1_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
 
 
 } EFI_ACPI_5_1_FPDT_FIRMWARE_BASIC_BOOT_TABLE;
-# 1188 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1188 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_5_1_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
@@ -3975,7 +3975,7 @@ typedef struct {
   UINT32 PlatformTimerCount;
   UINT32 PlatformTimerOffset;
 } EFI_ACPI_5_1_GENERIC_TIMER_DESCRIPTION_TABLE;
-# 1283 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1283 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT16 Length;
@@ -3999,7 +3999,7 @@ typedef struct {
   UINT32 GTxVirtualTimerFlags;
   UINT32 GTxCommonFlags;
 } EFI_ACPI_5_1_GTDT_GT_BLOCK_TIMER_STRUCTURE;
-# 1322 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1322 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT16 Length;
@@ -4009,13 +4009,13 @@ typedef struct {
   UINT32 WatchdogTimerGSIV;
   UINT32 WatchdogTimerFlags;
 } EFI_ACPI_5_1_GTDT_SBSA_GENERIC_WATCHDOG_STRUCTURE;
-# 1342 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1342 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 BootErrorRegionLength;
   UINT64 BootErrorRegion;
 } EFI_ACPI_5_1_BOOT_ERROR_RECORD_TABLE_HEADER;
-# 1356 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1356 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT32 UncorrectableErrorValid : 1;
   UINT32 CorrectableErrorValid : 1;
@@ -4035,7 +4035,7 @@ typedef struct {
   UINT32 DataLength;
   UINT32 ErrorSeverity;
 } EFI_ACPI_5_1_BOOT_ERROR_REGION_STRUCTURE;
-# 1393 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1393 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 SectionType[16];
   UINT32 ErrorSeverity;
@@ -4046,12 +4046,12 @@ typedef struct {
   UINT8 FruId[16];
   UINT8 FruText[20];
 } EFI_ACPI_5_1_GENERIC_ERROR_DATA_ENTRY_STRUCTURE;
-# 1412 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1412 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 ErrorSourceCount;
 } EFI_ACPI_5_1_HARDWARE_ERROR_SOURCE_TABLE_HEADER;
-# 1442 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1442 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT16 Type;
   UINT16 SourceId;
@@ -4080,7 +4080,7 @@ typedef struct {
   UINT32 AddressRegisterMsrAddress;
   UINT32 MiscRegisterMsrAddress;
 } EFI_ACPI_5_1_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_BANK_STRUCTURE;
-# 1490 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1490 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT16 Type : 1;
   UINT16 PollInterval : 1;
@@ -4241,7 +4241,7 @@ typedef struct {
   UINT8 Reserved0[4];
   UINT32 InstructionEntryCount;
 } EFI_ACPI_5_1_ERROR_RECORD_SERIALIZATION_TABLE_HEADER;
-# 1716 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1716 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 SerializationAction;
   UINT8 Instruction;
@@ -4262,7 +4262,7 @@ typedef struct {
   UINT8 Reserved0[3];
   UINT32 InjectionEntryCount;
 } EFI_ACPI_5_1_ERROR_INJECTION_TABLE_HEADER;
-# 1795 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1795 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 InjectionAction;
   UINT8 Instruction;
@@ -4291,7 +4291,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved;
 } EFI_ACPI_5_1_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER;
-# 1842 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 1842 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4338,9 +4338,9 @@ typedef struct {
   EFI_ACPI_5_1_PCCT_GENERIC_SHARED_MEMORY_REGION_COMMAND Command;
   EFI_ACPI_5_1_PCCT_GENERIC_SHARED_MEMORY_REGION_STATUS Status;
 } EFI_ACPI_5_1_PCCT_GENERIC_SHARED_MEMORY_REGION_HEADER;
-# 2143 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
+# 2143 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi51.h"
 #pragma pack()
-# 14 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h" 2
+# 14 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h" 2
 
 
 
@@ -4357,7 +4357,7 @@ typedef struct {
   UINT8 AccessSize;
   UINT64 Address;
 } EFI_ACPI_6_0_GENERIC_ADDRESS_STRUCTURE;
-# 58 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 58 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT64 Signature;
   UINT8 Checksum;
@@ -4369,12 +4369,12 @@ typedef struct {
   UINT8 ExtendedChecksum;
   UINT8 Reserved[3];
 } EFI_ACPI_6_0_ROOT_SYSTEM_DESCRIPTION_POINTER;
-# 79 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 79 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
 } EFI_ACPI_6_0_COMMON_HEADER;
-# 109 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 109 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 FirmwareCtrl;
@@ -4433,7 +4433,7 @@ typedef struct {
   EFI_ACPI_6_0_GENERIC_ADDRESS_STRUCTURE SleepStatusReg;
   UINT64 HypervisorVendorIdentity;
 } EFI_ACPI_6_0_FIXED_ACPI_DESCRIPTION_TABLE;
-# 235 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 235 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Length;
@@ -4447,13 +4447,13 @@ typedef struct {
   UINT32 OspmFlags;
   UINT8 Reserved1[24];
 } EFI_ACPI_6_0_FIRMWARE_ACPI_CONTROL_STRUCTURE;
-# 281 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 281 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 LocalApicAddress;
   UINT32 Flags;
 } EFI_ACPI_6_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER;
-# 327 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 327 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4461,7 +4461,7 @@ typedef struct {
   UINT8 ApicId;
   UINT32 Flags;
 } EFI_ACPI_6_0_PROCESSOR_LOCAL_APIC_STRUCTURE;
-# 343 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 343 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4499,7 +4499,7 @@ typedef struct {
   UINT8 CpeiProcessorOverride;
   UINT8 Reserved[31];
 } EFI_ACPI_6_0_PLATFORM_INTERRUPT_APIC_STRUCTURE;
-# 391 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 391 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4569,7 +4569,7 @@ typedef struct {
   UINT32 GlobalSystemInterrupt;
   UINT32 PlatformInterruptSourceFlags;
 } EFI_ACPI_6_0_PLATFORM_INTERRUPT_SOURCES_STRUCTURE;
-# 470 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 470 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4613,7 +4613,7 @@ typedef struct {
   UINT8 ProcessorPowerEfficiencyClass;
   UINT8 Reserved2[3];
 } EFI_ACPI_6_0_GIC_STRUCTURE;
-# 524 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 524 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4624,7 +4624,7 @@ typedef struct {
   UINT8 GicVersion;
   UINT8 Reserved2[3];
 } EFI_ACPI_6_0_GIC_DISTRIBUTOR_STRUCTURE;
-# 546 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 546 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4635,7 +4635,7 @@ typedef struct {
   UINT16 SPICount;
   UINT16 SPIBase;
 } EFI_ACPI_6_0_GIC_MSI_FRAME_STRUCTURE;
-# 565 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 565 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4665,7 +4665,7 @@ typedef struct {
   UINT32 LowEnergyLevel;
   UINT32 CriticalEnergyLevel;
 } EFI_ACPI_6_0_SMART_BATTERY_DESCRIPTION_TABLE;
-# 605 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 605 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   EFI_ACPI_6_0_GENERIC_ADDRESS_STRUCTURE EcControl;
@@ -4673,13 +4673,13 @@ typedef struct {
   UINT32 Uid;
   UINT8 GpeBit;
 } EFI_ACPI_6_0_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE;
-# 622 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 622 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved1;
   UINT64 Reserved2;
 } EFI_ACPI_6_0_SYSTEM_RESOURCE_AFFINITY_TABLE_HEADER;
-# 646 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 646 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4690,7 +4690,7 @@ typedef struct {
   UINT8 ProximityDomain31To8[3];
   UINT32 ClockDomain;
 } EFI_ACPI_6_0_PROCESSOR_LOCAL_APIC_SAPIC_AFFINITY_STRUCTURE;
-# 665 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 665 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4704,7 +4704,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved3;
 } EFI_ACPI_6_0_MEMORY_AFFINITY_STRUCTURE;
-# 689 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 689 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4727,17 +4727,17 @@ typedef struct {
   UINT32 Flags;
   UINT32 ClockDomain;
 } EFI_ACPI_6_0_GICC_AFFINITY_STRUCTURE;
-# 721 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 721 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT64 NumberOfSystemLocalities;
 } EFI_ACPI_6_0_SYSTEM_LOCALITY_DISTANCE_INFORMATION_TABLE_HEADER;
-# 734 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 734 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 Reserved[8];
 } EFI_ACPI_6_0_CORRECTED_PLATFORM_ERROR_POLLING_TABLE_HEADER;
-# 752 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 752 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -4756,7 +4756,7 @@ typedef struct {
   UINT32 MaximumNumberOfClockDomains;
   UINT64 MaximumPhysicalAddress;
 } EFI_ACPI_6_0_MAXIMUM_SYSTEM_CHARACTERISTICS_TABLE_HEADER;
-# 779 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 779 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Revision;
   UINT8 Length;
@@ -4773,7 +4773,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier[12];
 } EFI_ACPI_6_0_RAS_FEATURE_TABLE;
-# 804 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 804 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -4784,7 +4784,7 @@ typedef struct {
   UINT16 NumberOfRASFParameterBlocks;
   UINT32 SetRASCapabilitiesStatus;
 } EFI_ACPI_6_0_RASF_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 829 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 829 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type;
   UINT16 Version;
@@ -4795,7 +4795,7 @@ typedef struct {
   UINT16 Flags;
   UINT8 RequestedSpeed;
 } EFI_ACPI_6_0_RASF_PATROL_SCRUB_PLATFORM_BLOCK_STRUCTURE;
-# 850 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 850 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT8 PlatformCommunicationChannelIdentifier;
@@ -4803,7 +4803,7 @@ typedef struct {
 
 
 } EFI_ACPI_6_0_MEMORY_POWER_STATUS_TABLE;
-# 866 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 866 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT32 Signature;
   UINT16 Command;
@@ -4815,7 +4815,7 @@ typedef struct {
   UINT64 MemoryEnergyConsumed;
   UINT64 ExpectedAveragePowerComsuned;
 } EFI_ACPI_6_0_MPST_PLATFORM_COMMUNICATION_CHANNEL_SHARED_MEMORY_REGION;
-# 894 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 894 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 PowerStateValue;
   UINT8 PowerStateInformationIndex;
@@ -4871,7 +4871,7 @@ typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved;
 } EFI_ACPI_6_0_MEMORY_TOPOLOGY_TABLE;
-# 958 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 958 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Reserved;
@@ -4879,7 +4879,7 @@ typedef struct {
   UINT16 Flags;
   UINT16 Reserved1;
 } EFI_ACPI_6_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE;
-# 976 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 976 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_6_0_PMMT_COMMON_MEMORY_AGGREGATOR_DEVICE_STRUCTURE Header;
   UINT16 SocketIdentifier;
@@ -4954,7 +4954,7 @@ typedef struct {
 
   UINT32 ImageOffsetY;
 } EFI_ACPI_6_0_BOOT_GRAPHICS_RESOURCE_TABLE;
-# 1106 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1106 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type;
   UINT8 Length;
@@ -5028,14 +5028,14 @@ typedef struct {
 
   UINT64 ExitBootServicesExit;
 } EFI_ACPI_6_0_FPDT_FIRMWARE_BASIC_BOOT_RECORD;
-# 1188 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1188 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_6_0_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
 
 
 } EFI_ACPI_6_0_FPDT_FIRMWARE_BASIC_BOOT_TABLE;
-# 1203 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1203 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_6_0_FPDT_PERFORMANCE_TABLE_HEADER Header;
 
@@ -5109,7 +5109,7 @@ typedef struct {
   UINT32 PlatformTimerCount;
   UINT32 PlatformTimerOffset;
 } EFI_ACPI_6_0_GENERIC_TIMER_DESCRIPTION_TABLE;
-# 1298 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1298 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT16 Length;
@@ -5133,7 +5133,7 @@ typedef struct {
   UINT32 GTxVirtualTimerFlags;
   UINT32 GTxCommonFlags;
 } EFI_ACPI_6_0_GTDT_GT_BLOCK_TIMER_STRUCTURE;
-# 1337 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1337 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT16 Length;
@@ -5143,17 +5143,17 @@ typedef struct {
   UINT32 WatchdogTimerGSIV;
   UINT32 WatchdogTimerFlags;
 } EFI_ACPI_6_0_GTDT_SBSA_GENERIC_WATCHDOG_STRUCTURE;
-# 1357 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1357 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 Reserved;
 } EFI_ACPI_6_0_NVDIMM_FIRMWARE_INTERFACE_TABLE;
-# 1381 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1381 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type;
   UINT16 Length;
 } EFI_ACPI_6_0_NFIT_STRUCTURE_HEADER;
-# 1399 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1399 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type;
   UINT16 Length;
@@ -5286,7 +5286,7 @@ typedef struct {
   UINT32 BootErrorRegionLength;
   UINT64 BootErrorRegion;
 } EFI_ACPI_6_0_BOOT_ERROR_RECORD_TABLE_HEADER;
-# 1540 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1540 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT32 UncorrectableErrorValid : 1;
   UINT32 CorrectableErrorValid : 1;
@@ -5306,7 +5306,7 @@ typedef struct {
   UINT32 DataLength;
   UINT32 ErrorSeverity;
 } EFI_ACPI_6_0_BOOT_ERROR_REGION_STRUCTURE;
-# 1577 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1577 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 SectionType[16];
   UINT32 ErrorSeverity;
@@ -5317,12 +5317,12 @@ typedef struct {
   UINT8 FruId[16];
   UINT8 FruText[20];
 } EFI_ACPI_6_0_GENERIC_ERROR_DATA_ENTRY_STRUCTURE;
-# 1596 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1596 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER Header;
   UINT32 ErrorSourceCount;
 } EFI_ACPI_6_0_HARDWARE_ERROR_SOURCE_TABLE_HEADER;
-# 1626 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1626 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type;
   UINT16 SourceId;
@@ -5351,7 +5351,7 @@ typedef struct {
   UINT32 AddressRegisterMsrAddress;
   UINT32 MiscRegisterMsrAddress;
 } EFI_ACPI_6_0_IA32_ARCHITECTURE_MACHINE_CHECK_ERROR_BANK_STRUCTURE;
-# 1677 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1677 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT16 Type : 1;
   UINT16 PollInterval : 1;
@@ -5512,7 +5512,7 @@ typedef struct {
   UINT8 Reserved0[4];
   UINT32 InstructionEntryCount;
 } EFI_ACPI_6_0_ERROR_RECORD_SERIALIZATION_TABLE_HEADER;
-# 1903 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1903 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 SerializationAction;
   UINT8 Instruction;
@@ -5533,7 +5533,7 @@ typedef struct {
   UINT8 Reserved0[3];
   UINT32 InjectionEntryCount;
 } EFI_ACPI_6_0_ERROR_INJECTION_TABLE_HEADER;
-# 1982 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 1982 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 InjectionAction;
   UINT8 Instruction;
@@ -5562,7 +5562,7 @@ typedef struct {
   UINT32 Flags;
   UINT64 Reserved;
 } EFI_ACPI_6_0_PLATFORM_COMMUNICATION_CHANNEL_TABLE_HEADER;
-# 2031 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 2031 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 typedef struct {
   UINT8 Type;
   UINT8 Length;
@@ -5653,12 +5653,12 @@ typedef struct {
   UINT64 DoorbellAckPreserve;
   UINT64 DoorbellAckWrite;
 } EFI_ACPI_6_0_PCCT_SUBSPACE_2_HW_REDUCED_COMMUNICATIONS;
-# 2396 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
+# 2396 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/Acpi60.h"
 #pragma pack()
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
-# 33 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h" 2
+# 33 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 #pragma pack(1)
-# 43 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 43 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   UINT8 Type;
 
@@ -5680,7 +5680,7 @@ typedef struct {
 
 
 typedef EFI_DEVICE_PATH_PROTOCOL EFI_DEVICE_PATH;
-# 78 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 78 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5692,7 +5692,7 @@ typedef struct {
 
   UINT8 Device;
 } PCI_DEVICE_PATH;
-# 98 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 98 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5700,7 +5700,7 @@ typedef struct {
 
   UINT8 FunctionNumber;
 } PCCARD_DEVICE_PATH;
-# 114 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 114 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5716,7 +5716,7 @@ typedef struct {
 
   EFI_PHYSICAL_ADDRESS EndingAddress;
 } MEMMAP_DEVICE_PATH;
-# 140 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 140 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5727,7 +5727,7 @@ typedef struct {
 
 
 } VENDOR_DEVICE_PATH;
-# 159 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 159 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5735,7 +5735,7 @@ typedef struct {
 
   UINT32 ControllerNumber;
 } CONTROLLER_DEVICE_PATH;
-# 175 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 175 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5747,7 +5747,7 @@ typedef struct {
 
   UINT8 BaseAddress[8];
 } BMC_DEVICE_PATH;
-# 196 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 196 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5797,7 +5797,7 @@ typedef struct {
 
 
 } ACPI_EXTENDED_HID_DEVICE_PATH;
-# 271 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 271 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5825,7 +5825,7 @@ typedef struct {
 
   UINT32 NFITDeviceHandle;
 } ACPI_NVDIMM_DEVICE_PATH;
-# 327 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 327 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -5962,7 +5962,7 @@ typedef struct {
 
   UINT8 DeviceProtocol;
 } USB_CLASS_DEVICE_PATH;
-# 472 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 472 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6020,7 +6020,7 @@ typedef struct {
 
   UINT16 Lun;
 } SATA_DEVICE_PATH;
-# 539 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 539 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6136,7 +6136,7 @@ typedef struct {
 
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
-# 663 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 663 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
   UINT32 ResourceFlags;
 
 
@@ -6156,7 +6156,7 @@ typedef struct {
 
   UINT64 DeviceId;
 } INFINIBAND_DEVICE_PATH;
-# 693 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 693 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6173,7 +6173,7 @@ typedef struct {
 
 
   UINT8 DataBits;
-# 718 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 718 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
   UINT8 Parity;
 
 
@@ -6202,7 +6202,7 @@ typedef struct {
 
 
 typedef VENDOR_DEVICE_PATH VENDOR_DEFINED_DEVICE_PATH;
-# 756 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 756 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6217,7 +6217,7 @@ typedef struct {
 
   UINT32 FlowControlMap;
 } UART_FLOW_CONTROL_DEVICE_PATH;
-# 778 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 778 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6371,7 +6371,7 @@ typedef struct {
 
 
 } ISCSI_DEVICE_PATH;
-# 945 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 945 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6412,7 +6412,7 @@ typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
   BLUETOOTH_LE_ADDRESS Address;
 } BLUETOOTH_LE_DEVICE_PATH;
-# 999 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 999 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6452,7 +6452,7 @@ typedef struct {
 
   UINT8 SignatureType;
 } HARDDRIVE_DEVICE_PATH;
-# 1054 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1054 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6468,7 +6468,7 @@ typedef struct {
 
   UINT64 PartitionSize;
 } CDROM_DEVICE_PATH;
-# 1079 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1079 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6476,7 +6476,7 @@ typedef struct {
 
   CHAR16 PathName[1];
 } FILEPATH_DEVICE_PATH;
-# 1099 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1099 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6484,7 +6484,7 @@ typedef struct {
 
   EFI_GUID Protocol;
 } MEDIA_PROTOCOL_DEVICE_PATH;
-# 1115 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1115 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6492,7 +6492,7 @@ typedef struct {
 
   EFI_GUID FvFileName;
 } MEDIA_FW_VOL_FILEPATH_DEVICE_PATH;
-# 1131 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1131 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6500,7 +6500,7 @@ typedef struct {
 
   EFI_GUID FvName;
 } MEDIA_FW_VOL_DEVICE_PATH;
-# 1147 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1147 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
   UINT32 Reserved;
@@ -6535,7 +6535,7 @@ extern EFI_GUID gEfiPersistentVirtualDiskGuid;
 
 
 extern EFI_GUID gEfiPersistentVirtualCdGuid;
-# 1190 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1190 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6555,7 +6555,7 @@ typedef struct {
 
   UINT16 Instance;
 } MEDIA_RAM_DISK_DEVICE_PATH;
-# 1223 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1223 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef struct {
   EFI_DEVICE_PATH_PROTOCOL Header;
 
@@ -6571,7 +6571,7 @@ typedef struct {
 
   CHAR8 String[1];
 } BBS_BBS_DEVICE_PATH;
-# 1254 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DevicePath.h"
+# 1254 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DevicePath.h"
 typedef union {
   EFI_DEVICE_PATH_PROTOCOL DevPath;
   PCI_DEVICE_PATH Pci;
@@ -6692,11 +6692,11 @@ typedef union {
 
 
 extern EFI_GUID gEfiDevicePathProtocolGuid;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextIn.h" 1
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextIn.h" 1
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
 typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
-# 30 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
+# 30 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
 typedef struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL SIMPLE_INPUT_INTERFACE;
 
 
@@ -6706,14 +6706,14 @@ typedef struct {
   UINT16 ScanCode;
   CHAR16 UnicodeChar;
 } EFI_INPUT_KEY;
-# 84 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
+# 84 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
 typedef
 EFI_STATUS
 ( *EFI_INPUT_RESET)(
      EFI_SIMPLE_TEXT_INPUT_PROTOCOL *This,
      BOOLEAN ExtendedVerification
   );
-# 105 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
+# 105 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextIn.h"
 typedef
 EFI_STATUS
 ( *EFI_INPUT_READ_KEY)(
@@ -6735,11 +6735,11 @@ struct _EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
 };
 
 extern EFI_GUID gEfiSimpleTextInProtocolGuid;
-# 23 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h" 1
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 23 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h" 1
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef struct _EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
-# 48 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 48 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef
 EFI_STATUS
 ( *EFI_INPUT_RESET_EX)(
@@ -6781,14 +6781,14 @@ typedef struct {
 
   EFI_KEY_STATE KeyState;
 } EFI_KEY_DATA;
-# 192 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 192 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef
 EFI_STATUS
 ( *EFI_INPUT_READ_KEY_EX)(
       EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *This,
       EFI_KEY_DATA *KeyData
   );
-# 219 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 219 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_STATE)(
@@ -6804,7 +6804,7 @@ EFI_STATUS
 ( *EFI_KEY_NOTIFY_FUNCTION)(
      EFI_KEY_DATA *KeyData
   );
-# 261 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 261 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_KEYSTROKE_NOTIFY)(
@@ -6813,7 +6813,7 @@ EFI_STATUS
       EFI_KEY_NOTIFY_FUNCTION KeyNotificationFunction,
       void **NotifyHandle
   );
-# 285 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
+# 285 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextInEx.h"
 typedef
 EFI_STATUS
 ( *EFI_UNREGISTER_KEYSTROKE_NOTIFY)(
@@ -6840,37 +6840,37 @@ struct _EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
 };
 
 extern EFI_GUID gEfiSimpleTextInputExProtocolGuid;
-# 24 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h" 1
-# 27 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 24 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h" 1
+# 27 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef struct _EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 
 
 
 
 typedef EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL SIMPLE_TEXT_OUTPUT_INTERFACE;
-# 165 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 165 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_RESET)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
      BOOLEAN ExtendedVerification
   );
-# 190 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 190 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_STRING)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
      CHAR16 *String
   );
-# 211 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 211 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_TEST_STRING)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
      CHAR16 *String
   );
-# 234 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 234 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_QUERY_MODE)(
@@ -6879,27 +6879,27 @@ EFI_STATUS
       UINTN *Columns,
       UINTN *Rows
   );
-# 254 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 254 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_SET_MODE)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
      UINTN ModeNumber
   );
-# 275 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 275 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_SET_ATTRIBUTE)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This,
      UINTN Attribute
   );
-# 293 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 293 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_CLEAR_SCREEN)(
      EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This
   );
-# 316 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 316 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_SET_CURSOR_POSITION)(
@@ -6907,7 +6907,7 @@ EFI_STATUS
      UINTN Column,
      UINTN Row
   );
-# 338 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 338 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
 typedef
 EFI_STATUS
 ( *EFI_TEXT_ENABLE_CURSOR)(
@@ -6924,7 +6924,7 @@ typedef struct {
 
 
   INT32 MaxMode;
-# 362 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
+# 362 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/SimpleTextOut.h"
   INT32 Mode;
 
 
@@ -6971,7 +6971,7 @@ struct _EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
 };
 
 extern EFI_GUID gEfiSimpleTextOutProtocolGuid;
-# 25 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 25 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
 
 
 
@@ -6995,7 +6995,7 @@ typedef enum {
 
   MaxAllocateType
 } EFI_ALLOCATE_TYPE;
-# 128 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 128 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef struct {
 
 
@@ -7029,7 +7029,7 @@ typedef struct {
 
   UINT64 Attribute;
 } EFI_MEMORY_DESCRIPTOR;
-# 186 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 186 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_ALLOCATE_PAGES)(
@@ -7038,14 +7038,14 @@ EFI_STATUS
          UINTN Pages,
          EFI_PHYSICAL_ADDRESS *Memory
   );
-# 207 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 207 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_FREE_PAGES)(
       EFI_PHYSICAL_ADDRESS Memory,
       UINTN Pages
   );
-# 239 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 239 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_MEMORY_MAP)(
@@ -7055,7 +7055,7 @@ EFI_STATUS
          UINTN *DescriptorSize,
          UINT32 *DescriptorVersion
   );
-# 268 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 268 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_ALLOCATE_POOL)(
@@ -7063,13 +7063,13 @@ EFI_STATUS
       UINTN Size,
       void **Buffer
   );
-# 285 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 285 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_FREE_POOL)(
       void *Buffer
   );
-# 310 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 310 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_VIRTUAL_ADDRESS_MAP)(
@@ -7078,7 +7078,7 @@ EFI_STATUS
       UINT32 DescriptorVersion,
       EFI_MEMORY_DESCRIPTOR *VirtualMap
   );
-# 344 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 344 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CONNECT_CONTROLLER)(
@@ -7087,7 +7087,7 @@ EFI_STATUS
       EFI_DEVICE_PATH_PROTOCOL *RemainingDevicePath ,
       BOOLEAN Recursive
   );
-# 377 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 377 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_DISCONNECT_CONTROLLER)(
@@ -7095,21 +7095,21 @@ EFI_STATUS
       EFI_HANDLE DriverImageHandle ,
       EFI_HANDLE ChildHandle
   );
-# 405 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 405 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CONVERT_POINTER)(
          UINTN DebugDisposition,
          void **Address
   );
-# 440 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 440 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 void
 ( *EFI_EVENT_NOTIFY)(
       EFI_EVENT Event,
       void *Context
   );
-# 463 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 463 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CREATE_EVENT)(
@@ -7119,7 +7119,7 @@ EFI_STATUS
       void *NotifyContext ,
       EFI_EVENT *Event
   );
-# 492 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 492 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CREATE_EVENT_EX)(
@@ -7148,7 +7148,7 @@ typedef enum {
 
   TimerRelative
 } EFI_TIMER_DELAY;
-# 537 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 537 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_TIMER)(
@@ -7156,13 +7156,13 @@ EFI_STATUS
       EFI_TIMER_DELAY Type,
       UINT64 TriggerTime
   );
-# 553 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 553 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SIGNAL_EVENT)(
       EFI_EVENT Event
   );
-# 573 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 573 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_WAIT_FOR_EVENT)(
@@ -7170,19 +7170,19 @@ EFI_STATUS
       EFI_EVENT *Event,
       UINTN *Index
   );
-# 589 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 589 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CLOSE_EVENT)(
      EFI_EVENT Event
   );
-# 605 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 605 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CHECK_EVENT)(
      EFI_EVENT Event
   );
-# 627 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 627 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_TPL
 ( *EFI_RAISE_TPL)(
@@ -7200,7 +7200,7 @@ void
 ( *EFI_RESTORE_TPL)(
      EFI_TPL OldTpl
   );
-# 669 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 669 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_VARIABLE)(
@@ -7210,7 +7210,7 @@ EFI_STATUS
          UINTN *DataSize,
          void *Data
   );
-# 705 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 705 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_NEXT_VARIABLE_NAME)(
@@ -7218,7 +7218,7 @@ EFI_STATUS
          CHAR16 *VariableName,
          EFI_GUID *VendorGuid
   );
-# 747 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 747 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_VARIABLE)(
@@ -7257,20 +7257,20 @@ typedef struct {
 
   BOOLEAN SetsToZero;
 } EFI_TIME_CAPABILITIES;
-# 799 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 799 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_TIME)(
        EFI_TIME *Time,
        EFI_TIME_CAPABILITIES *Capabilities
   );
-# 816 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 816 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_TIME)(
       EFI_TIME *Time
   );
-# 837 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 837 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_WAKEUP_TIME)(
@@ -7278,14 +7278,14 @@ EFI_STATUS
       BOOLEAN *Pending,
       EFI_TIME *Time
   );
-# 859 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 859 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_WAKEUP_TIME)(
       BOOLEAN Enable,
       EFI_TIME *Time
   );
-# 896 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 896 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_IMAGE_LOAD)(
@@ -7296,7 +7296,7 @@ EFI_STATUS
       UINTN SourceSize,
       EFI_HANDLE *ImageHandle
   );
-# 921 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 921 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_IMAGE_START)(
@@ -7304,7 +7304,7 @@ EFI_STATUS
       UINTN *ExitDataSize,
       CHAR16 **ExitData
   );
-# 949 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 949 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_EXIT)(
@@ -7313,26 +7313,26 @@ EFI_STATUS
       UINTN ExitDataSize,
       CHAR16 *ExitData
   );
-# 967 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 967 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_IMAGE_UNLOAD)(
       EFI_HANDLE ImageHandle
   );
-# 983 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 983 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_EXIT_BOOT_SERVICES)(
       EFI_HANDLE ImageHandle,
       UINTN MapKey
   );
-# 999 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 999 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_STALL)(
       UINTN Microseconds
   );
-# 1021 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1021 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_WATCHDOG_TIMER)(
@@ -7341,7 +7341,7 @@ EFI_STATUS
      UINTN DataSize,
      CHAR16 *WatchdogData
   );
-# 1045 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1045 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 void
 ( *EFI_RESET_SYSTEM)(
@@ -7350,19 +7350,19 @@ void
      UINTN DataSize,
      void *ResetData
   );
-# 1064 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1064 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_NEXT_MONOTONIC_COUNT)(
       UINT64 *Count
   );
-# 1080 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1080 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_NEXT_HIGH_MONO_COUNT)(
       UINT32 *HighCount
   );
-# 1101 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1101 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CALCULATE_CRC32)(
@@ -7370,7 +7370,7 @@ EFI_STATUS
       UINTN DataSize,
       UINT32 *Crc32
   );
-# 1117 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1117 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 void
 ( *EFI_COPY_MEM)(
@@ -7378,7 +7378,7 @@ void
      void *Source,
      UINTN Length
   );
-# 1133 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1133 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 void
 ( *EFI_SET_MEM)(
@@ -7396,7 +7396,7 @@ typedef enum {
 
   EFI_NATIVE_INTERFACE
 } EFI_INTERFACE_TYPE;
-# 1171 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1171 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_INSTALL_PROTOCOL_INTERFACE)(
@@ -7405,14 +7405,14 @@ EFI_STATUS
          EFI_INTERFACE_TYPE InterfaceType,
          void *Interface
   );
-# 1196 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1196 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES)(
          EFI_HANDLE *Handle,
   ...
   );
-# 1221 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1221 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_REINSTALL_PROTOCOL_INTERFACE)(
@@ -7421,7 +7421,7 @@ EFI_STATUS
      void *OldInterface,
      void *NewInterface
   );
-# 1247 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1247 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_UNINSTALL_PROTOCOL_INTERFACE)(
@@ -7429,14 +7429,14 @@ EFI_STATUS
      EFI_GUID *Protocol,
      void *Interface
   );
-# 1266 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1266 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES)(
      EFI_HANDLE Handle,
   ...
   );
-# 1288 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1288 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_HANDLE_PROTOCOL)(
@@ -7444,7 +7444,7 @@ EFI_STATUS
       EFI_GUID *Protocol,
       void **Interface
   );
-# 1330 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1330 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_OPEN_PROTOCOL)(
@@ -7455,7 +7455,7 @@ EFI_STATUS
       EFI_HANDLE ControllerHandle,
       UINT32 Attributes
   );
-# 1362 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1362 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_CLOSE_PROTOCOL)(
@@ -7474,7 +7474,7 @@ typedef struct {
   UINT32 Attributes;
   UINT32 OpenCount;
 } EFI_OPEN_PROTOCOL_INFORMATION_ENTRY;
-# 1396 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1396 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_OPEN_PROTOCOL_INFORMATION)(
@@ -7483,7 +7483,7 @@ EFI_STATUS
       EFI_OPEN_PROTOCOL_INFORMATION_ENTRY **EntryBuffer,
       UINTN *EntryCount
   );
-# 1426 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1426 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_PROTOCOLS_PER_HANDLE)(
@@ -7491,7 +7491,7 @@ EFI_STATUS
       EFI_GUID ***ProtocolBuffer,
       UINTN *ProtocolBufferCount
   );
-# 1449 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1449 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_PROTOCOL_NOTIFY)(
@@ -7518,7 +7518,7 @@ typedef enum {
 
   ByProtocol
 } EFI_LOCATE_SEARCH_TYPE;
-# 1498 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1498 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_LOCATE_HANDLE)(
@@ -7528,7 +7528,7 @@ EFI_STATUS
          UINTN *BufferSize,
          EFI_HANDLE *Buffer
   );
-# 1524 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1524 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_LOCATE_DEVICE_PATH)(
@@ -7536,14 +7536,14 @@ EFI_STATUS
          EFI_DEVICE_PATH_PROTOCOL **DevicePath,
          EFI_HANDLE *Device
   );
-# 1545 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1545 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_INSTALL_CONFIGURATION_TABLE)(
      EFI_GUID *Guid,
      void *Table
   );
-# 1571 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1571 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_LOCATE_HANDLE_BUFFER)(
@@ -7553,7 +7553,7 @@ EFI_STATUS
          UINTN *NoHandles,
          EFI_HANDLE **Buffer
   );
-# 1598 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1598 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_LOCATE_PROTOCOL)(
@@ -7627,7 +7627,7 @@ typedef struct {
 
   void *CapsulePtr[1];
 } EFI_CAPSULE_TABLE;
-# 1706 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1706 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_UPDATE_CAPSULE)(
@@ -7635,7 +7635,7 @@ EFI_STATUS
      UINTN CapsuleCount,
      EFI_PHYSICAL_ADDRESS ScatterGatherList
   );
-# 1737 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1737 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_QUERY_CAPSULE_CAPABILITIES)(
@@ -7644,7 +7644,7 @@ EFI_STATUS
       UINT64 *MaximumCapsuleSize,
       EFI_RESET_TYPE *ResetType
   );
-# 1768 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1768 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_QUERY_VARIABLE_INFO)(
@@ -7653,7 +7653,7 @@ EFI_STATUS
       UINT64 *RemainingVariableStorageSize,
       UINT64 *MaximumVariableSize
   );
-# 1813 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1813 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef struct {
 
 
@@ -7880,14 +7880,14 @@ typedef struct {
 
   EFI_CONFIGURATION_TABLE *ConfigurationTable;
 } EFI_SYSTEM_TABLE;
-# 2051 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 2051 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef
 EFI_STATUS
 ( *EFI_IMAGE_ENTRY_POINT)(
       EFI_HANDLE ImageHandle,
       EFI_SYSTEM_TABLE *SystemTable
   );
-# 2066 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 2066 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 #pragma pack(1)
 typedef struct _EFI_LOAD_OPTION {
 
@@ -7901,10 +7901,10 @@ typedef struct _EFI_LOAD_OPTION {
 
 
   UINT16 FilePathListLength;
-# 2104 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 2104 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 } EFI_LOAD_OPTION;
 #pragma pack()
-# 2126 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 2126 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
 typedef union {
   struct {
 
@@ -7974,11 +7974,11 @@ typedef struct {
 
 } EFI_KEY_OPTION;
 #pragma pack()
-# 2231 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 2231 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 #pragma pack(1)
-# 65 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 65 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef void PXE_VOID;
 typedef UINT8 PXE_UINT8;
 typedef UINT16 PXE_UINT16;
@@ -7995,19 +7995,19 @@ typedef PXE_UINT8 PXE_BOOL;
 
 
 typedef PXE_UINT16 PXE_OPCODE;
-# 177 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 177 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT16 PXE_OPFLAGS;
-# 401 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 401 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT16 PXE_STATFLAGS;
-# 594 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 594 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT16 PXE_STATCODE;
-# 624 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 624 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT16 PXE_IFNUM;
-# 637 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 637 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT16 PXE_CONTROL;
-# 658 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 658 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT8 PXE_FRAME_TYPE;
-# 669 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 669 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef PXE_UINT32 PXE_IPV4;
 
 typedef PXE_UINT32 PXE_IPV6[4];
@@ -8017,7 +8017,7 @@ typedef PXE_UINT8 PXE_MAC_ADDR[32];
 
 typedef PXE_UINT8 PXE_IFTYPE;
 typedef UINT16 PXE_MEDIA_PROTOCOL;
-# 710 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 710 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_hw_undi {
   PXE_UINT32 Signature;
   PXE_UINT8 Len;
@@ -8035,7 +8035,7 @@ typedef struct s_pxe_hw_undi {
 
 
 } PXE_HW_UNDI;
-# 807 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 807 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_sw_undi {
   PXE_UINT32 Signature;
   PXE_UINT8 Len;
@@ -8057,7 +8057,7 @@ typedef union u_pxe_undi {
   PXE_HW_UNDI hw;
   PXE_SW_UNDI sw;
 } PXE_UNDI;
-# 873 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 873 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_cdb {
   PXE_OPCODE OpCode;
   PXE_OPFLAGS OpFlags;
@@ -8098,32 +8098,32 @@ typedef union pxe_device {
     PXE_UINT8 Function;
   } PCI, PCC;
 } PXE_DEVICE;
-# 922 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 922 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_cpb_start_30 {
-# 933 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 933 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Delay;
-# 949 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 949 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Block;
-# 963 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 963 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Virt2Phys;
-# 974 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 974 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Mem_IO;
 } PXE_CPB_START_30;
 
 typedef struct s_pxe_cpb_start_31 {
-# 988 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 988 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Delay;
-# 1004 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1004 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Block;
-# 1018 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1018 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Virt2Phys;
-# 1029 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1029 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Mem_IO;
-# 1046 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1046 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Map_Mem;
-# 1057 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1057 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 UnMap_Mem;
-# 1069 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1069 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   UINT64 Sync_Mem;
 
 
@@ -8134,9 +8134,9 @@ typedef struct s_pxe_cpb_start_31 {
 
   UINT64 Unique_ID;
 } PXE_CPB_START_31;
-# 1091 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1091 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_db_get_init_info {
-# 1100 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1100 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   PXE_UINT32 MemoryRequired;
 
 
@@ -8178,7 +8178,7 @@ typedef struct s_pxe_db_get_init_info {
 
 
   PXE_UINT16 MCastFilterCnt;
-# 1149 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1149 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   PXE_UINT16 TxBufCnt;
   PXE_UINT16 TxBufSize;
   PXE_UINT16 RxBufCnt;
@@ -8201,7 +8201,7 @@ typedef struct s_pxe_db_get_init_info {
 
   PXE_UINT8 SupportedLoopBackModes;
 } PXE_DB_GET_INIT_INFO;
-# 1183 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1183 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_pci_config_info {
 
 
@@ -8279,7 +8279,7 @@ typedef struct s_pxe_cpb_initialize {
 
 
   PXE_UINT32 LinkSpeed;
-# 1271 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1271 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   PXE_UINT16 TxBufCnt;
   PXE_UINT16 TxBufSize;
   PXE_UINT16 RxBufCnt;
@@ -8293,9 +8293,9 @@ typedef struct s_pxe_cpb_initialize {
 
   PXE_UINT8 LoopBackMode;
 } PXE_CPB_INITIALIZE;
-# 1295 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1295 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_db_initialize {
-# 1304 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1304 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   PXE_UINT32 MemoryUsed;
 
 
@@ -8349,7 +8349,7 @@ typedef struct s_pxe_dpb_station_address {
 } PXE_DB_STATION_ADDRESS;
 
 typedef struct s_pxe_db_statistics {
-# 1366 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1366 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
   PXE_UINT64 Supported;
 
 
@@ -8357,7 +8357,7 @@ typedef struct s_pxe_db_statistics {
 
   PXE_UINT64 Data[64];
 } PXE_DB_STATISTICS;
-# 1472 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiPxe.h"
+# 1472 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiPxe.h"
 typedef struct s_pxe_cpb_mcast_ip_to_mac {
 
 
@@ -8665,9 +8665,9 @@ typedef struct s_pxe_db_receive {
 } PXE_DB_RECEIVE;
 
 #pragma pack()
-# 2232 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiGpt.h" 1
-# 26 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiGpt.h"
+# 2232 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiGpt.h" 1
+# 26 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiGpt.h"
 #pragma pack(1)
 
 
@@ -8748,7 +8748,7 @@ typedef struct {
 
 
   EFI_LBA EndingLBA;
-# 129 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiGpt.h"
+# 129 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiGpt.h"
   UINT64 Attributes;
 
 
@@ -8757,13 +8757,13 @@ typedef struct {
 } EFI_PARTITION_ENTRY;
 
 #pragma pack()
-# 2233 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/HiiFormMapMethodGuid.h" 1
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/HiiFormMapMethodGuid.h"
+# 2233 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/HiiFormMapMethodGuid.h" 1
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/HiiFormMapMethodGuid.h"
 extern EFI_GUID gEfiHiiStandardFormGuid;
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h" 2
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h" 2
 
 
 
@@ -8782,7 +8782,7 @@ typedef UINT16 EFI_DEFAULT_ID;
 typedef UINT32 EFI_HII_FONT_STYLE;
 
 #pragma pack(1)
-# 46 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 46 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct {
   EFI_GUID PackageListGuid;
   UINT32 PackageLength;
@@ -8796,7 +8796,7 @@ typedef struct {
   UINT32 Type : 8;
 
 } EFI_HII_PACKAGE_HEADER;
-# 93 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 93 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct {
 
 
@@ -8860,7 +8860,7 @@ typedef struct _EFI_HII_SIMPLE_FONT_PACKAGE_HDR {
 
 
 } EFI_HII_SIMPLE_FONT_PACKAGE_HDR;
-# 174 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 174 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_GLYPH_INFO {
   UINT16 Width;
   UINT16 Height;
@@ -8883,7 +8883,7 @@ typedef struct _EFI_HII_FONT_PACKAGE_HDR {
   EFI_HII_FONT_STYLE FontStyle;
   CHAR16 FontFamily[1];
 } EFI_HII_FONT_PACKAGE_HDR;
-# 214 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 214 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_GLYPH_BLOCK {
   UINT8 BlockType;
 } EFI_HII_GLYPH_BLOCK;
@@ -8964,18 +8964,18 @@ typedef struct _EFI_HII_GIBT_SKIP2_BLOCK {
   EFI_HII_GLYPH_BLOCK Header;
   UINT16 SkipCount;
 } EFI_HII_GIBT_SKIP2_BLOCK;
-# 304 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 304 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_DEVICE_PATH_PACKAGE_HDR {
   EFI_HII_PACKAGE_HEADER Header;
 
 } EFI_HII_DEVICE_PATH_PACKAGE_HDR;
-# 317 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 317 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_GUID_PACKAGE_HDR {
   EFI_HII_PACKAGE_HEADER Header;
   EFI_GUID Guid;
 
 } EFI_HII_GUID_PACKAGE_HDR;
-# 335 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 335 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_STRING_PACKAGE_HDR {
   EFI_HII_PACKAGE_HEADER Header;
   UINT32 HdrSize;
@@ -8988,7 +8988,7 @@ typedef struct _EFI_HII_STRING_PACKAGE_HDR {
 typedef struct {
   UINT8 BlockType;
 } EFI_HII_STRING_BLOCK;
-# 372 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 372 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_SIBT_DUPLICATE_BLOCK {
   EFI_HII_STRING_BLOCK Header;
   EFI_STRING_ID StringId;
@@ -9096,7 +9096,7 @@ typedef struct _EFI_HII_IMAGE_PACKAGE_HDR {
 typedef struct _EFI_HII_IMAGE_BLOCK {
   UINT8 BlockType;
 } EFI_HII_IMAGE_BLOCK;
-# 505 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 505 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_IIBT_END_BLOCK {
   EFI_HII_IMAGE_BLOCK Header;
 } EFI_HII_IIBT_END_BLOCK;
@@ -9234,7 +9234,7 @@ typedef struct _EFI_HII_IMAGE_PALETTE_INFO {
   UINT16 PaletteSize;
   EFI_HII_RGB_PIXEL PaletteValue[1];
 } EFI_HII_IMAGE_PALETTE_INFO;
-# 651 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 651 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_FORM_PACKAGE_HDR {
   EFI_HII_PACKAGE_HEADER Header;
 
@@ -9272,7 +9272,7 @@ typedef union {
   EFI_HII_REF ref;
 
 } EFI_IFR_TYPE_VALUE;
-# 798 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 798 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_OP_HEADER {
   UINT8 OpCode;
   UINT8 Length : 7;
@@ -9294,13 +9294,13 @@ typedef struct _EFI_IFR_QUESTION_HEADER {
   } VarStoreInfo;
   UINT8 Flags;
 } EFI_IFR_QUESTION_HEADER;
-# 834 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 834 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_DEFAULTSTORE {
   EFI_IFR_OP_HEADER Header;
   EFI_STRING_ID DefaultName;
   UINT16 DefaultId;
 } EFI_IFR_DEFAULTSTORE;
-# 853 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 853 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_VARSTORE {
   EFI_IFR_OP_HEADER Header;
   EFI_GUID Guid;
@@ -9458,7 +9458,7 @@ typedef struct _EFI_IFR_DATE {
   EFI_IFR_QUESTION_HEADER Question;
   UINT8 Flags;
 } EFI_IFR_DATE;
-# 1023 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1023 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef union {
   struct {
     UINT8 MinValue;
@@ -9488,7 +9488,7 @@ typedef struct _EFI_IFR_NUMERIC {
   UINT8 Flags;
   MINMAXSTEP_DATA data;
 } EFI_IFR_NUMERIC;
-# 1067 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1067 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_ONE_OF {
   EFI_IFR_OP_HEADER Header;
   EFI_IFR_QUESTION_HEADER Question;
@@ -9528,7 +9528,7 @@ typedef struct _EFI_IFR_TIME {
   EFI_IFR_QUESTION_HEADER Question;
   UINT8 Flags;
 } EFI_IFR_TIME;
-# 1119 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1119 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_DISABLE_IF {
   EFI_IFR_OP_HEADER Header;
 } EFI_IFR_DISABLE_IF;
@@ -9574,7 +9574,7 @@ typedef struct _EFI_IFR_ONE_OF_OPTION {
   UINT8 Type;
   EFI_IFR_TYPE_VALUE Value;
 } EFI_IFR_ONE_OF_OPTION;
-# 1185 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1185 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_GUID {
   EFI_IFR_OP_HEADER Header;
   EFI_GUID Guid;
@@ -9714,7 +9714,7 @@ typedef struct _EFI_IFR_BITWISE_NOT {
 typedef struct _EFI_IFR_TO_BOOLEAN {
   EFI_IFR_OP_HEADER Header;
 } EFI_IFR_TO_BOOLEAN;
-# 1348 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1348 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_TO_STRING {
   EFI_IFR_OP_HEADER Header;
   UINT8 Format;
@@ -9835,7 +9835,7 @@ typedef struct _EFI_IFR_MID {
 typedef struct _EFI_IFR_TOKEN {
   EFI_IFR_OP_HEADER Header;
 } EFI_IFR_TOKEN;
-# 1476 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1476 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_SPAN {
   EFI_IFR_OP_HEADER Header;
   UINT8 Flags;
@@ -9946,7 +9946,7 @@ typedef struct _EFI_IFR_WRITE {
 typedef struct _EFI_IFR_MAP {
   EFI_IFR_OP_HEADER Header;
 } EFI_IFR_MAP;
-# 1594 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1594 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef enum {
   EfiKeyLCtrl,
   EfiKeyA0,
@@ -10084,7 +10084,7 @@ typedef struct {
   UINT16 Modifier;
   UINT16 AffectedAttribute;
 } EFI_KEY_DESCRIPTOR;
-# 1752 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1752 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct {
   UINT16 LayoutLength;
   EFI_GUID Guid;
@@ -10098,7 +10098,7 @@ typedef struct {
   UINT16 LayoutCount;
 
 } EFI_HII_KEYBOARD_PACKAGE_HDR;
-# 1824 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1824 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_IFR_ANIMATION {
 
 
@@ -10134,7 +10134,7 @@ typedef struct _EFI_HII_ANIMATION_BLOCK {
   UINT8 BlockType;
 
 } EFI_HII_ANIMATION_BLOCK;
-# 1882 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1882 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
 typedef struct _EFI_HII_AIBT_EXT1_BLOCK {
 
 
@@ -10209,7 +10209,7 @@ typedef struct _EFI_HII_ANIMATION_CELL {
 
 
 typedef struct _EFI_HII_AIBT_OVERLAY_IMAGES_BLOCK {
-# 1964 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1964 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
   EFI_IMAGE_ID DftImageId;
 
 
@@ -10236,7 +10236,7 @@ typedef struct _EFI_HII_AIBT_OVERLAY_IMAGES_BLOCK {
 
 
 typedef struct _EFI_HII_AIBT_CLEAR_IMAGES_BLOCK {
-# 1998 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 1998 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
   EFI_IMAGE_ID DftImageId;
 
 
@@ -10268,7 +10268,7 @@ typedef struct _EFI_HII_AIBT_CLEAR_IMAGES_BLOCK {
 
 
 typedef struct _EFI_HII_AIBT_RESTORE_SCRN_BLOCK {
-# 2037 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
+# 2037 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiInternalFormRepresentation.h"
   EFI_IMAGE_ID DftImageId;
 
 
@@ -10341,19 +10341,19 @@ typedef struct _EFI_HII_AIBT_SKIP2_BLOCK {
 } EFI_HII_AIBT_SKIP2_BLOCK;
 
 #pragma pack()
-# 2234 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiDxe.h" 2
+# 2234 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiSpec.h" 2
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiDxe.h" 2
 
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 1
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 1
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef UINT32 EFI_FV_FILE_ATTRIBUTES;
-# 30 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 30 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef UINT32 EFI_FVB_ATTRIBUTES_2;
-# 85 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 85 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef struct {
 
 
@@ -10418,7 +10418,7 @@ typedef struct {
 
   EFI_FV_BLOCK_MAP_ENTRY BlockMap[1];
 } EFI_FIRMWARE_VOLUME_HEADER;
-# 160 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 160 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef struct {
 
 
@@ -10505,9 +10505,9 @@ typedef struct {
 
   UINT32 UsedSize;
 } EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE;
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h" 1
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h" 1
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 #pragma pack(1)
 
 
@@ -10520,7 +10520,7 @@ typedef union {
 
 
     UINT8 Header;
-# 36 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 36 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
     UINT8 File;
   } Checksum;
 
@@ -10538,7 +10538,7 @@ typedef union {
 typedef UINT8 EFI_FV_FILETYPE;
 typedef UINT8 EFI_FFS_FILE_ATTRIBUTES;
 typedef UINT8 EFI_FFS_FILE_STATE;
-# 106 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 106 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -10588,7 +10588,7 @@ typedef struct {
 
 
   EFI_FFS_FILE_ATTRIBUTES Attributes;
-# 163 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 163 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
   UINT8 Size[3];
 
 
@@ -10602,9 +10602,9 @@ typedef struct {
 
   UINT64 ExtendedSize;
 } EFI_FFS_FILE_HEADER2;
-# 193 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 193 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef UINT8 EFI_SECTION_TYPE;
-# 230 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 230 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -10639,7 +10639,7 @@ typedef struct {
 
 typedef EFI_COMMON_SECTION_HEADER EFI_COMPATIBILITY16_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_COMPATIBILITY16_SECTION2;
-# 274 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 274 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -10669,7 +10669,7 @@ typedef struct {
 
   UINT8 CompressionType;
 } EFI_COMPRESSION_SECTION2;
-# 313 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 313 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_DISPOSABLE_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_DISPOSABLE_SECTION2;
 
@@ -10709,7 +10709,7 @@ typedef struct {
 
   EFI_GUID SubTypeGuid;
 } EFI_FREEFORM_SUBTYPE_GUID_SECTION2;
-# 361 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 361 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -10759,7 +10759,7 @@ typedef EFI_COMMON_SECTION_HEADER2 EFI_PE32_SECTION2;
 
 typedef EFI_COMMON_SECTION_HEADER EFI_PEI_DEPEX_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_PEI_DEPEX_SECTION2;
-# 420 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 420 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_PIC_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_PIC_SECTION2;
 
@@ -10774,7 +10774,7 @@ typedef EFI_COMMON_SECTION_HEADER2 EFI_TE_SECTION2;
 
 typedef EFI_COMMON_SECTION_HEADER EFI_RAW_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_RAW_SECTION2;
-# 443 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 443 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_SMM_DEPEX_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_SMM_DEPEX_SECTION2;
 
@@ -10819,15 +10819,15 @@ typedef struct {
   UINT16 BuildNumber;
   CHAR16 VersionString[1];
 } EFI_VERSION_SECTION2;
-# 504 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 504 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 #pragma pack()
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiBootMode.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiBootMode.h"
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiBootMode.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiBootMode.h"
 typedef UINT32 EFI_BOOT_MODE;
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h" 1
-# 36 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h" 1
+# 36 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -10842,7 +10842,7 @@ typedef struct {
 
   UINT32 Reserved;
 } EFI_HOB_GENERIC_HEADER;
-# 60 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 60 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -11007,9 +11007,9 @@ typedef struct {
 
 
 typedef UINT32 EFI_RESOURCE_TYPE;
-# 249 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 249 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef UINT32 EFI_RESOURCE_ATTRIBUTE_TYPE;
-# 313 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 313 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -11170,7 +11170,7 @@ typedef struct {
 
   EFI_HOB_GENERIC_HEADER Header;
 } EFI_HOB_MEMORY_POOL;
-# 481 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 481 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -11206,15 +11206,15 @@ typedef union {
   EFI_HOB_UEFI_CAPSULE *Capsule;
   UINT8 *Raw;
 } EFI_PEI_HOB_POINTERS;
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDependency.h" 1
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h" 1
-# 57 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDependency.h" 1
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h" 1
+# 57 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT16 e_magic;
   UINT16 e_cblp;
@@ -11249,12 +11249,12 @@ typedef struct {
   UINT16 SizeOfOptionalHeader;
   UINT16 Characteristics;
 } EFI_IMAGE_FILE_HEADER;
-# 115 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 115 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 Size;
 } EFI_IMAGE_DATA_DIRECTORY;
-# 148 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 148 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
 
 
@@ -11294,7 +11294,7 @@ typedef struct {
   UINT32 NumberOfRvaAndSizes;
   EFI_IMAGE_DATA_DIRECTORY DataDirectory[16];
 } EFI_IMAGE_OPTIONAL_HEADER32;
-# 199 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 199 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
 
 
@@ -11355,7 +11355,7 @@ typedef struct {
   EFI_IMAGE_FILE_HEADER FileHeader;
   EFI_IMAGE_OPTIONAL_HEADER64 OptionalHeader;
 } EFI_IMAGE_NT_HEADERS64;
-# 280 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 280 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT8 Name[8];
   union {
@@ -11371,18 +11371,18 @@ typedef struct {
   UINT16 NumberOfLinenumbers;
   UINT32 Characteristics;
 } EFI_IMAGE_SECTION_HEADER;
-# 430 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 430 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 SymbolTableIndex;
   UINT16 Type;
 } EFI_IMAGE_RELOCATION;
-# 478 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 478 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 SizeOfBlock;
 } EFI_IMAGE_BASE_RELOCATION;
-# 519 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 519 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   union {
     UINT32 SymbolTableIndex;
@@ -11390,7 +11390,7 @@ typedef struct {
   } Type;
   UINT16 Linenumber;
 } EFI_IMAGE_LINENUMBER;
-# 545 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 545 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT8 Name[16];
   UINT8 Date[12];
@@ -11400,7 +11400,7 @@ typedef struct {
   UINT8 Size[10];
   UINT8 EndHeader[2];
 } EFI_IMAGE_ARCHIVE_MEMBER_HEADER;
-# 567 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 567 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Characteristics;
   UINT32 TimeDateStamp;
@@ -11414,7 +11414,7 @@ typedef struct {
   UINT32 AddressOfNames;
   UINT32 AddressOfNameOrdinals;
 } EFI_IMAGE_EXPORT_DIRECTORY;
-# 591 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 591 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT16 Hint;
   UINT8 Name[1];
@@ -11430,7 +11430,7 @@ typedef struct {
     EFI_IMAGE_IMPORT_BY_NAME *AddressOfData;
   } u1;
 } EFI_IMAGE_THUNK_DATA;
-# 614 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 614 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Characteristics;
   UINT32 TimeDateStamp;
@@ -11452,7 +11452,7 @@ typedef struct {
   UINT32 RVA;
   UINT32 FileOffset;
 } EFI_IMAGE_DEBUG_DIRECTORY_ENTRY;
-# 643 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 643 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Unknown;
@@ -11586,7 +11586,7 @@ typedef struct {
   UINT64 ImageBase;
   EFI_IMAGE_DATA_DIRECTORY DataDirectory[2];
 } EFI_TE_IMAGE_HEADER;
-# 788 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 788 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef union {
   EFI_IMAGE_NT_HEADERS32 Pe32;
   EFI_IMAGE_NT_HEADERS64 Pe32Plus;
@@ -11599,12 +11599,12 @@ typedef union {
   EFI_TE_IMAGE_HEADER *Te;
   EFI_IMAGE_OPTIONAL_HEADER_UNION *Union;
 } EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION;
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h" 2
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h" 2
 
 typedef struct _EFI_DEBUG_SUPPORT_PROTOCOL EFI_DEBUG_SUPPORT_PROTOCOL;
-# 35 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 35 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef INTN EFI_EXCEPTION_TYPE;
-# 62 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 62 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT16 Fcw;
   UINT16 Fsw;
@@ -11673,7 +11673,7 @@ typedef struct {
   UINT32 Ecx;
   UINT32 Eax;
 } EFI_SYSTEM_CONTEXT_IA32;
-# 156 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 156 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT16 Fcw;
   UINT16 Fsw;
@@ -11751,7 +11751,7 @@ typedef struct {
   UINT64 R14;
   UINT64 R15;
 } EFI_SYSTEM_CONTEXT_X64;
-# 282 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 282 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
 
 
@@ -11903,7 +11903,7 @@ typedef struct {
 
   UINT64 IntNat;
 } EFI_SYSTEM_CONTEXT_IPF;
-# 456 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 456 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 R0;
   UINT64 R1;
@@ -11917,7 +11917,7 @@ typedef struct {
   UINT64 ControlFlags;
   UINT64 Ip;
 } EFI_SYSTEM_CONTEXT_EBC;
-# 490 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 490 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT32 R0;
   UINT32 R1;
@@ -11941,7 +11941,7 @@ typedef struct {
   UINT32 IFSR;
   UINT32 IFAR;
 } EFI_SYSTEM_CONTEXT_ARM;
-# 527 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 527 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
 
   UINT64 X0;
@@ -12017,7 +12017,7 @@ typedef struct {
   UINT64 ESR;
   UINT64 FAR;
 } EFI_SYSTEM_CONTEXT_AARCH64;
-# 645 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 645 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 X0;
   UINT64 X1;
@@ -12055,7 +12055,7 @@ typedef struct {
   UINT32 SSTATUS;
   UINT32 STVAL;
 } EFI_SYSTEM_CONTEXT_RISCV64;
-# 730 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 730 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 R0;
   UINT64 R1;
@@ -12114,7 +12114,7 @@ typedef union {
   EFI_SYSTEM_CONTEXT_RISCV64 *SystemContextRiscV64;
   EFI_SYSTEM_CONTEXT_LOONGARCH64 *SystemContextLoongArch64;
 } EFI_SYSTEM_CONTEXT;
-# 800 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 800 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 void
 ( *EFI_EXCEPTION_CALLBACK)(
@@ -12145,14 +12145,14 @@ typedef enum {
   IsaArm = 0x01c2,
   IsaAArch64 = 0xAA64
 } EFI_INSTRUCTION_SET_ARCHITECTURE;
-# 846 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 846 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_MAXIMUM_PROCESSOR_INDEX)(
      EFI_DEBUG_SUPPORT_PROTOCOL *This,
       UINTN *MaxProcessorIndex
   );
-# 868 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 868 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_PERIODIC_CALLBACK)(
@@ -12160,7 +12160,7 @@ EFI_STATUS
      UINTN ProcessorIndex,
      EFI_PERIODIC_CALLBACK PeriodicCallback
   );
-# 892 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 892 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_EXCEPTION_CALLBACK)(
@@ -12169,7 +12169,7 @@ EFI_STATUS
      EFI_EXCEPTION_CALLBACK ExceptionCallback,
      EFI_EXCEPTION_TYPE ExceptionType
   );
-# 914 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 914 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_INVALIDATE_INSTRUCTION_CACHE)(
@@ -12196,15 +12196,15 @@ struct _EFI_DEBUG_SUPPORT_PROTOCOL {
 };
 
 extern EFI_GUID gEfiDebugSupportProtocolGuid;
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h" 2
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h" 2
 
 
 
 
 typedef UINT32 EFI_STATUS_CODE_TYPE;
-# 67 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 67 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
 typedef UINT32 EFI_STATUS_CODE_VALUE;
-# 84 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 84 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
 typedef struct {
 
 
@@ -12219,9 +12219,9 @@ typedef struct {
 
   EFI_GUID Type;
 } EFI_STATUS_CODE_DATA;
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiS3BootScript.h" 1
-# 37 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiS3BootScript.h"
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiS3BootScript.h" 1
+# 37 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiS3BootScript.h"
 typedef enum {
   EfiBootScriptWidthUint8,
   EfiBootScriptWidthUint16,
@@ -12237,8 +12237,8 @@ typedef enum {
   EfiBootScriptWidthFillUint64,
   EfiBootScriptWidthMaximum
 } EFI_BOOT_SCRIPT_WIDTH;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 109 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 109 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef struct {
 
 
@@ -12310,19 +12310,19 @@ typedef struct {
 
   CHAR8 *PcdName;
 } EFI_PCD_INFO;
-# 189 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 189 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef
 void
 ( *EFI_AP_PROCEDURE)(
          void *Buffer
   );
-# 205 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 205 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef
 EFI_STATUS
 ( *EFI_AP_PROCEDURE2)(
      void *ProcedureArgument
   );
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h" 2
 
 
 
@@ -12365,7 +12365,7 @@ typedef enum {
 
 
   EfiGcdMemoryTypeMoreReliable,
-# 67 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 67 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
   EfiGcdMemoryTypeMaximum = 7
 } EFI_GCD_MEMORY_TYPE;
 
@@ -12463,7 +12463,7 @@ typedef struct {
 
 
   EFI_HANDLE ImageHandle;
-# 172 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 172 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
   EFI_HANDLE DeviceHandle;
 } EFI_GCD_MEMORY_SPACE_DESCRIPTOR;
 
@@ -12496,10 +12496,10 @@ typedef struct {
 
 
   EFI_HANDLE ImageHandle;
-# 212 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 212 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
   EFI_HANDLE DeviceHandle;
 } EFI_GCD_IO_SPACE_DESCRIPTOR;
-# 246 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 246 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_ADD_MEMORY_SPACE)(
@@ -12508,7 +12508,7 @@ EFI_STATUS
      UINT64 Length,
      UINT64 Capabilities
   );
-# 285 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 285 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_ALLOCATE_MEMORY_SPACE)(
@@ -12520,28 +12520,28 @@ EFI_STATUS
          EFI_HANDLE ImageHandle,
          EFI_HANDLE DeviceHandle
   );
-# 315 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 315 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_FREE_MEMORY_SPACE)(
      EFI_PHYSICAL_ADDRESS BaseAddress,
      UINT64 Length
   );
-# 343 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 343 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_REMOVE_MEMORY_SPACE)(
      EFI_PHYSICAL_ADDRESS BaseAddress,
      UINT64 Length
   );
-# 362 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 362 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_MEMORY_SPACE_DESCRIPTOR)(
       EFI_PHYSICAL_ADDRESS BaseAddress,
       EFI_GCD_MEMORY_SPACE_DESCRIPTOR *Descriptor
   );
-# 390 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 390 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_MEMORY_SPACE_ATTRIBUTES)(
@@ -12549,7 +12549,7 @@ EFI_STATUS
      UINT64 Length,
      UINT64 Attributes
   );
-# 415 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 415 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_SET_MEMORY_SPACE_CAPABILITIES)(
@@ -12557,14 +12557,14 @@ EFI_STATUS
      UINT64 Length,
      UINT64 Capabilities
   );
-# 438 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 438 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_MEMORY_SPACE_MAP)(
       UINTN *NumberOfDescriptors,
       EFI_GCD_MEMORY_SPACE_DESCRIPTOR **MemorySpaceMap
   );
-# 469 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 469 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_ADD_IO_SPACE)(
@@ -12572,7 +12572,7 @@ EFI_STATUS
      EFI_PHYSICAL_ADDRESS BaseAddress,
      UINT64 Length
   );
-# 501 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 501 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_ALLOCATE_IO_SPACE)(
@@ -12584,55 +12584,55 @@ EFI_STATUS
          EFI_HANDLE ImageHandle,
          EFI_HANDLE DeviceHandle
   );
-# 531 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 531 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_FREE_IO_SPACE)(
      EFI_PHYSICAL_ADDRESS BaseAddress,
      UINT64 Length
   );
-# 561 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 561 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_REMOVE_IO_SPACE)(
      EFI_PHYSICAL_ADDRESS BaseAddress,
      UINT64 Length
   );
-# 580 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 580 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_IO_SPACE_DESCRIPTOR)(
       EFI_PHYSICAL_ADDRESS BaseAddress,
       EFI_GCD_IO_SPACE_DESCRIPTOR *Descriptor
   );
-# 602 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 602 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_IO_SPACE_MAP)(
       UINTN *NumberOfDescriptors,
       EFI_GCD_IO_SPACE_DESCRIPTOR **IoSpaceMap
   );
-# 625 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 625 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_DISPATCH)(
   void
   );
-# 642 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 642 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_SCHEDULE)(
      EFI_HANDLE FirmwareVolumeHandle,
      const EFI_GUID *FileName
   );
-# 660 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 660 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_TRUST)(
      EFI_HANDLE FirmwareVolumeHandle,
      const EFI_GUID *FileName
   );
-# 685 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 685 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PROCESS_FIRMWARE_VOLUME)(
@@ -12640,7 +12640,7 @@ EFI_STATUS
      UINTN Size,
       EFI_HANDLE *FirmwareVolumeHandle
   );
-# 701 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDxeCis.h"
+# 701 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDxeCis.h"
 typedef struct {
 
 
@@ -12682,135 +12682,135 @@ typedef struct {
 } DXE_SERVICES;
 
 typedef DXE_SERVICES EFI_DXE_SERVICES;
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiDxe.h" 2
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h" 1
-# 809 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiDxe.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h" 1
+# 809 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdSetSku (
      UINTN SkuId
   );
-# 825 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 825 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT8
 
 LibPcdGet8 (
      UINTN TokenNumber
   );
-# 841 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 841 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT16
 
 LibPcdGet16 (
      UINTN TokenNumber
   );
-# 857 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 857 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT32
 
 LibPcdGet32 (
      UINTN TokenNumber
   );
-# 873 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 873 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT64
 
 LibPcdGet64 (
      UINTN TokenNumber
   );
-# 889 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 889 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPcdGetPtr (
      UINTN TokenNumber
   );
-# 905 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 905 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 BOOLEAN
 
 LibPcdGetBool (
      UINTN TokenNumber
   );
-# 919 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 919 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetSize (
      UINTN TokenNumber
   );
-# 939 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 939 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT8
 
 LibPcdGetEx8 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 960 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 960 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT16
 
 LibPcdGetEx16 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 978 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 978 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT32
 
 LibPcdGetEx32 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 999 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 999 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT64
 
 LibPcdGetEx64 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1020 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1020 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPcdGetExPtr (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1041 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1041 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 BOOLEAN
 
 LibPcdGetExBool (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1062 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1062 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetExSize (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1081 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1081 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet8S (
      UINTN TokenNumber,
      UINT8 Value
   );
-# 1100 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1100 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet16S (
      UINTN TokenNumber,
      UINT16 Value
   );
-# 1119 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1119 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet32S (
      UINTN TokenNumber,
      UINT32 Value
   );
-# 1138 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1138 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet64S (
      UINTN TokenNumber,
      UINT64 Value
   );
-# 1167 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1167 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetPtrS (
@@ -12818,14 +12818,14 @@ LibPcdSetPtrS (
            UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1187 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1187 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetBoolS (
      UINTN TokenNumber,
      BOOLEAN Value
   );
-# 1210 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1210 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx8S (
@@ -12833,7 +12833,7 @@ LibPcdSetEx8S (
      UINTN TokenNumber,
      UINT8 Value
   );
-# 1234 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1234 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx16S (
@@ -12841,7 +12841,7 @@ LibPcdSetEx16S (
      UINTN TokenNumber,
      UINT16 Value
   );
-# 1258 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1258 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx32S (
@@ -12849,7 +12849,7 @@ LibPcdSetEx32S (
      UINTN TokenNumber,
      UINT32 Value
   );
-# 1282 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1282 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx64S (
@@ -12857,7 +12857,7 @@ LibPcdSetEx64S (
      UINTN TokenNumber,
      UINT64 Value
   );
-# 1312 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1312 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetExPtrS (
@@ -12866,7 +12866,7 @@ LibPcdSetExPtrS (
            UINTN *SizeOfBuffer,
            void *Buffer
   );
-# 1337 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1337 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetExBoolS (
@@ -12874,7 +12874,7 @@ LibPcdSetExBoolS (
      UINTN TokenNumber,
      BOOLEAN Value
   );
-# 1361 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1361 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 typedef
 void
 ( *PCD_CALLBACK)(
@@ -12883,7 +12883,7 @@ void
             void *TokenData,
             UINTN TokenDataSize
   );
-# 1386 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1386 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdCallbackOnSet (
@@ -12891,7 +12891,7 @@ LibPcdCallbackOnSet (
      UINTN TokenNumber,
      PCD_CALLBACK NotificationFunction
   );
-# 1407 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1407 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdCancelCallback (
@@ -12899,20 +12899,20 @@ LibPcdCancelCallback (
      UINTN TokenNumber,
      PCD_CALLBACK NotificationFunction
   );
-# 1434 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1434 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetNextToken (
      const GUID *Guid ,
      UINTN TokenNumber
   );
-# 1454 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1454 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 GUID *
 
 LibPcdGetNextTokenSpace (
      const GUID *TokenSpaceGuid
   );
-# 1483 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1483 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPatchPcdSetPtr (
@@ -12921,7 +12921,7 @@ LibPatchPcdSetPtr (
             UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1515 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1515 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPatchPcdSetPtrS (
@@ -12930,7 +12930,7 @@ LibPatchPcdSetPtrS (
            UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1549 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1549 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPatchPcdSetPtrAndSize (
@@ -12940,7 +12940,7 @@ LibPatchPcdSetPtrAndSize (
             UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1584 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1584 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPatchPcdSetPtrAndSizeS (
@@ -12979,14 +12979,14 @@ typedef struct {
 
   CHAR8 *PcdName;
 } PCD_INFO;
-# 1635 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1635 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdGetInfo (
             UINTN TokenNumber,
             PCD_INFO *PcdInfo
   );
-# 1655 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1655 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdGetInfoEx (
@@ -12994,13 +12994,13 @@ LibPcdGetInfoEx (
             UINTN TokenNumber,
             PCD_INFO *PcdInfo
   );
-# 1670 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1670 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetSku (
   void
   );
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
+# 18 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
 
 extern GUID gEfiCallerIdGuid;
 extern GUID gEdkiiDscPlatformGuid;
@@ -13074,7 +13074,7 @@ extern UINT64 _gPcd_SkuId_Array[];
 
 
 extern const UINT8 _gPcd_FixedAtBuild_PcdAcpiDefaultOemId[7];
-# 100 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h"
+# 100 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h"
 extern const UINT64 _gPcd_FixedAtBuild_PcdAcpiDefaultOemTableId;
 
 
@@ -13121,13 +13121,13 @@ RamDiskDxeUnload (
      EFI_HANDLE ImageHandle
   );
 
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h" 1
-# 43 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h" 1
+# 43 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h"
 extern unsigned char RamDiskDxeStrings[];
-# 147 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
+# 147 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.h" 2
 # 2 "<built-in>" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i" 2
-# 11 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i" 2
+# 11 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.i"
 DefinitionBlock (
   "RamDisk.aml",
   "SSDT",

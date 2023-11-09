@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = FaultTolerantWriteDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Universal/FaultTolerantWriteDxe
 PACKAGE_RELATIVE_DIR = Universal/FaultTolerantWriteDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/FE5CEA76-4F72-49e8-986F-2CD899DFFE5DFaultTolerantWriteDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/FE5CEA76-4F72-49e8-986F-2CD899DFFE5DFaultTolerantWriteDxe
 
 MODULE_ENTRY_POINT = FaultTolerantWriteInitialize
 ARCH_ENTRY_POINT = FaultTolerantWriteInitialize
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -259,8 +259,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -270,7 +270,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -370,41 +370,41 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/FtwMisc.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/FtwMisc.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/FtwMisc.obj : $(WORKSPACE)/MdeModulePkg/Universal/FaultTolerantWriteDxe/FtwMisc.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FtwMisc.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FtwMisc.c
-
-$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(WORKSPACE)/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FaultTolerantWriteDxe.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FtwMisc.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FtwMisc.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/FaultTolerantWrite.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/FaultTolerantWrite.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/FaultTolerantWrite.obj : $(WORKSPACE)/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWrite.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FaultTolerantWrite.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWrite.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FaultTolerantWrite.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWrite.c
 
 $(OUTPUT_DIR)/UpdateWorkingBlock.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/UpdateWorkingBlock.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/UpdateWorkingBlock.obj : $(WORKSPACE)/MdeModulePkg/Universal/FaultTolerantWriteDxe/UpdateWorkingBlock.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./UpdateWorkingBlock.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/UpdateWorkingBlock.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./UpdateWorkingBlock.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/UpdateWorkingBlock.c
+
+$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FaultTolerantWriteDxe.obj : $(WORKSPACE)/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/./FaultTolerantWriteDxe.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.c
 
 $(OUTPUT_DIR)/FaultTolerantWriteDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/FaultTolerantWriteDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/FaultTolerantWriteDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/FaultTolerantWriteDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/FaultTolerantWriteDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/FaultTolerantWriteDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/FaultTolerantWriteDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/FaultTolerantWriteDxe.efi : $(DEBUG_DIR)/FaultTolerantWriteDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/FaultTolerantWriteDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/DEBUG/FaultTolerantWriteDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

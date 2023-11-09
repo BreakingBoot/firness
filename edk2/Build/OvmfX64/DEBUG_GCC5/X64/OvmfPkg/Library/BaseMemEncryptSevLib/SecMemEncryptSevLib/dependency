@@ -1,0 +1,15 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/MemEncryptSevLib.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecSnpSystemRamValidate.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/VirtualMemory.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecVirtualMemory.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SnpPageStateChangeInternal.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLibInternal.obj.deps
+
+               

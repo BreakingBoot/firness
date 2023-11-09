@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = UsbKbDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Bus/Usb/UsbKbDxe
 PACKAGE_RELATIVE_DIR = Bus/Usb/UsbKbDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/2D2E62CF-9ECF-43b7-8219-94E7FC713DFEUsbKbDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/2D2E62CF-9ECF-43b7-8219-94E7FC713DFEUsbKbDxe
 
 MODULE_ENTRY_POINT = USBKeyboardDriverBindingEntryPoint
 ARCH_ENTRY_POINT = USBKeyboardDriverBindingEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -258,8 +258,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -269,7 +269,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -366,39 +366,39 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/KeyBoard.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/KeyBoard.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/KeyBoard.obj : $(WORKSPACE)/MdeModulePkg/Bus/Usb/UsbKbDxe/KeyBoard.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./KeyBoard.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/KeyBoard.c
-
 $(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/MdeModulePkg/Bus/Usb/UsbKbDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/ComponentName.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/ComponentName.c
 
 $(OUTPUT_DIR)/EfiKey.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EfiKey.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EfiKey.obj : $(WORKSPACE)/MdeModulePkg/Bus/Usb/UsbKbDxe/EfiKey.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./EfiKey.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/EfiKey.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./EfiKey.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/EfiKey.c
+
+$(OUTPUT_DIR)/KeyBoard.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/KeyBoard.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/KeyBoard.obj : $(WORKSPACE)/MdeModulePkg/Bus/Usb/UsbKbDxe/KeyBoard.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./KeyBoard.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Usb/UsbKbDxe/KeyBoard.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/UsbKbDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/UsbKbDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/UsbKbDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/UsbKbDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/UsbKbDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/UsbKbDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/UsbKbDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/UsbKbDxe.efi : $(DEBUG_DIR)/UsbKbDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/UsbKbDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/DEBUG/UsbKbDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe/OUTPUT/UsbKbDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

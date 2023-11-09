@@ -1,7 +1,7 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib/DEBUG/AutoGen.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/DebugLib.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PeCoffGetEntryPointLib.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h:
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePeCoffGetEntryPointLib/PeCoffGetEntryPoint.c:
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib/DEBUG/AutoGen.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/DebugLib.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PeCoffGetEntryPointLib.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h:
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BasePeCoffGetEntryPointLib/PeCoffGetEntryPoint.c:

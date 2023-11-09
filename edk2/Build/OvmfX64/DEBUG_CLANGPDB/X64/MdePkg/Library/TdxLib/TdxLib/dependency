@@ -1,9 +1,9 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/Rtmr.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/Rtmr.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/TdInfo.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/AcceptPages.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/AcceptPages.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/TdxLib/TdxLib/OUTPUT/TdInfo.obj.deps
 
                

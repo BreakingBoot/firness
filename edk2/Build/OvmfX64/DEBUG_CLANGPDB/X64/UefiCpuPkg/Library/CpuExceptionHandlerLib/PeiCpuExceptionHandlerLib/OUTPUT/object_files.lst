@@ -1,5 +1,5 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/X64/SecPeiExceptionHandlerAsm.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/X64/ArchExceptionHandler.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/CpuExceptionCommon.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/PeiCpuException.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/PeiDxeSmmCpuException.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/X64/SecPeiExceptionHandlerAsm.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/X64/ArchExceptionHandler.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/CpuExceptionCommon.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/PeiCpuException.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiCpuExceptionHandlerLib/OUTPUT/PeiDxeSmmCpuException.obj

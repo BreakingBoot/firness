@@ -1,0 +1,155 @@
+## @file
+#  Platform PEI driver
+#
+#  This module provides platform specific function to detect boot mode.
+#  Copyright (c) 2006 - 2019, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+# DO NOT EDIT
+# FILE auto-generated
+
+[Defines]
+  INF_VERSION                = 0x00010017
+  BASE_NAME                  = PlatformPei
+  FILE_GUID                  = 222c386d-5abc-4fb4-b124-fbb82488acf4
+  MODULE_TYPE                = PEIM
+  VERSION_STRING             = 1.0
+  ENTRY_POINT                = InitializePlatform
+
+[Packages.X64]
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  OvmfPkg/OvmfPkg.dec
+
+[Binaries.X64]
+  PE32|PlatformPei.efi
+  PEI_DEPEX|PlatformPei.depex
+
+[PatchPcd.X64]
+
+[Protocols.X64]
+
+[Ppis.X64]
+  gEfiPeiMasterBootModePpiGuid
+
+  gEfiPeiMpServicesPpiGuid
+
+  gEfiPeiReadOnlyVariable2PpiGuid
+
+  ## SOMETIMES_CONSUMES
+  gPcdPpiGuid
+
+  ## CONSUMES
+  gEfiPeiPcdPpiGuid
+
+  ## SOMETIMES_CONSUMES
+  gGetPcdInfoPpiGuid
+
+  ## SOMETIMES_CONSUMES
+  gEfiGetPcdInfoPpiGuid
+
+  ## SOMETIMES_PRODUCES
+  gEfiPeiFirmwareVolumeInfoPpiGuid
+
+  ## SOMETIMES_PRODUCES
+  gEfiPeiFirmwareVolumeInfo2PpiGuid
+
+
+[Guids.X64]
+  gEfiMemoryTypeInformationGuid
+
+  gFdtHobGuid
+
+  gUefiOvmfPkgPlatformInfoGuid
+
+  ## SOMETIMES_PRODUCES ## GUID # FV File System Guid.
+  gEfiFirmwareFileSystem2Guid
+
+  ## SOMETIMES_PRODUCES ## HOB # MemoryAllocation StackHob
+  gEfiHobMemoryAllocStackGuid
+
+  ## SOMETIMES_PRODUCES ## HOB # MemoryAllocation BspStoreHob
+  gEfiHobMemoryAllocBspStoreGuid
+
+  ## SOMETIMES_PRODUCES ## HOB # MemoryAllocation ModuleHob
+  gEfiHobMemoryAllocModuleGuid
+
+  gCcEventEntryHobGuid
+
+
+[PcdEx.X64]
+
+[LibraryClasses.X64]
+## @LIB_INSTANCES
+#  OvmfPkg/Library/CcProbeLib/SecPeiCcProbeLib.inf
+#  MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
+#  MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
+#  UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
+#  MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr.inf
+#  MdePkg/Library/TdxLib/TdxLib.inf
+#  MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
+#  OvmfPkg/Library/CcExitLib/CcExitLib.inf
+#  MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
+#  OvmfPkg/Library/BaseMemEncryptSevLib/PeiMemEncryptSevLib.inf
+#  MdePkg/Library/PeiServicesTablePointerLibIdt/PeiServicesTablePointerLibIdt.inf
+#  MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+#  MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev.inf
+#  MdePkg/Library/PeiHobLib/PeiHobLib.inf
+#  MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
+#  MdePkg/Library/BaseLib/BaseLib.inf
+#  MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+#  MdePkg/Library/BasePrintLib/BasePrintLib.inf
+#  OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+#  MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
+#  MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
+#  OvmfPkg/Library/AcpiTimerLib/BaseAcpiTimerLib.inf
+#  OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
+#  OvmfPkg/Library/HardwareInfoLib/PeiHardwareInfoLib.inf
+#  UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+#  OvmfPkg/Library/QemuFwCfgSimpleParserLib/QemuFwCfgSimpleParserLib.inf
+#  MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
+#  MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
+#  OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg.inf
+#  OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf
+#  OvmfPkg/IntelTdx/TdxHelperLib/PeiTdxHelperLib.inf
+
+[Depex.X64]
+#  (TRUE) AND (gEfiPeiPcdPpiGuid)
+
+
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[BuildOptions.X64]
+## @AsBuilt
+##   GCC:DEBUG_GCC5_X64_ASLPP_FLAGS = -x c -E -include AutoGen.h
+##   GCC:DEBUG_GCC5_X64_ASLDLINK_FLAGS = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x40 -Wl,--defsym=PECOFF_HEADER_SIZE=0 -Wl,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds -Wl,--entry,ReferenceAcpiTable -u ReferenceAcpiTable -Wl,-m,elf_x86_64
+##   GCC:DEBUG_GCC5_X64_GENFW_FLAGS = 
+##   GCC:DEBUG_GCC5_X64_OBJCOPY_FLAGS = 
+##   GCC:DEBUG_GCC5_X64_DEPS_FLAGS = -MMD -MF $@.deps
+##   GCC:DEBUG_GCC5_X64_ASM_FLAGS = -c -x assembler -imacros AutoGen.h -m64
+##   GCC:DEBUG_GCC5_X64_CC_FLAGS = -g -Os -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -include AutoGen.h -fno-common -ffunction-sections -fdata-sections -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -m64 -fno-stack-protector "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -Wno-address -mcmodel=small -fpie -fno-asynchronous-unwind-tables -Wno-address  -fno-omit-frame-pointer -flto -DUSING_LTO -mno-mmx -mno-sse -D DISABLE_NEW_DEPRECATED_INTERFACES -D TDX_GUEST_SUPPORTED -D ENABLE_MD5_DEPRECATED_INTERFACES
+##   GCC:DEBUG_GCC5_X64_ASMLINK_FLAGS = /nologo /tiny
+##   GCC:DEBUG_GCC5_X64_VFR_FLAGS = -l -n
+##   GCC:DEBUG_GCC5_X64_ASLCC_FLAGS = -x c -fno-lto -m64
+##   GCC:DEBUG_GCC5_X64_APP_FLAGS = 
+##   GCC:DEBUG_GCC5_X64_NASM_FLAGS = -f elf64
+##   GCC:DEBUG_GCC5_X64_OPTROM_FLAGS = -e
+##   GCC:DEBUG_GCC5_X64_DTC_FLAGS = -H epapr
+##   GCC:DEBUG_GCC5_X64_SYMRENAME_FLAGS = Symbol renaming not needed for
+##   GCC:DEBUG_GCC5_X64_RC_FLAGS = -I binary -O elf64-x86-64        -B i386        --rename-section .data=.hii
+##   GCC:DEBUG_GCC5_X64_PP_FLAGS = -E -x assembler-with-cpp -include AutoGen.h
+##   GCC:DEBUG_GCC5_X64_VFRPP_FLAGS = -x c -E -P -DVFRCOMPILE --include $(MODULE_NAME)StrDefs.h
+##   GCC:DEBUG_GCC5_X64_DLINK_FLAGS = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x40 -Wl,--entry,$(IMAGE_ENTRY_POINT) -u $(IMAGE_ENTRY_POINT) -Wl,-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map,--whole-archive -Wl,-melf_x86_64,--oformat=elf64-x86-64,-pie -flto -Os
+##   GCC:DEBUG_GCC5_X64_ASL_FLAGS = 
+##   GCC:DEBUG_GCC5_X64_NASMB_FLAGS = -f bin
+##   GCC:DEBUG_GCC5_X64_DLINK2_FLAGS = -Wl,--defsym=PECOFF_HEADER_SIZE=0x228 -Wl,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds -Wno-error

@@ -1,0 +1,11 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe/OUTPUT/ConSplitter.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe/OUTPUT/ComponentName.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe/OUTPUT/AutoGen.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe/OUTPUT/ConSplitterGraphics.obj.deps
+
+               

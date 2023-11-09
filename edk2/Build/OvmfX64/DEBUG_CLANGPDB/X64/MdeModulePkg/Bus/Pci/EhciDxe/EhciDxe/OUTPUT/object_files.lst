@@ -1,8 +1,8 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciUrb.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/UsbHcMem.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciSched.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDebug.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciReg.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/ComponentName.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/Ehci.obj
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/AutoGen.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciUrb.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/UsbHcMem.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciSched.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDebug.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciReg.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/ComponentName.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/Ehci.obj
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/AutoGen.obj

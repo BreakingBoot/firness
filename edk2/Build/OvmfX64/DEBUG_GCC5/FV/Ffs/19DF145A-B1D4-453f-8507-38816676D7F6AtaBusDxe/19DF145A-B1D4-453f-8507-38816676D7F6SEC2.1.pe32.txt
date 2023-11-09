@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/19DF145A-B1D4-453f-8507-38816676D7F6AtaBusDxe/19DF145A-B1D4-453f-8507-38816676D7F6SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe/OUTPUT/AtaBusDxe.efi

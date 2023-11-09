@@ -1,16 +1,16 @@
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/ResetVector/ResetVector.nasmb"
+# 1 "/home/gl055/Research/Harden/firness/edk2/OvmfPkg/ResetVector/ResetVector.nasmb"
 # 1 "<built-in>" 1
-# 389 "<built-in>"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiPei.h" 1
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiPei.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 1
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
-# 162 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h"
+# 376 "<built-in>"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiPei.h" 1
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiPei.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 1
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
+# 162 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h"
 typedef unsigned long long UINT64;
 
 
@@ -66,8 +66,8 @@ typedef UINT64 UINTN;
 
 
 typedef INT64 INTN;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 2
-# 213 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 2
+# 213 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef struct {
   UINT32 Data1;
   UINT16 Data2;
@@ -106,11 +106,11 @@ struct _LIST_ENTRY {
   LIST_ENTRY *ForwardLink;
   LIST_ENTRY *BackLink;
 };
-# 607 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 607 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef __builtin_ms_va_list VA_LIST;
-# 711 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 711 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN *BASE_LIST;
-# 816 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 816 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 _Static_assert (sizeof (BOOLEAN) == 1, "sizeof (BOOLEAN) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (INT8) == 1, "sizeof (INT8) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (UINT8) == 1, "sizeof (UINT8) does not meet UEFI Specification Data Type requirements");
@@ -139,7 +139,7 @@ _Static_assert (_Alignof (CHAR16) == sizeof (CHAR16), "Alignment of CHAR16 does 
 _Static_assert (_Alignof (INTN) == sizeof (INTN), "Alignment of INTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (UINTN) == sizeof (UINTN), "Alignment of UINTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (void *) == sizeof (void *), "Alignment of VOID * does not meet UEFI Specification Data Type requirements");
-# 852 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 852 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef enum {
   __VerifyUint8EnumValue = 0xff
 } __VERIFY_UINT8_ENUM_SIZE;
@@ -159,9 +159,9 @@ _Static_assert (sizeof (__VERIFY_INT32_ENUM_SIZE) == 4, "Size of enum does not m
 _Static_assert (_Alignof (__VERIFY_UINT8_ENUM_SIZE) == sizeof (__VERIFY_UINT8_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_UINT16_ENUM_SIZE) == sizeof (__VERIFY_UINT16_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_INT32_ENUM_SIZE) == sizeof (__VERIFY_INT32_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
-# 1026 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 1026 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN RETURN_STATUS;
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h" 2
 
 
 
@@ -201,7 +201,7 @@ typedef UINT64 EFI_PHYSICAL_ADDRESS;
 
 
 typedef UINT64 EFI_VIRTUAL_ADDRESS;
-# 68 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
+# 68 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h"
 typedef struct {
   UINT16 Year;
   UINT8 Month;
@@ -242,13 +242,13 @@ typedef union {
   EFI_IPv4_ADDRESS v4;
   EFI_IPv6_ADDRESS v6;
 } EFI_IP_ADDRESS;
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiPei.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h" 1
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 1
-# 34 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h" 1
-# 24 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiPei.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h" 1
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 1
+# 34 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h" 1
+# 24 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
 
 
@@ -273,7 +273,7 @@ typedef struct {
 
 
 } WIN_CERTIFICATE;
-# 58 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 58 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
   EFI_GUID HashType;
   UINT8 PublicKey[256];
@@ -302,7 +302,7 @@ typedef struct {
 
   UINT8 CertData[1];
 } WIN_CERTIFICATE_UEFI_GUID;
-# 95 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 95 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 typedef struct {
 
 
@@ -314,11 +314,11 @@ typedef struct {
 
 
   EFI_GUID HashAlgorithm;
-# 116 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/WinCertificate.h"
+# 116 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h"
 } WIN_CERTIFICATE_EFI_PKCS1_15;
 
 extern EFI_GUID gEfiCertTypeRsa2048Sha256Guid;
-# 35 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 2
+# 35 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h" 2
 
 
 
@@ -462,7 +462,7 @@ typedef struct {
 
   UINT32 Reserved;
 } EFI_TABLE_HEADER;
-# 194 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 194 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
 typedef struct {
 
 
@@ -471,10 +471,10 @@ typedef struct {
 
 
   UINT64 MonotonicCount;
-# 210 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 210 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
   WIN_CERTIFICATE_UEFI_GUID AuthInfo;
 } EFI_VARIABLE_AUTHENTICATION;
-# 221 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
+# 221 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h"
 typedef struct {
 
 
@@ -486,15 +486,15 @@ typedef struct {
 
   WIN_CERTIFICATE_UEFI_GUID AuthInfo;
 } EFI_VARIABLE_AUTHENTICATION_2;
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 1
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 1
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef UINT32 EFI_FV_FILE_ATTRIBUTES;
-# 30 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 30 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef UINT32 EFI_FVB_ATTRIBUTES_2;
-# 85 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 85 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef struct {
 
 
@@ -559,7 +559,7 @@ typedef struct {
 
   EFI_FV_BLOCK_MAP_ENTRY BlockMap[1];
 } EFI_FIRMWARE_VOLUME_HEADER;
-# 160 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
+# 160 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h"
 typedef struct {
 
 
@@ -646,9 +646,9 @@ typedef struct {
 
   UINT32 UsedSize;
 } EFI_FIRMWARE_VOLUME_EXT_ENTRY_USED_SIZE_TYPE;
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h" 1
-# 15 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 16 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h" 1
+# 15 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 #pragma pack(1)
 
 
@@ -661,7 +661,7 @@ typedef union {
 
 
     UINT8 Header;
-# 36 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 36 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
     UINT8 File;
   } Checksum;
 
@@ -679,7 +679,7 @@ typedef union {
 typedef UINT8 EFI_FV_FILETYPE;
 typedef UINT8 EFI_FFS_FILE_ATTRIBUTES;
 typedef UINT8 EFI_FFS_FILE_STATE;
-# 106 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 106 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -729,7 +729,7 @@ typedef struct {
 
 
   EFI_FFS_FILE_ATTRIBUTES Attributes;
-# 163 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 163 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
   UINT8 Size[3];
 
 
@@ -743,9 +743,9 @@ typedef struct {
 
   UINT64 ExtendedSize;
 } EFI_FFS_FILE_HEADER2;
-# 193 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 193 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef UINT8 EFI_SECTION_TYPE;
-# 230 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 230 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -780,7 +780,7 @@ typedef struct {
 
 typedef EFI_COMMON_SECTION_HEADER EFI_COMPATIBILITY16_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_COMPATIBILITY16_SECTION2;
-# 274 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 274 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -810,7 +810,7 @@ typedef struct {
 
   UINT8 CompressionType;
 } EFI_COMPRESSION_SECTION2;
-# 313 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 313 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_DISPOSABLE_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_DISPOSABLE_SECTION2;
 
@@ -850,7 +850,7 @@ typedef struct {
 
   EFI_GUID SubTypeGuid;
 } EFI_FREEFORM_SUBTYPE_GUID_SECTION2;
-# 361 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 361 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef struct {
 
 
@@ -900,7 +900,7 @@ typedef EFI_COMMON_SECTION_HEADER2 EFI_PE32_SECTION2;
 
 typedef EFI_COMMON_SECTION_HEADER EFI_PEI_DEPEX_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_PEI_DEPEX_SECTION2;
-# 420 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 420 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_PIC_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_PIC_SECTION2;
 
@@ -915,7 +915,7 @@ typedef EFI_COMMON_SECTION_HEADER2 EFI_TE_SECTION2;
 
 typedef EFI_COMMON_SECTION_HEADER EFI_RAW_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_RAW_SECTION2;
-# 443 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 443 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 typedef EFI_COMMON_SECTION_HEADER EFI_SMM_DEPEX_SECTION;
 typedef EFI_COMMON_SECTION_HEADER2 EFI_SMM_DEPEX_SECTION2;
 
@@ -960,15 +960,15 @@ typedef struct {
   UINT16 BuildNumber;
   CHAR16 VersionString[1];
 } EFI_VERSION_SECTION2;
-# 504 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
+# 504 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h"
 #pragma pack()
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiBootMode.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiBootMode.h"
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiBootMode.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiBootMode.h"
 typedef UINT32 EFI_BOOT_MODE;
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h" 1
-# 36 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h" 1
+# 36 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -983,7 +983,7 @@ typedef struct {
 
   UINT32 Reserved;
 } EFI_HOB_GENERIC_HEADER;
-# 60 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 60 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -1148,9 +1148,9 @@ typedef struct {
 
 
 typedef UINT32 EFI_RESOURCE_TYPE;
-# 249 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 249 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef UINT32 EFI_RESOURCE_ATTRIBUTE_TYPE;
-# 313 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 313 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -1311,7 +1311,7 @@ typedef struct {
 
   EFI_HOB_GENERIC_HEADER Header;
 } EFI_HOB_MEMORY_POOL;
-# 481 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiHob.h"
+# 481 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h"
 typedef struct {
 
 
@@ -1347,15 +1347,15 @@ typedef union {
   EFI_HOB_UEFI_CAPSULE *Capsule;
   UINT8 *Raw;
 } EFI_PEI_HOB_POINTERS;
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiDependency.h" 1
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h" 1
-# 57 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDependency.h" 1
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h" 1
+# 57 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT16 e_magic;
   UINT16 e_cblp;
@@ -1390,12 +1390,12 @@ typedef struct {
   UINT16 SizeOfOptionalHeader;
   UINT16 Characteristics;
 } EFI_IMAGE_FILE_HEADER;
-# 115 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 115 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 Size;
 } EFI_IMAGE_DATA_DIRECTORY;
-# 148 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 148 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
 
 
@@ -1435,7 +1435,7 @@ typedef struct {
   UINT32 NumberOfRvaAndSizes;
   EFI_IMAGE_DATA_DIRECTORY DataDirectory[16];
 } EFI_IMAGE_OPTIONAL_HEADER32;
-# 199 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 199 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
 
 
@@ -1496,7 +1496,7 @@ typedef struct {
   EFI_IMAGE_FILE_HEADER FileHeader;
   EFI_IMAGE_OPTIONAL_HEADER64 OptionalHeader;
 } EFI_IMAGE_NT_HEADERS64;
-# 280 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 280 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT8 Name[8];
   union {
@@ -1512,18 +1512,18 @@ typedef struct {
   UINT16 NumberOfLinenumbers;
   UINT32 Characteristics;
 } EFI_IMAGE_SECTION_HEADER;
-# 430 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 430 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 SymbolTableIndex;
   UINT16 Type;
 } EFI_IMAGE_RELOCATION;
-# 478 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 478 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 VirtualAddress;
   UINT32 SizeOfBlock;
 } EFI_IMAGE_BASE_RELOCATION;
-# 519 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 519 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   union {
     UINT32 SymbolTableIndex;
@@ -1531,7 +1531,7 @@ typedef struct {
   } Type;
   UINT16 Linenumber;
 } EFI_IMAGE_LINENUMBER;
-# 545 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 545 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT8 Name[16];
   UINT8 Date[12];
@@ -1541,7 +1541,7 @@ typedef struct {
   UINT8 Size[10];
   UINT8 EndHeader[2];
 } EFI_IMAGE_ARCHIVE_MEMBER_HEADER;
-# 567 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 567 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Characteristics;
   UINT32 TimeDateStamp;
@@ -1555,7 +1555,7 @@ typedef struct {
   UINT32 AddressOfNames;
   UINT32 AddressOfNameOrdinals;
 } EFI_IMAGE_EXPORT_DIRECTORY;
-# 591 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 591 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT16 Hint;
   UINT8 Name[1];
@@ -1571,7 +1571,7 @@ typedef struct {
     EFI_IMAGE_IMPORT_BY_NAME *AddressOfData;
   } u1;
 } EFI_IMAGE_THUNK_DATA;
-# 614 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 614 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Characteristics;
   UINT32 TimeDateStamp;
@@ -1593,7 +1593,7 @@ typedef struct {
   UINT32 RVA;
   UINT32 FileOffset;
 } EFI_IMAGE_DEBUG_DIRECTORY_ENTRY;
-# 643 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 643 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef struct {
   UINT32 Signature;
   UINT32 Unknown;
@@ -1727,7 +1727,7 @@ typedef struct {
   UINT64 ImageBase;
   EFI_IMAGE_DATA_DIRECTORY DataDirectory[2];
 } EFI_TE_IMAGE_HEADER;
-# 788 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
+# 788 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h"
 typedef union {
   EFI_IMAGE_NT_HEADERS32 Pe32;
   EFI_IMAGE_NT_HEADERS64 Pe32Plus;
@@ -1740,12 +1740,12 @@ typedef union {
   EFI_TE_IMAGE_HEADER *Te;
   EFI_IMAGE_OPTIONAL_HEADER_UNION *Union;
 } EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION;
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h" 2
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h" 2
 
 typedef struct _EFI_DEBUG_SUPPORT_PROTOCOL EFI_DEBUG_SUPPORT_PROTOCOL;
-# 35 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 35 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef INTN EFI_EXCEPTION_TYPE;
-# 62 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 62 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT16 Fcw;
   UINT16 Fsw;
@@ -1814,7 +1814,7 @@ typedef struct {
   UINT32 Ecx;
   UINT32 Eax;
 } EFI_SYSTEM_CONTEXT_IA32;
-# 156 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 156 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT16 Fcw;
   UINT16 Fsw;
@@ -1892,7 +1892,7 @@ typedef struct {
   UINT64 R14;
   UINT64 R15;
 } EFI_SYSTEM_CONTEXT_X64;
-# 282 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 282 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
 
 
@@ -2044,7 +2044,7 @@ typedef struct {
 
   UINT64 IntNat;
 } EFI_SYSTEM_CONTEXT_IPF;
-# 456 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 456 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 R0;
   UINT64 R1;
@@ -2058,7 +2058,7 @@ typedef struct {
   UINT64 ControlFlags;
   UINT64 Ip;
 } EFI_SYSTEM_CONTEXT_EBC;
-# 490 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 490 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT32 R0;
   UINT32 R1;
@@ -2082,7 +2082,7 @@ typedef struct {
   UINT32 IFSR;
   UINT32 IFAR;
 } EFI_SYSTEM_CONTEXT_ARM;
-# 527 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 527 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
 
   UINT64 X0;
@@ -2158,7 +2158,7 @@ typedef struct {
   UINT64 ESR;
   UINT64 FAR;
 } EFI_SYSTEM_CONTEXT_AARCH64;
-# 645 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 645 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 X0;
   UINT64 X1;
@@ -2196,7 +2196,7 @@ typedef struct {
   UINT32 SSTATUS;
   UINT32 STVAL;
 } EFI_SYSTEM_CONTEXT_RISCV64;
-# 730 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 730 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef struct {
   UINT64 R0;
   UINT64 R1;
@@ -2255,7 +2255,7 @@ typedef union {
   EFI_SYSTEM_CONTEXT_RISCV64 *SystemContextRiscV64;
   EFI_SYSTEM_CONTEXT_LOONGARCH64 *SystemContextLoongArch64;
 } EFI_SYSTEM_CONTEXT;
-# 800 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 800 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 void
 ( *EFI_EXCEPTION_CALLBACK)(
@@ -2286,14 +2286,14 @@ typedef enum {
   IsaArm = 0x01c2,
   IsaAArch64 = 0xAA64
 } EFI_INSTRUCTION_SET_ARCHITECTURE;
-# 846 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 846 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_GET_MAXIMUM_PROCESSOR_INDEX)(
      EFI_DEBUG_SUPPORT_PROTOCOL *This,
       UINTN *MaxProcessorIndex
   );
-# 868 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 868 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_PERIODIC_CALLBACK)(
@@ -2301,7 +2301,7 @@ EFI_STATUS
      UINTN ProcessorIndex,
      EFI_PERIODIC_CALLBACK PeriodicCallback
   );
-# 892 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 892 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_REGISTER_EXCEPTION_CALLBACK)(
@@ -2310,7 +2310,7 @@ EFI_STATUS
      EFI_EXCEPTION_CALLBACK ExceptionCallback,
      EFI_EXCEPTION_TYPE ExceptionType
   );
-# 914 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Protocol/DebugSupport.h"
+# 914 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h"
 typedef
 EFI_STATUS
 ( *EFI_INVALIDATE_INSTRUCTION_CACHE)(
@@ -2337,15 +2337,15 @@ struct _EFI_DEBUG_SUPPORT_PROTOCOL {
 };
 
 extern EFI_GUID gEfiDebugSupportProtocolGuid;
-# 20 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h" 2
+# 20 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h" 2
 
 
 
 
 typedef UINT32 EFI_STATUS_CODE_TYPE;
-# 67 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 67 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
 typedef UINT32 EFI_STATUS_CODE_VALUE;
-# 84 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiStatusCode.h"
+# 84 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h"
 typedef struct {
 
 
@@ -2360,9 +2360,9 @@ typedef struct {
 
   EFI_GUID Type;
 } EFI_STATUS_CODE_DATA;
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiS3BootScript.h" 1
-# 37 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiS3BootScript.h"
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiS3BootScript.h" 1
+# 37 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiS3BootScript.h"
 typedef enum {
   EfiBootScriptWidthUint8,
   EfiBootScriptWidthUint16,
@@ -2378,8 +2378,8 @@ typedef enum {
   EfiBootScriptWidthFillUint64,
   EfiBootScriptWidthMaximum
 } EFI_BOOT_SCRIPT_WIDTH;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
-# 109 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h" 2
+# 109 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef struct {
 
 
@@ -2451,19 +2451,19 @@ typedef struct {
 
   CHAR8 *PcdName;
 } EFI_PCD_INFO;
-# 189 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 189 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef
 void
 ( *EFI_AP_PROCEDURE)(
          void *Buffer
   );
-# 205 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
+# 205 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h"
 typedef
 EFI_STATUS
 ( *EFI_AP_PROCEDURE2)(
      void *ProcedureArgument
   );
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
 
 
 
@@ -2485,8 +2485,8 @@ typedef struct _EFI_PEI_SERVICES EFI_PEI_SERVICES;
 
 typedef struct _EFI_PEI_NOTIFY_DESCRIPTOR EFI_PEI_NOTIFY_DESCRIPTOR;
 
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h" 1
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h" 1
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef struct _EFI_PEI_CPU_IO_PPI EFI_PEI_CPU_IO_PPI;
 
 
@@ -2507,7 +2507,7 @@ typedef enum {
   EfiPeiCpuIoWidthFillUint64,
   EfiPeiCpuIoWidthMaximum
 } EFI_PEI_CPU_IO_PPI_WIDTH;
-# 55 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 55 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_CPU_IO_PPI_IO_MEM)(
@@ -2532,7 +2532,7 @@ typedef struct {
 
   EFI_PEI_CPU_IO_PPI_IO_MEM Write;
 } EFI_PEI_CPU_IO_PPI_ACCESS;
-# 91 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 91 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT8
 ( *EFI_PEI_CPU_IO_PPI_IO_READ8)(
@@ -2540,7 +2540,7 @@ UINT8
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 110 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 110 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT16
 ( *EFI_PEI_CPU_IO_PPI_IO_READ16)(
@@ -2548,7 +2548,7 @@ UINT16
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 129 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 129 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT32
 ( *EFI_PEI_CPU_IO_PPI_IO_READ32)(
@@ -2556,7 +2556,7 @@ UINT32
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 148 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 148 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT64
 ( *EFI_PEI_CPU_IO_PPI_IO_READ64)(
@@ -2564,7 +2564,7 @@ UINT64
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 166 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 166 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_IO_WRITE8)(
@@ -2573,7 +2573,7 @@ void
       UINT64 Address,
       UINT8 Data
   );
-# 185 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 185 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_IO_WRITE16)(
@@ -2582,7 +2582,7 @@ void
       UINT64 Address,
       UINT16 Data
   );
-# 204 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 204 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_IO_WRITE32)(
@@ -2591,7 +2591,7 @@ void
       UINT64 Address,
       UINT32 Data
   );
-# 223 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 223 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_IO_WRITE64)(
@@ -2600,7 +2600,7 @@ void
       UINT64 Address,
       UINT64 Data
   );
-# 243 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 243 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT8
 ( *EFI_PEI_CPU_IO_PPI_MEM_READ8)(
@@ -2608,7 +2608,7 @@ UINT8
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 262 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 262 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT16
 ( *EFI_PEI_CPU_IO_PPI_MEM_READ16)(
@@ -2616,7 +2616,7 @@ UINT16
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 281 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 281 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT32
 ( *EFI_PEI_CPU_IO_PPI_MEM_READ32)(
@@ -2624,7 +2624,7 @@ UINT32
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 300 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 300 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 UINT64
 ( *EFI_PEI_CPU_IO_PPI_MEM_READ64)(
@@ -2632,7 +2632,7 @@ UINT64
       const EFI_PEI_CPU_IO_PPI *This,
       UINT64 Address
   );
-# 318 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 318 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_MEM_WRITE8)(
@@ -2641,7 +2641,7 @@ void
       UINT64 Address,
       UINT8 Data
   );
-# 337 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 337 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_MEM_WRITE16)(
@@ -2650,7 +2650,7 @@ void
       UINT64 Address,
       UINT16 Data
   );
-# 356 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 356 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_MEM_WRITE32)(
@@ -2659,7 +2659,7 @@ void
       UINT64 Address,
       UINT32 Data
   );
-# 375 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/CpuIo.h"
+# 375 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h"
 typedef
 void
 ( *EFI_PEI_CPU_IO_PPI_MEM_WRITE64)(
@@ -2706,11 +2706,11 @@ struct _EFI_PEI_CPU_IO_PPI {
 };
 
 extern EFI_GUID gEfiPeiCpuIoPpiInstalledGuid;
-# 39 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h" 1
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h" 1
-# 43 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 39 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h" 1
+# 18 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h" 1
+# 43 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef struct {
   UINT64 Rbx;
   UINT64 Rsp;
@@ -2726,21 +2726,21 @@ typedef struct {
   UINT8 XmmBuffer[160];
   UINT64 Ssp;
 } BASE_LIBRARY_JUMP_BUFFER;
-# 254 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 254 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrnLenS (
      const CHAR16 *String,
      UINTN MaxSize
   );
-# 282 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 282 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrnSizeS (
      const CHAR16 *String,
      UINTN MaxSize
   );
-# 315 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 315 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrCpyS (
@@ -2748,7 +2748,7 @@ StrCpyS (
       UINTN DestMax,
       const CHAR16 *Source
   );
-# 352 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 352 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrnCpyS (
@@ -2757,7 +2757,7 @@ StrnCpyS (
       const CHAR16 *Source,
       UINTN Length
   );
-# 390 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 390 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrCatS (
@@ -2765,7 +2765,7 @@ StrCatS (
          UINTN DestMax,
          const CHAR16 *Source
   );
-# 430 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 430 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrnCatS (
@@ -2774,7 +2774,7 @@ StrnCatS (
          const CHAR16 *Source,
          UINTN Length
   );
-# 482 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 482 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrDecimalToUintnS (
@@ -2782,7 +2782,7 @@ StrDecimalToUintnS (
             CHAR16 **EndPointer ,
             UINTN *Data
   );
-# 533 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 533 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrDecimalToUint64S (
@@ -2790,7 +2790,7 @@ StrDecimalToUint64S (
             CHAR16 **EndPointer ,
             UINT64 *Data
   );
-# 589 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 589 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrHexToUintnS (
@@ -2798,7 +2798,7 @@ StrHexToUintnS (
             CHAR16 **EndPointer ,
             UINTN *Data
   );
-# 645 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 645 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrHexToUint64S (
@@ -2806,21 +2806,21 @@ StrHexToUint64S (
             CHAR16 **EndPointer ,
             UINT64 *Data
   );
-# 667 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 667 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrnLenS (
      const CHAR8 *String,
      UINTN MaxSize
   );
-# 693 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 693 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrnSizeS (
      const CHAR8 *String,
      UINTN MaxSize
   );
-# 723 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 723 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrCpyS (
@@ -2828,7 +2828,7 @@ AsciiStrCpyS (
       UINTN DestMax,
       const CHAR8 *Source
   );
-# 757 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 757 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrnCpyS (
@@ -2837,7 +2837,7 @@ AsciiStrnCpyS (
       const CHAR8 *Source,
       UINTN Length
   );
-# 792 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 792 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrCatS (
@@ -2845,7 +2845,7 @@ AsciiStrCatS (
          UINTN DestMax,
          const CHAR8 *Source
   );
-# 829 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 829 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrnCatS (
@@ -2854,7 +2854,7 @@ AsciiStrnCatS (
          const CHAR8 *Source,
          UINTN Length
   );
-# 879 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 879 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrDecimalToUintnS (
@@ -2862,7 +2862,7 @@ AsciiStrDecimalToUintnS (
             CHAR8 **EndPointer ,
             UINTN *Data
   );
-# 928 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 928 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrDecimalToUint64S (
@@ -2870,7 +2870,7 @@ AsciiStrDecimalToUint64S (
             CHAR8 **EndPointer ,
             UINT64 *Data
   );
-# 981 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 981 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrHexToUintnS (
@@ -2878,7 +2878,7 @@ AsciiStrHexToUintnS (
             CHAR8 **EndPointer ,
             UINTN *Data
   );
-# 1034 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1034 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrHexToUint64S (
@@ -2886,26 +2886,26 @@ AsciiStrHexToUint64S (
             CHAR8 **EndPointer ,
             UINT64 *Data
   );
-# 1059 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1059 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrLen (
           const CHAR16 *String
   );
-# 1083 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1083 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrSize (
           const CHAR16 *String
   );
-# 1117 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1117 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 StrCmp (
           const CHAR16 *FirstString,
           const CHAR16 *SecondString
   );
-# 1156 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1156 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 StrnCmp (
@@ -2913,38 +2913,38 @@ StrnCmp (
           const CHAR16 *SecondString,
           UINTN Length
   );
-# 1189 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1189 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 CHAR16 *
 
 StrStr (
           const CHAR16 *String,
           const CHAR16 *SearchString
   );
-# 1230 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1230 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrDecimalToUintn (
           const CHAR16 *String
   );
-# 1270 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1270 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 StrDecimalToUint64 (
           const CHAR16 *String
   );
-# 1311 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1311 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 StrHexToUintn (
           const CHAR16 *String
   );
-# 1352 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1352 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 StrHexToUint64 (
           const CHAR16 *String
   );
-# 1408 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1408 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrToIpv6Address (
@@ -2953,7 +2953,7 @@ StrToIpv6Address (
       IPv6_ADDRESS *Address,
       UINT8 *PrefixLength
   );
-# 1458 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1458 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrToIpv4Address (
@@ -2962,14 +2962,14 @@ StrToIpv4Address (
       IPv4_ADDRESS *Address,
       UINT8 *PrefixLength
   );
-# 1511 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1511 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrToGuid (
       const CHAR16 *String,
       GUID *Guid
   );
-# 1551 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1551 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 StrHexToBytes (
@@ -2978,7 +2978,7 @@ StrHexToBytes (
       UINT8 *Buffer,
       UINTN MaxBufferSize
   );
-# 1600 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1600 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 UnicodeStrToAsciiStrS (
@@ -2986,7 +2986,7 @@ UnicodeStrToAsciiStrS (
           CHAR8 *Destination,
           UINTN DestMax
   );
-# 1651 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1651 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 UnicodeStrnToAsciiStrS (
@@ -2996,33 +2996,33 @@ UnicodeStrnToAsciiStrS (
           UINTN DestMax,
           UINTN *DestinationLength
   );
-# 1678 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1678 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrLen (
           const CHAR8 *String
   );
-# 1701 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1701 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrSize (
           const CHAR8 *String
   );
-# 1733 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1733 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 AsciiStrCmp (
           const CHAR8 *FirstString,
           const CHAR8 *SecondString
   );
-# 1769 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1769 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 AsciiStriCmp (
           const CHAR8 *FirstString,
           const CHAR8 *SecondString
   );
-# 1806 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1806 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 AsciiStrnCmp (
@@ -3030,38 +3030,38 @@ AsciiStrnCmp (
           const CHAR8 *SecondString,
           UINTN Length
   );
-# 1838 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1838 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 CHAR8 *
 
 AsciiStrStr (
           const CHAR8 *String,
           const CHAR8 *SearchString
   );
-# 1875 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1875 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrDecimalToUintn (
           const CHAR8 *String
   );
-# 1911 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1911 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsciiStrDecimalToUint64 (
           const CHAR8 *String
   );
-# 1951 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1951 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsciiStrHexToUintn (
           const CHAR8 *String
   );
-# 1991 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 1991 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsciiStrHexToUint64 (
           const CHAR8 *String
   );
-# 2045 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2045 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrToIpv6Address (
@@ -3070,7 +3070,7 @@ AsciiStrToIpv6Address (
       IPv6_ADDRESS *Address,
       UINT8 *PrefixLength
   );
-# 2093 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2093 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrToIpv4Address (
@@ -3079,14 +3079,14 @@ AsciiStrToIpv4Address (
       IPv4_ADDRESS *Address,
       UINT8 *PrefixLength
   );
-# 2142 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2142 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrToGuid (
       const CHAR8 *String,
       GUID *Guid
   );
-# 2180 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2180 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrHexToBytes (
@@ -3095,7 +3095,7 @@ AsciiStrHexToBytes (
       UINT8 *Buffer,
       UINTN MaxBufferSize
   );
-# 2225 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2225 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrToUnicodeStrS (
@@ -3103,7 +3103,7 @@ AsciiStrToUnicodeStrS (
           CHAR16 *Destination,
           UINTN DestMax
   );
-# 2275 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2275 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 AsciiStrnToUnicodeStrS (
@@ -3113,19 +3113,19 @@ AsciiStrnToUnicodeStrS (
           UINTN DestMax,
           UINTN *DestinationLength
   );
-# 2300 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2300 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 CHAR16
 
 CharToUpper (
           CHAR16 Char
   );
-# 2319 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2319 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 CHAR8
 
 AsciiCharToUpper (
           CHAR8 Chr
   );
-# 2344 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2344 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 Base64Encode (
@@ -3134,7 +3134,7 @@ Base64Encode (
             CHAR8 *Destination ,
             UINTN *DestinationSize
   );
-# 2435 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2435 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 RETURN_STATUS
 
 Base64Decode (
@@ -3143,118 +3143,118 @@ Base64Decode (
          UINT8 *Destination ,
          UINTN *DestinationSize
   );
-# 2457 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2457 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 DecimalToBcd8 (
           UINT8 Value
   );
-# 2477 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2477 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BcdToDecimal8 (
           UINT8 Value
   );
-# 2495 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2495 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 PathRemoveLastItem (
          CHAR16 *Path
   );
-# 2514 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2514 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 CHAR16 *
 
 PathCleanUpDirectories (
      CHAR16 *Path
   );
-# 2586 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2586 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 IsNodeInList (
           const LIST_ENTRY *FirstEntry,
           const LIST_ENTRY *SecondEntry
   );
-# 2609 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2609 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 InitializeListHead (
           LIST_ENTRY *ListHead
   );
-# 2637 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2637 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 InsertHeadList (
           LIST_ENTRY *ListHead,
           LIST_ENTRY *Entry
   );
-# 2666 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2666 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 InsertTailList (
           LIST_ENTRY *ListHead,
           LIST_ENTRY *Entry
   );
-# 2693 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2693 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 GetFirstNode (
           const LIST_ENTRY *List
   );
-# 2720 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2720 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 GetNextNode (
           const LIST_ENTRY *List,
           const LIST_ENTRY *Node
   );
-# 2748 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2748 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 GetPreviousNode (
           const LIST_ENTRY *List,
           const LIST_ENTRY *Node
   );
-# 2774 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2774 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 IsListEmpty (
           const LIST_ENTRY *ListHead
   );
-# 2806 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2806 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 IsNull (
           const LIST_ENTRY *List,
           const LIST_ENTRY *Node
   );
-# 2836 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2836 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 IsNodeAtEnd (
           const LIST_ENTRY *List,
           const LIST_ENTRY *Node
   );
-# 2869 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2869 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 SwapListEntries (
           LIST_ENTRY *FirstEntry,
           LIST_ENTRY *SecondEntry
   );
-# 2897 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2897 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 LIST_ENTRY *
 
 RemoveEntryList (
           const LIST_ENTRY *Entry
   );
-# 2917 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2917 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef
 INTN
 ( *BASE_SORT_COMPARE)(
      const void *Buffer1,
      const void *Buffer2
   );
-# 2947 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2947 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 QuickSort (
@@ -3264,145 +3264,145 @@ QuickSort (
            BASE_SORT_COMPARE CompareFunction,
       void *BufferOneElement
   );
-# 2972 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2972 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 LShiftU64 (
           UINT64 Operand,
           UINTN Count
   );
-# 2994 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 2994 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 RShiftU64 (
           UINT64 Operand,
           UINTN Count
   );
-# 3016 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3016 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 ARShiftU64 (
           UINT64 Operand,
           UINTN Count
   );
-# 3039 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3039 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 LRotU32 (
           UINT32 Operand,
           UINTN Count
   );
-# 3062 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3062 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 RRotU32 (
           UINT32 Operand,
           UINTN Count
   );
-# 3085 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3085 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 LRotU64 (
           UINT64 Operand,
           UINTN Count
   );
-# 3108 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3108 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 RRotU64 (
           UINT64 Operand,
           UINTN Count
   );
-# 3128 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3128 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 LowBitSet32 (
           UINT32 Operand
   );
-# 3148 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3148 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 LowBitSet64 (
           UINT64 Operand
   );
-# 3168 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3168 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 HighBitSet32 (
           UINT32 Operand
   );
-# 3188 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3188 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INTN
 
 HighBitSet64 (
           UINT64 Operand
   );
-# 3207 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3207 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 GetPowerOfTwo32 (
           UINT32 Operand
   );
-# 3226 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3226 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 GetPowerOfTwo64 (
           UINT64 Operand
   );
-# 3244 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3244 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 SwapBytes16 (
           UINT16 Value
   );
-# 3262 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3262 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 SwapBytes32 (
           UINT32 Value
   );
-# 3280 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3280 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 SwapBytes64 (
           UINT64 Value
   );
-# 3300 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3300 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 MultU64x32 (
           UINT64 Multiplicand,
           UINT32 Multiplier
   );
-# 3321 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3321 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 MultU64x64 (
           UINT64 Multiplicand,
           UINT64 Multiplier
   );
-# 3342 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3342 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INT64
 
 MultS64x64 (
           INT64 Multiplicand,
           INT64 Multiplier
   );
-# 3365 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3365 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 DivU64x32 (
           UINT64 Dividend,
           UINT32 Divisor
   );
-# 3388 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3388 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 ModU64x32 (
           UINT64 Dividend,
           UINT32 Divisor
   );
-# 3414 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3414 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 DivU64x32Remainder (
@@ -3410,7 +3410,7 @@ DivU64x32Remainder (
           UINT32 Divisor,
           UINT32 *Remainder
   );
-# 3441 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3441 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 DivU64x64Remainder (
@@ -3418,7 +3418,7 @@ DivU64x64Remainder (
           UINT64 Divisor,
           UINT64 *Remainder
   );
-# 3472 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3472 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 INT64
 
 DivS64x64Remainder (
@@ -3426,59 +3426,59 @@ DivS64x64Remainder (
           INT64 Divisor,
           INT64 *Remainder
   );
-# 3493 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3493 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 ReadUnaligned16 (
      const UINT16 *Buffer
   );
-# 3514 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3514 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 WriteUnaligned16 (
       UINT16 *Buffer,
       UINT16 Value
   );
-# 3534 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3534 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 ReadUnaligned24 (
      const UINT32 *Buffer
   );
-# 3555 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3555 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 WriteUnaligned24 (
       UINT32 *Buffer,
       UINT32 Value
   );
-# 3575 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3575 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 ReadUnaligned32 (
      const UINT32 *Buffer
   );
-# 3596 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3596 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 WriteUnaligned32 (
       UINT32 *Buffer,
       UINT32 Value
   );
-# 3616 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3616 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 ReadUnaligned64 (
      const UINT64 *Buffer
   );
-# 3637 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3637 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 WriteUnaligned64 (
       UINT64 *Buffer,
       UINT64 Value
   );
-# 3667 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3667 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldRead8 (
@@ -3486,7 +3486,7 @@ BitFieldRead8 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 3698 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3698 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldWrite8 (
@@ -3495,7 +3495,7 @@ BitFieldWrite8 (
           UINTN EndBit,
           UINT8 Value
   );
-# 3731 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3731 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldOr8 (
@@ -3504,7 +3504,7 @@ BitFieldOr8 (
           UINTN EndBit,
           UINT8 OrData
   );
-# 3764 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3764 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldAnd8 (
@@ -3513,7 +3513,7 @@ BitFieldAnd8 (
           UINTN EndBit,
           UINT8 AndData
   );
-# 3800 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3800 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldAndThenOr8 (
@@ -3523,7 +3523,7 @@ BitFieldAndThenOr8 (
           UINT8 AndData,
           UINT8 OrData
   );
-# 3829 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3829 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 BitFieldRead16 (
@@ -3531,7 +3531,7 @@ BitFieldRead16 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 3860 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3860 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 BitFieldWrite16 (
@@ -3540,7 +3540,7 @@ BitFieldWrite16 (
           UINTN EndBit,
           UINT16 Value
   );
-# 3893 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3893 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 BitFieldOr16 (
@@ -3549,7 +3549,7 @@ BitFieldOr16 (
           UINTN EndBit,
           UINT16 OrData
   );
-# 3926 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3926 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 BitFieldAnd16 (
@@ -3558,7 +3558,7 @@ BitFieldAnd16 (
           UINTN EndBit,
           UINT16 AndData
   );
-# 3962 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3962 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 BitFieldAndThenOr16 (
@@ -3568,7 +3568,7 @@ BitFieldAndThenOr16 (
           UINT16 AndData,
           UINT16 OrData
   );
-# 3991 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 3991 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 BitFieldRead32 (
@@ -3576,7 +3576,7 @@ BitFieldRead32 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 4022 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4022 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 BitFieldWrite32 (
@@ -3585,7 +3585,7 @@ BitFieldWrite32 (
           UINTN EndBit,
           UINT32 Value
   );
-# 4055 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4055 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 BitFieldOr32 (
@@ -3594,7 +3594,7 @@ BitFieldOr32 (
           UINTN EndBit,
           UINT32 OrData
   );
-# 4088 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4088 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 BitFieldAnd32 (
@@ -3603,7 +3603,7 @@ BitFieldAnd32 (
           UINTN EndBit,
           UINT32 AndData
   );
-# 4124 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4124 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 BitFieldAndThenOr32 (
@@ -3613,7 +3613,7 @@ BitFieldAndThenOr32 (
           UINT32 AndData,
           UINT32 OrData
   );
-# 4153 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4153 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 BitFieldRead64 (
@@ -3621,7 +3621,7 @@ BitFieldRead64 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 4184 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4184 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 BitFieldWrite64 (
@@ -3630,7 +3630,7 @@ BitFieldWrite64 (
           UINTN EndBit,
           UINT64 Value
   );
-# 4217 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4217 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 BitFieldOr64 (
@@ -3639,7 +3639,7 @@ BitFieldOr64 (
           UINTN EndBit,
           UINT64 OrData
   );
-# 4250 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4250 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 BitFieldAnd64 (
@@ -3648,7 +3648,7 @@ BitFieldAnd64 (
           UINTN EndBit,
           UINT64 AndData
   );
-# 4286 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4286 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 BitFieldAndThenOr64 (
@@ -3658,7 +3658,7 @@ BitFieldAndThenOr64 (
           UINT64 AndData,
           UINT64 OrData
   );
-# 4316 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4316 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldCountOnes32 (
@@ -3666,7 +3666,7 @@ BitFieldCountOnes32 (
            UINTN StartBit,
            UINTN EndBit
   );
-# 4344 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4344 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 BitFieldCountOnes64 (
@@ -3674,70 +3674,70 @@ BitFieldCountOnes64 (
            UINTN StartBit,
            UINTN EndBit
   );
-# 4374 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4374 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 CalculateSum8 (
           const UINT8 *Buffer,
           UINTN Length
   );
-# 4399 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4399 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT8
 
 CalculateCheckSum8 (
           const UINT8 *Buffer,
           UINTN Length
   );
-# 4425 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4425 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 CalculateSum16 (
           const UINT16 *Buffer,
           UINTN Length
   );
-# 4452 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4452 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 CalculateCheckSum16 (
           const UINT16 *Buffer,
           UINTN Length
   );
-# 4478 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4478 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 CalculateSum32 (
           const UINT32 *Buffer,
           UINTN Length
   );
-# 4505 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4505 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 CalculateCheckSum32 (
           const UINT32 *Buffer,
           UINTN Length
   );
-# 4531 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4531 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 CalculateSum64 (
           const UINT64 *Buffer,
           UINTN Length
   );
-# 4558 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4558 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 CalculateCheckSum64 (
           const UINT64 *Buffer,
           UINTN Length
   );
-# 4578 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4578 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 CalculateCrc32 (
       void *Buffer,
       UINTN Length
   );
-# 4594 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4594 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 CalculateCrc16Ansi (
@@ -3745,7 +3745,7 @@ CalculateCrc16Ansi (
       UINTN Length,
       UINT16 InitialValue
   );
-# 4611 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4611 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 CalculateCrc32c (
@@ -3753,27 +3753,27 @@ CalculateCrc32c (
      UINTN Length,
      UINT32 InitialValue
   );
-# 4629 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4629 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef
 void
 ( *SWITCH_STACK_ENTRY_POINT)(
           void *Context1 ,
           void *Context2
   );
-# 4643 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4643 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 MemoryFence (
   void
   );
-# 4670 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4670 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 __attribute__((returns_twice))
 UINTN
 
 SetJump (
           BASE_LIBRARY_JUMP_BUFFER *JumpBuffer
   );
-# 4693 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4693 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 LongJump (
@@ -3800,7 +3800,7 @@ void
 DisableInterrupts (
   void
   );
-# 4728 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4728 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 SaveAndDisableInterrupts (
@@ -3817,25 +3817,25 @@ void
 EnableDisableInterrupts (
   void
   );
-# 4755 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4755 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 GetInterruptState (
   void
   );
-# 4775 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4775 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 SetInterruptState (
           BOOLEAN InterruptState
   );
-# 4788 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4788 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 CpuPause (
   void
   );
-# 4823 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4823 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 SwitchStack (
@@ -3845,25 +3845,25 @@ SwitchStack (
           void *NewStack,
   ...
   );
-# 4840 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4840 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 CpuBreakpoint (
   void
   );
-# 4855 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4855 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 CpuDeadLoop (
   void
   );
-# 4868 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4868 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 SpeculationBarrier (
   void
   );
-# 4890 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4890 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 TdCall (
@@ -3873,7 +3873,7 @@ TdCall (
      UINT64 Arg3,
          void *Results
   );
-# 4915 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4915 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 TdVmCall (
@@ -3907,7 +3907,7 @@ typedef enum {
   PvalidatePageSize4K = 0,
   PvalidatePageSize2MB,
 } PVALIDATE_PAGE_SIZE;
-# 4981 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 4981 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmPvalidate (
@@ -3915,7 +3915,7 @@ AsmPvalidate (
        BOOLEAN Validate,
        PHYSICAL_ADDRESS Address
   );
-# 5016 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5016 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmRmpAdjust (
@@ -3923,7 +3923,7 @@ AsmRmpAdjust (
           UINT64 Rcx,
           UINT64 Rdx
   );
-# 5031 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5031 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef union {
   struct {
     UINT32 CF : 1;
@@ -4073,7 +4073,7 @@ typedef struct {
   UINTN Base;
 } IA32_DESCRIPTOR;
 #pragma pack ()
-# 5275 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5275 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef union {
   struct {
     UINT32 OffsetLow : 16;
@@ -4214,11 +4214,11 @@ typedef struct {
   UINT32 RealModeBufferSize;
   UINT32 ThunkAttributes;
 } THUNK_CONTEXT;
-# 5432 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5432 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 typedef void (X86_ASSEMBLY_PATCH_LABEL) (
   void
   );
-# 5461 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5461 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmCpuid (
@@ -4228,7 +4228,7 @@ AsmCpuid (
           UINT32 *Ecx ,
           UINT32 *Edx
   );
-# 5503 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5503 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmCpuidEx (
@@ -4239,46 +4239,46 @@ AsmCpuidEx (
           UINT32 *Ecx ,
           UINT32 *Edx
   );
-# 5521 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5521 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmDisableCache (
   void
   );
-# 5534 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5534 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmEnableCache (
   void
   );
-# 5554 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5554 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmReadMsr32 (
           UINT32 Index
   );
-# 5577 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5577 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmWriteMsr32 (
           UINT32 Index,
           UINT32 Value
   );
-# 5603 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5603 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrOr32 (
           UINT32 Index,
           UINT32 OrData
   );
-# 5629 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5629 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrAnd32 (
           UINT32 Index,
           UINT32 AndData
   );
-# 5658 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5658 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrAndThenOr32 (
@@ -4286,7 +4286,7 @@ AsmMsrAndThenOr32 (
           UINT32 AndData,
           UINT32 OrData
   );
-# 5688 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5688 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrBitFieldRead32 (
@@ -4294,7 +4294,7 @@ AsmMsrBitFieldRead32 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 5721 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5721 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrBitFieldWrite32 (
@@ -4303,7 +4303,7 @@ AsmMsrBitFieldWrite32 (
           UINTN EndBit,
           UINT32 Value
   );
-# 5757 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5757 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrBitFieldOr32 (
@@ -4312,7 +4312,7 @@ AsmMsrBitFieldOr32 (
           UINTN EndBit,
           UINT32 OrData
   );
-# 5793 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5793 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrBitFieldAnd32 (
@@ -4321,7 +4321,7 @@ AsmMsrBitFieldAnd32 (
           UINTN EndBit,
           UINT32 AndData
   );
-# 5833 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5833 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT32
 
 AsmMsrBitFieldAndThenOr32 (
@@ -4331,34 +4331,34 @@ AsmMsrBitFieldAndThenOr32 (
           UINT32 AndData,
           UINT32 OrData
   );
-# 5857 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5857 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMsr64 (
           UINT32 Index
   );
-# 5880 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5880 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmWriteMsr64 (
           UINT32 Index,
           UINT64 Value
   );
-# 5905 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5905 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrOr64 (
           UINT32 Index,
           UINT64 OrData
   );
-# 5930 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5930 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrAnd64 (
           UINT32 Index,
           UINT64 AndData
   );
-# 5958 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5958 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrAndThenOr64 (
@@ -4366,7 +4366,7 @@ AsmMsrAndThenOr64 (
           UINT64 AndData,
           UINT64 OrData
   );
-# 5988 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 5988 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrBitFieldRead64 (
@@ -4374,7 +4374,7 @@ AsmMsrBitFieldRead64 (
           UINTN StartBit,
           UINTN EndBit
   );
-# 6020 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6020 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrBitFieldWrite64 (
@@ -4383,7 +4383,7 @@ AsmMsrBitFieldWrite64 (
           UINTN EndBit,
           UINT64 Value
   );
-# 6056 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6056 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrBitFieldOr64 (
@@ -4392,7 +4392,7 @@ AsmMsrBitFieldOr64 (
           UINTN EndBit,
           UINT64 OrData
   );
-# 6092 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6092 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrBitFieldAnd64 (
@@ -4401,7 +4401,7 @@ AsmMsrBitFieldAnd64 (
           UINTN EndBit,
           UINT64 AndData
   );
-# 6131 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6131 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmMsrBitFieldAndThenOr64 (
@@ -4411,355 +4411,355 @@ AsmMsrBitFieldAndThenOr64 (
           UINT64 AndData,
           UINT64 OrData
   );
-# 6151 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6151 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadEflags (
   void
   );
-# 6167 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6167 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadCr0 (
   void
   );
-# 6183 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6183 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadCr2 (
   void
   );
-# 6199 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6199 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadCr3 (
   void
   );
-# 6215 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6215 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadCr4 (
   void
   );
-# 6232 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6232 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteCr0 (
   UINTN Cr0
   );
-# 6249 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6249 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteCr2 (
   UINTN Cr2
   );
-# 6266 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6266 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteCr3 (
   UINTN Cr3
   );
-# 6283 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6283 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteCr4 (
   UINTN Cr4
   );
-# 6299 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6299 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr0 (
   void
   );
-# 6315 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6315 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr1 (
   void
   );
-# 6331 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6331 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr2 (
   void
   );
-# 6347 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6347 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr3 (
   void
   );
-# 6363 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6363 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr4 (
   void
   );
-# 6379 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6379 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr5 (
   void
   );
-# 6395 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6395 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr6 (
   void
   );
-# 6411 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6411 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmReadDr7 (
   void
   );
-# 6428 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6428 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr0 (
   UINTN Dr0
   );
-# 6445 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6445 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr1 (
   UINTN Dr1
   );
-# 6462 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6462 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr2 (
   UINTN Dr2
   );
-# 6479 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6479 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr3 (
   UINTN Dr3
   );
-# 6496 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6496 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr4 (
   UINTN Dr4
   );
-# 6513 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6513 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr5 (
   UINTN Dr5
   );
-# 6530 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6530 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr6 (
   UINTN Dr6
   );
-# 6547 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6547 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmWriteDr7 (
   UINTN Dr7
   );
-# 6562 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6562 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadCs (
   void
   );
-# 6577 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6577 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadDs (
   void
   );
-# 6592 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6592 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadEs (
   void
   );
-# 6607 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6607 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadFs (
   void
   );
-# 6622 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6622 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadGs (
   void
   );
-# 6637 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6637 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadSs (
   void
   );
-# 6652 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6652 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadTr (
   void
   );
-# 6669 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6669 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmReadGdtr (
           IA32_DESCRIPTOR *Gdtr
   );
-# 6686 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6686 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteGdtr (
           const IA32_DESCRIPTOR *Gdtr
   );
-# 6703 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6703 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmReadIdtr (
           IA32_DESCRIPTOR *Idtr
   );
-# 6720 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6720 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteIdtr (
           const IA32_DESCRIPTOR *Idtr
   );
-# 6735 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6735 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT16
 
 AsmReadLdtr (
   void
   );
-# 6750 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6750 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteLdtr (
           UINT16 Ldtr
   );
-# 6769 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6769 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmFxSave (
           IA32_FX_BUFFER *Buffer
   );
-# 6789 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6789 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmFxRestore (
           const IA32_FX_BUFFER *Buffer
   );
-# 6804 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6804 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm0 (
   void
   );
-# 6819 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6819 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm1 (
   void
   );
-# 6834 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6834 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm2 (
   void
   );
-# 6849 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6849 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm3 (
   void
   );
-# 6864 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6864 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm4 (
   void
   );
-# 6879 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6879 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm5 (
   void
   );
-# 6894 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6894 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm6 (
   void
   );
-# 6909 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6909 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadMm7 (
   void
   );
-# 6924 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6924 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm0 (
           UINT64 Value
   );
-# 6939 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6939 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm1 (
           UINT64 Value
   );
-# 6954 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6954 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm2 (
           UINT64 Value
   );
-# 6969 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6969 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm3 (
           UINT64 Value
   );
-# 6984 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6984 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm4 (
           UINT64 Value
   );
-# 6999 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 6999 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm5 (
           UINT64 Value
   );
-# 7014 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7014 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm6 (
           UINT64 Value
   );
-# 7029 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7029 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWriteMm7 (
           UINT64 Value
   );
-# 7044 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7044 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadTsc (
   void
   );
-# 7061 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7061 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmReadPmc (
           UINT32 Index
   );
-# 7083 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7083 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmMonitor (
@@ -4767,32 +4767,32 @@ AsmMonitor (
           UINTN Ecx,
           UINTN Edx
   );
-# 7105 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7105 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINTN
 
 AsmMwait (
           UINTN Eax,
           UINTN Ecx
   );
-# 7119 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7119 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmWbinvd (
   void
   );
-# 7132 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7132 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmInvd (
   void
   );
-# 7153 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7153 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void *
 
 AsmFlushCacheLine (
           void *LinearAddress
   );
-# 7196 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7196 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmEnablePaging32 (
@@ -4801,7 +4801,7 @@ AsmEnablePaging32 (
           void *Context2 ,
           void *NewStack
   );
-# 7239 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7239 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmDisablePaging32 (
@@ -4810,7 +4810,7 @@ AsmDisablePaging32 (
           void *Context2 ,
           void *NewStack
   );
-# 7280 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7280 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmEnablePaging64 (
@@ -4820,7 +4820,7 @@ AsmEnablePaging64 (
           UINT64 Context2 ,
           UINT64 NewStack
   );
-# 7320 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7320 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmDisablePaging64 (
@@ -4830,44 +4830,44 @@ AsmDisablePaging64 (
           UINT32 Context2 ,
           UINT32 NewStack
   );
-# 7355 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7355 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmGetThunk16Properties (
           UINT32 *RealModeBufferSize,
           UINT32 *ExtraStackSize
   );
-# 7376 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7376 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmPrepareThunk16 (
           THUNK_CONTEXT *ThunkContext
   );
-# 7435 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7435 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmThunk16 (
           THUNK_CONTEXT *ThunkContext
   );
-# 7461 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7461 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmPrepareAndThunk16 (
           THUNK_CONTEXT *ThunkContext
   );
-# 7478 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7478 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 AsmRdRand16 (
           UINT16 *Rand
   );
-# 7495 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7495 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 AsmRdRand32 (
           UINT32 *Rand
   );
-# 7512 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7512 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 BOOLEAN
 
 AsmRdRand64 (
@@ -4884,32 +4884,32 @@ void
 AsmWriteTr (
      UINT16 Selector
   );
-# 7536 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7536 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmLfence (
   void
   );
-# 7552 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7552 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmXGetBv (
      UINT32 Index
   );
-# 7575 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7575 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 UINT64
 
 AsmXSetBv (
      UINT32 Index,
      UINT64 Value
   );
-# 7589 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7589 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 AsmVmgExit (
   void
   );
-# 7629 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/BaseLib.h"
+# 7629 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h"
 void
 
 PatchInstructionX86 (
@@ -4917,13 +4917,13 @@ PatchInstructionX86 (
       UINT64 PatchValue,
       UINTN ValueSize
   );
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h" 2
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h" 2
 
 
 
 
 typedef struct _EFI_PEI_PCI_CFG2_PPI EFI_PEI_PCI_CFG2_PPI;
-# 35 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h"
+# 35 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h"
 typedef enum {
 
 
@@ -4973,7 +4973,7 @@ typedef struct {
 
   UINT32 ExtendedRegister;
 } EFI_PEI_PCI_CFG_PPI_PCI_ADDRESS;
-# 109 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h"
+# 109 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_PCI_CFG2_PPI_IO)(
@@ -4983,7 +4983,7 @@ EFI_STATUS
             UINT64 Address,
             void *Buffer
   );
-# 149 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Ppi/PciCfg2.h"
+# 149 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_PCI_CFG2_PPI_RW)(
@@ -5010,15 +5010,15 @@ struct _EFI_PEI_PCI_CFG2_PPI {
 };
 
 extern EFI_GUID gEfiPciCfg2PpiGuid;
-# 40 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
-# 52 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 40 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h" 2
+# 52 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEIM_ENTRY_POINT2)(
      EFI_PEI_FILE_HANDLE FileHandle,
      const EFI_PEI_SERVICES **PeiServices
   );
-# 69 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 69 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEIM_NOTIFY_ENTRY_POINT)(
@@ -5026,7 +5026,7 @@ EFI_STATUS
      EFI_PEI_NOTIFY_DESCRIPTOR *NotifyDescriptor,
      void *Ppi
   );
-# 90 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 90 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef struct {
 
 
@@ -5076,14 +5076,14 @@ typedef union {
 
   EFI_PEI_PPI_DESCRIPTOR Ppi;
 } EFI_PEI_DESCRIPTOR;
-# 157 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 157 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_INSTALL_PPI)(
      const EFI_PEI_SERVICES **PeiServices,
      const EFI_PEI_PPI_DESCRIPTOR *PpiList
   );
-# 182 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 182 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_REINSTALL_PPI)(
@@ -5091,7 +5091,7 @@ EFI_STATUS
      const EFI_PEI_PPI_DESCRIPTOR *OldPpi,
      const EFI_PEI_PPI_DESCRIPTOR *NewPpi
   );
-# 203 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 203 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_LOCATE_PPI)(
@@ -5101,35 +5101,35 @@ EFI_STATUS
            EFI_PEI_PPI_DESCRIPTOR **PpiDescriptor ,
            void **Ppi
   );
-# 228 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 228 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_NOTIFY_PPI)(
      const EFI_PEI_SERVICES **PeiServices,
      const EFI_PEI_NOTIFY_DESCRIPTOR *NotifyList
   );
-# 244 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 244 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_GET_BOOT_MODE)(
      const EFI_PEI_SERVICES **PeiServices,
       EFI_BOOT_MODE *BootMode
   );
-# 260 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 260 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_SET_BOOT_MODE)(
      const EFI_PEI_SERVICES **PeiServices,
      EFI_BOOT_MODE BootMode
   );
-# 277 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 277 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_GET_HOB_LIST)(
      const EFI_PEI_SERVICES **PeiServices,
       void **HobList
   );
-# 296 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 296 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_CREATE_HOB)(
@@ -5138,7 +5138,7 @@ EFI_STATUS
      UINT16 Length,
          void **Hob
   );
-# 324 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 324 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_FIND_NEXT_VOLUME2)(
@@ -5146,7 +5146,7 @@ EFI_STATUS
      UINTN Instance,
       EFI_PEI_FV_HANDLE *VolumeHandle
   );
-# 353 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 353 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_FIND_NEXT_FILE2)(
@@ -5155,7 +5155,7 @@ EFI_STATUS
      const EFI_PEI_FV_HANDLE FvHandle,
          EFI_PEI_FILE_HANDLE *FileHandle
   );
-# 381 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 381 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_FIND_SECTION_DATA2)(
@@ -5164,7 +5164,7 @@ EFI_STATUS
      EFI_PEI_FILE_HANDLE FileHandle,
       void **SectionData
   );
-# 411 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 411 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_FIND_SECTION_DATA3)(
@@ -5175,7 +5175,7 @@ EFI_STATUS
       void **SectionData,
       UINT32 *AuthenticationStatus
   );
-# 434 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 434 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_INSTALL_PEI_MEMORY)(
@@ -5183,7 +5183,7 @@ EFI_STATUS
      EFI_PHYSICAL_ADDRESS MemoryBegin,
      UINT64 MemoryLength
   );
-# 464 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 464 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_ALLOCATE_PAGES)(
@@ -5192,7 +5192,7 @@ EFI_STATUS
      UINTN Pages,
       EFI_PHYSICAL_ADDRESS *Memory
   );
-# 486 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 486 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FREE_PAGES)(
@@ -5200,7 +5200,7 @@ EFI_STATUS
      EFI_PHYSICAL_ADDRESS Memory,
      UINTN Pages
   );
-# 506 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 506 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_ALLOCATE_POOL)(
@@ -5208,7 +5208,7 @@ EFI_STATUS
      UINTN Size,
       void **Buffer
   );
-# 522 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 522 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 void
 ( *EFI_PEI_COPY_MEM)(
@@ -5216,7 +5216,7 @@ void
      void *Source,
      UINTN Length
   );
-# 538 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 538 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 void
 ( *EFI_PEI_SET_MEM)(
@@ -5224,7 +5224,7 @@ void
      UINTN Size,
      UINT8 Value
   );
-# 575 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 575 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_REPORT_STATUS_CODE)(
@@ -5235,13 +5235,13 @@ EFI_STATUS
      const EFI_GUID *CallerId ,
      const EFI_STATUS_CODE_DATA *Data
   );
-# 599 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 599 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_RESET_SYSTEM)(
      const EFI_PEI_SERVICES **PeiServices
   );
-# 618 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 618 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 void
 ( *EFI_PEI_RESET2_SYSTEM)(
@@ -5250,7 +5250,7 @@ void
      UINTN DataSize,
      void *ResetData
   );
-# 647 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 647 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_FIND_BY_NAME)(
@@ -5318,14 +5318,14 @@ typedef struct {
 
   UINT32 AuthenticationStatus;
 } EFI_FV_FILE_INFO2;
-# 733 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 733 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_GET_FILE_INFO)(
       EFI_PEI_FILE_HANDLE FileHandle,
       EFI_FV_FILE_INFO *FileInfo
   );
-# 757 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 757 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_GET_FILE_INFO2)(
@@ -5360,20 +5360,20 @@ typedef struct {
 
   UINT64 FvSize;
 } EFI_FV_INFO;
-# 809 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 809 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_FFS_GET_VOLUME_INFO)(
       EFI_PEI_FV_HANDLE VolumeHandle,
       EFI_FV_INFO *VolumeInfo
   );
-# 840 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 840 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 EFI_STATUS
 ( *EFI_PEI_REGISTER_FOR_SHADOW)(
       EFI_PEI_FILE_HANDLE FileHandle
   );
-# 877 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 877 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 struct _EFI_PEI_SERVICES {
 
 
@@ -5478,7 +5478,7 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
 
 
   UINTN TemporaryRamSize;
-# 991 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 991 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
   void *PeiTemporaryRamBase;
 
 
@@ -5500,142 +5500,142 @@ typedef struct _EFI_SEC_PEI_HAND_OFF {
 
   UINTN StackSize;
 } EFI_SEC_PEI_HAND_OFF;
-# 1049 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Pi/PiPeiCis.h"
+# 1049 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h"
 typedef
 void
 ( *EFI_PEI_CORE_ENTRY_POINT)(
      const EFI_SEC_PEI_HAND_OFF *SecCoreData,
      const EFI_PEI_PPI_DESCRIPTOR *PpiList
   );
-# 19 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/PiPei.h" 2
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h" 1
-# 809 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 19 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiPei.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h" 1
+# 809 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdSetSku (
      UINTN SkuId
   );
-# 825 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 825 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT8
 
 LibPcdGet8 (
      UINTN TokenNumber
   );
-# 841 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 841 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT16
 
 LibPcdGet16 (
      UINTN TokenNumber
   );
-# 857 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 857 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT32
 
 LibPcdGet32 (
      UINTN TokenNumber
   );
-# 873 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 873 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT64
 
 LibPcdGet64 (
      UINTN TokenNumber
   );
-# 889 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 889 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPcdGetPtr (
      UINTN TokenNumber
   );
-# 905 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 905 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 BOOLEAN
 
 LibPcdGetBool (
      UINTN TokenNumber
   );
-# 919 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 919 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetSize (
      UINTN TokenNumber
   );
-# 939 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 939 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT8
 
 LibPcdGetEx8 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 960 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 960 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT16
 
 LibPcdGetEx16 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 978 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 978 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT32
 
 LibPcdGetEx32 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 999 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 999 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINT64
 
 LibPcdGetEx64 (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1020 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1020 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPcdGetExPtr (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1041 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1041 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 BOOLEAN
 
 LibPcdGetExBool (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1062 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1062 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetExSize (
      const GUID *Guid,
      UINTN TokenNumber
   );
-# 1081 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1081 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet8S (
      UINTN TokenNumber,
      UINT8 Value
   );
-# 1100 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1100 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet16S (
      UINTN TokenNumber,
      UINT16 Value
   );
-# 1119 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1119 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet32S (
      UINTN TokenNumber,
      UINT32 Value
   );
-# 1138 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1138 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSet64S (
      UINTN TokenNumber,
      UINT64 Value
   );
-# 1167 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1167 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetPtrS (
@@ -5643,14 +5643,14 @@ LibPcdSetPtrS (
            UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1187 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1187 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetBoolS (
      UINTN TokenNumber,
      BOOLEAN Value
   );
-# 1210 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1210 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx8S (
@@ -5658,7 +5658,7 @@ LibPcdSetEx8S (
      UINTN TokenNumber,
      UINT8 Value
   );
-# 1234 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1234 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx16S (
@@ -5666,7 +5666,7 @@ LibPcdSetEx16S (
      UINTN TokenNumber,
      UINT16 Value
   );
-# 1258 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1258 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx32S (
@@ -5674,7 +5674,7 @@ LibPcdSetEx32S (
      UINTN TokenNumber,
      UINT32 Value
   );
-# 1282 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1282 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetEx64S (
@@ -5682,7 +5682,7 @@ LibPcdSetEx64S (
      UINTN TokenNumber,
      UINT64 Value
   );
-# 1312 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1312 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetExPtrS (
@@ -5691,7 +5691,7 @@ LibPcdSetExPtrS (
            UINTN *SizeOfBuffer,
            void *Buffer
   );
-# 1337 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1337 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPcdSetExBoolS (
@@ -5699,7 +5699,7 @@ LibPcdSetExBoolS (
      UINTN TokenNumber,
      BOOLEAN Value
   );
-# 1361 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1361 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 typedef
 void
 ( *PCD_CALLBACK)(
@@ -5708,7 +5708,7 @@ void
             void *TokenData,
             UINTN TokenDataSize
   );
-# 1386 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1386 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdCallbackOnSet (
@@ -5716,7 +5716,7 @@ LibPcdCallbackOnSet (
      UINTN TokenNumber,
      PCD_CALLBACK NotificationFunction
   );
-# 1407 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1407 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdCancelCallback (
@@ -5724,20 +5724,20 @@ LibPcdCancelCallback (
      UINTN TokenNumber,
      PCD_CALLBACK NotificationFunction
   );
-# 1434 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1434 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetNextToken (
      const GUID *Guid ,
      UINTN TokenNumber
   );
-# 1454 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1454 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 GUID *
 
 LibPcdGetNextTokenSpace (
      const GUID *TokenSpaceGuid
   );
-# 1483 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1483 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPatchPcdSetPtr (
@@ -5746,7 +5746,7 @@ LibPatchPcdSetPtr (
             UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1515 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1515 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPatchPcdSetPtrS (
@@ -5755,7 +5755,7 @@ LibPatchPcdSetPtrS (
            UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1549 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1549 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void *
 
 LibPatchPcdSetPtrAndSize (
@@ -5765,7 +5765,7 @@ LibPatchPcdSetPtrAndSize (
             UINTN *SizeOfBuffer,
      const void *Buffer
   );
-# 1584 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1584 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 RETURN_STATUS
 
 LibPatchPcdSetPtrAndSizeS (
@@ -5804,14 +5804,14 @@ typedef struct {
 
   CHAR8 *PcdName;
 } PCD_INFO;
-# 1635 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1635 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdGetInfo (
             UINTN TokenNumber,
             PCD_INFO *PcdInfo
   );
-# 1655 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1655 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 void
 
 LibPcdGetInfoEx (
@@ -5819,13 +5819,13 @@ LibPcdGetInfoEx (
             UINTN TokenNumber,
             PCD_INFO *PcdInfo
   );
-# 1670 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h"
+# 1670 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h"
 UINTN
 
 LibPcdGetSku (
   void
   );
-# 18 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 2
+# 18 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/DEBUG/AutoGen.h" 2
 
 extern GUID gEfiCallerIdGuid;
 extern GUID gEdkiiDscPlatformGuid;
@@ -6066,8 +6066,8 @@ extern const UINT32 _gPcd_FixedAtBuild_PcdBfvRawDataOffset;
 
 
 extern const UINT32 _gPcd_FixedAtBuild_PcdBfvRawDataSize;
-# 390 "<built-in>" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/ResetVector/ResetVector.nasmb" 2
+# 377 "<built-in>" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/OvmfPkg/ResetVector/ResetVector.nasmb" 2
 ;------------------------------------------------------------------------------
 ; @file
 ; This file includes all other code files to assemble the reset vector code

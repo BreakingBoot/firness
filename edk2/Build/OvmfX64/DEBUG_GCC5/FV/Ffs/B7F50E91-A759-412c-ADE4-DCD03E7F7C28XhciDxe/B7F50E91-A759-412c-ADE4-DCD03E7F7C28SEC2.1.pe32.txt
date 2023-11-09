@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/B7F50E91-A759-412c-ADE4-DCD03E7F7C28XhciDxe/B7F50E91-A759-412c-ADE4-DCD03E7F7C28SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe/OUTPUT/XhciDxe.efi

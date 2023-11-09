@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = BaseMemoryLibRepStr
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdePkg/Library/BaseMemoryLibRepStr
 PACKAGE_RELATIVE_DIR = Library/BaseMemoryLibRepStr
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/e7884bf4-51a1-485b-982a-ff89129983bcBaseMemoryLibRepStr
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/e7884bf4-51a1-485b-982a-ff89129983bcBaseMemoryLibRepStr
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -264,8 +264,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/MdePkg/Library/MipiSysTLib/mipisyst/library/include/ \
     -I$(WORKSPACE)/MdePkg/Include/X64/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/object_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/inc.lst
 
 
 #
@@ -275,7 +275,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/BaseMemoryLibRepStr.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/BaseMemoryLibRepStr.lib \
               
 
 #
@@ -350,170 +350,170 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ZeroMemWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ZeroMemWrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/ZeroMemWrapper.c
+$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem32Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem32Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem32Wrapper.c
 
 $(OUTPUT_DIR)/MemLibGuid.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/MemLibGuid.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/MemLibGuid.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/MemLibGuid.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./MemLibGuid.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/MemLibGuid.c
-
-$(OUTPUT_DIR)/CompareMemWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CompareMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CompareMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/CompareMemWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./CompareMemWrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/CompareMemWrapper.c
-
-$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMem32Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem32Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem32Wrapper.c
-
-$(OUTPUT_DIR)/SetMemWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SetMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SetMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMemWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMemWrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMemWrapper.c
-
-$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem8Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem8Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem8Wrapper.c
-
-$(OUTPUT_DIR)/CopyMemWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CopyMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CopyMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/CopyMemWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./CopyMemWrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/CopyMemWrapper.c
-
-$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMem16Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem16Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem16Wrapper.c
-
-$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ScanMem32Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem32Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem32Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem32Wrapper.c
-
-$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/IsZeroBufferWrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./IsZeroBufferWrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/IsZeroBufferWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./MemLibGuid.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/MemLibGuid.c
 
 $(OUTPUT_DIR)/ScanMem16Wrapper.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ScanMem16Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ScanMem16Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem16Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem16Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem16Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem16Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem16Wrapper.c
 
-$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem64Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem64Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem64Wrapper.c
+$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ScanMem8Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem8Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem8Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem8Wrapper.c
+
+$(OUTPUT_DIR)/CopyMemWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CopyMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CopyMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/CopyMemWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./CopyMemWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/CopyMemWrapper.c
+
+$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SetMem16Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMem16Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem16Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem16Wrapper.c
 
 $(OUTPUT_DIR)/SetMem64Wrapper.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SetMem64Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SetMem64Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMem64Wrapper.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem64Wrapper.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem64Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem64Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem64Wrapper.c
+
+$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ZeroMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ZeroMemWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ZeroMemWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/ZeroMemWrapper.c
+
+$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/IsZeroBufferWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/IsZeroBufferWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./IsZeroBufferWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/IsZeroBufferWrapper.c
+
+$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SetMem32Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMem32Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMem32Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMem32Wrapper.c
+
+$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ScanMem64Wrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/ScanMem64Wrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./ScanMem64Wrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/ScanMem64Wrapper.c
+
+$(OUTPUT_DIR)/SetMemWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SetMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SetMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/SetMemWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./SetMemWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/SetMemWrapper.c
+
+$(OUTPUT_DIR)/CompareMemWrapper.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CompareMemWrapper.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CompareMemWrapper.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/CompareMemWrapper.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/./CompareMemWrapper.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/CompareMemWrapper.c
 
 $(OUTPUT_DIR)/BaseMemoryLibRepStr.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/BaseMemoryLibRepStr.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/BaseMemoryLibRepStr.lib @$(OBJECT_FILES_LIST)
-
-$(OUTPUT_DIR)/X64/ScanMem32.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/ScanMem32.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/ScanMem32.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.iii
-
-$(OUTPUT_DIR)/X64/SetMem32.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/SetMem32.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/SetMem32.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.iii
-
-$(OUTPUT_DIR)/X64/ZeroMem.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/ZeroMem.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/ZeroMem.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.iii
-
-$(OUTPUT_DIR)/X64/SetMem16.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/SetMem16.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/SetMem16.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.iii
-
-$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.iii
-
-$(OUTPUT_DIR)/X64/SetMem64.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/SetMem64.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/SetMem64.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.iii
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/BaseMemoryLibRepStr.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/X64/CompareMem.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/CompareMem.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/CompareMem.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/CompareMem.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CompareMem.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CompareMem.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CompareMem.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CompareMem.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CompareMem.iii
 
-$(OUTPUT_DIR)/X64/ScanMem64.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/ScanMem64.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/ScanMem64.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.iii
-
-$(OUTPUT_DIR)/X64/ScanMem16.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/ScanMem16.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/ScanMem16.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.iii
+$(OUTPUT_DIR)/X64/SetMem64.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/SetMem64.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/SetMem64.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem64.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem64.iii
 
 $(OUTPUT_DIR)/X64/CopyMem.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/CopyMem.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/CopyMem.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/CopyMem.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CopyMem.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CopyMem.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CopyMem.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/CopyMem.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/CopyMem.iii
+
+$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/IsZeroBuffer.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/IsZeroBuffer.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/IsZeroBuffer.iii
+
+$(OUTPUT_DIR)/X64/ScanMem32.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/ScanMem32.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/ScanMem32.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem32.iii
+
+$(OUTPUT_DIR)/X64/ScanMem16.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/ScanMem16.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/ScanMem16.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem16.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem16.iii
+
+$(OUTPUT_DIR)/X64/SetMem32.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/SetMem32.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/SetMem32.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem32.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem32.iii
+
+$(OUTPUT_DIR)/X64/ScanMem64.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/ScanMem64.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/ScanMem64.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem64.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem64.iii
 
 $(OUTPUT_DIR)/X64/ScanMem8.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/ScanMem8.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/ScanMem8.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem8.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem8.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem8.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem8.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem8.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ScanMem8.iii
+
+$(OUTPUT_DIR)/X64/SetMem16.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/SetMem16.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/SetMem16.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem16.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem16.iii
 
 $(OUTPUT_DIR)/X64/SetMem.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/SetMem.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/SetMem.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/SetMem.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/SetMem.iii
+
+$(OUTPUT_DIR)/X64/ZeroMem.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/ZeroMem.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/ZeroMem.obj : $(WORKSPACE)/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ZeroMem.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/OUTPUT/X64/ZeroMem.iii
 
 
 

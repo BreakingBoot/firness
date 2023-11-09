@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/240612B7-A063-11d4-9A3A-0090273FC14DUsbBusDxe/240612B7-A063-11d4-9A3A-0090273FC14DSEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe/OUTPUT/UsbBusDxe.efi

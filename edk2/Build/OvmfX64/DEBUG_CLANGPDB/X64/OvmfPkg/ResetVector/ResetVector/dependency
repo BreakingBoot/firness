@@ -1,7 +1,7 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/OUTPUT/ResetVector.nasmb.trim.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/OUTPUT/ResetVector.bin.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/OUTPUT/ResetVector.bin.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/ResetVector/ResetVector/OUTPUT/ResetVector.nasmb.trim.deps
 
                

@@ -1030,6 +1030,7 @@
       gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|8000
   }
 !endif
+MdeModulePkg/Firness/FirnessHarnesses.inf
 
 !if $(SECURE_BOOT_ENABLE) == TRUE
   SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf

@@ -1,6 +1,6 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformDxe/Platform/DEBUG/PlatformForms.c:   /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformDxe/PlatformForms.vfr \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformDxe/Platform/DEBUG/PlatformDxeStrDefs.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Include/Guid/OvmfPlatformConfig.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformDxe/Platform.h
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformDxe/Platform/DEBUG/PlatformForms.c:   /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformDxe/PlatformForms.vfr \
+  /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformDxe/Platform/DEBUG/PlatformDxeStrDefs.h \
+  /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Include/Guid/OvmfPlatformConfig.h \
+  /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformDxe/Platform.h
 
 # Updated 

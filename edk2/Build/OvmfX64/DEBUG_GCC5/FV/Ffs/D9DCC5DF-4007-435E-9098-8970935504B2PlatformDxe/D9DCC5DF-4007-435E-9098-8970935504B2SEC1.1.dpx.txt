@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_DXE_DEPEX -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/D9DCC5DF-4007-435E-9098-8970935504B2PlatformDxe/D9DCC5DF-4007-435E-9098-8970935504B2SEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/PlatformDxe/Platform/OUTPUT/PlatformDxe.depex

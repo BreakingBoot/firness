@@ -1,0 +1,6 @@
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/PlatformDebugLibIoPort/DebugIoPortQemu.c

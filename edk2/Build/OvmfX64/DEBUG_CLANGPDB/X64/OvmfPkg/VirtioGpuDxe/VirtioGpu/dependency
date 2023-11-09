@@ -1,11 +1,11 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/Commands.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/Commands.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/Gop.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/Gop.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/DriverBinding.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/DriverBinding.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/AutoGen.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/AutoGen.obj.deps
 
                

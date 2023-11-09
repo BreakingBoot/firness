@@ -1,0 +1,7 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib/OUTPUT/LockBoxDxe.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/LockBoxLib/LockBoxDxeLib/OUTPUT/LockBoxLib.obj.deps
+
+               

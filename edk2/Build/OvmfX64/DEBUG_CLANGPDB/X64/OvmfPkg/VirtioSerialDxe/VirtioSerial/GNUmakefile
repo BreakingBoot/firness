@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = VirtioSerial
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/VirtioSerialDxe
 PACKAGE_RELATIVE_DIR = VirtioSerialDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioSerialDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/23CACE14-EBA4-49F6-9681-C697FF0B649EVirtioSerialDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioSerialDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/23CACE14-EBA4-49F6-9681-C697FF0B649EVirtioSerialDxe
 
 MODULE_ENTRY_POINT = VirtioSerialEntryPoint
 ARCH_ENTRY_POINT = VirtioSerialEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -253,8 +253,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/static_library_files.lst
 
 
 #
@@ -264,7 +264,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -361,36 +361,36 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/VirtioSerialPort.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/VirtioSerialPort.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/VirtioSerialPort.obj : $(WORKSPACE)/OvmfPkg/VirtioSerialDxe/VirtioSerialPort.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerialPort.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerialPort.c
-
-$(OUTPUT_DIR)/VirtioSerial.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/VirtioSerial.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/VirtioSerial.obj : $(WORKSPACE)/OvmfPkg/VirtioSerialDxe/VirtioSerial.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerial.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerial.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerialPort.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerialPort.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/VirtioSerial.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/VirtioSerial.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/VirtioSerial.obj : $(WORKSPACE)/OvmfPkg/VirtioSerialDxe/VirtioSerial.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerial.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerial.c
 
 $(OUTPUT_DIR)/VirtioSerialRing.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/VirtioSerialRing.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/VirtioSerialRing.obj : $(WORKSPACE)/OvmfPkg/VirtioSerialDxe/VirtioSerialRing.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerialRing.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerialRing.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/./VirtioSerialRing.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioSerialDxe/VirtioSerialRing.c
 
 $(OUTPUT_DIR)/VirtioSerialDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/VirtioSerialDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/VirtioSerialDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/VirtioSerialDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/VirtioSerialDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/VirtioSerialDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/VirtioSerialDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/VirtioSerialDxe.efi : $(DEBUG_DIR)/VirtioSerialDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/VirtioSerialDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/DEBUG/VirtioSerialDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

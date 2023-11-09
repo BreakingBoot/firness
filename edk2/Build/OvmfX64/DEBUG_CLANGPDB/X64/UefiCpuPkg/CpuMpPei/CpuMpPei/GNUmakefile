@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = CpuMpPei
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = UefiCpuPkg/CpuMpPei
 PACKAGE_RELATIVE_DIR = CpuMpPei
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuMpPei
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/EDADEB9D-DDBA-48BD-9D22-C1C169C8C5C6CpuMpPei
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuMpPei
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/EDADEB9D-DDBA-48BD-9D22-C1C169C8C5C6CpuMpPei
 
 MODULE_ENTRY_POINT = CpuMpPeimInit
 ARCH_ENTRY_POINT = CpuMpPeimInit
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -274,8 +274,8 @@ INC =  \
     -I$(WORKSPACE)/UefiCpuPkg \
     -I$(WORKSPACE)/UefiCpuPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/static_library_files.lst
 
 
 #
@@ -285,7 +285,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -396,44 +396,44 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/AutoGen.c
+
 $(OUTPUT_DIR)/CpuMp2Pei.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CpuMp2Pei.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CpuMp2Pei.obj : $(WORKSPACE)/UefiCpuPkg/CpuMpPei/CpuMp2Pei.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuMp2Pei.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuMpPei/CpuMp2Pei.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuMp2Pei.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuMpPei/CpuMp2Pei.c
 
 $(OUTPUT_DIR)/CpuMpPei.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CpuMpPei.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CpuMpPei.obj : $(WORKSPACE)/UefiCpuPkg/CpuMpPei/CpuMpPei.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuMpPei.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuMpPei/CpuMpPei.c
-
-$(OUTPUT_DIR)/CpuBist.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CpuBist.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CpuBist.obj : $(WORKSPACE)/UefiCpuPkg/CpuMpPei/CpuBist.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuBist.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuMpPei/CpuBist.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuMpPei.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuMpPei/CpuMpPei.c
 
 $(OUTPUT_DIR)/CpuPaging.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CpuPaging.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CpuPaging.obj : $(WORKSPACE)/UefiCpuPkg/CpuMpPei/CpuPaging.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuPaging.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuMpPei/CpuPaging.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuPaging.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuMpPei/CpuPaging.c
 
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/AutoGen.c
+$(OUTPUT_DIR)/CpuBist.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CpuBist.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CpuBist.obj : $(WORKSPACE)/UefiCpuPkg/CpuMpPei/CpuBist.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/./CpuBist.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuMpPei/CpuBist.c
 
 $(OUTPUT_DIR)/CpuMpPei.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/CpuMpPei.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/CpuMpPei.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/CpuMpPei.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/CpuMpPei.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/CpuMpPei.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/CpuMpPei.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/CpuMpPei.efi : $(DEBUG_DIR)/CpuMpPei.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/CpuMpPei.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/DEBUG/CpuMpPei.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/CpuMpPei/OUTPUT/CpuMpPei.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

@@ -1,0 +1,8 @@
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/QemuFwCfgSimpleParserLib/QemuFwCfgSimpleParserLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h
+/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Include/IndustryStandard/QemuFwCfg.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Include/Library/QemuFwCfgLib.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Include/Library/QemuFwCfgSimpleParserLib.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/QemuFwCfgSimpleParserLib/QemuFwCfgSimpleParser.c

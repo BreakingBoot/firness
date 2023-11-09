@@ -1,9 +1,9 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull/OUTPUT/PerformanceLib.obj:   /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BasePerformanceLibNull/PerformanceLib.c \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull/DEBUG/AutoGen.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PcdLib.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/PerformanceLib.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Library/DebugLib.h
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull/OUTPUT/PerformanceLib.obj:   /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BasePerformanceLibNull/PerformanceLib.c \
+  /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull/DEBUG/AutoGen.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PerformanceLib.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/DebugLib.h
 
 # Updated 

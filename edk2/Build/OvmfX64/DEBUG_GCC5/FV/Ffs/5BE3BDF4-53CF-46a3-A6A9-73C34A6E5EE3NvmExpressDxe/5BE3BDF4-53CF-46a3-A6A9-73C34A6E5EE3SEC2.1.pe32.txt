@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/5BE3BDF4-53CF-46a3-A6A9-73C34A6E5EE3NvmExpressDxe/5BE3BDF4-53CF-46a3-A6A9-73C34A6E5EE3SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe/OUTPUT/NvmExpressDxe.efi

@@ -1,0 +1,13 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWriteDxe.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FtwMisc.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/UpdateWorkingBlock.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/AutoGen.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe/OUTPUT/FaultTolerantWrite.obj.deps
+
+               

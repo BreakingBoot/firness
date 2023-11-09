@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = UefiBootManagerLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Library/UefiBootManagerLib
 PACKAGE_RELATIVE_DIR = Library/UefiBootManagerLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/8D4752BC-595E-49a2-B4AF-F3F57B601DE9UefiBootManagerLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/8D4752BC-595E-49a2-B4AF-F3F57B601DE9UefiBootManagerLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -239,7 +239,7 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/object_files.lst
 
 
 #
@@ -249,7 +249,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/UefiBootManagerLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/UefiBootManagerLib.lib \
               
 
 #
@@ -324,49 +324,49 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/BmLoadOption.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmLoadOption.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmLoadOption.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmLoadOption.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
-
-$(OUTPUT_DIR)/BmConsole.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmConsole.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmConsole.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmConsole.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmConsole.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmConsole.c
-
-$(OUTPUT_DIR)/BmDriverHealth.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmDriverHealth.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmDriverHealth.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmDriverHealth.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmDriverHealth.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmDriverHealth.c
-
-$(OUTPUT_DIR)/BmConnect.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmConnect.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmConnect.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmConnect.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmConnect.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmConnect.c
-
-$(OUTPUT_DIR)/BmBoot.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmBoot.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmBoot.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmBoot.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
-
-$(OUTPUT_DIR)/BmHotkey.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmHotkey.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmHotkey.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmHotkey.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmHotkey.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmHotkey.c
+$(OUTPUT_DIR)/BmBootDescription.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmBootDescription.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmBootDescription.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmBootDescription.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmBootDescription.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmBootDescription.c
 
 $(OUTPUT_DIR)/BmMisc.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/BmMisc.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/BmMisc.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmMisc.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmMisc.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
 
-$(OUTPUT_DIR)/BmBootDescription.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BmBootDescription.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BmBootDescription.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmBootDescription.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmBootDescription.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmBootDescription.c
+$(OUTPUT_DIR)/BmConsole.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmConsole.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmConsole.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmConsole.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmConsole.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmConsole.c
+
+$(OUTPUT_DIR)/BmHotkey.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmHotkey.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmHotkey.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmHotkey.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmHotkey.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmHotkey.c
+
+$(OUTPUT_DIR)/BmDriverHealth.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmDriverHealth.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmDriverHealth.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmDriverHealth.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmDriverHealth.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmDriverHealth.c
+
+$(OUTPUT_DIR)/BmBoot.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmBoot.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmBoot.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmBoot.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
+
+$(OUTPUT_DIR)/BmLoadOption.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmLoadOption.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmLoadOption.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmLoadOption.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
+
+$(OUTPUT_DIR)/BmConnect.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BmConnect.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BmConnect.obj : $(WORKSPACE)/MdeModulePkg/Library/UefiBootManagerLib/BmConnect.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/./BmConnect.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiBootManagerLib/BmConnect.c
 
 $(OUTPUT_DIR)/UefiBootManagerLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/UefiBootManagerLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/UefiBootManagerLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib/OUTPUT/UefiBootManagerLib.lib @$(OBJECT_FILES_LIST)
 
 
 

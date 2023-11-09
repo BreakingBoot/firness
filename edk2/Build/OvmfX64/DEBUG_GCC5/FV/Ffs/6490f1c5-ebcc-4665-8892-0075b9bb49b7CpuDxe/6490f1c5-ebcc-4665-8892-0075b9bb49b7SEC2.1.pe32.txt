@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/6490f1c5-ebcc-4665-8892-0075b9bb49b7CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi

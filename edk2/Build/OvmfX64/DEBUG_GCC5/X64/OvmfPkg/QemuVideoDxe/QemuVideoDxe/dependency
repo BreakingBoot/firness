@@ -1,0 +1,15 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/Gop.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/Initialize.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/VbeShim.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/ComponentName.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/Driver.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/AutoGen.obj.deps
+
+               

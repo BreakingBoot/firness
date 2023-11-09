@@ -1,0 +1,3 @@
+Arch=X64
+BuildDir=/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+PlatformGuid=5a9e7754-d81b-49ea-85ad-69eaa7b1539b

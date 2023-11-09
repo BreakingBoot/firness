@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = RamDiskDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Universal/Disk/RamDiskDxe
 PACKAGE_RELATIVE_DIR = Universal/Disk/RamDiskDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/28A03FF4-12B3-4305-A417-BB1A4F94081ERamDiskDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/28A03FF4-12B3-4305-A417-BB1A4F94081ERamDiskDxe
 
 MODULE_ENTRY_POINT = RamDiskDxeEntryPoint
 ARCH_ENTRY_POINT = RamDiskDxeEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -263,9 +263,9 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/static_library_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/static_library_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/inc.lst
 
 
 #
@@ -275,8 +275,8 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi \
-              /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.aml \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi \
+              /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.aml \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -374,63 +374,63 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/RamDiskDriver.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDiskDriver.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/RamDiskDriver.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
-$(OUTPUT_DIR)/RamDiskDriver.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDriver.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskDriver.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDriver.c
+$(OUTPUT_DIR)/RamDiskProtocol.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDiskProtocol.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/RamDiskProtocol.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
+$(OUTPUT_DIR)/RamDiskProtocol.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskProtocol.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskProtocol.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskProtocol.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/RamDisk.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDisk.obj : $(OUTPUT_DIR)/RamDisk.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.c
-
-$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
-$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskBlockIo.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskBlockIo.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskBlockIo.c
-
-$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
-$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskFileExplorer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskFileExplorer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskFileExplorer.c
-
-$(OUTPUT_DIR)/RamDiskHii.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDiskHii.obj : $(DEBUG_DIR)/RamDiskHii.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskHii.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskHii.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/RamDiskImpl.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/RamDiskImpl.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/RamDiskImpl.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
 $(OUTPUT_DIR)/RamDiskImpl.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskImpl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskImpl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskImpl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskImpl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskImpl.c
 
-$(OUTPUT_DIR)/RamDiskProtocol.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/RamDiskProtocol.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/RamDiskProtocol.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
-$(OUTPUT_DIR)/RamDiskProtocol.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskProtocol.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskProtocol.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskProtocol.c
+$(OUTPUT_DIR)/RamDisk.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDisk.obj : $(OUTPUT_DIR)/RamDisk.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.c
+
+$(OUTPUT_DIR)/RamDiskHii.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDiskHii.obj : $(DEBUG_DIR)/RamDiskHii.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskHii.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskHii.c
+
+$(OUTPUT_DIR)/RamDiskDriver.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDiskDriver.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/RamDiskDriver.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
+$(OUTPUT_DIR)/RamDiskDriver.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDriver.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskDriver.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDriver.c
+
+$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
+$(OUTPUT_DIR)/RamDiskBlockIo.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskBlockIo.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskBlockIo.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskBlockIo.c
+
+$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
+$(OUTPUT_DIR)/RamDiskFileExplorer.obj : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskFileExplorer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDiskFileExplorer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskFileExplorer.c
 
 $(OUTPUT_DIR)/RamDiskDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/RamDiskDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/RamDiskDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/RamDiskDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/RamDiskDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/RamDiskDxe.efi : $(DEBUG_DIR)/RamDiskDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -441,24 +441,24 @@ $(DEBUG_DIR)/RamDiskHii.c : $(MAKE_FILE)
 $(DEBUG_DIR)/RamDiskHii.c : $(DEBUG_DIR)/AutoGen.h
 $(DEBUG_DIR)/RamDiskHii.c : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
 $(DEBUG_DIR)/RamDiskHii.c : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskHii.vfr
-	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskHii.vfr > $(OUTPUT_DIR)/RamDiskHii.i
-	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/. $(OUTPUT_DIR)/RamDiskHii.i
+	"$(VFRPP)" $(DEPS_FLAGS) $(VFRPP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskHii.vfr > $(OUTPUT_DIR)/RamDiskHii.i
+	"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)/$(MODULE_NAME)StrDefs.hpk --output-directory /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/. $(OUTPUT_DIR)/RamDiskHii.i
 
 $(OUTPUT_DIR)/RamDisk.aml : $(MAKE_FILE)
 $(OUTPUT_DIR)/RamDisk.aml : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/RamDisk.aml : $(DEBUG_DIR)/RamDiskDxeStrDefs.h
 $(OUTPUT_DIR)/RamDisk.aml : $(WORKSPACE)/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDisk.asl
-	Trim --asl-file --asl-deps -o $(OUTPUT_DIR)/./RamDisk.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDisk.asl
-	"$(ASLPP)" $(DEPS_FLAGS) $(ASLPP_FLAGS) $(INC) -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe $(OUTPUT_DIR)/./RamDisk.i > $(OUTPUT_DIR)/./RamDisk.iii
+	Trim --asl-file --asl-deps -o $(OUTPUT_DIR)/./RamDisk.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDisk.asl
+	"$(ASLPP)" $(DEPS_FLAGS) $(ASLPP_FLAGS) $(INC) -I/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe $(OUTPUT_DIR)/./RamDisk.i > $(OUTPUT_DIR)/./RamDisk.iii
 	Trim --source-code -l -o $(OUTPUT_DIR)/./RamDisk.iiii $(OUTPUT_DIR)/./RamDisk.iii
-	"$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.aml $(OUTPUT_DIR)/./RamDisk.iiii
+	"$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/./RamDisk.aml $(OUTPUT_DIR)/./RamDisk.iiii
 	$(CP) $(OUTPUT_DIR)/./RamDisk.aml $(OUTPUT_DIR)/./RamDisk.amli
 
 $(OUTPUT_DIR)/RamDisk.amli : $(OUTPUT_DIR)/RamDisk.aml
 	
 
 $(OUTPUT_DIR)/RamDisk.c : $(OUTPUT_DIR)/RamDisk.amli
-	-AmlToC /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.amli
+	-AmlToC /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.amli
 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : $(OUTPUT_DIR)/RamDiskDxe.map
 	test -f $(OUTPUT_DIR)/RamDiskDxe.map && $(CP) $(OUTPUT_DIR)/RamDiskDxe.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map
@@ -469,7 +469,7 @@ $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx : $(OUTPUT_DIR)/RamDiskDxe.depex
 $(FFS_OUTPUT_DIR)/RamDiskDxeOffset.raw : $(FFS_OUTPUT_DIR)/RamDiskDxe.offset
 	-test -e $(FFS_OUTPUT_DIR)/RamDiskDxe.offset && GenSec -s EFI_SECTION_RAW -o $(FFS_OUTPUT_DIR)/RamDiskDxeOffset.raw $(FFS_OUTPUT_DIR)/RamDiskDxe.offset
 $(FFS_OUTPUT_DIR)/RamDiskDxe.offset : $(DEBUG_DIR)/RamDiskDxe.efi
-	Trim --Vfr-Uni-Offset -o $(FFS_OUTPUT_DIR)/RamDiskDxe.offset --ModuleName=RamDiskDxe --DebugDir=/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG 
+	Trim --Vfr-Uni-Offset -o $(FFS_OUTPUT_DIR)/RamDiskDxe.offset --ModuleName=RamDiskDxe --DebugDir=/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 : $(OUTPUT_DIR)/RamDiskDxe.efi
 	-test -e $(OUTPUT_DIR)/RamDiskDxe.efi && GenSec -s EFI_SECTION_PE32 -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 $(OUTPUT_DIR)/RamDiskDxe.efi
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui : $(MODULE_DIR)/$(MODULE_FILE)

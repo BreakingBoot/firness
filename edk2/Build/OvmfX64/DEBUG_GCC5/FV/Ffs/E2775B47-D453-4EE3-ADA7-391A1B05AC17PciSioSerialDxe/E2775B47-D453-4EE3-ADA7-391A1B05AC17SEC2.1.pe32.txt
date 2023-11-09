@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/E2775B47-D453-4EE3-ADA7-391A1B05AC17PciSioSerialDxe/E2775B47-D453-4EE3-ADA7-391A1B05AC17SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Pci/PciSioSerialDxe/PciSioSerialDxe/OUTPUT/PciSioSerialDxe.efi

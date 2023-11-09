@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = BaseIoLibIntrinsicSev
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdePkg/Library/BaseIoLibIntrinsic
 PACKAGE_RELATIVE_DIR = Library/BaseIoLibIntrinsic
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/93742f95-6e71-4581-b600-8e1da443f95aBaseIoLibIntrinsicSev
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/93742f95-6e71-4581-b600-8e1da443f95aBaseIoLibIntrinsicSev
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -246,8 +246,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/MdePkg/Library/MipiSysTLib/mipisyst/library/include/ \
     -I$(WORKSPACE)/MdePkg/Include/X64/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/object_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/inc.lst
 
 
 #
@@ -257,7 +257,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/BaseIoLibIntrinsicSev.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/BaseIoLibIntrinsicSev.lib \
               
 
 #
@@ -332,47 +332,47 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/IoLib.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/IoLib.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/IoLib.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c
+$(OUTPUT_DIR)/IoLibGcc.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/IoLibGcc.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/IoLibGcc.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLibGcc.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibGcc.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibGcc.c
 
 $(OUTPUT_DIR)/IoHighLevel.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/IoHighLevel.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/IoHighLevel.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoHighLevel.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoHighLevel.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoHighLevel.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoHighLevel.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoHighLevel.c
 
 $(OUTPUT_DIR)/IoLibMmioBuffer.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/IoLibMmioBuffer.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/IoLibMmioBuffer.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLibMmioBuffer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibMmioBuffer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibMmioBuffer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibMmioBuffer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibMmioBuffer.c
 
 $(OUTPUT_DIR)/IoLibFifo.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/IoLibFifo.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/IoLibFifo.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLibFifo.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibFifo.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibFifo.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibFifo.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibFifo.c
+
+$(OUTPUT_DIR)/IoLib.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/IoLib.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/IoLib.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLib.c
 
 $(OUTPUT_DIR)/IoLibInternalTdx.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/IoLibInternalTdx.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/IoLibInternalTdx.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLibInternalTdx.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibInternalTdx.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibInternalTdx.c
-
-$(OUTPUT_DIR)/IoLibGcc.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/IoLibGcc.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/IoLibGcc.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/IoLibGcc.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibGcc.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibGcc.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/./IoLibInternalTdx.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/IoLibInternalTdx.c
 
 $(OUTPUT_DIR)/BaseIoLibIntrinsicSev.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/BaseIoLibIntrinsicSev.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/BaseIoLibIntrinsicSev.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/BaseIoLibIntrinsicSev.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/X64/IoFifoSev.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/IoFifoSev.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/IoFifoSev.obj : $(WORKSPACE)/MdePkg/Library/BaseIoLibIntrinsic/X64/IoFifoSev.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/IoFifoSev.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/IoFifoSev.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/IoFifoSev.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/IoFifoSev.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseIoLibIntrinsic/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsicSev/OUTPUT/X64/IoFifoSev.iii
 
 
 

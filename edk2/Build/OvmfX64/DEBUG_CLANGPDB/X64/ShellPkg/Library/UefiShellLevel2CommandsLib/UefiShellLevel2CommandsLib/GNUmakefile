@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = UefiShellLevel2CommandsLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = ShellPkg/Library/UefiShellLevel2CommandsLib
 PACKAGE_RELATIVE_DIR = Library/UefiShellLevel2CommandsLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/CBF3931C-A2DF-40e5-B77E-CCA9555E9755UefiShellLevel2CommandsLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/CBF3931C-A2DF-40e5-B77E-CCA9555E9755UefiShellLevel2CommandsLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -247,7 +247,7 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Include \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/object_files.lst
 
 
 #
@@ -257,7 +257,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/UefiShellLevel2CommandsLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/UefiShellLevel2CommandsLib.lib \
               
 
 #
@@ -332,105 +332,105 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Rm.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Rm.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Rm.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Rm.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Rm.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Rm.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Rm.c
-
-$(OUTPUT_DIR)/Load.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Load.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Load.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Load.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Load.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Load.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Load.c
-
-$(OUTPUT_DIR)/Cd.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Cd.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Cd.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Cd.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Cd.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Cd.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Cd.c
-
-$(OUTPUT_DIR)/Ls.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ls.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ls.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Ls.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Ls.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Ls.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Ls.c
-
-$(OUTPUT_DIR)/Attrib.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Attrib.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Attrib.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Attrib.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Attrib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Attrib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Attrib.c
-
 $(OUTPUT_DIR)/TimeDate.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TimeDate.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TimeDate.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/TimeDate.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/TimeDate.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./TimeDate.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/TimeDate.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/Parse.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Parse.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Parse.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Parse.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Parse.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Parse.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Parse.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./TimeDate.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/TimeDate.c
 
 $(OUTPUT_DIR)/Reset.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Reset.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Reset.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/Reset.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Reset.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Reset.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Reset.c
-
-$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./UefiShellLevel2CommandsLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.c
-
-$(OUTPUT_DIR)/Vol.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Vol.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Vol.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Vol.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Vol.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Vol.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Vol.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Reset.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Reset.c
 
 $(OUTPUT_DIR)/Set.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Set.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Set.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/Set.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Set.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Set.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Set.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Set.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Set.c
+
+$(OUTPUT_DIR)/Parse.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Parse.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Parse.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Parse.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Parse.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Parse.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Parse.c
 
 $(OUTPUT_DIR)/Mv.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Mv.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Mv.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/Mv.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Mv.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Mv.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Mv.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Mv.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Mv.c
 
 $(OUTPUT_DIR)/Map.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Map.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Map.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/Map.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Map.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Map.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Map.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Map.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Map.c
 
-$(OUTPUT_DIR)/Cp.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Cp.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Cp.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
-$(OUTPUT_DIR)/Cp.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Cp.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Cp.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Cp.c
+$(OUTPUT_DIR)/Attrib.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Attrib.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Attrib.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Attrib.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Attrib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Attrib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Attrib.c
+
+$(OUTPUT_DIR)/Ls.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ls.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ls.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Ls.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Ls.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Ls.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Ls.c
 
 $(OUTPUT_DIR)/MkDir.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/MkDir.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/MkDir.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
 $(OUTPUT_DIR)/MkDir.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/MkDir.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./MkDir.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/MkDir.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./MkDir.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/MkDir.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/Rm.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Rm.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Rm.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Rm.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Rm.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Rm.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Rm.c
+
+$(OUTPUT_DIR)/Cd.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Cd.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Cd.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Cd.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Cd.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Cd.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Cd.c
+
+$(OUTPUT_DIR)/Load.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Load.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Load.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Load.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Load.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Load.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Load.c
+
+$(OUTPUT_DIR)/Cp.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Cp.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Cp.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Cp.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Cp.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Cp.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Cp.c
+
+$(OUTPUT_DIR)/Vol.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Vol.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Vol.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/Vol.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/Vol.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./Vol.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/Vol.c
+
+$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(DEBUG_DIR)/UefiShellLevel2CommandsLibStrDefs.h
+$(OUTPUT_DIR)/UefiShellLevel2CommandsLib.obj : $(WORKSPACE)/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/./UefiShellLevel2CommandsLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.c
 
 $(OUTPUT_DIR)/UefiShellLevel2CommandsLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/UefiShellLevel2CommandsLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/UefiShellLevel2CommandsLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib/OUTPUT/UefiShellLevel2CommandsLib.lib @$(OBJECT_FILES_LIST)
 
 
 

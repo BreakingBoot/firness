@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = BaseCpuLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdePkg/Library/BaseCpuLib
 PACKAGE_RELATIVE_DIR = Library/BaseCpuLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4FBD2538-249C-4b50-8F4A-A9E66609CBF6BaseCpuLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4FBD2538-249C-4b50-8F4A-A9E66609CBF6BaseCpuLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -243,8 +243,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/MdePkg/Library/MipiSysTLib/mipisyst/library/include/ \
     -I$(WORKSPACE)/MdePkg/Include/X64/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/object_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/inc.lst
 
 
 #
@@ -254,7 +254,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib \
               
 
 #
@@ -332,32 +332,32 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/X86BaseCpuLib.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X86BaseCpuLib.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X86BaseCpuLib.obj : $(WORKSPACE)/MdePkg/Library/BaseCpuLib/X86BaseCpuLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/./X86BaseCpuLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X86BaseCpuLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/./X86BaseCpuLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X86BaseCpuLib.c
 
 $(OUTPUT_DIR)/X86CpuFlushTlb.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X86CpuFlushTlb.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X86CpuFlushTlb.obj : $(WORKSPACE)/MdePkg/Library/BaseCpuLib/X86CpuFlushTlb.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/./X86CpuFlushTlb.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X86CpuFlushTlb.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/./X86CpuFlushTlb.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X86CpuFlushTlb.c
 
 $(OUTPUT_DIR)/BaseCpuLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/BaseCpuLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/X64/InitializeFpu.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/InitializeFpu.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/InitializeFpu.obj : $(WORKSPACE)/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/InitializeFpu.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/InitializeFpu.iii
 
 $(OUTPUT_DIR)/X64/CpuSleep.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/CpuSleep.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/CpuSleep.obj : $(WORKSPACE)/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseCpuLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/CpuSleep.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseCpuLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/X64/CpuSleep.iii
 
 
 

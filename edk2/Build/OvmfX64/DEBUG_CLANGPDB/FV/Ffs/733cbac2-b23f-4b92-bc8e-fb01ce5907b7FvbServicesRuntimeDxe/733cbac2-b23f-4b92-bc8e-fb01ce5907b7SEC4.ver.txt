@@ -1,1 +1,1 @@
-GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/733cbac2-b23f-4b92-bc8e-fb01ce5907b7FvbServicesRuntimeDxe/733cbac2-b23f-4b92-bc8e-fb01ce5907b7SEC4.ver
+GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/733cbac2-b23f-4b92-bc8e-fb01ce5907b7FvbServicesRuntimeDxe/733cbac2-b23f-4b92-bc8e-fb01ce5907b7SEC4.ver

@@ -1,7 +1,7 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskHii.c:   /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskHii.vfr \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskNVData.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Guid/HiiPlatformSetupFormset.h \
-  /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Include/Guid/RamDiskHii.h
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskHii.c:   /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskHii.vfr \
+  /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/DEBUG/RamDiskDxeStrDefs.h \
+  /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskNVData.h \
+  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/HiiPlatformSetupFormset.h \
+  /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Include/Guid/RamDiskHii.h
 
 # Updated 

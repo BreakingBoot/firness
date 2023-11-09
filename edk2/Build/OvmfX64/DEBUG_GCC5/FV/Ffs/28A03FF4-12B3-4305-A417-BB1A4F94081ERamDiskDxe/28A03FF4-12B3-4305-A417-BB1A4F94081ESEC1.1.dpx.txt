@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_DXE_DEPEX -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/28A03FF4-12B3-4305-A417-BB1A4F94081ERamDiskDxe/28A03FF4-12B3-4305-A417-BB1A4F94081ESEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDiskDxe.depex

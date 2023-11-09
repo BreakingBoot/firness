@@ -1,0 +1,7 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/BasePeCoffLib/BasePeCoffLib/OUTPUT/PeCoffLoaderEx.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdePkg/Library/BasePeCoffLib/BasePeCoffLib/OUTPUT/BasePeCoff.obj.deps
+
+               

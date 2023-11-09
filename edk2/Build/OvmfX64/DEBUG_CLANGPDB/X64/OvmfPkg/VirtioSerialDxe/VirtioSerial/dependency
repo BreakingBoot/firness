@@ -1,11 +1,11 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialPort.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerial.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialRing.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialPort.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerial.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/AutoGen.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/AutoGen.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioSerialDxe/VirtioSerial/OUTPUT/VirtioSerialRing.obj.deps
 
                

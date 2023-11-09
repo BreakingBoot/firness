@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = DxeMain
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Core/Dxe
 PACKAGE_RELATIVE_DIR = Core/Dxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/D6A2CB7F-6A18-4e2f-B43B-9920A733700ADxeCore
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/D6A2CB7F-6A18-4e2f-B43B-9920A733700ADxeCore
 
 MODULE_ENTRY_POINT = DxeMain
 ARCH_ENTRY_POINT = DxeMain
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -317,8 +317,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/static_library_files.lst
 
 
 #
@@ -328,7 +328,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -443,184 +443,184 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Image/Image.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Image/Image.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Image/Image.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Image/Image.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Image/Image.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Image/Image.c
-
-$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/MemoryProtection.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/MemoryProtection.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/MemoryProtection.c
-
-$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/MemoryAttributesTable.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/MemoryAttributesTable.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/MemoryAttributesTable.c
-
-$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVolBlock/FwVolBlock.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVolBlock/FwVolBlock.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVolBlock/FwVolBlock.c
-
-$(OUTPUT_DIR)/Hand/Locate.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hand/Locate.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hand/Locate.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Locate.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Locate.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Hand/Locate.c
-
-$(OUTPUT_DIR)/Mem/Pool.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mem/Pool.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mem/Pool.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/Pool.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/Pool.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Mem/Pool.c
-
-$(OUTPUT_DIR)/Mem/MemData.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mem/MemData.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mem/MemData.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/MemData.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/MemData.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Mem/MemData.c
-
-$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolWrite.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolWrite.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolWrite.c
-
-$(OUTPUT_DIR)/Hand/Handle.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hand/Handle.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hand/Handle.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Handle.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Handle.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Hand/Handle.c
-
-$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/InstallConfigurationTable.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/InstallConfigurationTable.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/InstallConfigurationTable.c
-
 $(OUTPUT_DIR)/SectionExtraction/CoreSectionExtraction.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SectionExtraction/CoreSectionExtraction.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SectionExtraction/CoreSectionExtraction.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/SectionExtraction/CoreSectionExtraction.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/SectionExtraction/CoreSectionExtraction.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/SectionExtraction/CoreSectionExtraction.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/SectionExtraction/CoreSectionExtraction.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/SectionExtraction/CoreSectionExtraction.c
 
 $(OUTPUT_DIR)/Misc/Stall.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Misc/Stall.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Misc/Stall.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/Stall.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/Stall.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/Stall.c
-
-$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/MemoryProfileRecord.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/MemoryProfileRecord.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Mem/MemoryProfileRecord.c
-
-$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/DriverSupport.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/DriverSupport.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Hand/DriverSupport.c
-
-$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeMain/DxeMain.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
-
-$(OUTPUT_DIR)/Hand/Notify.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hand/Notify.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hand/Notify.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Notify.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Notify.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Hand/Notify.c
-
-$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/DxeMain/DxeProtocolNotify.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeMain/DxeProtocolNotify.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/DxeMain/DxeProtocolNotify.c
-
-$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Dispatcher/Dependency.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Dispatcher/Dependency.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Dispatcher/Dependency.c
-
-$(OUTPUT_DIR)/Mem/Page.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mem/Page.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mem/Page.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/Page.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/Page.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Mem/Page.c
-
-$(OUTPUT_DIR)/Event/Tpl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Event/Tpl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Event/Tpl.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Tpl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Tpl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Event/Tpl.c
-
-$(OUTPUT_DIR)/Event/Event.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Event/Event.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Event/Event.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Event.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Event.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Event/Event.c
-
-$(OUTPUT_DIR)/FwVol/Ffs.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVol/Ffs.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVol/Ffs.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/Ffs.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/Ffs.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVol/Ffs.c
-
-$(OUTPUT_DIR)/Event/Timer.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Event/Timer.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Event/Timer.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Timer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Timer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Event/Timer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/Stall.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/Stall.c
 
 $(OUTPUT_DIR)/Misc/DebugImageInfo.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Misc/DebugImageInfo.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Misc/DebugImageInfo.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/DebugImageInfo.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/DebugImageInfo.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/DebugImageInfo.c
-
-$(OUTPUT_DIR)/Gcd/Gcd.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Gcd/Gcd.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Gcd/Gcd.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Gcd/Gcd.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Gcd/Gcd.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Gcd/Gcd.c
-
-$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolRead.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolRead.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolRead.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/HeapGuard.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/HeapGuard.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Mem/HeapGuard.c
-
-$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolAttrib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolAttrib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolAttrib.c
-
-$(OUTPUT_DIR)/FwVol/FwVol.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FwVol/FwVol.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FwVol/FwVol.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVol.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVol.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVol.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/DebugImageInfo.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/DebugImageInfo.c
 
 $(OUTPUT_DIR)/Misc/SetWatchdogTimer.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Misc/SetWatchdogTimer.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Misc/SetWatchdogTimer.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/SetWatchdogTimer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/SetWatchdogTimer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Misc/SetWatchdogTimer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/SetWatchdogTimer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/SetWatchdogTimer.c
+
+$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVol/FwVolRead.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolRead.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolRead.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolRead.c
+
+$(OUTPUT_DIR)/Hand/Locate.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hand/Locate.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hand/Locate.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Locate.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Locate.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Hand/Locate.c
+
+$(OUTPUT_DIR)/FwVol/FwVol.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVol/FwVol.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVol/FwVol.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVol.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVol.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVol.c
+
+$(OUTPUT_DIR)/Hand/Handle.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hand/Handle.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hand/Handle.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Handle.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Handle.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Hand/Handle.c
+
+$(OUTPUT_DIR)/Image/Image.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Image/Image.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Image/Image.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Image/Image.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Image/Image.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Image/Image.c
+
+$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/DxeMain/DxeProtocolNotify.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/DxeMain/DxeProtocolNotify.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeMain/DxeProtocolNotify.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/DxeMain/DxeProtocolNotify.c
+
+$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVolBlock/FwVolBlock.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVolBlock/FwVolBlock.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVolBlock/FwVolBlock.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVolBlock/FwVolBlock.c
 
 $(OUTPUT_DIR)/Library/Library.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Library/Library.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Library/Library.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Library/Library.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Library/Library.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Library/Library.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Library/Library.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Library/Library.c
+
+$(OUTPUT_DIR)/Gcd/Gcd.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Gcd/Gcd.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Gcd/Gcd.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Gcd/Gcd.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Gcd/Gcd.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Gcd/Gcd.c
+
+$(OUTPUT_DIR)/Mem/Pool.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mem/Pool.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mem/Pool.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/Pool.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/Pool.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Mem/Pool.c
+
+$(OUTPUT_DIR)/Mem/Page.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mem/Page.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mem/Page.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/Page.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/Page.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Mem/Page.c
+
+$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVol/FwVolAttrib.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolAttrib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolAttrib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolAttrib.c
+
+$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hand/DriverSupport.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/DriverSupport.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/DriverSupport.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Hand/DriverSupport.c
+
+$(OUTPUT_DIR)/FwVol/Ffs.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVol/Ffs.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVol/Ffs.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/Ffs.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/Ffs.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVol/Ffs.c
+
+$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mem/MemoryProfileRecord.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/MemoryProfileRecord.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/MemoryProfileRecord.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Mem/MemoryProfileRecord.c
+
+$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mem/HeapGuard.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/HeapGuard.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/HeapGuard.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Mem/HeapGuard.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/Event/Tpl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Event/Tpl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Event/Tpl.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Tpl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Tpl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Event/Tpl.c
+
+$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Misc/MemoryAttributesTable.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/MemoryAttributesTable.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/MemoryAttributesTable.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/MemoryAttributesTable.c
+
+$(OUTPUT_DIR)/Event/Timer.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Event/Timer.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Event/Timer.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Timer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Timer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Event/Timer.c
+
+$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/DxeMain/DxeMain.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeMain/DxeMain.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
+
+$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Dispatcher/Dependency.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Dispatcher/Dependency.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Dispatcher/Dependency.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Dispatcher/Dependency.c
+
+$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Misc/InstallConfigurationTable.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/InstallConfigurationTable.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/InstallConfigurationTable.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/InstallConfigurationTable.c
+
+$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FwVol/FwVolWrite.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/FwVol/FwVolWrite.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/FwVol/FwVolWrite.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/FwVol/FwVolWrite.c
 
 $(OUTPUT_DIR)/Dispatcher/Dispatcher.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Dispatcher/Dispatcher.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Dispatcher/Dispatcher.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Dispatcher/Dispatcher.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Dispatcher/Dispatcher.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Core/Dxe/Dispatcher/Dispatcher.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Dispatcher/Dispatcher.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Dispatcher/Dispatcher.c
+
+$(OUTPUT_DIR)/Hand/Notify.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hand/Notify.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hand/Notify.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Hand/Notify.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Hand/Notify.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Hand/Notify.c
+
+$(OUTPUT_DIR)/Mem/MemData.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mem/MemData.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mem/MemData.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Mem/MemData.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Mem/MemData.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Mem/MemData.c
+
+$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Misc/MemoryProtection.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Misc/MemoryProtection.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Misc/MemoryProtection.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Misc/MemoryProtection.c
+
+$(OUTPUT_DIR)/Event/Event.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Event/Event.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Event/Event.obj : $(WORKSPACE)/MdeModulePkg/Core/Dxe/Event/Event.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/Event/Event.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Core/Dxe/Event/Event.c
 
 $(OUTPUT_DIR)/DxeCore.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/DxeCore.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/DxeCore.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/DxeCore.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/DxeCore.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/DxeCore.efi : $(DEBUG_DIR)/DxeCore.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Core/Dxe/DxeMain/OUTPUT/DxeCore.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

@@ -1,0 +1,6 @@
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib.inf
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/LinuxGdt.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/LoadLinuxLib.h
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/Linux.c
+/home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/LoadLinuxLib/X64/JumpToKernel.nasm

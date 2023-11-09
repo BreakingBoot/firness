@@ -1,12 +1,12 @@
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm"
 # 1 "<built-in>" 1
-# 389 "<built-in>"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h" 1
-# 16 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 1
-# 21 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
-# 162 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/X64/ProcessorBind.h"
+# 376 "<built-in>"
+# 1 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h" 1
+# 16 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 1
+# 21 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h" 1
+# 162 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h"
 typedef unsigned long long UINT64;
 
 
@@ -62,8 +62,8 @@ typedef UINT64 UINTN;
 
 
 typedef INT64 INTN;
-# 22 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h" 2
-# 213 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 22 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h" 2
+# 213 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef struct {
   UINT32 Data1;
   UINT16 Data2;
@@ -102,11 +102,11 @@ struct _LIST_ENTRY {
   LIST_ENTRY *ForwardLink;
   LIST_ENTRY *BackLink;
 };
-# 607 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 607 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef __builtin_ms_va_list VA_LIST;
-# 711 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 711 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN *BASE_LIST;
-# 816 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 816 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 _Static_assert (sizeof (BOOLEAN) == 1, "sizeof (BOOLEAN) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (INT8) == 1, "sizeof (INT8) does not meet UEFI Specification Data Type requirements");
 _Static_assert (sizeof (UINT8) == 1, "sizeof (UINT8) does not meet UEFI Specification Data Type requirements");
@@ -135,7 +135,7 @@ _Static_assert (_Alignof (CHAR16) == sizeof (CHAR16), "Alignment of CHAR16 does 
 _Static_assert (_Alignof (INTN) == sizeof (INTN), "Alignment of INTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (UINTN) == sizeof (UINTN), "Alignment of UINTN does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (void *) == sizeof (void *), "Alignment of VOID * does not meet UEFI Specification Data Type requirements");
-# 852 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 852 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef enum {
   __VerifyUint8EnumValue = 0xff
 } __VERIFY_UINT8_ENUM_SIZE;
@@ -155,9 +155,9 @@ _Static_assert (sizeof (__VERIFY_INT32_ENUM_SIZE) == 4, "Size of enum does not m
 _Static_assert (_Alignof (__VERIFY_UINT8_ENUM_SIZE) == sizeof (__VERIFY_UINT8_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_UINT16_ENUM_SIZE) == sizeof (__VERIFY_UINT16_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
 _Static_assert (_Alignof (__VERIFY_INT32_ENUM_SIZE) == sizeof (__VERIFY_INT32_ENUM_SIZE), "Alignment of enum does not meet UEFI Specification Data Type requirements");
-# 1026 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Include/Base.h"
+# 1026 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h"
 typedef UINTN RETURN_STATUS;
-# 17 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h" 2
+# 17 "/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr/DEBUG/AutoGen.h" 2
 
 extern GUID gEfiCallerIdGuid;
 extern GUID gEdkiiDscPlatformGuid;
@@ -166,8 +166,8 @@ extern CHAR8 *gEfiCallerBaseName;
 
 
 extern UINT64 _gPcd_SkuId_Array[];
-# 390 "<built-in>" 2
-# 1 "/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm" 2
+# 377 "<built-in>" 2
+# 1 "/home/gl055/Research/Harden/firness/edk2/MdePkg/Library/BaseMemoryLibRepStr/X64/ScanMem32.nasm" 2
 ;------------------------------------------------------------------------------
 ;
 ; Copyright (c) 2006 - 2008, Intel Corporation. All rights reserved.<BR>

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = PlatformPei
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/PlatformPei
 PACKAGE_RELATIVE_DIR = PlatformPei
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/222c386d-5abc-4fb4-b124-fbb82488acf4PlatformPei
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/222c386d-5abc-4fb4-b124-fbb82488acf4PlatformPei
 
 MODULE_ENTRY_POINT = InitializePlatform
 ARCH_ENTRY_POINT = InitializePlatform
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -282,8 +282,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/static_library_files.lst
 
 
 #
@@ -293,7 +293,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -401,64 +401,64 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/MemDetect.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/MemDetect.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/MemDetect.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/MemDetect.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./MemDetect.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/MemDetect.c
-
-$(OUTPUT_DIR)/ClearCache.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ClearCache.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ClearCache.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/ClearCache.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./ClearCache.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/ClearCache.c
-
-$(OUTPUT_DIR)/IntelTdx.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/IntelTdx.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/IntelTdx.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/IntelTdx.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./IntelTdx.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/IntelTdx.c
-
-$(OUTPUT_DIR)/FeatureControl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FeatureControl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FeatureControl.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/FeatureControl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./FeatureControl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/FeatureControl.c
-
-$(OUTPUT_DIR)/MemTypeInfo.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/MemTypeInfo.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/MemTypeInfo.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/MemTypeInfo.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./MemTypeInfo.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/MemTypeInfo.c
+$(OUTPUT_DIR)/Platform.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Platform.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Platform.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/Platform.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./Platform.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/Platform.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/FeatureControl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FeatureControl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FeatureControl.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/FeatureControl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./FeatureControl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/FeatureControl.c
+
+$(OUTPUT_DIR)/IntelTdx.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/IntelTdx.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/IntelTdx.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/IntelTdx.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./IntelTdx.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/IntelTdx.c
 
 $(OUTPUT_DIR)/Fv.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Fv.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Fv.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/Fv.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./Fv.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/Fv.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./Fv.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/Fv.c
+
+$(OUTPUT_DIR)/ClearCache.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ClearCache.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ClearCache.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/ClearCache.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./ClearCache.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/ClearCache.c
 
 $(OUTPUT_DIR)/AmdSev.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AmdSev.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AmdSev.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/AmdSev.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./AmdSev.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/AmdSev.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./AmdSev.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/AmdSev.c
 
-$(OUTPUT_DIR)/Platform.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Platform.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Platform.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/Platform.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./Platform.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/PlatformPei/Platform.c
+$(OUTPUT_DIR)/MemTypeInfo.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/MemTypeInfo.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/MemTypeInfo.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/MemTypeInfo.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./MemTypeInfo.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/MemTypeInfo.c
+
+$(OUTPUT_DIR)/MemDetect.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/MemDetect.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/MemDetect.obj : $(WORKSPACE)/OvmfPkg/PlatformPei/MemDetect.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/./MemDetect.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/PlatformPei/MemDetect.c
 
 $(OUTPUT_DIR)/PlatformPei.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/PlatformPei.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/PlatformPei.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/PlatformPei.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/PlatformPei.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/PlatformPei.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/PlatformPei.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/PlatformPei.efi : $(DEBUG_DIR)/PlatformPei.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/PlatformPei.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/DEBUG/PlatformPei.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

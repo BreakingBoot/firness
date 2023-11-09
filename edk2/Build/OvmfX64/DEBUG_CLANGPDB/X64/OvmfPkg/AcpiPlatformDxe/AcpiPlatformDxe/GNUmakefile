@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = AcpiPlatformDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/AcpiPlatformDxe
 PACKAGE_RELATIVE_DIR = AcpiPlatformDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/AcpiPlatformDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/17985e6f-e778-4d94-aefa-c5dd2b77e186QemuFwCfgAcpiPlatform
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/AcpiPlatformDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/17985e6f-e778-4d94-aefa-c5dd2b77e186QemuFwCfgAcpiPlatform
 
 MODULE_ENTRY_POINT = AcpiPlatformEntryPoint
 ARCH_ENTRY_POINT = AcpiPlatformEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -271,8 +271,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -282,7 +282,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -394,36 +394,36 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/EntryPoint.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EntryPoint.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EntryPoint.obj : $(WORKSPACE)/OvmfPkg/AcpiPlatformDxe/EntryPoint.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/AcpiPlatformDxe/EntryPoint.c
-
-$(OUTPUT_DIR)/CloudHvAcpi.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CloudHvAcpi.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CloudHvAcpi.obj : $(WORKSPACE)/OvmfPkg/AcpiPlatformDxe/CloudHvAcpi.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./CloudHvAcpi.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/AcpiPlatformDxe/CloudHvAcpi.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/AcpiPlatformDxe/EntryPoint.c
 
 $(OUTPUT_DIR)/AcpiPlatform.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AcpiPlatform.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AcpiPlatform.obj : $(WORKSPACE)/OvmfPkg/AcpiPlatformDxe/AcpiPlatform.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./AcpiPlatform.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/AcpiPlatformDxe/AcpiPlatform.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./AcpiPlatform.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/AcpiPlatformDxe/AcpiPlatform.c
+
+$(OUTPUT_DIR)/CloudHvAcpi.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CloudHvAcpi.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CloudHvAcpi.obj : $(WORKSPACE)/OvmfPkg/AcpiPlatformDxe/CloudHvAcpi.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./CloudHvAcpi.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/AcpiPlatformDxe/CloudHvAcpi.c
 
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/QemuFwCfgAcpiPlatform.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/QemuFwCfgAcpiPlatform.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/QemuFwCfgAcpiPlatform.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/QemuFwCfgAcpiPlatform.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/QemuFwCfgAcpiPlatform.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/QemuFwCfgAcpiPlatform.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/QemuFwCfgAcpiPlatform.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/QemuFwCfgAcpiPlatform.efi : $(DEBUG_DIR)/QemuFwCfgAcpiPlatform.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/QemuFwCfgAcpiPlatform.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/DEBUG/QemuFwCfgAcpiPlatform.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe/OUTPUT/QemuFwCfgAcpiPlatform.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = NestedInterruptTplLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/NestedInterruptTplLib
 PACKAGE_RELATIVE_DIR = Library/NestedInterruptTplLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/NestedInterruptTplLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/8df39823-2f9e-4ef2-b971-243b44c32c67NestedInterruptTplLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/NestedInterruptTplLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/8df39823-2f9e-4ef2-b971-243b44c32c67NestedInterruptTplLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -231,7 +231,7 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/object_files.lst
 
 
 #
@@ -241,7 +241,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/NestedInterruptTplLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/NestedInterruptTplLib.lib \
               
 
 #
@@ -319,16 +319,16 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/Tpl.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Tpl.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Tpl.obj : $(WORKSPACE)/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/./Tpl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/./Tpl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
 
 $(OUTPUT_DIR)/Iret.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Iret.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Iret.obj : $(WORKSPACE)/OvmfPkg/Library/NestedInterruptTplLib/Iret.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/./Iret.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/NestedInterruptTplLib/Iret.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/./Iret.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/NestedInterruptTplLib/Iret.c
 
 $(OUTPUT_DIR)/NestedInterruptTplLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/NestedInterruptTplLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/NestedInterruptTplLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/NestedInterruptTplLib/NestedInterruptTplLib/OUTPUT/NestedInterruptTplLib.lib @$(OBJECT_FILES_LIST)
 
 
 

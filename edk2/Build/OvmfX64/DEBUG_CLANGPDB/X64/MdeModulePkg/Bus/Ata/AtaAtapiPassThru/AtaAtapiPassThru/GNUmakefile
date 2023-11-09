@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = AtaAtapiPassThru
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Bus/Ata/AtaAtapiPassThru
 PACKAGE_RELATIVE_DIR = Bus/Ata/AtaAtapiPassThru
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/5E523CB4-D397-4986-87BD-A6DD8B22F455AtaAtapiPassThruDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/5E523CB4-D397-4986-87BD-A6DD8B22F455AtaAtapiPassThruDxe
 
 MODULE_ENTRY_POINT = InitializeAtaAtapiPassThru
 ARCH_ENTRY_POINT = InitializeAtaAtapiPassThru
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -261,8 +261,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/static_library_files.lst
 
 
 #
@@ -272,7 +272,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -374,41 +374,41 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/ComponentName.c
 
 $(OUTPUT_DIR)/IdeMode.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/IdeMode.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/IdeMode.obj : $(WORKSPACE)/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/IdeMode.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./IdeMode.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/IdeMode.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./IdeMode.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/IdeMode.c
 
 $(OUTPUT_DIR)/AhciMode.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AhciMode.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AhciMode.obj : $(WORKSPACE)/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AhciMode.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AhciMode.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AhciMode.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AhciMode.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AhciMode.c
 
 $(OUTPUT_DIR)/AtaAtapiPassThru.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/AtaAtapiPassThru.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/AtaAtapiPassThru.obj : $(WORKSPACE)/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AtaAtapiPassThru.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/./AtaAtapiPassThru.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.c
 
 $(OUTPUT_DIR)/AtaAtapiPassThruDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/AtaAtapiPassThruDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/AtaAtapiPassThruDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/AtaAtapiPassThruDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/AtaAtapiPassThruDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AtaAtapiPassThruDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AtaAtapiPassThruDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/AtaAtapiPassThruDxe.efi : $(DEBUG_DIR)/AtaAtapiPassThruDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AtaAtapiPassThruDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/DEBUG/AtaAtapiPassThruDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru/OUTPUT/AtaAtapiPassThruDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

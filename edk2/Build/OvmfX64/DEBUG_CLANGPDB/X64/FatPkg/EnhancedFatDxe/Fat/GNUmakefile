@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = Fat
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = FatPkg/EnhancedFatDxe
 PACKAGE_RELATIVE_DIR = EnhancedFatDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/961578FE-B6B7-44c3-AF35-6BC705CD2B1FFat
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/961578FE-B6B7-44c3-AF35-6BC705CD2B1FFat
 
 MODULE_ENTRY_POINT = FatEntryPoint
 ARCH_ENTRY_POINT = FatEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -265,8 +265,8 @@ INC =  \
     -I$(WORKSPACE)/MdePkg/Library/MipiSysTLib/mipisyst/library/include \
     -I$(WORKSPACE)/MdePkg/Include/X64
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/static_library_files.lst
 
 
 #
@@ -276,7 +276,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -369,114 +369,114 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Hash.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Hash.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Hash.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Hash.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Hash.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Hash.c
-
-$(OUTPUT_DIR)/OpenVolume.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/OpenVolume.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/OpenVolume.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/OpenVolume.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./OpenVolume.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/OpenVolume.c
-
-$(OUTPUT_DIR)/FileName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FileName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FileName.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/FileName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./FileName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/FileName.c
-
-$(OUTPUT_DIR)/DirectoryCache.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/DirectoryCache.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/DirectoryCache.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/DirectoryCache.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DirectoryCache.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/DirectoryCache.c
-
-$(OUTPUT_DIR)/Info.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Info.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Info.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Info.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Info.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Info.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/Flush.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Flush.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Flush.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Flush.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Flush.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Flush.c
-
-$(OUTPUT_DIR)/Open.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Open.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Open.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Open.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Open.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Open.c
+$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/ComponentName.c
 
 $(OUTPUT_DIR)/Init.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Init.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Init.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Init.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Init.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Init.c
-
-$(OUTPUT_DIR)/Fat.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Fat.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Fat.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Fat.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Fat.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Fat.c
-
-$(OUTPUT_DIR)/FileSpace.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/FileSpace.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/FileSpace.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/FileSpace.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./FileSpace.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/FileSpace.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Init.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Init.c
 
 $(OUTPUT_DIR)/UnicodeCollation.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/UnicodeCollation.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/UnicodeCollation.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/UnicodeCollation.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./UnicodeCollation.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/UnicodeCollation.c
-
-$(OUTPUT_DIR)/Delete.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Delete.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Delete.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Delete.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Delete.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Delete.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./UnicodeCollation.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/UnicodeCollation.c
 
 $(OUTPUT_DIR)/DirectoryManage.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/DirectoryManage.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/DirectoryManage.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/DirectoryManage.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DirectoryManage.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/DirectoryManage.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DirectoryManage.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/DirectoryManage.c
 
 $(OUTPUT_DIR)/Misc.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Misc.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Misc.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Misc.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Misc.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Misc.c
-
-$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Misc.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Misc.c
 
 $(OUTPUT_DIR)/DiskCache.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/DiskCache.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/DiskCache.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/DiskCache.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DiskCache.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/DiskCache.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DiskCache.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/DiskCache.c
 
-$(OUTPUT_DIR)/Data.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Data.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Data.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Data.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Data.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/Data.c
+$(OUTPUT_DIR)/Hash.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Hash.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Hash.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Hash.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Hash.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Hash.c
+
+$(OUTPUT_DIR)/OpenVolume.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/OpenVolume.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/OpenVolume.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/OpenVolume.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./OpenVolume.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/OpenVolume.c
+
+$(OUTPUT_DIR)/Fat.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Fat.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Fat.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Fat.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Fat.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Fat.c
 
 $(OUTPUT_DIR)/ReadWrite.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ReadWrite.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ReadWrite.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/ReadWrite.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./ReadWrite.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/FatPkg/EnhancedFatDxe/ReadWrite.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./ReadWrite.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/ReadWrite.c
+
+$(OUTPUT_DIR)/Delete.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Delete.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Delete.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Delete.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Delete.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Delete.c
+
+$(OUTPUT_DIR)/Info.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Info.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Info.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Info.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Info.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Info.c
+
+$(OUTPUT_DIR)/Flush.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Flush.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Flush.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Flush.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Flush.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Flush.c
+
+$(OUTPUT_DIR)/FileName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FileName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FileName.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/FileName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./FileName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/FileName.c
+
+$(OUTPUT_DIR)/Open.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Open.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Open.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Open.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Open.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Open.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/Data.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Data.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Data.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/Data.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./Data.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/Data.c
+
+$(OUTPUT_DIR)/FileSpace.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/FileSpace.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/FileSpace.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/FileSpace.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./FileSpace.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/FileSpace.c
+
+$(OUTPUT_DIR)/DirectoryCache.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/DirectoryCache.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/DirectoryCache.obj : $(WORKSPACE)/FatPkg/EnhancedFatDxe/DirectoryCache.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/./DirectoryCache.obj $(INC) /home/gl055/Research/Harden/firness/edk2/FatPkg/EnhancedFatDxe/DirectoryCache.c
 
 $(OUTPUT_DIR)/Fat.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/Fat.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/Fat.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/Fat.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/Fat.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/Fat.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/Fat.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/Fat.efi : $(DEBUG_DIR)/Fat.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/Fat.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/DEBUG/Fat.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/FatPkg/EnhancedFatDxe/Fat/OUTPUT/Fat.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = Mtftp4Dxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = NetworkPkg/Mtftp4Dxe
 PACKAGE_RELATIVE_DIR = Mtftp4Dxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/DC3641B8-2FA8-4ed3-BC1F-F9962A03454BMtftp4Dxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/DC3641B8-2FA8-4ed3-BC1F-F9962A03454BMtftp4Dxe
 
 MODULE_ENTRY_POINT = Mtftp4DriverEntryPoint
 ARCH_ENTRY_POINT = Mtftp4DriverEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -259,8 +259,8 @@ INC =  \
     -I$(WORKSPACE)/NetworkPkg \
     -I$(WORKSPACE)/NetworkPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -270,7 +270,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -366,59 +366,59 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Rrq.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Rrq.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Rrq.c
-
-$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/ComponentName.c
-
-$(OUTPUT_DIR)/Mtftp4Impl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mtftp4Impl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mtftp4Impl.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Impl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Impl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Impl.c
-
-$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Wrq.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Wrq.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Wrq.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/AutoGen.c
-
 $(OUTPUT_DIR)/Mtftp4Option.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Mtftp4Option.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Mtftp4Option.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Option.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Option.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Option.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Option.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Option.c
 
 $(OUTPUT_DIR)/Mtftp4Driver.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Mtftp4Driver.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Mtftp4Driver.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Driver.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Driver.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Driver.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Driver.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Driver.c
+
+$(OUTPUT_DIR)/Mtftp4Impl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mtftp4Impl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mtftp4Impl.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Impl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Impl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Impl.c
+
+$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mtftp4Wrq.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Wrq.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Wrq.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Wrq.c
+
+$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/ComponentName.c
+
+$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Mtftp4Rrq.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Rrq.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Rrq.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Rrq.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/Mtftp4Support.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Mtftp4Support.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Mtftp4Support.obj : $(WORKSPACE)/NetworkPkg/Mtftp4Dxe/Mtftp4Support.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Support.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Support.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/./Mtftp4Support.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/Mtftp4Dxe/Mtftp4Support.c
 
 $(OUTPUT_DIR)/Mtftp4Dxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/Mtftp4Dxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/Mtftp4Dxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/Mtftp4Dxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/Mtftp4Dxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/Mtftp4Dxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/Mtftp4Dxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/Mtftp4Dxe.efi : $(DEBUG_DIR)/Mtftp4Dxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/Mtftp4Dxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/DEBUG/Mtftp4Dxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

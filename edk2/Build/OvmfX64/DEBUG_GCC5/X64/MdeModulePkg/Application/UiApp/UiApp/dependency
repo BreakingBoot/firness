@@ -1,0 +1,17 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/DEBUG/FrontPageVfr.c.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/FrontPageCustomizedUiSupport.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/FrontPageCustomizedUi.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/FrontPage.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/String.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/FrontPageVfr.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Application/UiApp/UiApp/OUTPUT/AutoGen.obj.deps
+
+               

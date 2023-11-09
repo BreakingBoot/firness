@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = EhciDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Bus/Pci/EhciDxe
 PACKAGE_RELATIVE_DIR = Bus/Pci/EhciDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/BDFE430E-8F2A-4db0-9991-6F856594777EEhciDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/BDFE430E-8F2A-4db0-9991-6F856594777EEhciDxe
 
 MODULE_ENTRY_POINT = EhcDriverEntryPoint
 ARCH_ENTRY_POINT = EhcDriverEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -259,8 +259,8 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -270,7 +270,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -364,59 +364,59 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Ehci.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Ehci.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Ehci.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/Ehci.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./Ehci.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/Ehci.c
-
-$(OUTPUT_DIR)/EhciDebug.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/EhciDebug.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/EhciDebug.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/EhciDebug.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciDebug.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciDebug.c
-
 $(OUTPUT_DIR)/EhciUrb.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EhciUrb.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EhciUrb.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/EhciUrb.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciUrb.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciUrb.c
-
-$(OUTPUT_DIR)/UsbHcMem.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/UsbHcMem.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/UsbHcMem.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/UsbHcMem.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./UsbHcMem.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/UsbHcMem.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciUrb.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciUrb.c
 
 $(OUTPUT_DIR)/EhciReg.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EhciReg.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EhciReg.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/EhciReg.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciReg.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciReg.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciReg.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciReg.c
 
 $(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/ComponentName.c
+
+$(OUTPUT_DIR)/Ehci.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Ehci.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Ehci.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/Ehci.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./Ehci.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/Ehci.c
 
 $(OUTPUT_DIR)/EhciSched.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EhciSched.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EhciSched.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/EhciSched.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciSched.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciSched.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciSched.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciSched.c
+
+$(OUTPUT_DIR)/EhciDebug.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/EhciDebug.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/EhciDebug.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/EhciDebug.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./EhciDebug.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/EhciDebug.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/UsbHcMem.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/UsbHcMem.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/UsbHcMem.obj : $(WORKSPACE)/MdeModulePkg/Bus/Pci/EhciDxe/UsbHcMem.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/./UsbHcMem.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Bus/Pci/EhciDxe/UsbHcMem.c
 
 $(OUTPUT_DIR)/EhciDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/EhciDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/EhciDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/EhciDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/EhciDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/EhciDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/EhciDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/EhciDxe.efi : $(DEBUG_DIR)/EhciDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/EhciDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/DEBUG/EhciDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe/OUTPUT/EhciDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

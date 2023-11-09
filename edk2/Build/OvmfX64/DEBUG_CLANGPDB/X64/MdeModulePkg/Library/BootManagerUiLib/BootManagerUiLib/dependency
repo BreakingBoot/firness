@@ -1,11 +1,11 @@
 
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/BootManager.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/DEBUG/BootManagerVfr.c.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/AutoGen.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/BootManager.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/BootManagerVfr.obj.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/BootManagerVfr.obj.deps
 
--include /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/DEBUG/BootManagerVfr.c.deps
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib/OUTPUT/AutoGen.obj.deps
 
                

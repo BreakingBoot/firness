@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = TcpDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = NetworkPkg/TcpDxe
 PACKAGE_RELATIVE_DIR = TcpDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1A7E4468-2F55-4a56-903C-01265EB7622BTcpDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1A7E4468-2F55-4a56-903C-01265EB7622BTcpDxe
 
 MODULE_ENTRY_POINT = TcpDriverEntryPoint
 ARCH_ENTRY_POINT = TcpDriverEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -264,8 +264,8 @@ INC =  \
     -I$(WORKSPACE)/NetworkPkg \
     -I$(WORKSPACE)/NetworkPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -275,7 +275,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -371,84 +371,84 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/SockImpl.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SockImpl.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SockImpl.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/SockImpl.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./SockImpl.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/SockImpl.c
-
-$(OUTPUT_DIR)/SockInterface.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SockInterface.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SockInterface.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/SockInterface.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./SockInterface.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/SockInterface.c
-
-$(OUTPUT_DIR)/TcpOutput.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TcpOutput.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TcpOutput.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpOutput.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpOutput.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpOutput.c
-
 $(OUTPUT_DIR)/TcpDispatcher.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TcpDispatcher.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TcpDispatcher.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpDispatcher.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpDispatcher.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpDispatcher.c
-
-$(OUTPUT_DIR)/TcpMisc.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TcpMisc.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TcpMisc.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpMisc.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpMisc.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpMisc.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpDispatcher.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpDispatcher.c
 
 $(OUTPUT_DIR)/TcpIo.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TcpIo.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TcpIo.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpIo.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpIo.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpIo.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/TcpDriver.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TcpDriver.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TcpDriver.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpDriver.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpDriver.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpDriver.c
-
-$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/ComponentName.c
-
-$(OUTPUT_DIR)/TcpTimer.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TcpTimer.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TcpTimer.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpTimer.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpTimer.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpTimer.c
-
-$(OUTPUT_DIR)/TcpInput.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/TcpInput.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/TcpInput.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpInput.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpInput.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpInput.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpIo.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpIo.c
 
 $(OUTPUT_DIR)/TcpOption.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TcpOption.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TcpOption.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpOption.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpOption.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpOption.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpOption.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpOption.c
+
+$(OUTPUT_DIR)/TcpTimer.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TcpTimer.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TcpTimer.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpTimer.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpTimer.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpTimer.c
+
+$(OUTPUT_DIR)/TcpMisc.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TcpMisc.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TcpMisc.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpMisc.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpMisc.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpMisc.c
+
+$(OUTPUT_DIR)/SockImpl.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SockImpl.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SockImpl.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/SockImpl.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./SockImpl.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/SockImpl.c
+
+$(OUTPUT_DIR)/SockInterface.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SockInterface.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SockInterface.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/SockInterface.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./SockInterface.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/SockInterface.c
 
 $(OUTPUT_DIR)/TcpMain.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TcpMain.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TcpMain.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpMain.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpMain.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/NetworkPkg/TcpDxe/TcpMain.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpMain.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpMain.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/TcpInput.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TcpInput.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TcpInput.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpInput.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpInput.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpInput.c
+
+$(OUTPUT_DIR)/TcpOutput.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TcpOutput.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TcpOutput.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpOutput.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpOutput.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpOutput.c
+
+$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/ComponentName.c
+
+$(OUTPUT_DIR)/TcpDriver.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/TcpDriver.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/TcpDriver.obj : $(WORKSPACE)/NetworkPkg/TcpDxe/TcpDriver.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/./TcpDriver.obj $(INC) /home/gl055/Research/Harden/firness/edk2/NetworkPkg/TcpDxe/TcpDriver.c
 
 $(OUTPUT_DIR)/TcpDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/TcpDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/TcpDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/TcpDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/TcpDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/TcpDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/TcpDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/TcpDxe.efi : $(DEBUG_DIR)/TcpDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/TcpDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/DEBUG/TcpDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/NetworkPkg/TcpDxe/TcpDxe/OUTPUT/TcpDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

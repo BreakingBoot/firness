@@ -1,0 +1,9 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/HardwareInfoLib/PeiHardwareInfoLib/OUTPUT/HardwareInfoPei.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/HardwareInfoLib/PeiHardwareInfoLib/OUTPUT/HardwareInfoPciHostBridgeLib.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/HardwareInfoLib/PeiHardwareInfoLib/OUTPUT/QemuFwCfgHardwareInfoLib.obj.deps
+
+               

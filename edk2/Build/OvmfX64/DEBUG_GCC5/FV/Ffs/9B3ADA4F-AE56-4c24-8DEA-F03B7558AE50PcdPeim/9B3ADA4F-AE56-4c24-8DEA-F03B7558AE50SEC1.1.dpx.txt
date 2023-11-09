@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PEI_DEPEX -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/9B3ADA4F-AE56-4c24-8DEA-F03B7558AE50PcdPeim/9B3ADA4F-AE56-4c24-8DEA-F03B7558AE50SEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/PCD/Pei/Pcd/OUTPUT/PcdPeim.depex

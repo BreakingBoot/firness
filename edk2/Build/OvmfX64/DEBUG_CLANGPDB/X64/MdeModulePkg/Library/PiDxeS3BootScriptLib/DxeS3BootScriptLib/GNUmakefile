@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = DxeS3BootScriptLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = MdeModulePkg/Library/PiDxeS3BootScriptLib
 PACKAGE_RELATIVE_DIR = Library/PiDxeS3BootScriptLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/57F9967B-26CD-4262-837A-55B8AA158254DxeS3BootScriptLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/57F9967B-26CD-4262-837A-55B8AA158254DxeS3BootScriptLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -233,7 +233,7 @@ INC =  \
     -I$(WORKSPACE)/MdeModulePkg/Test/Mock/Include \
     -I$(WORKSPACE)/MdeModulePkg/Library/BrotliCustomDecompressLib/brotli/c/include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/object_files.lst
 
 
 #
@@ -243,7 +243,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/DxeS3BootScriptLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/DxeS3BootScriptLib.lib \
               
 
 #
@@ -318,19 +318,19 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/BootScriptExecute.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/BootScriptExecute.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/BootScriptExecute.obj : $(WORKSPACE)/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptExecute.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/./BootScriptExecute.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptExecute.c
-
 $(OUTPUT_DIR)/BootScriptSave.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/BootScriptSave.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/BootScriptSave.obj : $(WORKSPACE)/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptSave.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/./BootScriptSave.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptSave.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/./BootScriptSave.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptSave.c
+
+$(OUTPUT_DIR)/BootScriptExecute.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/BootScriptExecute.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/BootScriptExecute.obj : $(WORKSPACE)/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptExecute.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/./BootScriptExecute.obj $(INC) /home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/PiDxeS3BootScriptLib/BootScriptExecute.c
 
 $(OUTPUT_DIR)/DxeS3BootScriptLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/DxeS3BootScriptLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/DxeS3BootScriptLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib/OUTPUT/DxeS3BootScriptLib.lib @$(OBJECT_FILES_LIST)
 
 
 

@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = VirtioNet
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/VirtioNetDxe
 PACKAGE_RELATIVE_DIR = VirtioNetDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/A92CDB4B-82F1-4E0B-A516-8A655D371524VirtioNetDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/A92CDB4B-82F1-4E0B-A516-8A655D371524VirtioNetDxe
 
 MODULE_ENTRY_POINT = VirtioNetEntryPoint
 ARCH_ENTRY_POINT = VirtioNetEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -266,8 +266,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/static_library_files.lst
 
 
 #
@@ -277,7 +277,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -372,99 +372,99 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/SnpStop.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpStop.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpStop.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpStop.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpStop.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpStop.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/AutoGen.c
-
-$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpReceiveFilters.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpReceiveFilters.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpReceiveFilters.c
-
-$(OUTPUT_DIR)/SnpUnsupported.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpUnsupported.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpUnsupported.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpUnsupported.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpUnsupported.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpUnsupported.c
+$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpSharedHelpers.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpSharedHelpers.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpSharedHelpers.c
 
 $(OUTPUT_DIR)/Events.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Events.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Events.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/Events.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./Events.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/Events.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./Events.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/Events.c
 
-$(OUTPUT_DIR)/SnpReceive.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpReceive.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpReceive.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpReceive.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpReceive.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpReceive.c
-
-$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpMcastIpToMac.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpMcastIpToMac.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpMcastIpToMac.c
-
-$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpSharedHelpers.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpSharedHelpers.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpSharedHelpers.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpSharedHelpers.c
-
-$(OUTPUT_DIR)/SnpTransmit.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpTransmit.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpTransmit.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpTransmit.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpTransmit.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpTransmit.c
-
-$(OUTPUT_DIR)/SnpGetStatus.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpGetStatus.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpGetStatus.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpGetStatus.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpGetStatus.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpGetStatus.c
-
-$(OUTPUT_DIR)/SnpShutdown.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SnpShutdown.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SnpShutdown.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpShutdown.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpShutdown.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpShutdown.c
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/EntryPoint.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/EntryPoint.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/EntryPoint.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/EntryPoint.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/EntryPoint.c
-
-$(OUTPUT_DIR)/DriverBinding.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/DriverBinding.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/DriverBinding.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/DriverBinding.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./DriverBinding.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/DriverBinding.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/EntryPoint.c
 
 $(OUTPUT_DIR)/SnpStart.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SnpStart.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SnpStart.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpStart.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpStart.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpStart.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpStart.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpStart.c
 
-$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/ComponentName.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/ComponentName.c
+$(OUTPUT_DIR)/SnpReceive.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpReceive.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpReceive.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpReceive.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpReceive.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpReceive.c
+
+$(OUTPUT_DIR)/SnpTransmit.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpTransmit.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpTransmit.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpTransmit.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpTransmit.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpTransmit.c
+
+$(OUTPUT_DIR)/SnpGetStatus.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpGetStatus.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpGetStatus.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpGetStatus.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpGetStatus.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpGetStatus.c
+
+$(OUTPUT_DIR)/SnpShutdown.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpShutdown.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpShutdown.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpShutdown.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpShutdown.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpShutdown.c
+
+$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpMcastIpToMac.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpMcastIpToMac.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpMcastIpToMac.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpMcastIpToMac.c
+
+$(OUTPUT_DIR)/SnpUnsupported.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpUnsupported.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpUnsupported.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpUnsupported.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpUnsupported.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpUnsupported.c
+
+$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpReceiveFilters.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpReceiveFilters.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpReceiveFilters.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpReceiveFilters.c
+
+$(OUTPUT_DIR)/SnpStop.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SnpStop.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SnpStop.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpStop.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpStop.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpStop.c
+
+$(OUTPUT_DIR)/DriverBinding.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/DriverBinding.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/DriverBinding.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/DriverBinding.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./DriverBinding.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/DriverBinding.c
 
 $(OUTPUT_DIR)/SnpInitialize.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SnpInitialize.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SnpInitialize.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/SnpInitialize.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpInitialize.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioNetDxe/SnpInitialize.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./SnpInitialize.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/SnpInitialize.c
+
+$(OUTPUT_DIR)/ComponentName.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/ComponentName.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/ComponentName.obj : $(WORKSPACE)/OvmfPkg/VirtioNetDxe/ComponentName.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/./ComponentName.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioNetDxe/ComponentName.c
 
 $(OUTPUT_DIR)/VirtioNetDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/VirtioNetDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/VirtioNetDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/VirtioNetDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/VirtioNetDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/VirtioNetDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/VirtioNetDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/VirtioNetDxe.efi : $(DEBUG_DIR)/VirtioNetDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/VirtioNetDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/DEBUG/VirtioNetDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioNetDxe/VirtioNet/OUTPUT/VirtioNetDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

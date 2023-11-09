@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_DXE_DEPEX -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/A19B1FE7-C1BC-49F8-875F-54A5D542443FCpuIo2Dxe/A19B1FE7-C1BC-49F8-875F-54A5D542443FSEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe/OUTPUT/CpuIo2Dxe.depex

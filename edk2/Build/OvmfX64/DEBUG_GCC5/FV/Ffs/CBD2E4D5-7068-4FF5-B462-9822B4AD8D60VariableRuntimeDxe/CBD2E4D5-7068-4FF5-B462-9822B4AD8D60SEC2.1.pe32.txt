@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/CBD2E4D5-7068-4FF5-B462-9822B4AD8D60VariableRuntimeDxe/CBD2E4D5-7068-4FF5-B462-9822B4AD8D60SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe/OUTPUT/VariableRuntimeDxe.efi

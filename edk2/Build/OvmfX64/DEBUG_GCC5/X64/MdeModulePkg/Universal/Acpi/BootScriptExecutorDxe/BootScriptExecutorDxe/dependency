@@ -1,0 +1,11 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe/OUTPUT/X64/SetIdtEntry.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe/OUTPUT/X64/S3Asm.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe/OUTPUT/ScriptExecute.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe/OUTPUT/AutoGen.obj.deps
+
+               

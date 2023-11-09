@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = VirtioGpu
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/VirtioGpuDxe
 PACKAGE_RELATIVE_DIR = VirtioGpuDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioGpuDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/D6099B94-CD97-4CC5-8714-7F6312701A8AVirtioGpuDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioGpuDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/D6099B94-CD97-4CC5-8714-7F6312701A8AVirtioGpuDxe
 
 MODULE_ENTRY_POINT = VirtioGpuEntryPoint
 ARCH_ENTRY_POINT = VirtioGpuEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -256,8 +256,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/static_library_files.lst
 
 
 #
@@ -267,7 +267,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -361,39 +361,39 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/Commands.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/Commands.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/Commands.obj : $(WORKSPACE)/OvmfPkg/VirtioGpuDxe/Commands.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./Commands.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioGpuDxe/Commands.c
-
 $(OUTPUT_DIR)/Gop.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Gop.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Gop.obj : $(WORKSPACE)/OvmfPkg/VirtioGpuDxe/Gop.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./Gop.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioGpuDxe/Gop.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./Gop.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioGpuDxe/Gop.c
 
 $(OUTPUT_DIR)/DriverBinding.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/DriverBinding.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/DriverBinding.obj : $(WORKSPACE)/OvmfPkg/VirtioGpuDxe/DriverBinding.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./DriverBinding.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/VirtioGpuDxe/DriverBinding.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./DriverBinding.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioGpuDxe/DriverBinding.c
+
+$(OUTPUT_DIR)/Commands.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/Commands.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/Commands.obj : $(WORKSPACE)/OvmfPkg/VirtioGpuDxe/Commands.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./Commands.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/VirtioGpuDxe/Commands.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/VirtioGpuDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/VirtioGpuDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/VirtioGpuDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/VirtioGpuDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/VirtioGpuDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/VirtioGpuDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/VirtioGpuDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/VirtioGpuDxe.efi : $(DEBUG_DIR)/VirtioGpuDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/VirtioGpuDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/DEBUG/VirtioGpuDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/VirtioGpuDxe/VirtioGpu/OUTPUT/VirtioGpuDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

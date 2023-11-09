@@ -20,7 +20,7 @@ EFI_READ_STATUS = TRUE
 EFI_READ_LOCK_CAP = TRUE
 EFI_READ_LOCK_STATUS = TRUE
 EFI_FVB2_ALIGNMENT_16 = TRUE
-EFI_FV_EXT_HEADER_FILE_NAME = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/SECFV.ext
+EFI_FV_EXT_HEADER_FILE_NAME = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/SECFV.ext
 [files]
-EFI_FILE_NAME = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/df1ccef6-f301-4a63-9661-fc6030dcc880SecMain/df1ccef6-f301-4a63-9661-fc6030dcc880.ffs
-EFI_FILE_NAME = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1BA0062E-C779-4582-8566-336AE8F78F09ResetVector/1BA0062E-C779-4582-8566-336AE8F78F09.ffs
+EFI_FILE_NAME = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/df1ccef6-f301-4a63-9661-fc6030dcc880SecMain/df1ccef6-f301-4a63-9661-fc6030dcc880.ffs
+EFI_FILE_NAME = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1BA0062E-C779-4582-8566-336AE8F78F09ResetVector/1BA0062E-C779-4582-8566-336AE8F78F09.ffs

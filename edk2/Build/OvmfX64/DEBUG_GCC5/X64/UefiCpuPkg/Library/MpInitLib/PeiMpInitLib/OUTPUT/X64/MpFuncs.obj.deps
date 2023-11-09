@@ -1,0 +1,25 @@
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/UefiCpuPkg/Library/MpInitLib/PeiMpInitLib/OUTPUT/X64/MpFuncs.obj:  /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/MpInitLib/X64/MpFuncs.nasm \
+ /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/UefiCpuPkg/Library/MpInitLib/PeiMpInitLib/DEBUG/AutoGen.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/PiPei.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiPeiCis.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiMultiPhase.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Guid/WinCertificate.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiMultiPhase.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareVolume.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiFirmwareFile.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiBootMode.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiHob.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiDependency.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiStatusCode.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Protocol/DebugSupport.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/IndustryStandard/PeImage.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Pi/PiS3BootScript.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/CpuIo.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Ppi/PciCfg2.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h \
+ /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/PcdLib.h
+
+# Updated 

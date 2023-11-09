@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = 6490f1c5-ebcc-4665-8892-0075b9bb49b7
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = UefiCpuPkg/CpuDxe
 PACKAGE_RELATIVE_DIR = CpuDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/6490f1c5-ebcc-4665-8892-0075b9bb49b7CpuDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/6490f1c5-ebcc-4665-8892-0075b9bb49b7CpuDxe
 
 MODULE_ENTRY_POINT = InitializeCpu
 ARCH_ENTRY_POINT = InitializeCpu
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -294,9 +294,9 @@ NASM_INC =  \
     -I$(WORKSPACE)/UefiCpuPkg/ \
     -I$(WORKSPACE)/UefiCpuPkg/Include/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/static_library_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/static_library_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/inc.lst
 
 
 #
@@ -306,7 +306,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -418,49 +418,49 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
+$(OUTPUT_DIR)/CpuGdt.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CpuGdt.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CpuGdt.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuGdt.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuGdt.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/CpuGdt.c
+
 $(OUTPUT_DIR)/X64/PagingAttribute.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/PagingAttribute.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/PagingAttribute.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/X64/PagingAttribute.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/PagingAttribute.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/X64/PagingAttribute.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/PagingAttribute.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/X64/PagingAttribute.c
 
 $(OUTPUT_DIR)/CpuMp.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CpuMp.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CpuMp.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuMp.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuMp.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/CpuMp.c
-
-$(OUTPUT_DIR)/CpuGdt.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CpuGdt.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CpuGdt.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuGdt.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuGdt.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/CpuGdt.c
-
-$(OUTPUT_DIR)/CpuPageTable.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CpuPageTable.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CpuPageTable.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuPageTable.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuPageTable.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/CpuPageTable.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuMp.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/CpuMp.c
 
 $(OUTPUT_DIR)/CpuDxe.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/CpuDxe.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/CpuDxe.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuDxe.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuDxe.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/CpuDxe.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuDxe.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/CpuDxe.c
+
+$(OUTPUT_DIR)/CpuPageTable.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CpuPageTable.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CpuPageTable.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/CpuPageTable.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./CpuPageTable.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/CpuPageTable.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/AutoGen.c
 
 $(OUTPUT_DIR)/CpuDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/CpuDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/CpuDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/CpuDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/CpuDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/CpuDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/CpuDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/CpuDxe.efi : $(DEBUG_DIR)/CpuDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/CpuDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/DEBUG/CpuDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/CpuDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -470,19 +470,19 @@ $(OUTPUT_DIR)/CpuDxe.map : $(OUTPUT_DIR)/CpuDxe.efi
 $(OUTPUT_DIR)/X64/CpuAsm.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/CpuAsm.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/CpuAsm.obj : $(WORKSPACE)/UefiCpuPkg/CpuDxe/X64/CpuAsm.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/X64/CpuAsm.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/X64/CpuAsm.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/CpuDxe/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/X64/CpuAsm.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/X64/CpuAsm.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/CpuDxe/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/6490f1c5-ebcc-4665-8892-0075b9bb49b7/OUTPUT/X64/CpuAsm.iii
 
-$(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map
-	test -f /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map && $(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map
+$(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map
+	test -f /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map && $(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs : $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC4.ver
 	GenFfs -t EFI_FV_FILETYPE_DRIVER -g $(MODULE_GUID) -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs -oi $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx -oi $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 -oi $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui -oi $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC4.ver
-$(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx : /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex
-	-test -e /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex && GenSec -s EFI_SECTION_DXE_DEPEX -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex
-$(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 : /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi
-	-test -e /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi && GenSec -s EFI_SECTION_PE32 -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi
+$(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx : /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex
+	-test -e /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex && GenSec -s EFI_SECTION_DXE_DEPEX -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.depex
+$(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 : /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi
+	-test -e /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi && GenSec -s EFI_SECTION_PE32 -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuDxe/$(MODULE_GUID)/OUTPUT/CpuDxe.efi
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui : $(MODULE_DIR)/$(MODULE_FILE)
 	GenSec -s EFI_SECTION_USER_INTERFACE -n $(MODULE_NAME) -o $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC3.ui
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID)SEC4.ver : $(MODULE_DIR)/$(MODULE_FILE)

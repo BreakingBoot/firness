@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = SmbiosPlatformDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/SmbiosPlatformDxe
 PACKAGE_RELATIVE_DIR = SmbiosPlatformDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/SmbiosPlatformDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4110465d-5ff3-4f4b-b580-24ed0d06747aSmbiosPlatformDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/SmbiosPlatformDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/4110465d-5ff3-4f4b-b580-24ed0d06747aSmbiosPlatformDxe
 
 MODULE_ENTRY_POINT = SmbiosTablePublishEntry
 ARCH_ENTRY_POINT = SmbiosTablePublishEntry
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -268,8 +268,8 @@ INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/static_library_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/static_library_files.lst
 
 
 #
@@ -279,7 +279,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -384,44 +384,44 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/CloudHv.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CloudHv.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CloudHv.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/CloudHv.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./CloudHv.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/SmbiosPlatformDxe/CloudHv.c
-
 $(OUTPUT_DIR)/SmbiosPlatformDxe.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/SmbiosPlatformDxe.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/SmbiosPlatformDxe.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./SmbiosPlatformDxe.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.c
-
-$(OUTPUT_DIR)/EntryPoint.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/EntryPoint.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/EntryPoint.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/EntryPoint.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/SmbiosPlatformDxe/EntryPoint.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./SmbiosPlatformDxe.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.c
 
 $(OUTPUT_DIR)/Qemu.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/Qemu.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/Qemu.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/Qemu.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./Qemu.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/SmbiosPlatformDxe/Qemu.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./Qemu.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/SmbiosPlatformDxe/Qemu.c
+
+$(OUTPUT_DIR)/CloudHv.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CloudHv.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CloudHv.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/CloudHv.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./CloudHv.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/SmbiosPlatformDxe/CloudHv.c
+
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/AutoGen.c
+
+$(OUTPUT_DIR)/EntryPoint.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/EntryPoint.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/EntryPoint.obj : $(WORKSPACE)/OvmfPkg/SmbiosPlatformDxe/EntryPoint.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/./EntryPoint.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/SmbiosPlatformDxe/EntryPoint.c
 
 $(OUTPUT_DIR)/SmbiosPlatformDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/SmbiosPlatformDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/SmbiosPlatformDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/SmbiosPlatformDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/SmbiosPlatformDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/SmbiosPlatformDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/SmbiosPlatformDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/SmbiosPlatformDxe.efi : $(DEBUG_DIR)/SmbiosPlatformDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/SmbiosPlatformDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/DEBUG/SmbiosPlatformDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe/OUTPUT/SmbiosPlatformDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 

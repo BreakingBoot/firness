@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = SecMemEncryptSevLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/Library/BaseMemEncryptSevLib
 PACKAGE_RELATIVE_DIR = Library/BaseMemEncryptSevLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/046388b4-430e-4e61-88f6-51ea21db2632SecMemEncryptSevLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/046388b4-430e-4e61-88f6-51ea21db2632SecMemEncryptSevLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -241,7 +241,7 @@ INC =  \
     -I$(WORKSPACE)/UefiCpuPkg \
     -I$(WORKSPACE)/UefiCpuPkg/Include
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/object_files.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/object_files.lst
 
 
 #
@@ -251,7 +251,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLib.lib \
               
 
 #
@@ -326,39 +326,39 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
-$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecSnpSystemRamValidate.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecSnpSystemRamValidate.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecSnpSystemRamValidate.c
-
-$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/VirtualMemory.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.c
-
-$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLibInternal.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/./SecMemEncryptSevLibInternal.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLibInternal.c
+$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SnpPageStateChangeInternal.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SnpPageStateChangeInternal.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SnpPageStateChangeInternal.c
 
 $(OUTPUT_DIR)/X64/SecVirtualMemory.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/SecVirtualMemory.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/SecVirtualMemory.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecVirtualMemory.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecVirtualMemory.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecVirtualMemory.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecVirtualMemory.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecVirtualMemory.c
 
-$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/X64/SnpPageStateChangeInternal.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SnpPageStateChangeInternal.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SnpPageStateChangeInternal.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SnpPageStateChangeInternal.c
+$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/SecSnpSystemRamValidate.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecSnpSystemRamValidate.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/SecSnpSystemRamValidate.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/SecSnpSystemRamValidate.c
 
 $(OUTPUT_DIR)/X64/MemEncryptSevLib.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/MemEncryptSevLib.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/MemEncryptSevLib.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/MemEncryptSevLib.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/MemEncryptSevLib.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/MemEncryptSevLib.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/MemEncryptSevLib.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/MemEncryptSevLib.c
+
+$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/X64/VirtualMemory.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/X64/VirtualMemory.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/X64/VirtualMemory.c
+
+$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/SecMemEncryptSevLibInternal.obj : $(WORKSPACE)/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLibInternal.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/./SecMemEncryptSevLibInternal.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLibInternal.c
 
 $(OUTPUT_DIR)/SecMemEncryptSevLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/SecMemEncryptSevLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLib.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BaseMemEncryptSevLib/SecMemEncryptSevLib/OUTPUT/SecMemEncryptSevLib.lib @$(OBJECT_FILES_LIST)
 
 
 

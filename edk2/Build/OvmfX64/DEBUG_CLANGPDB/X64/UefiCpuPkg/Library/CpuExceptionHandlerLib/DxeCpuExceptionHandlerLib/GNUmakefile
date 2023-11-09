@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = DxeCpuExceptionHandlerLib
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = UefiCpuPkg/Library/CpuExceptionHandlerLib
 PACKAGE_RELATIVE_DIR = Library/CpuExceptionHandlerLib
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/B6E9835A-EDCF-4748-98A8-27D3C722E02DDxeCpuExceptionHandlerLib
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/B6E9835A-EDCF-4748-98A8-27D3C722E02DDxeCpuExceptionHandlerLib
 
 MODULE_ENTRY_POINT = _ModuleEntryPoint
 ARCH_ENTRY_POINT = _ModuleEntryPoint
@@ -60,13 +60,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -254,8 +254,8 @@ NASM_INC =  \
     -I$(WORKSPACE)/UefiCpuPkg/ \
     -I$(WORKSPACE)/UefiCpuPkg/Include/
 
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/inc.lst
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/object_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/object_files.lst
 
 
 #
@@ -265,7 +265,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/DxeCpuExceptionHandlerLib.lib \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/DxeCpuExceptionHandlerLib.lib \
               
 
 #
@@ -343,34 +343,34 @@ include $(MODULE_BUILD_DIR)/deps_target
 $(OUTPUT_DIR)/X64/ExceptionHandlerAsm.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/ExceptionHandlerAsm.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/ExceptionHandlerAsm.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ExceptionHandlerAsm.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ExceptionHandlerAsm.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ExceptionHandlerAsm.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ExceptionHandlerAsm.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ExceptionHandlerAsm.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ExceptionHandlerAsm.iii
 
 $(OUTPUT_DIR)/DxeCpuExceptionHandlerLib.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/DxeCpuExceptionHandlerLib.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/DxeCpuExceptionHandlerLib.lib @$(OBJECT_FILES_LIST)
-
-$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./CpuExceptionCommon.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.c
-
-$(OUTPUT_DIR)/DxeException.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/DxeException.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/DxeException.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeException.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./DxeException.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeException.c
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/DxeCpuExceptionHandlerLib.lib @$(OBJECT_FILES_LIST)
 
 $(OUTPUT_DIR)/PeiDxeSmmCpuException.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/PeiDxeSmmCpuException.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/PeiDxeSmmCpuException.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiDxeSmmCpuException.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./PeiDxeSmmCpuException.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiDxeSmmCpuException.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./PeiDxeSmmCpuException.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/PeiDxeSmmCpuException.c
+
+$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/CpuExceptionCommon.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./CpuExceptionCommon.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/CpuExceptionCommon.c
 
 $(OUTPUT_DIR)/X64/ArchExceptionHandler.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/ArchExceptionHandler.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/ArchExceptionHandler.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ArchExceptionHandler.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ArchExceptionHandler.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ArchExceptionHandler.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/X64/ArchExceptionHandler.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/X64/ArchExceptionHandler.c
+
+$(OUTPUT_DIR)/DxeException.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/DxeException.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/DxeException.obj : $(WORKSPACE)/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeException.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib/OUTPUT/./DxeException.obj $(INC) /home/gl055/Research/Harden/firness/edk2/UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeException.c
 
 
 

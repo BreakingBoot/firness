@@ -19,7 +19,7 @@ PLATFORM_NAME = Ovmf
 PLATFORM_GUID = 5a9e7754-d81b-49ea-85ad-69eaa7b1539b
 PLATFORM_VERSION = 0.1
 PLATFORM_RELATIVE_DIR = OvmfPkg
-PLATFORM_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg
+PLATFORM_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg
 PLATFORM_OUTPUT_DIR = Build/OvmfX64
 
 #
@@ -35,8 +35,8 @@ MODULE_FILE_BASE_NAME = TdxDxe
 BASE_NAME = $(MODULE_NAME)
 MODULE_RELATIVE_DIR = OvmfPkg/TdxDxe
 PACKAGE_RELATIVE_DIR = TdxDxe
-MODULE_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe
-FFS_OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/E750224E-7BCE-40AF-B5BB-47E3611EB5C2TdxDxe
+MODULE_DIR = /home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe
+FFS_OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/E750224E-7BCE-40AF-B5BB-47E3611EB5C2TdxDxe
 
 MODULE_ENTRY_POINT = TdxDxeEntryPoint
 ARCH_ENTRY_POINT = TdxDxeEntryPoint
@@ -59,13 +59,13 @@ TARGET = DEBUG
 #
 # Build Directory Macro Definition
 #
-# PLATFORM_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
-BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+# PLATFORM_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
+BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB
 BIN_DIR = $(BUILD_DIR)/X64
 LIB_DIR = $(BIN_DIR)
-MODULE_BUILD_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe
-OUTPUT_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT
-DEBUG_DIR = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG
+MODULE_BUILD_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe
+OUTPUT_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT
+DEBUG_DIR = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG
 DEST_DIR_OUTPUT = $(OUTPUT_DIR)
 DEST_DIR_DEBUG = $(DEBUG_DIR)
 
@@ -289,9 +289,9 @@ NASM_INC =  \
     -I$(WORKSPACE)/OvmfPkg/Include/ \
     -I$(WORKSPACE)/OvmfPkg/Csm/Include/
 
-OBJECT_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/object_files.lst
-STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/static_library_files.lst
-INC_LIST = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/inc.lst
+OBJECT_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/object_files.lst
+STATIC_LIBRARY_FILES_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/static_library_files.lst
+INC_LIST = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/inc.lst
 
 
 #
@@ -301,7 +301,7 @@ FORCE_REBUILD = force_build
 INIT_TARGET = init
 PCH_TARGET =
 BC_TARGET = 
-CODA_TARGET = /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi \
+CODA_TARGET = /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map \
               $(FFS_OUTPUT_DIR)/$(MODULE_GUID).ffs \
               
@@ -406,34 +406,34 @@ include $(MODULE_BUILD_DIR)/deps_target
 #
 # Individual Object Build Targets
 #
+$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
+$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/AutoGen.c
+
 $(OUTPUT_DIR)/TdxDxe.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TdxDxe.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TdxDxe.obj : $(WORKSPACE)/OvmfPkg/TdxDxe/TdxDxe.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./TdxDxe.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe/TdxDxe.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./TdxDxe.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe/TdxDxe.c
 
 $(OUTPUT_DIR)/TdxAcpiTable.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/TdxAcpiTable.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/TdxAcpiTable.obj : $(WORKSPACE)/OvmfPkg/TdxDxe/TdxAcpiTable.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./TdxAcpiTable.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe/TdxAcpiTable.c
-
-$(OUTPUT_DIR)/AutoGen.obj : $(MAKE_FILE)
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.h
-$(OUTPUT_DIR)/AutoGen.obj : $(DEBUG_DIR)/AutoGen.c
-	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./AutoGen.obj $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/AutoGen.c
+	"$(CC)" $(DEPS_FLAGS) $(CC_FLAGS) -c -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/./TdxAcpiTable.obj $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe/TdxAcpiTable.c
 
 $(OUTPUT_DIR)/TdxDxe.lib : $(OBJECT_FILES)
 $(OUTPUT_DIR)/TdxDxe.lib : $(OBJECT_FILES_LIST)
-	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.lib @$(OBJECT_FILES_LIST)
+	"$(SLINK)" $(SLINK_FLAGS) /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.lib @$(OBJECT_FILES_LIST)
 
 $(DEBUG_DIR)/TdxDxe.dll : $(MAKE_FILE)
 $(DEBUG_DIR)/TdxDxe.dll : $(STATIC_LIBRARY_FILES)
 $(DEBUG_DIR)/TdxDxe.dll : $(STATIC_LIBRARY_FILES_LIST)
-	"$(DLINK)" /OUT:/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/TdxDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
+	"$(DLINK)" /OUT:/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/TdxDxe.dll $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) $(DLINK2_FLAGS)
 
 $(OUTPUT_DIR)/TdxDxe.efi : $(DEBUG_DIR)/TdxDxe.dll
-	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/TdxDxe.dll $(GENFW_FLAGS)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi $(DEBUG_DIR)
-	$(CP) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
+	"$(GENFW)" -e $(MODULE_TYPE) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/DEBUG/TdxDxe.dll $(GENFW_FLAGS)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi $(DEBUG_DIR)
+	$(CP) /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi $(BIN_DIR)/$(MODULE_NAME_GUID).efi
 	-$(CP) $(DEBUG_DIR)/*.map $(OUTPUT_DIR)
 	-$(CP) $(DEBUG_DIR)/*.pdb $(OUTPUT_DIR)
 
@@ -443,10 +443,10 @@ $(OUTPUT_DIR)/TdxDxe.map : $(OUTPUT_DIR)/TdxDxe.efi
 $(OUTPUT_DIR)/X64/ApRunLoop.obj : $(MAKE_FILE)
 $(OUTPUT_DIR)/X64/ApRunLoop.obj : $(DEBUG_DIR)/AutoGen.h
 $(OUTPUT_DIR)/X64/ApRunLoop.obj : $(WORKSPACE)/OvmfPkg/TdxDxe/X64/ApRunLoop.nasm
-	Trim --asm-file -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.i -i $(INC_LIST) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe/X64/ApRunLoop.nasm
-	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe/X64/ApRunLoop.nasm > /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.ii
-	Trim --trim-long --source-code -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.iii /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.ii
-	"$(NASM)" -I/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/OvmfPkg/TdxDxe/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.obj /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.iii
+	Trim --asm-file -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.i -i $(INC_LIST) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe/X64/ApRunLoop.nasm
+	"$(PP)" $(DEPS_FLAGS) $(PP_FLAGS) $(INC) /home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe/X64/ApRunLoop.nasm > /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.ii
+	Trim --trim-long --source-code -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.iii /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.ii
+	"$(NASM)" -I/home/gl055/Research/Harden/firness/edk2/OvmfPkg/TdxDxe/X64/ $(NASM_INC) $(NASM_FLAGS) -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.obj /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/X64/ApRunLoop.iii
 
 $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map : $(OUTPUT_DIR)/TdxDxe.map
 	test -f $(OUTPUT_DIR)/TdxDxe.map && $(CP) $(OUTPUT_DIR)/TdxDxe.map $(FFS_OUTPUT_DIR)/$(MODULE_GUID).map

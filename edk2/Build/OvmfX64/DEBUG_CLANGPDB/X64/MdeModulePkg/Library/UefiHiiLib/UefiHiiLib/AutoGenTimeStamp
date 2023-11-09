@@ -1,6 +1,6 @@
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiHiiLib/HiiLanguage.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiHiiLib/HiiString.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiHiiLib/HiiLib.c
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib/DEBUG/AutoGen.h
-/home/gl055/Research/Bootloaders/auto-harness-generation/edk2/MdeModulePkg/Library/UefiHiiLib/InternalHiiLib.h
+/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiHiiLib/InternalHiiLib.h
+/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
+/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiHiiLib/HiiLib.c
+/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiHiiLib/HiiString.c
+/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib/DEBUG/AutoGen.h
+/home/gl055/Research/Harden/firness/edk2/MdeModulePkg/Library/UefiHiiLib/HiiLanguage.c

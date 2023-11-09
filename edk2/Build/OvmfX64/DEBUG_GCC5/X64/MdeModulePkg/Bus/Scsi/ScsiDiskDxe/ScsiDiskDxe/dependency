@@ -1,0 +1,9 @@
+
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe/OUTPUT/ComponentName.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe/OUTPUT/ScsiDisk.obj.deps
+
+-include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe/OUTPUT/AutoGen.obj.deps
+
+               

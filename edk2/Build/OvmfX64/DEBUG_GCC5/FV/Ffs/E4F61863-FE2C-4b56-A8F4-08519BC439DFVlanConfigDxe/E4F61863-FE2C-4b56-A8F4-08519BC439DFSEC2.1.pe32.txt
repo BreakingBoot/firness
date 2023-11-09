@@ -1,0 +1,1 @@
+GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/E4F61863-FE2C-4b56-A8F4-08519BC439DFVlanConfigDxe/E4F61863-FE2C-4b56-A8F4-08519BC439DFSEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/NetworkPkg/VlanConfigDxe/VlanConfigDxe/OUTPUT/VlanConfigDxe.efi

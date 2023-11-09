@@ -1,7 +1,7 @@
 
 // This file has been generated from:
-//   -Python script: /home/gl055/Research/Bootloaders/auto-harness-generation/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.amli
-//   -Input AML file: /home/gl055/Research/Bootloaders/edk2/BaseTools/Source/Python/AmlToC/AmlToC.py
+//   -Python script: /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe/OUTPUT/RamDisk.amli
+//   -Input AML file: /home/gl055/Research/Harden/firness/edk2/BaseTools/Source/Python/AmlToC/AmlToC.py
 
 unsigned char ramdisk_aml_code[] = {
   0x53, 0x53, 0x44, 0x54, 0x7C, 0x00, 0x00, 0x00, 
