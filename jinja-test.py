@@ -6,8 +6,8 @@ import re
 import os
 import code_generation_templates as code_gen
 from datetime import datetime
-# from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict, Counter
+from itertools import permutations
 from typing import List, Dict, Any, Tuple, Set
 
 
@@ -31,6 +31,7 @@ services_map = {
     "protocol": "Protocols",
     "other": "OtherFunctions"
 }
+
 known_contant_variables = [
     "__CONSTANT_STRING__",
     "__CONSTANT_INT__",
@@ -94,14 +95,21 @@ class FieldInfo:
         self.name = name
         self.type = type
 
-def object_to_dict(obj):
-    if isinstance(obj, str):
-        return obj 
-    return obj.__dict__
-
 current_args_dict = defaultdict(list)
 protocol_guids = set()
 driver_guids = set()
+
+
+
+def is_integer_string(s: str) -> bool:
+    try:
+        int(s)  # Try to convert the string to an integer
+        return True  # If successful, it's an integer
+    except ValueError:
+        return False  # If an exception is raised, it's not an integer
+    
+def is_string(s: str) -> bool:
+    return (s.startswith('"') or s.startswith('L"')) and s.endswith('"')
 
 def is_whitespace(s: str) -> bool:
     return len(s.strip()) == 0
@@ -352,6 +360,9 @@ def is_fuzzable(type: str,
 def remove_ref_symbols(type: str) -> str:
     return re.sub(r"[ * &]", "", type)
 
+def remove_prefix(type: str) -> str:
+    return remove_ref_symbols(ignore_cast(type))
+
 def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]], 
                       types: Dict[str, List[FieldInfo]],
                       pre_processed_data: Dict[str, FunctionBlock],
@@ -396,6 +407,38 @@ def ignore_cast(usage: str) -> str:
     return re.sub(r"\(.*?\)", "", usage)
 
 #
+# This function will return a set of all of the stripped usage values
+# only handles conditional statements taht are separated by a pipe
+#
+def get_stripped_usage(usage: str) -> Set[str]:
+    usages = set()
+
+    tmp = []
+    for usage_value in usage.split("|"):
+        tmp.append(remove_prefix(usage_value))
+    # loop through the tmp list and add all of the orderings of the values
+    # example: if the usage is "a|b|c" then add "a|b|c", "b|a|c", "c|a|b", etc.
+    permutations_list = list(permutations(tmp))
+
+    # Convert each permutation tuple back to a list of strings
+    ordered_strings = ['|'.join(perm) for perm in permutations_list]
+
+    # Convert the list to a set
+    usages.update(set(ordered_strings))
+
+    if len(usages) == 0:
+        usages.add(remove_prefix(usage))
+
+    return usages
+
+def contains_usage(usage: str, current_usages: Set[str]) -> bool:
+    usages = get_stripped_usage(usage)
+    for use in usages:
+        if use in current_usages:
+            return True
+    return False
+
+#
 # Filters out any arguments that are not IN and CONSTANT values, but making sure
 # to not keep duplicates
 #
@@ -416,25 +459,22 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             driver_guids.add(arg.variable)    # Add to the driver_guids set
 
                 if not should_ignore_constant and (((argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and 
-                      ((argument[0].variable == "__CONSTANT_STRING__" or 
-                        argument[0].variable == "__CONSTANT_INT__" or 
-                        argument[0].variable == "__FUNCTION_PTR__" or
-                        argument[0].variable == "__ENUM_ARG__") 
+                      ((argument[0].variable in known_contant_variables) 
                        and not contains_void_star(argument[0].arg_type))) or 
                        ("efi_guid" in argument[0].arg_type.lower() and argument[0].assignment == "" and argument[0].variable.startswith("g"))):
 
                     # Check if arg.usage is already in the set for this function and arg_key
                     if len(argument[0].potential_outputs) > 1:
                         for argument_value in argument[0].potential_outputs:
-                            if ignore_cast(argument_value) not in usage_seen[function][arg_key]:
+                            if not contains_usage(argument_value, usage_seen[function][arg_key]):
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment, argument[0].data_type, argument_value, argument[0].variable, [])
                                 pre_processed_data[function].arguments.setdefault(arg_key, []).append(new_arg)
                                 current_args_dict[function].append(arg_key)
-                                usage_seen[function][arg_key].add(ignore_cast(argument_value))
-                    elif ignore_cast(argument[0].usage) not in usage_seen[function][arg_key]:
+                                usage_seen[function][arg_key].update(get_stripped_usage(argument_value))
+                    elif not contains_usage(argument[0].usage, usage_seen[function][arg_key]):
                         pre_processed_data[function].arguments.setdefault(arg_key, []).append(argument[0])
                         current_args_dict[function].append(arg_key)
-                        usage_seen[function][arg_key].add(ignore_cast(argument[0].usage))  # Update the set with the new arg.usage value
+                        usage_seen[function][arg_key].update(get_stripped_usage(argument[0].usage))  # Update the set with the new arg.usage value
     # Step 2: Filter out arguments with less than 3 different values
     for function, function_block in pre_processed_data.items():
         for arg_key, argument in function_block.arguments.items():
@@ -489,11 +529,6 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
 
 
 def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder):
-    # env = Environment(loader=FileSystemLoader('./Templates/'))
-    # template = env.get_template('Firness_main_template.jinja')
-    # code = template.render(functions=function_dict)
-    # with open(f'{harness_folder}/FirnessMain.c', 'w') as f:
-    #     f.write(code)
     code = code_gen.gen_firness_main(function_dict)
     code_gen.write_to_file(f'{harness_folder}/FirnessMain.c', code)
 
@@ -502,32 +537,16 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
                   types_dict: Dict[str, List[FieldInfo]], 
                   generators_dict: Dict[str, FunctionBlock], 
                   harness_folder):
-    # env = Environment(loader=FileSystemLoader('./Templates/'))
-    # template = env.get_template('code_template.jinja')
-    # template = env.get_template('working_template.jinja')
-    # code = template.render(functions=function_dict, services=data_template, types=types_dict, generators=generators_dict)
-    # with open(f'{harness_folder}/FirnessHarnesses.c', 'w') as f:
-    #     f.write(code)
     code = code_gen.harness_generator(data_template, function_dict, types_dict, generators_dict)
     code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
 def generate_header(function_dict: Dict[str, FunctionBlock], 
                     all_includes: List[str], 
                     harness_folder):
-    # env = Environment(loader=FileSystemLoader('./Templates/'))
-    # template = env.get_template('header_template.jinja')
-    # code = template.render(functions=function_dict, includes=all_includes)
-    # with open(f'{harness_folder}/FirnessHarnesses.h', 'w') as f:
-    #     f.write(code)
     code = code_gen.harness_header(all_includes, function_dict)
     code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 def generate_inf(harness_folder):
-    # env = Environment(loader=FileSystemLoader('./Templates/'))
-    # template = env.get_template('inf_template.jinja')
-    # code = template.render(uuid=uuid.uuid4(), guids=driver_guids, protocols=protocol_guids)
-    # with open(f'{harness_folder}/FirnessHarnesses.inf', 'w') as f:
-    #     f.write(code)
     code = code_gen.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids)
     code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
