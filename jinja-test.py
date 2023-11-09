@@ -361,7 +361,7 @@ def remove_ref_symbols(type: str) -> str:
     return re.sub(r"[ * &]", "", type)
 
 def remove_prefix(type: str) -> str:
-    return remove_ref_symbols(ignore_cast(type))
+    return remove_ref_symbols(remove_casts(type))
 
 def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]], 
                       types: Dict[str, List[FieldInfo]],
@@ -406,16 +406,43 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
 def ignore_cast(usage: str) -> str:
     return re.sub(r"\(.*?\)", "", usage)
 
+def remove_casts(input_string: str, 
+                 aliases: Dict[str, str]) -> str:
+    # Define a regular expression pattern to match casts within parentheses
+    pattern = r'\(([^()]+)\)'
+
+    # Define a function to replace matched casts with their content
+    def replace_cast(match):
+        cast_contents = match.group(1)
+        check_list = scalable_params
+        check_list.extend([alias.lower() for alias in aliases.keys()])
+        contains_cast = any(cast in cast_contents.lower() for cast in check_list)
+        if contains_cast:
+            return ''
+        if ' ' in cast_contents:
+            return cast_contents
+        return ''
+
+    # Use re.sub() to replace the matched casts with their content
+    result = re.sub(pattern, replace_cast, input_string)
+
+    # Remove any remaining parentheses
+    result = result.replace('(', '').replace(')', '')
+
+    return result
+
 #
 # This function will return a set of all of the stripped usage values
 # only handles conditional statements taht are separated by a pipe
 #
-def get_stripped_usage(usage: str) -> Set[str]:
+def get_stripped_usage(usage: str, 
+                       macros: Dict[str, Macros],
+                       aliases: Dict[str, str]) -> Set[str]:
     usages = set()
 
     tmp = []
     for usage_value in usage.split("|"):
-        tmp.append(remove_prefix(usage_value))
+        tmp.append(remove_casts(usage_value.strip(), aliases))
     # loop through the tmp list and add all of the orderings of the values
     # example: if the usage is "a|b|c" then add "a|b|c", "b|a|c", "c|a|b", etc.
     permutations_list = list(permutations(tmp))
@@ -423,16 +450,25 @@ def get_stripped_usage(usage: str) -> Set[str]:
     # Convert each permutation tuple back to a list of strings
     ordered_strings = ['|'.join(perm) for perm in permutations_list]
 
+    # Add all permutations mixed with the macro values to the set
+    # Add the macro values to the set, incase the macro value is used in the conditional
+    # EDK2 tends to redefine the same macro value in different files
+    for permutation in permutations_list:
+        permutation = list(permutation)
+        for index, element in enumerate(permutation):
+            if element in macros.keys():
+                permutation[index] = re.sub(r'\s', '', remove_casts(macros[element].value, aliases))
+                ordered_strings.append('|'.join(permutation))
     # Convert the list to a set
     usages.update(set(ordered_strings))
 
-    if len(usages) == 0:
-        usages.add(remove_prefix(usage))
-
     return usages
 
-def contains_usage(usage: str, current_usages: Set[str]) -> bool:
-    usages = get_stripped_usage(usage)
+def contains_usage(usage: str, 
+                   current_usages: Set[str],
+                   macros: Dict[str, Macros], 
+                   aliases: Dict[str, str]) -> bool:
+    usages = get_stripped_usage(remove_casts(usage, aliases), macros, aliases)
     for use in usages:
         if use in current_usages:
             return True
@@ -443,7 +479,9 @@ def contains_usage(usage: str, current_usages: Set[str]) -> bool:
 # to not keep duplicates
 #
 def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
-                            pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+                            pre_processed_data: Dict[str, FunctionBlock], 
+                            macros: Dict[str, Macros],
+                            aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
     usage_seen = defaultdict(lambda: defaultdict(set))  # Keeps track of arg.usage values seen for each function and arg_key
 
     # Step 1: Collect all arguments
@@ -466,15 +504,15 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                     # Check if arg.usage is already in the set for this function and arg_key
                     if len(argument[0].potential_outputs) > 1:
                         for argument_value in argument[0].potential_outputs:
-                            if not contains_usage(argument_value, usage_seen[function][arg_key]):
+                            if not contains_usage(argument_value, usage_seen[function][arg_key], macros, aliases):
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment, argument[0].data_type, argument_value, argument[0].variable, [])
                                 pre_processed_data[function].arguments.setdefault(arg_key, []).append(new_arg)
                                 current_args_dict[function].append(arg_key)
-                                usage_seen[function][arg_key].update(get_stripped_usage(argument_value))
-                    elif not contains_usage(argument[0].usage, usage_seen[function][arg_key]):
+                                usage_seen[function][arg_key].update(get_stripped_usage(argument_value, macros, aliases))
+                    elif not contains_usage(argument[0].usage, usage_seen[function][arg_key], macros, aliases):
                         pre_processed_data[function].arguments.setdefault(arg_key, []).append(argument[0])
                         current_args_dict[function].append(arg_key)
-                        usage_seen[function][arg_key].update(get_stripped_usage(argument[0].usage))  # Update the set with the new arg.usage value
+                        usage_seen[function][arg_key].update(get_stripped_usage(argument[0].usage, macros, aliases))  # Update the set with the new arg.usage value
     # Step 2: Filter out arguments with less than 3 different values
     for function, function_block in pre_processed_data.items():
         for arg_key, argument in function_block.arguments.items():
@@ -711,7 +749,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     pre_processed_data = get_intersect(input_data, pre_processed_data)
 
     # Step 1: Collect the constant arguments
-    pre_processed_data = collect_known_constants(input_data, pre_processed_data)
+    pre_processed_data = collect_known_constants(input_data, pre_processed_data, macros, aliases)
 
     # Step 2: Collect the fuzzable arguments
     pre_processed_data = get_directly_fuzzable(input_data, pre_processed_data, aliases)
