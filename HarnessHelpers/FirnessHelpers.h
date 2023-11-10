@@ -6,37 +6,46 @@ typedef struct {
   UINTN Length;
 } INPUT_BUFFER;
 
-EFI_SUCCESS
+// Read in a specified number of bytes from the input buffer
+// and copy them to the output buffer. The input buffer is
+// updated to remove the extracted bytes. If the input buffer
+// does not contain enough bytes, the output buffer is filled
+// with zeros. The output buffer is allocated by this function
+// and must be freed by the caller. The output buffer can be any
+// type of buffer which is why it is a void pointer.
+STATIC
+EFI_STATUS
 EFIAPI
 ReadBytes(
   INPUT_BUFFER *inputBuffer, 
   UINTN numBytes, 
-  UINT8 **outputBuffer
-  ) 
+  VOID *outputBuffer
+  )
 {
   // Check for valid input
   if (inputBuffer == NULL || outputBuffer == NULL) 
   {
-    return EFI_ERROR;
+    return EFI_ABORTED;
   }
 
   // Allocate memory for the output buffer
-  *outputBuffer = AllocateZeroPool(sizeof(UINT8) * numBytes);
-  if (*outputBuffer == NULL) 
+  outputBuffer = (VOID*)AllocateZeroPool(numBytes);
+  if (outputBuffer == NULL) 
   {
-    return EFI_ERROR;
+    return EFI_ABORTED;
   }
 
   // Determine the actual number of bytes to extract
   UINTN actualBytes = (numBytes > inputBuffer->Length) ? inputBuffer->Length : numBytes;
 
   // Copy the bytes from the input buffer to the output buffer
-  CopyMem(*outputBuffer, inputBuffer->Buffer, actualBytes);
+  CopyMem((UINT8*)outputBuffer, inputBuffer->Buffer, actualBytes);
 
-  // // Fill the remaining part of the output buffer with zeros if necessary
-  // if (actualBytes < numBytes) {
-  //   ZeroMem(*outputBuffer + actualBytes, 0, numBytes - actualBytes);
-  // }
+  // Fill the remaining part of the output buffer with zeros if necessary
+  if (actualBytes < numBytes) 
+  {
+    ZeroMem((UINT8*)outputBuffer + actualBytes, numBytes - actualBytes);
+  }
 
   // Update the input buffer to remove the extracted bytes
   CopyMem(inputBuffer->Buffer, inputBuffer->Buffer + actualBytes, inputBuffer->Length - actualBytes);

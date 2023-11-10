@@ -53,29 +53,37 @@ When the analysis is complete four `.json` files are outputed:
 - `call-database.json`: This the output from the Call Site Analysis
 - `generator-database.json`: This is the output from the Generator Analysis
 - `types.json`: This is a map of structures and the fields of the structures to the types, which gets used when generating the harness.
+- `macros.json`: This is the output of all macros, their value they are assigned, and their file location.
 
 ### Code Generation <a id="generation"></a>
 
-This section currently uses Python's `jinja` library which allows for creating data dependent files (aka. the file structure can change depending on the given input data). This comes in handy when input data depends on the services being fuzzed, which could have one input or five. 
+This section utilizes a custom Python template engine used for generating the harness source code. It takes the analyzed `call-database.json` after post-processing, along with several other helper files with information extracted from the call database. 
 
-There are 3 steps that are used within this program:
-- Performs a frequency analysis to only keep function calls of a certain name with the most number of arguments. This is important because some function calls may have local definitions of the same function name. For example, `CopyMem` is apart of the system table in EDK2 and only takes 3 arguements, but there is one file specific to a PEI module that has a `CopyMem` function defined that requires 5 arguments so my analysis removes that.
-- Perform pre-processing of data to capture specific types for each argument. If one of the arguments is a string that is predefined in the code or a specific integer from an enum then I want to use those to allow to pass certain blocking statements that perform checks on those arguemnts (allowing for deeper code coverage). The pre-processing with save those interesting data structures to be used in a switch statement, along with identifying directly fuzzable arguments (i.e. scalable parameters).
-- Perform a second stage of pre-process, which has the goal of tracing the non-scalable paremters through the datastructure and determine its fuzzablility. Currently, I go 3 levels deep of analysis (i.e. if a structure has a field of another structure it will only work down to 3 levels of structures). Sometimes the structures are defined via generator functions, so I maintain a data structure that contains all of the generator functions for any of the used data types. Once all of the anlysis is done then a final structure is generated to be used by the last part.
-- Generate the code based of pre-defined tempaltes from `jinja`.
+There are several phases of the processing of the data before it is ready for the template engine:
+1. Utilizes the `input.txt` that was used during the static analysis, along with a frequency analysis to do a preliminary pruning of the data.This is important because some function calls may have local definitions of the same function name. For example, `CopyMem` is apart of the system table in EDK2 and only takes 3 arguements, but there is one file specific to a PEI module that has a `CopyMem` function defined that requires 5 arguments so my analysis removes that.
+2. Type based analysis on all of the function calls. Given a function, process all of the arguments and determine the function type. We have 4 type classifications:
+    - Constants: Arguments that are predefined in the source code (Integers, Strings, enum values, macros that are constants, etc.).
+    - Fuzzable Scalars: Arguments that aren't predefined, but have types that are of scalar type (Integers, String, etc.).
+    - Fuzzable Structs: Structures that to one level type expansion have all Fuzzable Scalar fields.
+    - Generator Functions: These are arguments that get generated through other function calls, which are important because in the instances where a structure isn't fuzzable to one level the generator functions can produce them.
+    - Other: These would be structures that aren't fuzzable to one level or have a generator function (e.g. function pointers, linked-list structures). The analysis does capture function pointers, so it will utilize them if they can.
+3. Once all of the analysis is complete, the structure which maps the functions to argument lists is passed to the template to generate the code.
+
+The template engine creates 4 files based off of the information obtained from the call database during the anlysis: The main file to call the harnessed functions, a harnessed file which holds all of the harnessed functions, a header file for the harnessed functions, and an INF file needed for compiling with EDK2.
 
 ## Notes
 
 The static anlysis utilizes a compilation database, which can be generated with the `bear` library:
 
 ```
+Example: 
 bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANGPDB
 ```
 
 All of the dependencies are included in the included docker which can be built and run with:
 
 ```
-sudo docker build -t fimware-analyzer .
+sudo docker build -t firness .
 sudo docker run -it -v ./:/llvm-source/llvm-15.0.7/clang-tools-extra/firness firness
 /llvm-source/llvm-15.0.7/clang-tools-extra/firness/patch.sh
 /llvm-source/llvm-15.0.7/clang-tools-extra/firness/analyze.sh
