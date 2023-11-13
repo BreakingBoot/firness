@@ -1,10 +1,10 @@
 import json
 import argparse
 import uuid
-import ast
 import re
 import os
 import code_generation_templates as code_gen
+import generate_debugger_template as debug_gen
 from datetime import datetime
 from collections import defaultdict, Counter
 from itertools import permutations
@@ -665,6 +665,36 @@ def write_to_file_output(data: Dict[str, List[FunctionBlock]], file_path: str):
     with open(file_path, 'w') as file:
         json.dump(serializable_data, file, indent=4)
 
+def generate_main_std(function_dict: Dict[str, FunctionBlock], harness_folder):
+    code = debug_gen.gen_firness_main(function_dict)
+    debug_gen.write_to_file(f'{harness_folder}/FirnessMain_std.c', code)
+
+def generate_code_std(function_dict: Dict[str, FunctionBlock], 
+                  data_template: Dict[str, FunctionBlock], 
+                  types_dict: Dict[str, List[FieldInfo]], 
+                  generators_dict: Dict[str, FunctionBlock], 
+                  harness_folder):
+    code = debug_gen.harness_generator(data_template, function_dict, types_dict, generators_dict)
+    debug_gen.write_to_file(f'{harness_folder}/FirnessHarnesses_std.c', code)
+
+def generate_header_std(function_dict: Dict[str, FunctionBlock], 
+                    all_includes: List[str], 
+                    types: Dict[str, List[FieldInfo]],
+                    harness_folder):
+    code = debug_gen.harness_header(all_includes, function_dict, types)
+    debug_gen.write_to_file(f'{harness_folder}/FirnessHarnesses_std.h', code)
+
+def generate_harness_debugger(merged_data: Dict[str, FunctionBlock], 
+                     template: Dict[str, FunctionBlock], 
+                     types: Dict[str, List[FieldInfo]], 
+                     all_includes: List[str],
+                     generators: Dict[str, FunctionBlock],
+                     harness_folder: str):
+    
+    generate_main_std(merged_data, harness_folder)
+    generate_code_std(merged_data, template, types, generators, harness_folder)
+    generate_header_std(merged_data, all_includes, types, harness_folder)
+
 def generate_harness(merged_data: Dict[str, FunctionBlock], 
                      template: Dict[str, FunctionBlock], 
                      types: Dict[str, List[FieldInfo]], 
@@ -676,6 +706,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_code(merged_data, template, types, generators, harness_folder)
     generate_header(merged_data, all_includes, harness_folder)
     generate_inf(harness_folder)
+    generate_harness_debugger(merged_data, template, types, all_includes, generators, harness_folder)
     if not os.path.exists("Firness/"):
         os.makedirs("Firness/")
     os.system(f'cp {harness_folder}/* Firness/')
