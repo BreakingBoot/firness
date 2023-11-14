@@ -1,4 +1,5 @@
 import re
+import os
 from typing import List, Dict, Any, Tuple, Set
 
 convert_type = {
@@ -448,3 +449,5 @@ def write_to_file(filename: str, output: List[str]):
     with open(filename, 'w') as f:
         f.writelines([line + '\n' for line in output])
 
+def compile(harness_folder: str):
+    os.system(f'clang -g -o firness_decoder {harness_folder}/FirnessMain_std.c {harness_folder}/FirnessHarnesses_std.c')

@@ -64,8 +64,27 @@ class FieldInfo:
         self.name = name
         self.type = type
 
-def remove_ref_symbols(type: str) -> str:
-    return re.sub(r"[ * &]", "", type)
+aliases_map = {}
+
+# this is a function that will return the underlying data type for any function
+# so given EFI_PHYSICAL_ADDRESS it will return UINT64 by searching the aliases
+# dictionary
+def get_type(arg_type: str) -> str:
+    if remove_ref_symbols(arg_type) in aliases_map.keys():
+        return aliases_map[arg_type]
+    else:
+        return arg_type
+
+def set_undefined_constants(argument: Argument) -> str:
+    if "int" in get_type(argument.arg_type).lower() or argument.variable == "__ENUM_ARG__":
+        return "0"
+    elif "bool" in argument.arg_type.lower():
+        return "FALSE"
+    else:
+        return "NULL"
+
+def remove_ref_symbols(type_str: str) -> str:
+    return re.sub(r" *\*| *&", "", type_str)
 
 def generate_outputs(all_args: Dict[str, List[Argument]],
                     arg_type_list: List[TypeTracker],
@@ -76,32 +95,47 @@ def generate_outputs(all_args: Dict[str, List[Argument]],
     for arg_key, arguments in all_args.items():
         if "OUT" in arguments[0].arg_dir and not "IN" in arguments[0].arg_dir:
             tmp.extend(declare_var(arg_key, arguments, arg_type_list, False))
+            tmp.append(f"UINT8 {arg_key}_OutputChoice = 0;")
+            tmp.append(f"ReadBytes(Input, sizeof({arg_key}_OutputChoice), &{arg_key}_OutputChoice);")
+            tmp.append(f"if({arg_key}_OutputChoice % 2)")
+            tmp.append("{")
+            if arguments[0].pointer_count > 0:
+                tmp.append(f"    ReadBytes(Input, sizeof(*{arg_key}), &{arg_key});")
+            else:
+                tmp.append(f"    ReadBytes(Input, sizeof({arg_key}), {arg_key});")
+            tmp.append("}") 
     
     if len(tmp) > 0:
         output.append("/*")
         output.append("    Output Variable(s)")
         output.append("*/")
         output.extend(tmp)
-        output.append("")
-    # if "*" in arguments[0].arg_type:
-    #     arg_type = "UINTN" if arguments[0].arg_type == "void" else arguments[0].arg_type.replace('*', '')
-    #     output += f"{arg_type} {arg_key};\n"
-    # else:
-    #     arg_type = "UINTN" if arguments[0].arg_type == "void" else arguments[0].arg_type
-    #     output += f"{arg_type} {arg_key};\n"
-    
+     
     return add_indents(output, indent)
 
+def harness_includes(includes: List[str]) -> List[str]:
+    output = []
+    output.append("#ifndef __FIRNESS_INCLUDES__")
+    output.append("#define __FIRNESS_INCLUDES__")
 
-def harness_header(includes: List[str], 
-                   functions: Dict[str, FunctionBlock]) -> List[str]:
+    output.append("")
+    for include in includes:
+        output.append(f"#include <{include}>")
+
+    output.append("")
+    output.append("#endif // __FIRNESS_INCLUDES__")
+
+    return output
+
+def harness_header(functions: Dict[str, FunctionBlock]) -> List[str]:
     output = []
     output.append("#ifndef __FIRNESS_HARNESSES__")
     output.append("#define __FIRNESS_HARNESSES__")
 
-    for include in includes:
-        output.append(f"#include <{include}>")
+    output.append("")
+    output.append("#include \"FirnessIncludes.h\"")
     output.append("#include \"FirnessHelpers.h\"")
+    output.append("")
 
     for function, function_block in functions.items():
         output.append(f"EFI_STATUS")
@@ -110,8 +144,9 @@ def harness_header(includes: List[str],
         output.append(f"    IN INPUT_BUFFER *Input,")
         output.append(f"    IN EFI_SYSTEM_TABLE *SystemTable")
         output.append(");")
+        output.append("")
 
-    output.append("#endif")
+    output.append("#endif // __FIRNESS_HARNESSES__")
 
     return output
 
@@ -187,10 +222,10 @@ def declare_var(arg_key: str,
     else:
         arg_type = add_ptrs("UINTN", arguments[0].pointer_count) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count))
-    if arguments[0].pointer_count > 0:
-        output.append(f'{arg_type} {arg_key} = NULL;')
+    if arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower():
+        output.append(f'{arg_type} {arg_key} = AllocatePool(sizeof({remove_ref_symbols(arg_type)}));')
     else:
-        output.append(f"{arg_type} {arg_key};")
+        output.append(f"{arg_type} {arg_key} = {set_undefined_constants(arguments[0])};")
     
     return add_indents(output, indent)
 
@@ -198,7 +233,7 @@ def fuzzable_args(arg: str,
                   indent: bool) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
-    output.append(f"ReadBytes(&Input, sizeof({arg}), &{arg});")
+    output.append(f"ReadBytes(Input, sizeof({arg}), &{arg});")
     
     return add_indents(output, indent)
 
@@ -247,12 +282,14 @@ def constant_args(arg_key: str,
     output = []
     output.append("// Constant Variable Initialization")
     output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(&Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
+    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
     output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
         if argument.usage == "":
-            output.append(f'        {arg_key} = NULL;')
+            output.append(f'        {arg_key} = {set_undefined_constants(argument)};')
+        elif "char" in argument.arg_type.lower():
+            output.append(f'        {arg_key} = StrDuplicate({argument.usage});')
         else:
             output.append(f'        {arg_key} = {argument.usage};')
         output.append(f'        break;')
@@ -266,7 +303,7 @@ def function_ptr_args(arg_key: str,
     output = []
     output.append("// Function Pointer Variable Initialization")
     output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(&Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
+    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
     output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
@@ -284,7 +321,7 @@ def guid_args(arg_key: str,
     output = []
     output.append("// EFI_GUID Variable Initialization")
     output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(&Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
+    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
     output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
@@ -305,13 +342,13 @@ def generator_struct_args(arg_key: str,
     output.append("// Generator Struct Variable Initialization")
     if len(arguments) > 1:
         output.append(f'UINT8 {arg_key}_choice = 0;')
-        output.append(f'ReadBytes(&Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
+        output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
         output.append(f'switch({arg_key}_choice % {len(arguments)})' +' {')
         for index, argument in enumerate(arguments):
             output.append(f'    case {index}:')
             if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__'):
                 for field in types[remove_ref_symbols(argument.arg_type)]:
-                    output.append(f'ReadBytes(&Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
+                    output.append(f'        ReadBytes(Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
             # elif "__GENERATOR_FUNCTION__" in argument.variable:
             #     output.extend(function_body(generators[argument.assignment], services, protocol_variable, generators, types, True))
             output.append(f'        break;')
@@ -319,7 +356,7 @@ def generator_struct_args(arg_key: str,
     else:
         if arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__'):
             for field in types[remove_ref_symbols(arguments[0].arg_type)]:
-                output.append(f'ReadBytes(&Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
+                output.append(f'ReadBytes(Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
         # elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
         #     output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
 
@@ -343,7 +380,9 @@ def function_body(function_block: FunctionBlock,
 def harness_generator(services: Dict[str, FunctionBlock], 
                       functions: Dict[str, FunctionBlock], 
                       types: Dict[str, List[FieldInfo]], 
-                      generators: Dict[str, FunctionBlock]) -> List[str]:
+                      generators: Dict[str, FunctionBlock],
+                      aliases: Dict[str, str]) -> List[str]:
+    aliases_map.update(aliases)
     # Initialize an empty string to store the generated content
     output = []
 
@@ -460,6 +499,7 @@ def gen_firness_inf(uuid: str,
     output.append("[Sources]")
     output.append("  FirnessMain.c")
     output.append("  FirnessHarnesses.c")
+    output.append("  FirnessHelpers.c")
 
     output.append("")
     output.append("[Packages]")

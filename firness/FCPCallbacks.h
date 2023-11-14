@@ -45,7 +45,14 @@ public:
             if (!FilePath.empty()) {
                 MacroDef mac;
                 mac.Name = MacroName.str();
-                mac.File = FilePath.str();
+                // remove the first 6 directories from the path
+                std::string ShortPath = FilePath.str();
+                size_t pos = ShortPath.find('/');
+                for (int i = 0; i < 6; i++) {
+                    pos = ShortPath.find('/', pos + 1);
+                }
+                ShortPath = ShortPath.substr(pos + 1);
+                mac.File = ShortPath;
 
                 const LangOptions &LangOpts = Context->getLangOpts();
                 CharSourceRange Range = CharSourceRange::getTokenRange(MD->getMacroInfo()->getDefinitionLoc(), MD->getMacroInfo()->getDefinitionEndLoc());
@@ -69,11 +76,10 @@ public:
                             SrcMgr::CharacteristicKind FileType) override {
         // Need to also track the function calls -> include directives
         // Store the full path and other information as needed.
-        std::string FullPath = SearchPath.str() + "/" + FileName.str();
-
-        IncludeDirectives.insert(FullPath);
-        
-        // IncludeDirectives.insert(FileName.str());
+        // std::string FullPath = SearchPath.str() + "/" + FileName.str();
+        // IncludeDirectives.insert(FullPath);
+        if("AutoGen.h" != FileName.str())
+            IncludeDirectives.insert(FileName.str());
     }
 
 private:
