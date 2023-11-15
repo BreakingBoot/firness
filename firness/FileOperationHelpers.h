@@ -118,6 +118,7 @@ namespace FileOps {
             callObject["Function"] = call.Function;
             callObject["Service"] = call.Service;
             callObject["Include"] = call.includes;
+            callObject["Return_Type"] = call.return_type;
 
             for (const auto& argumentPair : call.Arguments) {
                 // Create a JSON object for each argument
@@ -193,6 +194,7 @@ namespace FileOps {
             callObject["Function"] = call.Function;
             callObject["Service"] = call.Service;
             callObject["Include"] = call.includes;
+            callObject["ReturnType"] = call.return_type;
 
             for (const auto& argumentPair : call.Arguments) {
                 // Create a JSON object for each argument

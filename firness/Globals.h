@@ -97,6 +97,7 @@ struct TypeData {
 struct Call {
     std::string Function;
     std::string Service;
+    std::string return_type;
     std::map<std::string, Argument> Arguments;
     std::set<std::string> includes;
 
@@ -109,6 +110,7 @@ struct Call {
         }
         Arguments.clear();
         includes.clear();
+        return_type.clear();
     }
 };
 
@@ -138,3 +140,4 @@ extern std::set<std::string> IncludeDirectives;
 extern std::vector<std::string> EnumConstants;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
+extern std::set<std::string> GeneratorTypes;

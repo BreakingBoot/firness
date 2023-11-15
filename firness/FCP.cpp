@@ -15,6 +15,7 @@ std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 std::vector<Call> GeneratorMap;
 std::set<std::string> IncludeDirectives;
 std::set<std::pair<std::string, std::string>> SingleTypedefs;
+std::set<std::string> GeneratorTypes;
 
 
 // Define command-line options for input file and output dir

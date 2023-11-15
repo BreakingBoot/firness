@@ -86,6 +86,24 @@ namespace PassHelpers {
         return 0;
     }
 
+    std::string removeTrailingPointer(const std::string& input) {
+        std::string result = input;
+
+        // Remove trailing spaces
+        result.erase(std::remove_if(result.rbegin(), result.rend(), ::isspace).base(), result.end());
+
+        // Find the last occurrence of '*'
+        size_t lastStarPos = result.find_last_of('*');
+
+        // Check if '*' is found and it is at the end of the string
+        if (lastStarPos != std::string::npos && lastStarPos == result.length() - 1) {
+            // Erase the trailing '*'
+            result.erase(lastStarPos);
+        }
+
+        return result;
+    }
+
     /*
         Eliminates the extra whitespace for new lines//extra spaces
         in a given string

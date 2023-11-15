@@ -514,6 +514,7 @@ public:
     */
     bool VisitCallExpr(CallExpr *Call)
     {
+
         // Check if the call expression is found in CallArgMap
         if (CallArgMap.find(Call) != CallArgMap.end()) {
             // Iterate through the argument-direction map for this call expression
@@ -551,6 +552,7 @@ public:
                                         if(GenCallInfo(Call))
                                         {
                                             CallInfo.includes = IncludeDirectives;
+                                            CallInfo.return_type = Call->getCallReturnType(*this->Context).getAsString();
                                             GeneratorMap.push_back(CallInfo);
                                         }
                                         VarDeclMap.clear();
@@ -569,6 +571,22 @@ public:
                 }
             }
         }
+        /*else if(GeneratorTypes.find(removeTrailingPointer(Call->getType().getAsString())) != GeneratorTypes.end())
+        {
+            llvm::outs() << "Found Generator Function: " << Call->getType().getAsString() << "\n";
+            Call->dump();
+            HandleMatchingExpr(Call, *this->Context);
+            GeneratorFunctionsMap[Call] = VarDeclMap;
+            if(GenCallInfo(Call))
+            {
+                CallInfo.includes = IncludeDirectives;
+                CallInfo.return_type = Call->getType().getAsString();
+                GeneratorMap.push_back(CallInfo);
+            }
+            VarDeclMap.clear();
+            CallInfo.clear();
+        }*/
+
         return true;
     }
 

@@ -365,6 +365,7 @@ public:
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
+                GeneratorTypes.insert(removeTrailingPointer(String_Arg.arg_type));
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
             }
         }
@@ -565,6 +566,7 @@ public:
             CallExprMap[Call] = VarDeclMap;
             GenCallInfo(Call);
             CallInfo.includes = IncludeDirectives;
+            CallInfo.return_type = Call->getType().getAsString();
             CallMap.push_back(CallInfo);
         }
         return true;
