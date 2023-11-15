@@ -52,11 +52,12 @@ class Argument:
         }
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: List[str] = []):
+    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
         self.service = service
         self.function = function
         self.includes = includes
+        self.return_type = return_type
 
     def to_dict(self):
         return {

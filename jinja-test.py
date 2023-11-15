@@ -118,7 +118,8 @@ class FunctionBlock:
             'arguments': {key: [arg.to_dict() for arg in args] for key, args in self.arguments.items()},
             'service': self.service,
             'function': self.function,
-            'includes': self.includes
+            'includes': self.includes,
+            'return_type': self.return_type
         }
 
 
@@ -884,7 +885,7 @@ def initialize_data(function_template: Dict[str, FunctionBlock]) -> Dict[str, Fu
     initial_data = {}
     current_args_dict.clear()
     for func, func_block in function_template.items():
-        initial_data[func] = FunctionBlock({}, func, func_block.service)
+        initial_data[func] = FunctionBlock({}, func, func_block.service, {}, func_block.return_type)
     return initial_data
 
 # Now add the output variables because we aren't trying to fuzz those
@@ -978,7 +979,7 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
         if function not in generators.keys():
             generators_template[function] = function_blocks[0]
             generators[function] = FunctionBlock(
-                {}, function, function_blocks[0].service)
+                {}, function, function_blocks[0].service, {}, function_blocks[0].return_type)
         elif generators_template[function].service == "":
             generators_template[function].service = function_blocks[0].service
             generators[function].service = function_blocks[0].service

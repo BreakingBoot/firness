@@ -39,11 +39,12 @@ class Argument:
         }
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: List[str] = []):
+    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
         self.service = service
         self.function = function
         self.includes = includes
+        self.return_type = return_type
 
     def to_dict(self):
         return {
@@ -86,23 +87,24 @@ def set_undefined_constants(argument: Argument) -> str:
 def remove_ref_symbols(type_str: str) -> str:
     return re.sub(r" *\*| *&", "", type_str)
 
-def generate_outputs(all_args: Dict[str, List[Argument]],
-                    arg_type_list: List[TypeTracker],
+def generate_outputs(function: str,
+                     all_args: Dict[str, List[Argument]],
+                     arg_type_list: List[TypeTracker],
                      indent: bool) -> List[str]:
     output = []
     tmp = []
     
     for arg_key, arguments in all_args.items():
         if "OUT" in arguments[0].arg_dir and not "IN" in arguments[0].arg_dir:
-            tmp.extend(declare_var(arg_key, arguments, arg_type_list, False))
-            tmp.append(f"UINT8 {arg_key}_OutputChoice = 0;")
-            tmp.append(f"ReadBytes(Input, sizeof({arg_key}_OutputChoice), &{arg_key}_OutputChoice);")
-            tmp.append(f"if({arg_key}_OutputChoice % 2)")
+            tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False))
+            tmp.append(f"UINT8 {function}_{arg_key}_OutputChoice = 0;")
+            tmp.append(f"ReadBytes(Input, sizeof({function}_{arg_key}_OutputChoice), &{function}_{arg_key}_OutputChoice);")
+            tmp.append(f"if({function}_{arg_key}_OutputChoice % 2)")
             tmp.append("{")
             if arguments[0].pointer_count > 0:
-                tmp.append(f"    ReadBytes(Input, sizeof(*{arg_key}), &{arg_key});")
+                tmp.append(f"    ReadBytes(Input, sizeof(*{function}_{arg_key}), &{function}_{arg_key});")
             else:
-                tmp.append(f"    ReadBytes(Input, sizeof({arg_key}), {arg_key});")
+                tmp.append(f"    ReadBytes(Input, sizeof({function}_{arg_key}), {function}_{arg_key});")
             tmp.append("}") 
     
     if len(tmp) > 0:
@@ -158,7 +160,8 @@ def harness_header(functions: Dict[str, FunctionBlock],
 # properly add casts to the arguments based off the difference
 # between the argument type and the type tracker type along with
 # the pointer count
-def cast_arg(arg_key:str,
+def cast_arg(function: str, 
+             arg_key:str,
              arguments: List[Argument],
              arg_type_list: List[TypeTracker]) -> str:
     
@@ -170,7 +173,7 @@ def cast_arg(arg_key:str,
             if arguments[0].pointer_count > arg.pointer_count:
                 update_arg += f'&'
             break
-    update_arg += arg_key
+    update_arg += f'{function}_{arg_key}'
 
     return update_arg
     
@@ -197,7 +200,7 @@ def call_function(function: str,
     else:
         output.append(f"{call_prefix}{function}(")
     for arg_key, arguments in function_block.arguments.items():
-        tmp = f"    {cast_arg(arg_key, arguments, arg_type_list)},"
+        tmp = f"    {cast_arg(function, arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
         if arg_key == list(function_block.arguments.keys())[-1]:
             tmp = tmp[:-1]
@@ -213,13 +216,14 @@ def add_ptrs(arg_type: str,
     else:
         return add_ptrs(f"{arg_type}*", num_ptrs - 1)
 
-def declare_var(arg_key: str, 
+def declare_var(function: str,
+                arg_key: str, 
                 arguments: List[Argument],
                 arg_type_list: List[TypeTracker],
                 indent: bool) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
-        print(f"ERROR: {arg_key} has more than 2 pointers")
+        print(f"ERROR: {function} {arg_key} has more than 2 pointers")
         return output
     elif arguments[0].pointer_count == 2:
         arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
@@ -231,17 +235,18 @@ def declare_var(arg_key: str,
         arg_type = add_ptrs("UINTN", arguments[0].pointer_count) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count))
     if arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower():
-        output.append(f'{arg_type} {arg_key} = AllocatePool(sizeof({remove_ref_symbols(arg_type)}));')
+        output.append(f'{arg_type} {function}_{arg_key} = AllocatePool(sizeof({remove_ref_symbols(arg_type)}));')
     else:
-        output.append(f"{arg_type} {arg_key} = {set_undefined_constants(arguments[0])};")
+        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arguments[0])};")
     
     return add_indents(output, indent)
 
-def fuzzable_args(arg: str, 
+def fuzzable_args(function: str,
+                  arg: str, 
                   indent: bool) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
-    output.append(f"ReadBytes(Input, sizeof({arg}), &{arg});")
+    output.append(f"ReadBytes(Input, sizeof({function}_{arg}), &{function}_{arg});")
     
     return add_indents(output, indent)
 
@@ -256,7 +261,7 @@ def generate_inputs(function_block: FunctionBlock,
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir:
-            tmp.extend(declare_var(arg_key, arguments, arg_type_list, False))
+            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False))
 
     if len(tmp) > 0:
         output.append("/*")
@@ -268,54 +273,57 @@ def generate_inputs(function_block: FunctionBlock,
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir:
             if arguments[0].variable == "__FUZZABLE__":
-                output.extend(fuzzable_args(arg_key, False))
+                output.extend(fuzzable_args(function_block.function, arg_key, False))
             elif "__CONSTANT" in arguments[0].variable or "__ENUM_ARG__" in arguments[0].variable:
-                output.extend(constant_args(arg_key, arguments, False))
+                output.extend(constant_args(function_block.function, arg_key, arguments, False))
             elif "__FUNCTION_PTR__" in arguments[0].variable:
-                output.extend(function_ptr_args(arg_key, arguments, False))
+                output.extend(function_ptr_args(function_block.function, arg_key, arguments, False))
             elif "EFI_GUID" in arguments[0].arg_type:
-                output.extend(guid_args(arg_key, arguments, False))
+                output.extend(guid_args(function_block.function, arg_key, arguments, False))
             elif (
                 arguments[0].variable.startswith('__FUZZABLE_')
                 and arguments[0].variable.endswith('_STRUCT__')
             ) or "__GENERATOR_FUNCTION__" in arguments[0].variable:
-                output.extend(generator_struct_args(arg_key, arguments, types, services, protocol_variable, generators, False))
+                output.extend(generator_struct_args(function_block.function, arg_key, arguments, types, services, protocol_variable, generators, False))
+                    
             output.append("")
 
     return add_indents(output, indent)
 
-def constant_args(arg_key: str, 
+def constant_args(function: str,
+                  arg_key: str, 
                   arguments: List[Argument],
                   indent: bool) -> List[str]:
     output = []
     output.append("// Constant Variable Initialization")
-    output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
-    output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
+    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
         if argument.usage == "":
-            output.append(f'        {arg_key} = {set_undefined_constants(argument)};')
+            output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument)};')
         elif "char" in argument.arg_type.lower():
-            output.append(f'        {arg_key} = StrDuplicate({argument.usage});')
+            output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
         else:
-            output.append(f'        {arg_key} = {argument.usage};')
+            output.append(f'        {function}_{arg_key} = {argument.usage};')
         output.append(f'        break;')
     output.append('}')
 
     return add_indents(output, indent)
 
-def function_ptr_args(arg_key: str, 
+def function_ptr_args(function:str, 
+                      arg_key: str, 
                       arguments: List[Argument],
                       indent: bool) -> List[str]:
     output = []
     output.append("// Function Pointer Variable Initialization")
-    output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
-    output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
+    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
-        output.append(f'        {arg_key} = {argument.usage};')
+        output.append(f'        {function}_{arg_key} = {argument.usage};')
         output.append(f'        break;')
     output.append('}')
     
@@ -323,23 +331,25 @@ def function_ptr_args(arg_key: str,
 
     return add_indents(output, indent)
 
-def guid_args(arg_key: str, 
+def guid_args(function:str, 
+              arg_key: str, 
               arguments: List[Argument],
               indent: bool) -> List[str]:
     output = []
     output.append("// EFI_GUID Variable Initialization")
-    output.append(f'UINT8 {arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
-    output.append(f'switch({arg_key}_choice % {len(arguments)})' + ' {')
+    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
     for index, argument in enumerate(arguments):
         output.append(f'    case {index}:')
-        output.append(f'        {arg_key} = &{argument.variable};')
+        output.append(f'        {function}_{arg_key} = &{argument.variable};')
         output.append(f'        break;')
     output.append('}')
 
     return add_indents(output, indent)
 
-def generator_struct_args(arg_key: str, 
+def generator_struct_args(function: str, 
+                          arg_key: str, 
                           arguments: List[Argument], 
                           types: Dict[str, List[FieldInfo]], 
                           services: Dict[str, FunctionBlock], 
@@ -349,24 +359,31 @@ def generator_struct_args(arg_key: str,
     output = []
     output.append("// Generator Struct Variable Initialization")
     if len(arguments) > 1:
-        output.append(f'UINT8 {arg_key}_choice = 0;')
-        output.append(f'ReadBytes(Input, sizeof({arg_key}_choice), &{arg_key}_choice);')
-        output.append(f'switch({arg_key}_choice % {len(arguments)})' +' {')
+        output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+        output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+        output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' +' {')
         for index, argument in enumerate(arguments):
-            output.append(f'    case {index}:')
+            output.append(f'    case {index}: ' + '{')
             if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__'):
                 for field in types[remove_ref_symbols(argument.arg_type)]:
-                    output.append(f'        ReadBytes(Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
-            # elif "__GENERATOR_FUNCTION__" in argument.variable:
-            #     output.extend(function_body(generators[argument.assignment], services, protocol_variable, generators, types, True))
+                    output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), &({function}_{arg_key}->{field.name}));')
+            elif "__GENERATOR_FUNCTION__" in argument.variable:
+                generator_outputs = function_body(generators[argument.assignment], services, protocol_variable, generators, types, True)
+                for line in generator_outputs:
+                    output.append(f'    {line}')
+                for generator_arg_key, generator_arguments in generators[argument.assignment].arguments.items():
+                    if "OUT" in generator_arguments[0].arg_dir and not "IN" in generator_arguments[0].arg_dir:
+                        if argument.arg_type in generator_arguments[0].arg_type:
+                            output.append(f'        {function}_{arg_key} = {argument.assignment}_{generator_arg_key};')
             output.append(f'        break;')
+            output.append('    }')
         output.append('}')
     else:
         if arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__'):
             for field in types[remove_ref_symbols(arguments[0].arg_type)]:
-                output.append(f'ReadBytes(Input, sizeof({arg_key}->{field.name}), &({arg_key}->{field.name}));')
-        # elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
-        #     output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), &({function}_{arg_key}->{field.name}));')
+        elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
+            output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
 
     return add_indents(output, indent)
 
@@ -379,7 +396,7 @@ def function_body(function_block: FunctionBlock,
     output = []
     arg_type_list = []
     output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False))
-    output.extend(generate_outputs(function_block.arguments, arg_type_list, False))
+    output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False))
     output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False))
 
     return add_indents(output, indent)
