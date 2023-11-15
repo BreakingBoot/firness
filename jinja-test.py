@@ -9,8 +9,28 @@ from datetime import datetime
 from collections import defaultdict, Counter
 from itertools import permutations
 from typing import List, Dict, Any, Tuple, Set
-import Levenshtein
 
+default_includes = {
+    "Library/BaseLib.h",
+    "Library/BaseMemoryLib.h",
+    "Library/DebugLib.h",
+    "Library/MemoryAllocationLib.h",
+    "Library/UefiBootServicesTableLib.h",
+    "Library/UefiLib.h",
+    "Library/UefiRuntimeServicesTableLib.h",
+    "Library/UefiApplicationEntryPoint.h",
+    "Library/UefiBootManagerLib.h",
+    "Library/UefiRuntimeLib.h",
+    "Library/PcdLib.h",
+    "Library/PrintLib.h",
+    "Library/ReportStatusCodeLib.h",
+    "Library/TimerLib.h",
+    "Library/PciLib.h",
+    "Library/SerialPortLib.h",
+    "Library/PciExpressLib.h",
+    "Library/IoLib.h",
+    "Library/SynchronizationLib.h"        
+}
 
 type_defs = {
     "INT8": "signed char",
@@ -86,11 +106,12 @@ class Argument:
 
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = []):
+    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
         self.service = service
         self.function = function
         self.includes = includes
+        self.return_type = return_type
 
     def to_dict(self):
         return {
@@ -230,7 +251,7 @@ def load_data(json_file: str,
             for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
         }
         function_block = FunctionBlock(arguments, raw_function_block.get(
-            'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'))
+            'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
         function_dict[function_block.function].append(function_block)
 
     # Check if there is a single most common number of parameters for each function
@@ -284,7 +305,7 @@ def load_generators(json_file: str,
             for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
         }
         function_block = FunctionBlock(arguments, raw_function_block.get(
-            'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'))
+            'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
         function_dict[function_block.function].append(function_block)
 
     # Determine the most common number of parameters for each function
@@ -537,8 +558,9 @@ def contains_usage(usage: str,
 def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             pre_processed_data: Dict[str, FunctionBlock], 
                             macros: Dict[str, Macros],
-                            aliases: Dict[str, str]) -> Dict[str, FunctionBlock]:
+                            aliases: Dict[str, str]) -> Tuple[Dict[str, FunctionBlock], Dict[str, str]]:
     usage_seen = defaultdict(lambda: defaultdict(set))  # Keeps track of arg.usage values seen for each function and arg_key
+    matched_macros = defaultdict(list)
 
     # Step 1: Collect all arguments
     for function, function_blocks in input_data.items():
@@ -566,10 +588,14 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             if not contains_usage(argument_value, usage_seen[function][arg_key], macros, aliases):
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment, argument[0].data_type, argument_value, argument[0].variable, [])
                                 pre_processed_data[function].arguments.setdefault(arg_key, []).append(new_arg)
+                                if argument[0].assignment in macros.keys():
+                                    matched_macros[macros[argument[0].assignment].name] = macros[argument[0].assignment].value
                                 current_args_dict[function].append(arg_key)
                                 usage_seen[function][arg_key].update(get_stripped_usage(argument_value, macros, aliases))
                     elif not contains_usage(argument[0].usage, usage_seen[function][arg_key], macros, aliases):
                         pre_processed_data[function].arguments.setdefault(arg_key, []).append(argument[0])
+                        if argument[0].assignment in macros.keys():
+                            matched_macros[macros[argument[0].assignment].name] = macros[argument[0].assignment].value
                         current_args_dict[function].append(arg_key)
                         usage_seen[function][arg_key].update(get_stripped_usage(argument[0].usage, macros, aliases))  # Update the set with the new arg.usage value
     # Step 2: Filter out arguments with less than 3 different values
@@ -579,7 +605,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                 for arg in argument:
                     argument.remove(arg)
                 current_args_dict[function].remove(arg_key)
-    return pre_processed_data
+    return pre_processed_data, matched_macros
 
 
 def contains_void_star(s):
@@ -653,8 +679,9 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
 
 
 def generate_header(function_dict: Dict[str, FunctionBlock],
+                    matched_macros: Dict[str, str],
                     harness_folder):
-    code = code_gen.harness_header(function_dict)
+    code = code_gen.harness_header(function_dict, matched_macros)
     code_gen.write_to_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 
@@ -798,9 +825,10 @@ def generate_code_std(function_dict: Dict[str, FunctionBlock],
                       data_template: Dict[str, FunctionBlock],
                       types_dict: Dict[str, List[FieldInfo]],
                       generators_dict: Dict[str, FunctionBlock],
+                      aliases: Dict[str, str],
                       harness_folder):
     code = debug_gen.harness_generator(
-        data_template, function_dict, types_dict, generators_dict)
+        data_template, function_dict, types_dict, aliases, generators_dict)
     debug_gen.write_to_file(f'{harness_folder}/FirnessHarnesses_std.c', code)
 
 
@@ -817,10 +845,11 @@ def generate_harness_debugger(merged_data: Dict[str, FunctionBlock],
                               types: Dict[str, List[FieldInfo]],
                               all_includes: List[str],
                               generators: Dict[str, FunctionBlock],
+                              aliases: Dict[str, str],
                               harness_folder: str):
 
     generate_main_std(merged_data, harness_folder)
-    generate_code_std(merged_data, template, types, generators, harness_folder)
+    generate_code_std(merged_data, template, types, generators, aliases, harness_folder)
     generate_header_std(merged_data, all_includes, types, harness_folder)
     debug_gen.compile(harness_folder)
 
@@ -836,15 +865,16 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      all_includes: List[str],
                      generators: Dict[str, FunctionBlock],
                      aliases: Dict[str, str],
+                     matched_macros: Dict[str, str],
                      harness_folder: str):
 
     generate_main(merged_data, harness_folder)
     generate_code(merged_data, template, types, generators, aliases, harness_folder)
-    generate_header(merged_data, harness_folder)
+    generate_header(merged_data, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder)
     generate_harness_debugger(merged_data, template,
-                              types, all_includes, generators, harness_folder)
+                              types, all_includes, generators, aliases, harness_folder)
     if not os.path.exists("Firness/"):
         os.makedirs("Firness/")
     os.system(f'cp {harness_folder}/* Firness/')
@@ -878,14 +908,15 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                    input_generators: Dict[str, List[FunctionBlock]],
                                    aliases: Dict[str, str],
                                    macros: Dict[str, Macros],
-                                   random: bool) -> Dict[str, FunctionBlock]:
+                                   random: bool) -> Tuple[Dict[str, FunctionBlock], Dict[str, str]]:
     # Collect all of the arguments to be passed to the template
     pre_processed_data = initialize_data(function_template)
     pre_processed_data = get_intersect(input_data, pre_processed_data)
+    matched_macros = {}
 
     if not random:
         # Step 1: Collect the constant arguments
-        pre_processed_data = collect_known_constants(
+        pre_processed_data, matched_macros = collect_known_constants(
             input_data, pre_processed_data, macros, aliases)
 
     # Step 2: Collect the fuzzable arguments
@@ -931,7 +962,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
             function_block.arguments.keys())}
         function_block.arguments = sorted_arguments
 
-    return pre_processed_data
+    return pre_processed_data, matched_macros
 
 
 def clean_harnesses(clean: bool) -> None:
@@ -1045,17 +1076,19 @@ def main():
     # that have all scalable fields will be directly generated with random input
 
     # print_template(function_template)
-    processed_data = collect_all_function_arguments(
+    processed_data, matched_macros = collect_all_function_arguments(
         data, function_template, types, generators, aliases, macros_name, args.random)
 
     # all_includes = get_union(processed_data, processed_generators)
-    all_includes = get_union(processed_data, {})
+    # all_includes = get_union(processed_data, {})
+    all_includes = get_union({}, {})
+    all_includes = list(set(all_includes) | default_includes)
 
     write_to_file(processed_generators,
                   f'{harness_folder}/processed_generators.json')
     write_to_file(processed_data, f'{harness_folder}/processed_data.json')
     generate_harness(processed_data, template, types,
-                     all_includes, processed_generators, aliases, harness_folder)
+                     all_includes, processed_generators, aliases, matched_macros, harness_folder)
 
 
 if __name__ == '__main__':

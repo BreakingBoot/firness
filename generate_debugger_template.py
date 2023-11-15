@@ -77,13 +77,21 @@ class FieldInfo:
         self.name = name
         self.type = type
 
+aliases_map = {}
+
+def get_type(arg_type: str) -> str:
+    if remove_ref_symbols(arg_type) in aliases_map.keys():
+        return arg_type.replace(remove_ref_symbols(arg_type), aliases_map[remove_ref_symbols(arg_type)])
+    else:
+        return arg_type
+
 # create the structures converted to normal c types
 def create_structs(type: str, fields: List[FieldInfo]) -> List[str]:
     output = []
     output.append("typedef struct {")
     for field in fields:
-        if field.type in convert_type.keys():
-            output.append(f"    {convert_type[field.type]} {field.name};")
+        if get_type(field.type) in convert_type.keys():
+            output.append(f"    {field.type.replace(remove_ref_symbols(field.type), convert_type[get_type(field.type)])} {field.name};")
         else:
             output.append(f"    uint64_t {field.name};")
     output.append('}' + f" {type};")
@@ -92,8 +100,8 @@ def create_structs(type: str, fields: List[FieldInfo]) -> List[str]:
     return output
 
 
-def remove_ref_symbols(type: str) -> str:
-    return re.sub(r"[ * &]", "", type)
+def remove_ref_symbols(type_str: str) -> str:
+    return re.sub(r" *\*| *&", "", type_str)
 
 def generate_outputs(all_args: Dict[str, List[Argument]],
                     arg_type_list: List[TypeTracker],
@@ -352,8 +360,10 @@ def function_body(function_block: FunctionBlock,
 def harness_generator(services: Dict[str, FunctionBlock], 
                       functions: Dict[str, FunctionBlock], 
                       types: Dict[str, List[FieldInfo]], 
+                      aliases: Dict[str, str],
                       generators: Dict[str, FunctionBlock]) -> List[str]:
     # Initialize an empty string to store the generated content
+    aliases_map.update(aliases)
     output = []
 
     output.append("#include \"FirnessHarnesses_std.h\"")
@@ -450,4 +460,4 @@ def write_to_file(filename: str, output: List[str]):
         f.writelines([line + '\n' for line in output])
 
 def compile(harness_folder: str):
-    os.system(f'clang -g -o firness_decoder {harness_folder}/FirnessMain_std.c {harness_folder}/FirnessHarnesses_std.c')
+    os.system(f'clang -w -g -o firness_decoder {harness_folder}/FirnessMain_std.c {harness_folder}/FirnessHarnesses_std.c')

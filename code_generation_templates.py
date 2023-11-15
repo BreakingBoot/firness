@@ -71,7 +71,7 @@ aliases_map = {}
 # dictionary
 def get_type(arg_type: str) -> str:
     if remove_ref_symbols(arg_type) in aliases_map.keys():
-        return aliases_map[arg_type]
+        return arg_type.replace(remove_ref_symbols(arg_type), aliases_map[remove_ref_symbols(arg_type)])
     else:
         return arg_type
 
@@ -127,7 +127,8 @@ def harness_includes(includes: List[str]) -> List[str]:
 
     return output
 
-def harness_header(functions: Dict[str, FunctionBlock]) -> List[str]:
+def harness_header(functions: Dict[str, FunctionBlock],
+                   matched_macros: Dict[str, str]) -> List[str]:
     output = []
     output.append("#ifndef __FIRNESS_HARNESSES__")
     output.append("#define __FIRNESS_HARNESSES__")
@@ -135,6 +136,10 @@ def harness_header(functions: Dict[str, FunctionBlock]) -> List[str]:
     output.append("")
     output.append("#include \"FirnessIncludes.h\"")
     output.append("#include \"FirnessHelpers.h\"")
+    output.append("")
+
+    for name, value in matched_macros.items():
+        output.append(f"#define {name} {value}")
     output.append("")
 
     for function, function_block in functions.items():
@@ -187,7 +192,10 @@ def call_function(function: str,
     else:
         call_prefix = ""
     
-    output.append(f"Status = {call_prefix}{function}(")
+    if function_block.return_type == "EFI_STATUS":
+        output.append(f"Status = {call_prefix}{function}(")
+    else:
+        output.append(f"{call_prefix}{function}(")
     for arg_key, arguments in function_block.arguments.items():
         tmp = f"    {cast_arg(arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
