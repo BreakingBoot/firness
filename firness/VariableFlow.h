@@ -60,8 +60,11 @@ public:
                 }
             }
         }
-        else if(T->getTypeClassName() == "Typedef")
+        else if(T->getTypeClassName() != "Builtin")
         {
+            // Function pointers that are typedefed should be ignored
+            if(T->isFunctionPointerType())
+                return true;
            SingleTypedefs.insert(std::make_pair(TD->getNameAsString(), TD->getUnderlyingType().getAsString()));
         }
         return true;
