@@ -56,8 +56,12 @@ def declare_var(arg_key: str,
                 indent: bool) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
-        print(f"ERROR: {arg_key} has more than 2 pointers")
-        return output
+        if arguments[0].arg_dir == "OUT":
+            arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
+            arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count))
+        else:
+            print(f"ERROR: {function} {arg_key} has more than 2 pointers")
+            return output
     elif arguments[0].pointer_count == 2:
         arg_type = "uint64_t*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
         arg_type_list.append(TypeTracker(arg_type, arg_key, 1))
@@ -115,7 +119,7 @@ def generate_inputs(function_block: FunctionBlock,
                 arguments[0].variable.startswith('__FUZZABLE_')
                 and arguments[0].variable.endswith('_STRUCT__')
             ) or "__GENERATOR_FUNCTION__" in arguments[0].variable:
-                output.extend(generator_struct_args(arg_key, arguments, types, services, protocol_variable, generators, False))
+                output.extend(generator_struct_args(function_block.function, arg_key, arguments, types, services, protocol_variable, generators, False))
             output.append("")
 
     return add_indents(output, indent)
@@ -174,7 +178,8 @@ def guid_args(arg_key: str,
 
     return add_indents(output, indent)
 
-def generator_struct_args(arg_key: str, 
+def generator_struct_args(function: str,
+                          arg_key: str, 
                           arguments: List[Argument], 
                           types: Dict[str, List[FieldInfo]], 
                           services: Dict[str, FunctionBlock], 
@@ -184,32 +189,41 @@ def generator_struct_args(arg_key: str,
     output = []
     output.append("// Generator Struct Variable Initialization")
     if len(arguments) > 1:
-        output.append(f'uint8_t {arg_key}_choice = 0;')
-        output.append(f'ReadBytes(Input, sizeof(uint8_t), &{arg_key}_choice);')
-        output.append(f'switch({arg_key}_choice % {len(arguments)})' +' {')
+        output.append(f'uint8_t {function}_{arg_key}_choice = 0;')
+        output.append(f'ReadBytes(Input, sizeof(uint8_t), &{function}_{arg_key}_choice);')
+        output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' +' {')
         for index, argument in enumerate(arguments):
-            output.append(f'    case {index}:')
+            output.append(f'    case {index}: ' + '{')
             if argument.variable.startswith('__FUZZABLE_') and argument.variable.endswith('_STRUCT__'):
                 output.append(f'        printf(\"{argument.arg_type}\\n\");')
-                output.append(f'        {remove_ref_symbols(arguments[0].arg_type)} {arg_key};')
+                output.append(f'        {remove_ref_symbols(arguments[0].arg_type)} {function}_{arg_key};')
                 for field in types[remove_ref_symbols(argument.arg_type)]:
                     if field.type != "EFI_GUID":
-                        output.append(f'        {arg_key}.{field.name} = 0;')
-                    output.append(f'        ReadBytes(Input, sizeof({arg_key}.{field.name}), &({arg_key}.{field.name}));')
-                    output.append(f'        printf(\"\t{field.name} = %lx;\\n\", {arg_key}.{field.name});')            # elif "__GENERATOR_FUNCTION__" in argument.variable:
-            #     output.extend(function_body(generators[argument.assignment], services, protocol_variable, generators, types, True))
+                        output.append(f'        {function}_{arg_key}.{field.name} = 0;')
+                    output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}.{field.name}), &({function}_{arg_key}.{field.name}));')
+                    output.append(f'        printf(\"\t{field.name} = %lx;\\n\", {function}_{arg_key}.{field.name});')            # elif "__GENERATOR_FUNCTION__" in argument.variable:
+            elif "__GENERATOR_FUNCTION__" in argument.variable:
+                generator_outputs = function_body(generators[argument.assignment], services, protocol_variable, generators, types, True)
+                for line in generator_outputs:
+                    output.append(f'    {line}')
+                for generator_arg_key, generator_arguments in generators[argument.assignment].arguments.items():
+                    if "OUT" in generator_arguments[0].arg_dir and not "IN" in generator_arguments[0].arg_dir:
+                        if argument.arg_type in generator_arguments[0].arg_type:
+                            output.append(f'        printf(\"{function}_{arg_key} = {argument.assignment}_{generator_arg_key};\");')
             output.append(f'        break;')
+            output.append('    }')
         output.append('}')
     else:
         if arguments[0].variable.startswith('__FUZZABLE_') and arguments[0].variable.endswith('_STRUCT__'):
             output.append(f'printf(\"{arguments[0].arg_type}\\n\");')
-            output.append(f'{remove_ref_symbols(arguments[0].arg_type)} {arg_key};')
+            output.append(f'{remove_ref_symbols(arguments[0].arg_type)} {function}_{arg_key};')
             for field in types[remove_ref_symbols(arguments[0].arg_type)]:
                 if field.type != "EFI_GUID":
-                    output.append(f'{arg_key}.{field.name} = 0;')
-                output.append(f'ReadBytes(Input, sizeof({arg_key}.{field.name}), &({arg_key}.{field.name}));')
-                output.append(f'printf(\"\t{field.name} = %lx;\\n\", {arg_key}.{field.name});')
-        #     output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
+                    output.append(f'{function}_{arg_key}.{field.name} = 0;')
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}.{field.name}), &({function}_{arg_key}.{field.name}));')
+                output.append(f'printf(\"\t{field.name} = %lx;\\n\", {function}_{arg_key}.{field.name});')
+        elif "__GENERATOR_FUNCTION__" in arguments[0].variable:
+            output.extend(function_body(generators[arguments[0].assignment], services, protocol_variable, generators, types, False))        
 
     return add_indents(output, indent)
 

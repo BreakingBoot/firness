@@ -3,6 +3,47 @@
 [Protocols]
 
 [BootServices]
+    RaiseTPL
+    RestoreTPL
+    AllocatePages
+    FreePages
+    GetMemoryMap
+    AllocatePool
+    FreePool
+    CreateEvent
+    SetTimer
+    WaitForEvent
+    SignalEvent
+    CloseEvent
+    CheckEvent
+    InstallProtocolInterface
+    ReinstallProtocolInterface
+    UninstallProtocolInterface
+    HandleProtocol
+    RegisterProtocolNotify
+    LocateHandle
+    LocateDevicePath
+    InstallConfigurationTable
+    LoadImage
+    StartImage
+    Exit
+    UnloadImage
+    ExitBootServices
+    Stall
+    SetWatchdogTimer
+    ConnectController
+    DisconnectController
+    OpenProtocol
+    CloseProtocol
+    OpenProtocolInformation
+    ProtocolsPerHandle
+    LocateHandleBuffer
+    LocateProtocol
+    InstallMultipleProtocolInterfaces
+    UninstallMultipleProtocolInterfaces
+    CopyMem
+    SetMem
+    CreateEventEx
 
 [RuntimeServices]
     GetTime

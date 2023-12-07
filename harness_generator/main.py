@@ -152,13 +152,15 @@ def main():
                         help='Clean the generator database (default: False)')
     parser.add_argument('-r', '--random', dest='random', action='store_true',
                         help='Use random input instead of structured input data (default: False)')
+    parser.add_argument('-b', '--best-guess', dest='best_guess', action='store_true',
+                        help='Choose the function match with the highest frequency even if it might not be the right one (default: False)')
 
     args = parser.parse_args()
     pwd = os.path.dirname(os.getcwd())
     clean_harnesses(args.clean, pwd)
     harness_folder = generate_harness_folder(pwd)
     processed_data, processed_generators, template, types, all_includes, matched_macros, aliases, protocol_guids, driver_guids = analyze_data(args.macro_file, args.generator_file, args.input_file,
-                                                  args.data_file, args.types_file, args.alias_file, args.random, harness_folder)
+                                                  args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess)
     generate_harness(processed_data, template, types,
                      all_includes, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder)
 

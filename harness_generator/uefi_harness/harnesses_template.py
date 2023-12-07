@@ -31,6 +31,7 @@ def generate_outputs(function: str,
     for arg_key, arguments in all_args.items():
         if "OUT" in arguments[0].arg_dir and not "IN" in arguments[0].arg_dir:
             tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False))
+            # This is being used to handle the case where the output is a pointer ( so randomely create a pointer)
             tmp.append(f"UINT8 {function}_{arg_key}_OutputChoice = 0;")
             tmp.append(f"ReadBytes(Input, sizeof({function}_{arg_key}_OutputChoice), &{function}_{arg_key}_OutputChoice);")
             tmp.append(f"if({function}_{arg_key}_OutputChoice % 2)")
@@ -116,8 +117,12 @@ def declare_var(function: str,
                 indent: bool) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
-        print(f"ERROR: {function} {arg_key} has more than 2 pointers")
-        return output
+        if arguments[0].arg_dir == "OUT":
+            arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
+            arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count))
+        else:
+            print(f"ERROR: {function} {arg_key} has more than 2 pointers")
+            return output
     elif arguments[0].pointer_count == 2:
         arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
         arg_type_list.append(TypeTracker(arg_type, arg_key, 1))
@@ -171,7 +176,7 @@ def generate_inputs(function_block: FunctionBlock,
                 output.extend(constant_args(function_block.function, arg_key, arguments, False))
             elif "__FUNCTION_PTR__" in arguments[0].variable:
                 output.extend(function_ptr_args(function_block.function, arg_key, arguments, False))
-            elif "EFI_GUID" in arguments[0].arg_type:
+            elif "guid" in arguments[0].arg_type.lower():
                 output.extend(guid_args(function_block.function, arg_key, arguments, False))
             elif (
                 arguments[0].variable.startswith('__FUZZABLE_')
@@ -189,19 +194,27 @@ def constant_args(function: str,
                   indent: bool) -> List[str]:
     output = []
     output.append("// Constant Variable Initialization")
-    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
-    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
-    for index, argument in enumerate(arguments):
-        output.append(f'    case {index}:')
-        if argument.usage == "":
-            output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument)};')
-        elif "char" in argument.arg_type.lower():
-            output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
+    if len(arguments) > 1:
+        output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+        output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+        output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
+        for index, argument in enumerate(arguments):
+            output.append(f'    case {index}:')
+            if argument.usage == "":
+                output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument)};')
+            elif "char" in argument.arg_type.lower():
+                output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
+            else:
+                output.append(f'        {function}_{arg_key} = {argument.usage};')
+            output.append(f'        break;')
+        output.append('}')
+    else:
+        if arguments[0].usage == "":
+            output.append(f'{function}_{arg_key} = {set_undefined_constants(arguments[0])};')
+        elif "char" in arguments[0].arg_type.lower():
+            output.append(f'{function}_{arg_key} = StrDuplicate({arguments[0].usage});')
         else:
-            output.append(f'        {function}_{arg_key} = {argument.usage};')
-        output.append(f'        break;')
-    output.append('}')
+            output.append(f'{function}_{arg_key} = {arguments[0].usage};')
 
     return add_indents(output, indent)
 
@@ -211,14 +224,17 @@ def function_ptr_args(function:str,
                       indent: bool) -> List[str]:
     output = []
     output.append("// Function Pointer Variable Initialization")
-    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
-    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
-    for index, argument in enumerate(arguments):
-        output.append(f'    case {index}:')
-        output.append(f'        {function}_{arg_key} = {argument.usage};')
-        output.append(f'        break;')
-    output.append('}')
+    if len(arguments) > 1:
+        output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+        output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+        output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
+        for index, argument in enumerate(arguments):
+            output.append(f'    case {index}:')
+            output.append(f'        {function}_{arg_key} = {argument.usage};')
+            output.append(f'        break;')
+        output.append('}')
+    else:
+        output.append(f'{function}_{arg_key} = {arguments[0].usage};')
     
     # VOID* {{ arg_key }};
 
@@ -230,14 +246,17 @@ def guid_args(function:str,
               indent: bool) -> List[str]:
     output = []
     output.append("// EFI_GUID Variable Initialization")
-    output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
-    output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
-    for index, argument in enumerate(arguments):
-        output.append(f'    case {index}:')
-        output.append(f'        {function}_{arg_key} = &{argument.variable};')
-        output.append(f'        break;')
-    output.append('}')
+    if len(arguments) > 1:
+        output.append(f'UINT8 {function}_{arg_key}_choice = 0;')
+        output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), &{function}_{arg_key}_choice);')
+        output.append(f'switch({function}_{arg_key}_choice % {len(arguments)})' + ' {')
+        for index, argument in enumerate(arguments):
+            output.append(f'    case {index}:')
+            output.append(f'        {function}_{arg_key} = &{argument.variable};')
+            output.append(f'        break;')
+        output.append('}')
+    else:
+        output.append(f'{function}_{arg_key} = &{arguments[0].variable};')
 
     return add_indents(output, indent)
 
