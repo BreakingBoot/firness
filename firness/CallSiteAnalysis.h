@@ -286,6 +286,7 @@ public:
         if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(E)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 if (FunctionNames.count(FD->getNameAsString())) {
+                    llvm::outs() << "Found Match: " << FD->getNameAsString() << "\n";
                     return true;
                 }
             }
@@ -293,6 +294,7 @@ public:
         else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(E)) {
             // If the Function Pointer Called matches the one we are looking for
             if (FunctionNames.count(MemExpr->getMemberNameInfo().getName().getAsString())) {
+                llvm::outs() << "Found Match: " << MemExpr->getMemberNameInfo().getName().getAsString() << "\n";
                 return true;
             }
         }
@@ -483,8 +485,8 @@ public:
         } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
             // Get the TypedefNameDecl for the typedef type.
             TypedefNameDecl *TND = TDT->getDecl();
-            llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
-                        << TND->getNameAsString() << "\n";
+            // llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
+            //             << TND->getNameAsString() << "\n";
             // This is never reached, but I keep incase it is needed in future analysis            
         }
     }
@@ -499,7 +501,13 @@ public:
         bool found = false;
 
         std::string CallExprString;
-        if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
+        if (FunctionDecl* FD = dyn_cast<FunctionDecl>(EX)) {
+            CallExprString = FD->getNameAsString();
+            CallInfo.Function = CallExprString;
+            CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
+            return true;
+        }
+        else if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 CallExprString = FD->getNameAsString();
                 CallInfo.Function = CallExprString;
@@ -560,6 +568,7 @@ public:
 
         if(doesCallMatch(Call, *this->Context))
         {
+            //llvm::outs() << "Found match: " << Call->getNameAsString() << "\n";
             VarDeclMap.clear();
             CallInfo.clear();
             HandleMatchingExpr(Call, *this->Context);
@@ -572,6 +581,54 @@ public:
         return true;
     }
 
+    /*
+        This function just captures the following infomation from function declerations:
+            Direction - IN/OUT/IN_OUT
+            Argument Type - UINTN/EFI_GUID/...
+            Argument Name - Guid/StringName/...
+        It is the backup option if there isn't any function calls
+    */
+   void HandleFunctionDeclArgs(FunctionDecl *FD, ASTContext &Ctx)
+   {
+        for (unsigned i = 0; i < FD->getNumParams(); ++i) {
+            Expr* Arg = FD->getArg(i);
+            llvm::outs() << Arg->getAsString() << "\n";
+        }
+   }
+
+    /*
+        Visit All function definitions as a backup option incase 
+        there aren't any function calls directly to the harnessed
+        function.
+
+        This will only use randomized data or generator functions
+        it will not be able to get contextual information.
+    */
+   bool VisitFunctionDecl(FunctionDecl *FD)
+   {
+        // Check if any of the arguments are references to the functions of interest
+        // This happens when converting the function pointers during UEFI -> OS transition
+        for (unsigned i = 0; i < FD->getNumParams(); ++i) {
+            Expr* Arg = FD->getParam(i);
+            if (doesCallMatch(Arg, *this->Context)) {
+                return true;  // Skip this CallExpr if an argument refers to a function of interest
+            }
+        }
+
+        if(FunctionNames.count(FD->getNameAsString()))
+        {
+            //llvm::outs() << "Found match: " << Call->getNameAsString() << "\n";
+            VarDeclMap.clear();
+            CallInfo.clear();
+            HandleFunctionDeclArgs(FD, *this->Context);
+            CallExprMap[FD] = VarDeclMap;
+            //GenCallInfo(FD);
+            CallInfo.includes = IncludeDirectives;
+            CallInfo.return_type = FD->getType().getAsString();
+            CallMap.push_back(CallInfo);
+        }
+    return true;
+   }
 
 private:
     ASTContext *Context;
