@@ -1,4 +1,5 @@
 import json
+import os
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple
 from common.types import FunctionBlock, FieldInfo, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes
@@ -155,8 +156,13 @@ def load_data(json_file: str,
 
 def load_generators(json_file: str,
                     macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
+
+    if os.stat(json_file).st_size <= 4:
+        print("WARNING: No generator functions were captured!!\n")
+        return defaultdict(list)
+    
     with open(json_file, 'r') as file:
-        raw_data = json.load(file)
+        raw_data = json.load(file)            
 
     function_dict = defaultdict(list)
     for raw_function_block in raw_data:
