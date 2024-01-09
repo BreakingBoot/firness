@@ -132,9 +132,9 @@ public:
                 if (PointeeType->isFunctionType()) {
                     if (const TypedefType *TDT = PointeeType->getAs<TypedefType>()) {
                         TypedefNameDecl *TDN = TDT->getDecl();
-                        llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
+                        // llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
                     } else {
-                        llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
+                        // llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
                     }
                 }
             } 

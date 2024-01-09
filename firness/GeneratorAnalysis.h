@@ -352,8 +352,8 @@ public:
         } else if (const TypedefType *TDT = dyn_cast<TypedefType>(QT)) {
             // Get the TypedefNameDecl for the typedef type.
             TypedefNameDecl *TND = TDT->getDecl();
-            llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
-                        << TND->getNameAsString() << "\n";
+            // llvm::outs() << "Variable " << VD->getNameAsString() << " is of typedef type "
+            //             << TND->getNameAsString() << "\n";
             // This is never reached, but I keep incase it is needed in future analysis            
         }
     }
@@ -476,9 +476,9 @@ public:
                 if (PointeeType->isFunctionType()) {
                     if (const TypedefType *TDT = PointeeType->getAs<TypedefType>()) {
                         TypedefNameDecl *TDN = TDT->getDecl();
-                        llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
+                        // llvm::outs() << "Found typedef: " << TDN->getName().str() << "\n";
                     } else {
-                        llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
+                        // llvm::outs() << "Function pointer call without typedef: " << VD->getNameAsString() << "\n";
                     }
                 }
             } 
