@@ -1,15 +1,16 @@
 #!/bin/bash
 
 build_dir=/llvm-source/llvm-15.0.7/build
-edk2_dir=/llvm-source/llvm-15.0.7/clang-tools-extra/firness/edk2
-input_file=/llvm-source/llvm-15.0.7/clang-tools-extra/firness/input.txt
-output_dir=/llvm-source/llvm-15.0.7/clang-tools-extra/firness
-test_code=/llvm-source/llvm-15.0.7/clang-tools-extra/firness/TestCode/CopyMemTest.c
+edk2_dir=/input/edk2
+input_file=/input/input.txt
+output_dir=/output
+
 
 # Ensure that two arguments are provided
-if [[ $# == 2 ]]; then
+if [[ $# == 3 ]]; then
     input_file=$1
     output_dir=$2
+    edk2_dir=$3
 fi
 
 # Create output_dir/tmp directory if it doesn't exist
@@ -29,7 +30,6 @@ cd $build_dir && ninja
 # Check the exit status of ninja
 if [[ $? -eq 0 ]]; then
     # If ninja succeeded, run firness
-    # firness -o $output_tmp_dir -i $input_file $test_code # For single file
     firness -p $edk2_dir -o $output_tmp_dir -i $input_file dummyfile # For compilation database
 else
     # If ninja failed, print an error message
