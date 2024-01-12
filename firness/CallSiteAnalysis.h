@@ -501,13 +501,13 @@ public:
         bool found = false;
 
         std::string CallExprString;
-        if (FunctionDecl* FD = dyn_cast<FunctionDecl>(EX)) {
+        /*if (FunctionDecl* FD = dyn_cast<FunctionDecl>(EX)) {
             CallExprString = FD->getNameAsString();
             CallInfo.Function = CallExprString;
             CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
         }
-        else if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
+        else*/ if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 CallExprString = FD->getNameAsString();
                 CallInfo.Function = CallExprString;
@@ -581,54 +581,54 @@ public:
         return true;
     }
 
-    /*
-        This function just captures the following infomation from function declerations:
-            Direction - IN/OUT/IN_OUT
-            Argument Type - UINTN/EFI_GUID/...
-            Argument Name - Guid/StringName/...
-        It is the backup option if there isn't any function calls
-    */
-   void HandleFunctionDeclArgs(FunctionDecl *FD, ASTContext &Ctx)
-   {
-        for (unsigned i = 0; i < FD->getNumParams(); ++i) {
-            Expr* Arg = FD->getArg(i);
-            llvm::outs() << Arg->getAsString() << "\n";
-        }
-   }
+//     /*
+//         This function just captures the following infomation from function declerations:
+//             Direction - IN/OUT/IN_OUT
+//             Argument Type - UINTN/EFI_GUID/...
+//             Argument Name - Guid/StringName/...
+//         It is the backup option if there isn't any function calls
+//     */
+//    void HandleFunctionDeclArgs(FunctionDecl *FD, ASTContext &Ctx)
+//    {
+//         for (unsigned i = 0; i < FD->getNumParams(); ++i) {
+//             Expr* Arg = FD->getArg(i);
+//             llvm::outs() << Arg->getAsString() << "\n";
+//         }
+//    }
 
-    /*
-        Visit All function definitions as a backup option incase 
-        there aren't any function calls directly to the harnessed
-        function.
+//     /*
+//         Visit All function definitions as a backup option incase 
+//         there aren't any function calls directly to the harnessed
+//         function.
 
-        This will only use randomized data or generator functions
-        it will not be able to get contextual information.
-    */
-   bool VisitFunctionDecl(FunctionDecl *FD)
-   {
-        // Check if any of the arguments are references to the functions of interest
-        // This happens when converting the function pointers during UEFI -> OS transition
-        for (unsigned i = 0; i < FD->getNumParams(); ++i) {
-            Expr* Arg = FD->getParam(i);
-            if (doesCallMatch(Arg, *this->Context)) {
-                return true;  // Skip this CallExpr if an argument refers to a function of interest
-            }
-        }
+//         This will only use randomized data or generator functions
+//         it will not be able to get contextual information.
+//     */
+//    bool VisitFunctionDecl(FunctionDecl *FD)
+//    {
+//         // Check if any of the arguments are references to the functions of interest
+//         // This happens when converting the function pointers during UEFI -> OS transition
+//         for (unsigned i = 0; i < FD->getNumParams(); ++i) {
+//             Expr* Arg = FD->getParam(i);
+//             if (doesCallMatch(Arg, *this->Context)) {
+//                 return true;  // Skip this CallExpr if an argument refers to a function of interest
+//             }
+//         }
 
-        if(FunctionNames.count(FD->getNameAsString()))
-        {
-            //llvm::outs() << "Found match: " << Call->getNameAsString() << "\n";
-            VarDeclMap.clear();
-            CallInfo.clear();
-            HandleFunctionDeclArgs(FD, *this->Context);
-            CallExprMap[FD] = VarDeclMap;
-            //GenCallInfo(FD);
-            CallInfo.includes = IncludeDirectives;
-            CallInfo.return_type = FD->getType().getAsString();
-            CallMap.push_back(CallInfo);
-        }
-    return true;
-   }
+//         if(FunctionNames.count(FD->getNameAsString()))
+//         {
+//             //llvm::outs() << "Found match: " << Call->getNameAsString() << "\n";
+//             VarDeclMap.clear();
+//             CallInfo.clear();
+//             HandleFunctionDeclArgs(FD, *this->Context);
+//             CallExprMap[FD] = VarDeclMap;
+//             //GenCallInfo(FD);
+//             CallInfo.includes = IncludeDirectives;
+//             CallInfo.return_type = FD->getType().getAsString();
+//             CallMap.push_back(CallInfo);
+//         }
+//     return true;
+//    }
 
 private:
     ASTContext *Context;
