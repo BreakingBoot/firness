@@ -93,7 +93,8 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      matched_macros: Dict[str, str],
                      protocol_guids: set,
                      driver_guids: set,
-                     harness_folder: str):
+                     harness_folder: str,
+                     output_dir: str):
 
     generate_main(merged_data, harness_folder)
     generate_code(merged_data, template, types, generators, aliases, harness_folder)
@@ -102,9 +103,10 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_inf(harness_folder, protocol_guids, driver_guids)
     generate_harness_debugger(merged_data, template,
                               types, all_includes, generators, aliases, harness_folder)
-    if not os.path.exists("Firness/"):
-        os.makedirs("Firness/")
-    os.system(f'cp {harness_folder}/* Firness/')
+    output_dir = os.path.join(output_dir, 'Firness')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    os.system(f'cp {harness_folder}/* {output_dir}')
 
 def generate_harness_folder(dir: str):
     # Define the outer directory name
@@ -128,7 +130,7 @@ def generate_harness_folder(dir: str):
     os.makedirs(full_path, exist_ok=True)
 
     # Copy the FirnessHelper.h to the full path
-    os.system(f'cp {dir}/HarnessHelpers/* {full_path}')
+    os.system(f'cp /llvm-source/HarnessHelpers/* {full_path}')
 
     # Return the full path of the inner directory
     return full_path
@@ -136,18 +138,20 @@ def generate_harness_folder(dir: str):
 
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
-    parser.add_argument('-d', '--data-file', dest='data_file', default='../tmp/call-database.json',
-                        help='Path to the data file (default: tmp/call-database.json)')
-    parser.add_argument('-g', '--generator-file', dest='generator_file', default='../tmp/generator-database.json',
-                        help='Path to the generator file (default: tmp/generator-database.json)')
-    parser.add_argument('-t', '--types-file', dest='types_file', default='../tmp/types.json',
-                        help='Path to the types file (default: tmp/types.json)')
-    parser.add_argument('-a', '--alias-file', dest='alias_file', default='../tmp/aliases.json',
-                        help='Path to the typedef aliases file (default: ../tmp/aliases.json)')
-    parser.add_argument('-m', '--macro-file', dest='macro_file', default='../tmp/macros.json',
-                        help='Path to the macros file (default: ../tmp/macros.json)')
+    parser.add_argument('-d', '--data-file', dest='data_file', default='/output/tmp/call-database.json',
+                        help='Path to the data file (default: /output/tmp/call-database.json)')
+    parser.add_argument('-g', '--generator-file', dest='generator_file', default='/output/tmp/generator-database.json',
+                        help='Path to the generator file (default: /output/tmp/generator-database.json)')
+    parser.add_argument('-t', '--types-file', dest='types_file', default='/output/tmp/types.json',
+                        help='Path to the types file (default: /output/tmp/types.json)')
+    parser.add_argument('-a', '--alias-file', dest='alias_file', default='/output/tmp/aliases.json',
+                        help='Path to the typedef aliases file (default: /output/tmp/aliases.json)')
+    parser.add_argument('-m', '--macro-file', dest='macro_file', default='/output/tmp/macros.json',
+                        help='Path to the macros file (default: /output/tmp/macros.json)')
     parser.add_argument('-i', '--input-file', dest='input_file',
-                        default='../input.txt', help='Path to the input file (default: input.txt)')
+                        default='/input/input.txt', help='Path to the input file (default: /input/input.txt)')
+    parser.add_argument('-o', '--output', dest='output',
+                        default='/output', help='Path to the output directory (default: /output)')
     parser.add_argument('-c', '--clean', dest='clean', action='store_true',
                         help='Clean the generator database (default: False)')
     parser.add_argument('-r', '--random', dest='random', action='store_true',
@@ -156,13 +160,13 @@ def main():
                         help='Choose the function match with the highest frequency even if it might not be the right one (default: False)')
 
     args = parser.parse_args()
-    pwd = os.path.dirname(os.getcwd())
-    clean_harnesses(args.clean, pwd)
-    harness_folder = generate_harness_folder(pwd)
+
+    clean_harnesses(args.clean, args.output)
+    harness_folder = generate_harness_folder(args.output)
     processed_data, processed_generators, template, types, all_includes, matched_macros, aliases, protocol_guids, driver_guids = analyze_data(args.macro_file, args.generator_file, args.input_file,
                                                   args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess)
     generate_harness(processed_data, template, types,
-                     all_includes, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder)
+                     all_includes, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output)
 
 
 if __name__ == '__main__':
