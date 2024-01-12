@@ -126,6 +126,8 @@ ENV PATH /llvm-source/llvm-15.0.7/build/bin:$PATH
 
 COPY analyze.sh /llvm-source
 COPY ./ /llvm-source/llvm-15.0.7/clang-tools-extra/firness
+COPY ./harness_generator /llvm-source/harness_generator
+COPY ./HarnessHelpers /llvm-source/HarnessHelpers
 
 RUN /llvm-source/llvm-15.0.7/clang-tools-extra/firness/patch.sh \
     && cd llvm-15.0.7/build \
@@ -139,6 +141,8 @@ RUN /llvm-source/llvm-15.0.7/clang-tools-extra/firness/patch.sh \
 #     #&& bear -- build -p OvmfPkg/OvmfPkgX64.dsc -t CLANGPDB -a X64
 
 # Set the default shell command
-ENV EDK2_DOCKER_USER_HOME /llvm-source
-COPY entrypoint.sh /llvm-source/entrypoint
-ENTRYPOINT ["/llvm-source/entrypoint"]
+# ENV EDK2_DOCKER_USER_HOME /llvm-source
+# COPY entrypoint.sh /llvm-source/entrypoint
+COPY ./pipeline_analysis.sh /llvm-source/pipeline_analysis.sh
+ENTRYPOINT ["/bin/sh"]
+# ENTRYPOINT ["/llvm-source/pipeline_analysis.sh"]
