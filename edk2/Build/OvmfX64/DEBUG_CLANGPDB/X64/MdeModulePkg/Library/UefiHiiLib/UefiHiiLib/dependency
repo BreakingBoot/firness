@@ -1,9 +1,0 @@
-
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib/OUTPUT/HiiLanguage.obj.deps
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib/OUTPUT/HiiString.obj.deps
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Library/UefiHiiLib/UefiHiiLib/OUTPUT/HiiLib.obj.deps
-
-               

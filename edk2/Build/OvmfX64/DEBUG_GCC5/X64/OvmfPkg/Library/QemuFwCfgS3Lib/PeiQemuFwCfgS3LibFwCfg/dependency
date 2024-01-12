@@ -1,9 +1,0 @@
-
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg/OUTPUT/QemuFwCfgS3BasePei.obj.deps
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg/OUTPUT/QemuFwCfgS3Pei.obj.deps
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg/OUTPUT/QemuFwCfgS3PeiDxe.obj.deps
-
-               

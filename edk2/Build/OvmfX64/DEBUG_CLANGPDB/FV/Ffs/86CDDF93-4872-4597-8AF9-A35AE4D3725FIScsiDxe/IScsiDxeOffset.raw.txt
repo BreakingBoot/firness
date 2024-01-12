@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_RAW -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/86CDDF93-4872-4597-8AF9-A35AE4D3725FIScsiDxe/IScsiDxeOffset.raw /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/86CDDF93-4872-4597-8AF9-A35AE4D3725FIScsiDxe/IScsiDxe.offset

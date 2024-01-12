@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/A2f436EA-A127-4EF8-957C-8048606FF670SnpDxe/A2f436EA-A127-4EF8-957C-8048606FF670SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/NetworkPkg/SnpDxe/SnpDxe/OUTPUT/SnpDxe.efi

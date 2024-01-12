@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/408edcec-cf6d-477c-a5a8-b4844e3de281ConSplitterDxe/408edcec-cf6d-477c-a5a8-b4844e3de281SEC4.ver

@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/52fe8196-f9de-4d07-b22f-51f77a0e7c41LocalApicTimerDxe/52fe8196-f9de-4d07-b22f-51f77a0e7c41SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/LocalApicTimerDxe/LocalApicTimerDxe/OUTPUT/LocalApicTimerDxe.efi

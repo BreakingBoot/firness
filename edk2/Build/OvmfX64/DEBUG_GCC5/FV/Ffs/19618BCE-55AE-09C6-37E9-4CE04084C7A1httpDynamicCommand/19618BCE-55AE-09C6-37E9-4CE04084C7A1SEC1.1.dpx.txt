@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_DXE_DEPEX -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/19618BCE-55AE-09C6-37E9-4CE04084C7A1httpDynamicCommand/19618BCE-55AE-09C6-37E9-4CE04084C7A1SEC1.1.dpx /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/ShellPkg/DynamicCommand/HttpDynamicCommand/HttpDynamicCommand/OUTPUT/httpDynamicCommand.depex

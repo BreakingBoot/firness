@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/D93CE3D8-A7EB-4730-8C8E-CC466A9ECC3CReportStatusCodeRouterRuntimeDxe/D93CE3D8-A7EB-4730-8C8E-CC466A9ECC3CSEC4.ver

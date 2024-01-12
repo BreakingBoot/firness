@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/1cec9b56-4ead-4328-8931-20587be89098Firness/1cec9b56-4ead-4328-8931-20587be89098SEC1.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Firness/FirnessHarnesses/OUTPUT/Firness.efi

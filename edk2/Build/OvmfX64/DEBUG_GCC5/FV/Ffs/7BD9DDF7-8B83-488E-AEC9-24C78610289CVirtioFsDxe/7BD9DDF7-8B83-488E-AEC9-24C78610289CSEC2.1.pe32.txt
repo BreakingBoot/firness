@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/7BD9DDF7-8B83-488E-AEC9-24C78610289CVirtioFsDxe/7BD9DDF7-8B83-488E-AEC9-24C78610289CSEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/VirtioFsDxe/VirtioFsDxe/OUTPUT/VirtioFsDxe.efi

@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_VERSION -n 1.0 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/2f30da26-f51b-4b6f-85c4-31873c281bcaLinuxInitrdDynamicShellCommand/2f30da26-f51b-4b6f-85c4-31873c281bcaSEC4.ver

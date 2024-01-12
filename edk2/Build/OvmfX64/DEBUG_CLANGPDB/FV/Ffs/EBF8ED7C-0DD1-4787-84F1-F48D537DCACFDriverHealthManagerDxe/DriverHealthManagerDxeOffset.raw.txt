@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_RAW -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/EBF8ED7C-0DD1-4787-84F1-F48D537DCACFDriverHealthManagerDxe/DriverHealthManagerDxeOffset.raw /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/EBF8ED7C-0DD1-4787-84F1-F48D537DCACFDriverHealthManagerDxe/DriverHealthManagerDxe.offset

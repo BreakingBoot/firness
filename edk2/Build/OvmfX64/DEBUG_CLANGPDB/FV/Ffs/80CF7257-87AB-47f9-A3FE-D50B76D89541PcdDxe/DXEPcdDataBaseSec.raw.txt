@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_RAW -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/80CF7257-87AB-47f9-A3FE-D50B76D89541PcdDxe/DXEPcdDataBaseSec.raw /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/MdeModulePkg/Universal/PCD/Dxe/Pcd/OUTPUT/DXEPcdDataBase.raw

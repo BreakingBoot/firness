@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/DC3641B8-2FA8-4ed3-BC1F-F9962A03454BMtftp4Dxe/DC3641B8-2FA8-4ed3-BC1F-F9962A03454BSEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/NetworkPkg/Mtftp4Dxe/Mtftp4Dxe/OUTPUT/Mtftp4Dxe.efi

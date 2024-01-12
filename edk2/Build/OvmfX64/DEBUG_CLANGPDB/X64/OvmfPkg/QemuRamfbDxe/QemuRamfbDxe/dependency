@@ -1,7 +1,0 @@
-
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe/OUTPUT/QemuRamfb.obj.deps
-
--include /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe/OUTPUT/AutoGen.obj.deps
-
-               

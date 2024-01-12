@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/E750224E-7BCE-40AF-B5BB-47E3611EB5C2TdxDxe/E750224E-7BCE-40AF-B5BB-47E3611EB5C2SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/TdxDxe/TdxDxe/OUTPUT/TdxDxe.efi

@@ -1,1 +1,0 @@
-/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/UefiCpuPkg/CpuMpPei/280251c4-1d09-4035-9062-839acb5f18c1/GNUmakefile

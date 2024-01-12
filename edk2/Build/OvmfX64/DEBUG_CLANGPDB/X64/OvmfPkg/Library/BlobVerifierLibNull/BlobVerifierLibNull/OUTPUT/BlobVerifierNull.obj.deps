@@ -1,9 +1,0 @@
-/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BlobVerifierLibNull/BlobVerifierLibNull/OUTPUT/BlobVerifierNull.obj:   /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Library/BlobVerifierLibNull/BlobVerifierNull.c \
-  /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/Library/BlobVerifierLibNull/BlobVerifierLibNull/DEBUG/AutoGen.h \
-  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Base.h \
-  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/X64/ProcessorBind.h \
-  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Library/BaseLib.h \
-  /home/gl055/Research/Harden/firness/edk2/OvmfPkg/Include/Library/BlobVerifierLib.h \
-  /home/gl055/Research/Harden/firness/edk2/MdePkg/Include/Uefi/UefiBaseType.h
-
-# Updated 

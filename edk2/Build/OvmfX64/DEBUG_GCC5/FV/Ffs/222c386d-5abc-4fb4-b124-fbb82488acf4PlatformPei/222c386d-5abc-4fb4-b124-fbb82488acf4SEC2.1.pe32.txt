@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/FV/Ffs/222c386d-5abc-4fb4-b124-fbb82488acf4PlatformPei/222c386d-5abc-4fb4-b124-fbb82488acf4SEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_GCC5/X64/OvmfPkg/PlatformPei/PlatformPei/OUTPUT/PlatformPei.efi

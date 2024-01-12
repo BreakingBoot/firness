@@ -1,1 +1,0 @@
-/home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib/GNUmakefile

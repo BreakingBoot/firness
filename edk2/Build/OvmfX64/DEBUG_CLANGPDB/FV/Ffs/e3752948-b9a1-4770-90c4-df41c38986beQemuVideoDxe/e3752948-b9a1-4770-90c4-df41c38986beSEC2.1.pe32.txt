@@ -1,1 +1,0 @@
-GenSec -s EFI_SECTION_PE32 -o /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/FV/Ffs/e3752948-b9a1-4770-90c4-df41c38986beQemuVideoDxe/e3752948-b9a1-4770-90c4-df41c38986beSEC2.1.pe32 /home/gl055/Research/Harden/firness/edk2/Build/OvmfX64/DEBUG_CLANGPDB/X64/OvmfPkg/QemuVideoDxe/QemuVideoDxe/OUTPUT/QemuVideoDxe.efi
