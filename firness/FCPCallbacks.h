@@ -76,10 +76,10 @@ public:
                             SrcMgr::CharacteristicKind FileType) override {
         // Need to also track the function calls -> include directives
         // Store the full path and other information as needed.
-        // std::string FullPath = SearchPath.str() + "/" + FileName.str();
+        std::string FullPath = SearchPath.str() + "/" + FileName.str();
         // IncludeDirectives.insert(FullPath);
         if("AutoGen.h" != FileName.str())
-            IncludeDirectives.insert(FileName.str());
+            IncludeDirectives.insert(FullPath);
     }
 
 private:
