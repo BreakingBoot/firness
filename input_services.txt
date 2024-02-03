@@ -62,3 +62,20 @@
     UpdateCapsule
     QueryCapsuleCapabilities
     QueryVariableInfo
+
+[DxeServices]
+    AddMemorySpace
+    AllocateMemorySpace
+    FreeMemorySpace
+    RemoveMemorySpace
+    GetMemorySpaceDescriptor
+    SetMemorySpaceAttributes
+    GetMemorySpaceMap
+    AddIoSpace
+    AllocateIoSpace
+    FreeIoSpace
+    RemoveIoSpace
+    GetIoSpaceDescriptor
+    GetIoSpaceMap
+    SetMemorySpaceCapabilities
+    ProcessFirmwareVolume
