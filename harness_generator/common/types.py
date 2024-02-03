@@ -19,7 +19,22 @@ default_includes = {
     "Library/SerialPortLib.h",
     "Library/PciExpressLib.h",
     "Library/IoLib.h",
-    "Library/SynchronizationLib.h"        
+    "Library/SynchronizationLib.h",
+    "Uefi/UefiSpec.h"    
+}
+
+default_libraries = {
+    "UefiApplicationEntryPoint",
+    "UefiLib",
+    "BaseLib",
+    "BaseMemoryLib",
+    "DebugLib",
+    "UefiBootServicesTableLib",
+    "UefiRuntimeServicesTableLib",
+    "UefiDriverEntryPoint",
+    "PcdLib",
+    "DxeServicesTableLib",
+    "HobLib"
 }
 
 type_defs = {
@@ -32,8 +47,8 @@ type_defs = {
     "CHAR16": "unsigned short",
     "INT32": "int",
     "UINT32": "unsigned int",
-    "INT64": "__int64",
-    "UINT64": "unsigned __int64",
+    "INT64": "long long",
+    "UINT64": "unsigned long long",
     "INTN": "long",
     "UINTN": "unsigned long"
 }
@@ -54,7 +69,7 @@ convert_types = {
     "VOID*": "void*",
     "UINTN": "uint64_t",
     "INTN": "int64_t",
-    "EFI_GUID": "EFI_GUID"
+    "EFI_GUID": "EFI_GUID",
 }
 
 scalable_params = [
@@ -73,6 +88,7 @@ services_map = {
     "BS": "BootServices",
     "RT": "RuntimeServices",
     "protocol": "Protocols",
+    "DS": "DxeServices",
     "other": "OtherFunctions"
 }
 
@@ -93,9 +109,9 @@ ignore_constant_keywords = [
 class Argument:
     def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str, potential_outputs: List[str] = []):
         self.arg_dir = arg_dir
-        self.arg_type = arg_type
+        self.arg_type = arg_type.replace('const ', '')
         self.assignment = assignment
-        self.data_type = data_type
+        self.data_type = data_type.replace('const ', '')
         self.pointer_count = arg_type.count('*')
         self.usage = usage
         self.potential_outputs = potential_outputs
@@ -143,8 +159,9 @@ class FieldInfo:
         self.type = type
 
 class TypeTracker:
-    def __init__(self, arg_type: str, variable: str, pointer_count: int):
+    def __init__(self, arg_type: str, variable: str, pointer_count: int, fuzzable: bool = False):
         self.arg_type = arg_type
         self.name = variable
         self.pointer_count = pointer_count
+        self.fuzzable = fuzzable
         

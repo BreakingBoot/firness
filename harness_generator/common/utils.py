@@ -173,6 +173,24 @@ def is_fuzzable(type: str,
 
     return False
 
+def print_function_block(function_block: FunctionBlock) -> None:
+    print('----------------------------------------------')
+    print('Function Block:')
+    print(f'\tService: {function_block.service}')
+    print(f'\tFunction: {function_block.function}')
+    print(f'\tReturn Type: {function_block.return_type}')
+    for arg_num, arg_list in function_block.arguments.items():
+        print(f'\t{arg_num}: ')
+        for arg in arg_list:
+            print(f'\t\tArg Dir: {arg.arg_dir}')
+            print(f'\t\tArg Type: {arg.arg_type}')
+            print(f'\t\tAssignment: {arg.assignment}')
+            print(f'\t\tData Type: {arg.data_type}')
+            print(f'\t\tUsage: {arg.usage}')
+            print(f'\t\tPointer Count: {arg.pointer_count}')
+            print(f'\t\tPotential Values: {arg.potential_outputs}')
+            print(f'\t\tVariable: {arg.variable}')
+    print('----------------------------------------------')
 
 #
 # Get the intersect between all of the includes for each function of the same name
