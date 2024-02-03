@@ -286,7 +286,7 @@ public:
         if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(E)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 if (FunctionNames.count(FD->getNameAsString())) {
-                    llvm::outs() << "Found Match: " << FD->getNameAsString() << "\n";
+                    // llvm::outs() << "Found Match: " << FD->getNameAsString() << "\n";
                     return true;
                 }
             }
@@ -294,7 +294,7 @@ public:
         else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(E)) {
             // If the Function Pointer Called matches the one we are looking for
             if (FunctionNames.count(MemExpr->getMemberNameInfo().getName().getAsString())) {
-                llvm::outs() << "Found Match: " << MemExpr->getMemberNameInfo().getName().getAsString() << "\n";
+                // llvm::outs() << "Found Match: " << MemExpr->getMemberNameInfo().getName().getAsString() << "\n";
                 return true;
             }
         }
@@ -353,20 +353,34 @@ public:
             {
                 Argument String_Arg;
                 String_Arg.data_type = VD->getType().getAsString();
-                String_Arg.variable = VD->getNameAsString();
+                if(Clang_Arg.ArgNum == 0 && CallInfo.Service == "protocol")
+                {
+                    String_Arg.variable = "__PROTOCOL__";
+                }
+                else
+                {
+                    String_Arg.variable = VD->getNameAsString();
+                }
+                // String_Arg.variable = VD->getNameAsString();
                 std::vector<std::string> potentialOutputs = GetPotentialOutputs(Clang_Arg.Arg);
                 if(potentialOutputs.size() > 1)
                 {
                     String_Arg.potential_outputs = potentialOutputs;
                     String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 }
+                else if(potentialOutputs.size() == 1)
+                {
+                    String_Arg.usage = PassHelpers::reduceWhitespace(potentialOutputs[0]);
+                }
                 else
                 {
                     String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 }
+
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
+
                 GeneratorTypes.insert(removeTrailingPointer(String_Arg.arg_type));
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
             }
@@ -389,6 +403,54 @@ public:
         }
         return true;
     }
+
+    // std::vector<std::string> GetPotentialOutputs(Expr *E) {
+    //     std::vector<std::string> potentialOutputs;
+
+    //     if (auto *BO = dyn_cast<BinaryOperator>(E->IgnoreCasts())) {
+    //         if (BO->isBitwiseOp()) {
+    //             Expr *lhs = BO->getLHS();
+    //             Expr *rhs = BO->getRHS();
+
+    //             // Recursively check left-hand side and right-hand side
+    //             auto leftOutputs = GetPotentialOutputs(lhs->IgnoreCasts()->IgnoreParens());
+    //             auto rightOutputs = GetPotentialOutputs(rhs->IgnoreCasts()->IgnoreParens());
+
+    //             if (leftOutputs.empty() && rightOutputs.empty()) {
+    //                 return potentialOutputs;
+    //             } else if (leftOutputs.empty()) {
+    //                 return rightOutputs;
+    //             } else if (rightOutputs.empty()) {
+    //                 return leftOutputs;
+    //             }
+
+    //             // Combine the potential outputs from both sides
+    //             for (const std::string &left : leftOutputs) {
+    //                 for (const std::string &right : rightOutputs) {
+    //                     if (BO->getOpcode() == BO_Or)
+    //                         potentialOutputs.push_back(left + " | " + right);
+    //                     else if (BO->getOpcode() == BO_And)
+    //                         potentialOutputs.push_back(left + " & " + right);
+    //                 }
+    //             }
+    //         }
+    //     } else if (ConditionalOperator *condOp = dyn_cast<ConditionalOperator>(E->IgnoreCasts())) {
+    //         // Process true and false expressions
+    //         auto trueOutputs = GetPotentialOutputs(condOp->getTrueExpr());
+    //         auto falseOutputs = GetPotentialOutputs(condOp->getFalseExpr());
+
+    //         // Add the potential outputs from both branches
+    //         potentialOutputs.insert(potentialOutputs.end(), trueOutputs.begin(), trueOutputs.end());
+    //         potentialOutputs.insert(potentialOutputs.end(), falseOutputs.begin(), falseOutputs.end());
+    //     } else {
+    //         // This is a leaf node or non-conditional expression, add it to potential outputs
+    //         //if (isa<StringLiteral>(E->IgnoreCasts()) || isa<IntegerLiteral>(E->IgnoreCasts()) || isa<CharacterLiteral>(E->IgnoreCasts())) {
+    //         potentialOutputs.push_back(getSourceCode(E, *this->Context));
+    //         //}
+    //     }
+
+    //     return potentialOutputs;
+    // }
 
     std::vector<std::string> GetPotentialOutputs(Expr *E) {
         std::vector<std::string> potentialOutputs;
@@ -520,7 +582,22 @@ public:
             CallInfo.Function = CallExprString;
             if (auto *Base = dyn_cast<Expr>(MemExpr->getBase()))
             {
-                CallInfo.Service = getSourceCode(Base, *this->Context);
+                // Base is of type Expr*
+                // Now, you can get the type information
+                QualType BaseType = Base->getType();
+                std::string type = BaseType.getAsString();
+                std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+
+                // check if the BaseType contains the phrase protocol and make sure its lowercase
+                if (type.find("protocol") != std::string::npos) {
+                    CallInfo.Service = "protocol";
+                    ///CallInfo.Arguments.begin()->second.variable = "__PROTOCOL__";
+                }
+                else
+                {
+                    CallInfo.Service = getSourceCode(Base, *this->Context);
+                }
+
             }
             CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
@@ -551,6 +628,82 @@ public:
         llvm::outs() << "False Expr: " << falseExprString << "\n";
     }
 
+    bool isProtocol(std::string function_name) {
+        if(CallInfo.Arguments.empty())
+        {
+            return false;
+        }
+        std::string type = CallInfo.Arguments.begin()->second.data_type;
+        if(type.empty())
+        {
+            return false;
+        }
+        // if(CallInfo.Service == "protocol")
+        // {
+        //     CallInfo.Arguments.begin()->second.variable = "__PROTOCOL__";
+        //     llvm::outs() << "Protocol: " << function_name << "\n";
+        //     return true;
+        // }
+        std::string guid;
+        for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
+        {
+            if(it->first == function_name)
+            {
+                if(!it->second.empty())
+                {
+                    guid = it->second;
+                }
+            }
+        }
+        if(guid.empty())
+        {
+            return false;
+        }
+        // drop the g and Guid from the string guid
+        guid = guid.substr(1, guid.length() - 5);
+
+        // make sure its all lowercase
+        std::transform(guid.begin(), guid.end(), guid.begin(), ::tolower);
+
+        // remove the all underscores from the data type string
+        type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
+
+        // make sure its all lowercase
+        std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+
+        // check if the type contains the guid
+        if (type.find(guid) != std::string::npos) {
+            CallInfo.Service = "protocol";
+            CallInfo.Arguments.begin()->second.variable = "__PROTOCOL__";
+            return true;
+        }
+
+        return false;
+    }
+
+    bool isNonProtocol(std::string function_name)
+    {
+        for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
+        {
+            if(it->first == function_name)
+            {
+                if(it->second.empty())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void verifyCallInfo()
+    {
+        if(isNonProtocol(CallInfo.Function) || isProtocol(CallInfo.Function))
+        {
+            CallMap.push_back(CallInfo);
+        }
+    }
+
     /*
         Visit Every Call Expr and add its info to the 
         Call Map if the function name matches
@@ -576,7 +729,7 @@ public:
             GenCallInfo(Call);
             CallInfo.includes = IncludeDirectives;
             CallInfo.return_type = Call->getType().getAsString();
-            CallMap.push_back(CallInfo);
+            verifyCallInfo();
         }
         return true;
     }

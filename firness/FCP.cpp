@@ -11,11 +11,13 @@ std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 std::vector<Call> CallMap;
 std::map<std::string, MacroDef> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
+std::map<std::string, std::set<std::string>> EnumMap;
 std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 std::vector<Call> GeneratorMap;
 std::set<std::string> IncludeDirectives;
 std::set<std::pair<std::string, std::string>> SingleTypedefs;
 std::set<std::string> GeneratorTypes;
+std::set<std::pair<std::string, std::string>> HarnessFunctions;
 
 
 // Define command-line options for input file and output dir
@@ -45,7 +47,10 @@ int main(int argc, const char **argv) {
     // ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList()); // For Single file input
 
     if(!input_filename.empty())
+    {
         FunctionNames = FileOps::processFunctionNames(input_filename);
+        HarnessFunctions = FileOps::processHarnessFunctions(input_filename);
+    }
     else
     {
         llvm::errs() << "Missing Input File\n";
@@ -60,6 +65,7 @@ int main(int argc, const char **argv) {
         FileOps::outputGeneratorMap(output_filename, GeneratorMap);
         FileOps::outputTypedefs(output_filename, SingleTypedefs);
         FileOps::outputMacros(output_filename, PreDefinedConstants);
+        FileOps::outputEnums(output_filename, EnumMap);
     }
     else
         FileOps::printCallMap(CallMap);
