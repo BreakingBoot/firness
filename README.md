@@ -71,20 +71,88 @@ There are several phases of the processing of the data before it is ready for th
 
 The template engine creates 4 files based off of the information obtained from the call database during the anlysis: The main file to call the harnessed functions, a harnessed file which holds all of the harnessed functions, a header file for the harnessed functions, and an INF file needed for compiling with EDK2.
 
-## Notes
+## Running
 
-The static anlysis utilizes a compilation database, which can be generated with the `bear` library:
-
-```
-Example: 
-bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANGPDB
-```
-
-All of the dependencies are included in the included docker which can be built and run with:
+To run this section, you'll need the docker image with can either be built with:
 
 ```
-sudo docker build -t firness .
-sudo docker run -it -v ./:/llvm-source/llvm-15.0.7/clang-tools-extra/firness firness
+docker build -t firness-image:dev -f firness_dev.dockerfile .
+```
+
+or it can be from here, which is faster because you don't have to build clang:
+
+```
+# login into you ghcr.io
+docker login ghcr.io -u <username>
+# you'lll then be promted for your github token
+# Next, pull the container:
+docker pull ghcr.io/breakingboot/fuzzuer/firness-image:dev
+```
+### Code Analysis
+With the container, you can now run the analysis:
+
+```
+# start the container
+docker run -it -v <local_input_folder>:/input -v <local_output_folder>:output ./:/llvm-source/llvm-15.0.7/clang-tools-extra/firness firness-image:dev
+
+# path clang to include the analysis
 /llvm-source/llvm-15.0.7/clang-tools-extra/firness/patch.sh
-/llvm-source/llvm-15.0.7/clang-tools-extra/firness/analyze.sh
+
+# get the compilation database
+cd /input/edk2/ && \
+make -C BaseTools && \
+. ./edksetup.sh &&  \
+bear -- build -p OvmfPkg/OvmfPkgX64.dsc -a X64 -t CLANGDWARF
+
+# Begin the static analysis
+/llvm-source/llvm-15.0.7/clang-tools-extra/firness/analysis.sh <input_dir> <output_dir> <edk2_dir>
+```
+
+`<local_input_folder>` is the folder on the host system that contains the firmware that you want to analyse and the `input.txt` defining the function to analyse. `<local_output_folder` is where you want the analysis to put the output. `<input_dir>` is the docker relative input directory and needs to correspond with `<local_input_folder>`, it defaults to `/input`. `<output_dir>` and `<edk2_dir>` work similarly but default to `/output` and `/input/edk2`, respectively.
+
+NOTE: If the firmware has already been compiled and you recreate the compilation database, the analysis will fail because the `compilation-database.json` will be overwritten with an empty file since it doesn't automatically recompile everything. If you want to do that then clean the `Build/` directory and recompile it.
+
+
+### Code Generation
+The harnesses can be generated with:
+
+```
+cd /llvm-source/harness_generator && \
+python3 main.py
+```
+
+If you followed the convention above you shouldn't have to change any of the input options, but there are several different options:
+
+```
+# python3 main.py -h
+usage: main.py [-h] [-d DATA_FILE] [-g GENERATOR_FILE] [-t TYPES_FILE] [-a ALIAS_FILE]
+               [-m MACRO_FILE] [-i INPUT_FILE] [-o OUTPUT] [-c] [-r] [-b]
+
+Process some data.
+
+options:
+  -h, --help            show this help message and exit
+  -d DATA_FILE, --data-file DATA_FILE
+                        Path to the data file (default: /output/tmp/call-
+                        database.json)
+  -g GENERATOR_FILE, --generator-file GENERATOR_FILE
+                        Path to the generator file (default: /output/tmp/generator-
+                        database.json)
+  -t TYPES_FILE, --types-file TYPES_FILE
+                        Path to the types file (default: /output/tmp/types.json)
+  -a ALIAS_FILE, --alias-file ALIAS_FILE
+                        Path to the typedef aliases file (default:
+                        /output/tmp/aliases.json)
+  -m MACRO_FILE, --macro-file MACRO_FILE
+                        Path to the macros file (default: /output/tmp/macros.json)
+  -i INPUT_FILE, --input-file INPUT_FILE
+                        Path to the input file (default: /input/input.txt)
+  -o OUTPUT, --output OUTPUT
+                        Path to the output directory (default: /output)
+  -c, --clean           Clean the generator database (default: False)
+  -r, --random          Use random input instead of structured input data (default:
+                        False)
+  -b, --best-guess      Choose the function match with the highest frequency even if
+                        it might not be the right one (default: False)
+
 ```
