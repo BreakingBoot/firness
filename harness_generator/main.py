@@ -62,9 +62,10 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
                   types_dict: Dict[str, List[FieldInfo]],
                   generators_dict: Dict[str, FunctionBlock],
                   aliases: Dict[str, str],
-                  harness_folder):
+                  harness_folder,
+                  enums: Dict[str, List[str]]):
     code = uefi_harnesses.harness_generator(
-        data_template, function_dict, types_dict, generators_dict, aliases)
+        data_template, function_dict, types_dict, generators_dict, aliases, enums)
     gen_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
 
@@ -75,8 +76,8 @@ def generate_header(function_dict: Dict[str, FunctionBlock],
     gen_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 
-def generate_inf(harness_folder: str, driver_guids: set = None, protocol_guids: set = None):
-    code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids)
+def generate_inf(harness_folder: str, libraries: str, driver_guids: set = None, protocol_guids: set = None):
+    code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
 def generate_includes(all_includes: List[str], harness_folder: str):
@@ -87,7 +88,9 @@ def generate_includes(all_includes: List[str], harness_folder: str):
 def generate_harness(merged_data: Dict[str, FunctionBlock],
                      template: Dict[str, FunctionBlock],
                      types: Dict[str, List[FieldInfo]],
+                     enums: Dict[str, List[str]],
                      all_includes: List[str],
+                     libraries: List[str],
                      generators: Dict[str, FunctionBlock],
                      aliases: Dict[str, str],
                      matched_macros: Dict[str, str],
@@ -97,12 +100,12 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      output_dir: str):
 
     generate_main(merged_data, harness_folder)
-    generate_code(merged_data, template, types, generators, aliases, harness_folder)
+    generate_code(merged_data, template, types, generators, aliases, harness_folder, enums)
     generate_header(merged_data, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
-    generate_inf(harness_folder, protocol_guids, driver_guids)
-    generate_harness_debugger(merged_data, template,
-                              types, all_includes, generators, aliases, harness_folder)
+    generate_inf(harness_folder, libraries, protocol_guids, driver_guids)
+    # generate_harness_debugger(merged_data, template,
+                            #   types, all_includes, generators, aliases, harness_folder)
     output_dir = os.path.join(output_dir, 'Firness')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -148,6 +151,8 @@ def main():
                         help='Path to the typedef aliases file (default: /output/tmp/aliases.json)')
     parser.add_argument('-m', '--macro-file', dest='macro_file', default='/output/tmp/macros.json',
                         help='Path to the macros file (default: /output/tmp/macros.json)')
+    parser.add_argument('-e', '--enum-file', dest='enum_file', default='/output/tmp/enums.json',
+                        help='Path to the enums file (default: /output/tmp/enums.json)')
     parser.add_argument('-i', '--input-file', dest='input_file',
                         default='/input/input.txt', help='Path to the input file (default: /input/input.txt)')
     parser.add_argument('-o', '--output', dest='output',
@@ -163,10 +168,10 @@ def main():
 
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
-    processed_data, processed_generators, template, types, all_includes, matched_macros, aliases, protocol_guids, driver_guids = analyze_data(args.macro_file, args.generator_file, args.input_file,
+    processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                   args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess)
-    generate_harness(processed_data, template, types,
-                     all_includes, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output)
+    generate_harness(processed_data, template, types, enums,
+                     all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output)
 
 
 if __name__ == '__main__':
