@@ -41,27 +41,14 @@ ReadBytes(
     return EFI_ABORTED;
   }
 
-  // Allocate memory for the output buffer
-  outputBuffer = (VOID*)AllocateZeroPool(numBytes);
-  if (outputBuffer == NULL) 
-  {
-    return EFI_ABORTED;
-  }
-
   // Determine the actual number of bytes to extract
-  UINTN actualBytes = (numBytes > inputBuffer->Length) ? inputBuffer->Length : numBytes;
+  UINTN actualBytes = (inputBuffer->Length - numBytes >= 0) ? numBytes : inputBuffer->Length;
 
   // Copy the bytes from the input buffer to the output buffer
   CopyMem((UINT8*)outputBuffer, inputBuffer->Buffer, actualBytes);
 
-  // Fill the remaining part of the output buffer with zeros if necessary
-  if (actualBytes < numBytes) 
-  {
-    ZeroMem((UINT8*)outputBuffer + actualBytes, numBytes - actualBytes);
-  }
-
   // Update the input buffer to remove the extracted bytes
-  CopyMem(inputBuffer->Buffer, inputBuffer->Buffer + actualBytes, inputBuffer->Length - actualBytes);
+  inputBuffer += actualBytes;
   inputBuffer->Length -= actualBytes;
 
   return EFI_SUCCESS;
