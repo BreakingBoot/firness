@@ -35,7 +35,8 @@ def harness_header(functions: Dict[str, FunctionBlock],
         output.append(f"EFIAPI")
         output.append(f"Fuzz{function}(")
         output.append(f"    IN INPUT_BUFFER *Input,")
-        output.append(f"    IN EFI_SYSTEM_TABLE *SystemTable")
+        output.append(f"    IN EFI_SYSTEM_TABLE *SystemTable,")
+        output.append(f"    IN EFI_HANDLE *ImageHandle")
         output.append(");")
         output.append("")
 

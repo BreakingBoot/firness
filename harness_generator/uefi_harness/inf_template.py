@@ -2,7 +2,8 @@ from typing import List
 
 def gen_firness_inf(uuid: str, 
                     driver_guids: List[str], 
-                    protocol_guids: List[str]) -> List[str]:
+                    protocol_guids: List[str],
+                    libraries: List[str]) -> List[str]:
     output = []
 
     output.append("[Defines]")
@@ -42,6 +43,8 @@ def gen_firness_inf(uuid: str,
 
     output.append("")
     output.append("[LibraryClasses]")
+    # for lib in libraries:
+    #     output.append(f'  {lib}')
     output.append("  UefiApplicationEntryPoint")
     output.append("  UefiLib")
     output.append("  BaseLib")
