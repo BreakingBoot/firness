@@ -129,6 +129,7 @@ extern std::map<TypedefDecl*, TypeData> varTypeInfo;
 extern std::map<RecordDecl*, TypeData> varRecordInfo;
 
 extern std::set<std::string> FunctionNames;
+extern std::set<std::pair<std::string, std::string>> HarnessFunctions;
 extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
 extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 extern std::map<std::string, TypeData> FinalTypes;
@@ -138,6 +139,7 @@ extern std::vector<Call> CallMap;
 extern std::map<std::string, MacroDef> PreDefinedConstants;
 extern std::set<std::string> IncludeDirectives;
 extern std::vector<std::string> EnumConstants;
+extern std::map<std::string, std::set<std::string>> EnumMap;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
 extern std::set<std::string> GeneratorTypes;

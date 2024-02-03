@@ -262,6 +262,18 @@ namespace FileOps {
             // Remove extra whitespace between words
             line = std::regex_replace(line, std::regex("\\s+"), " ");
 
+            // stip any line that containes a [ or a ]
+            if (line.find('[') != std::string::npos || line.find(']') != std::string::npos) {
+                continue;
+            }
+
+            // Remove the protocol name from the function name
+            // e.g. gEdkiiIoMmuProtocolGuid:Map -> Map
+            size_t colonIndex = line.find(':');
+            if (colonIndex != std::string::npos) {
+                line = line.substr(colonIndex + 1);
+            }
+
             if (!line.empty()) {
                 FunctionNames.insert(line);
             }
@@ -270,6 +282,76 @@ namespace FileOps {
         file.close();
         return FunctionNames;
     }
+
+    /*
+        Output enums to a json file
+    */
+    void outputEnums(const std::string& filename, const std::map<std::string, std::set<std::string>>& enums) {
+        std::string file_path = filename + "/enums.json";
+        nlohmann::json j;
+        for (const auto& pair : enums) {
+            const std::set<std::string>& enumValues = pair.second;
+            nlohmann::json enumJson;
+            enumJson["Name"] = pair.first;
+            enumJson["Values"] = enumValues;
+            j.push_back(enumJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+
+    /*
+        Read input file that contains the functions to analyze
+        and store them in the HarnessFunctionNames set
+    */
+    std::set<std::pair<std::string, std::string>> processHarnessFunctions(const std::string& filename) {
+        std::ifstream file(filename);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            exit(1);
+        }
+        HarnessFunctions.clear();
+        std::string line;
+        std::string function;
+        std::string guid = "";
+        while (std::getline(file, line)) {
+            // Remove leading and trailing whitespace
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return !std::isspace(ch); }));
+            line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) { return !std::isspace(ch); }).base(), line.end());
+
+            // Remove extra whitespace between words
+            line = std::regex_replace(line, std::regex("\\s+"), " ");
+
+            // stip any line that containes a [ or a ]
+            if (line.find('[') != std::string::npos || line.find(']') != std::string::npos) {
+                continue;
+            }
+
+            // Remove the protocol name from the function name
+            // e.g. gEdkiiIoMmuProtocolGuid:Map -> Map
+            size_t colonIndex = line.find(':');
+            if (colonIndex != std::string::npos) {
+                function = line.substr(colonIndex + 1);
+                guid = line.substr(0, colonIndex);
+            }
+            else
+            {
+                function = line;
+            }
+
+            if (!line.empty()) {
+                HarnessFunctions.insert(std::make_pair(function, guid));
+                function.clear();
+                guid = "";
+            }
+        }
+
+        file.close();
+        return HarnessFunctions;
+    }
+
 }; // FileOps namespace
 
 #endif

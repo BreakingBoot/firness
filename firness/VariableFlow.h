@@ -24,8 +24,19 @@ public:
     */
    bool VisitEnumDecl(EnumDecl* ED)
    {
+        // Get the source location information
+        SourceLocation Loc = ED->getLocation();
+        FullSourceLoc FullLoc = Context->getFullLoc(Loc);
+
+        // Print filename and line number
+        std::string enum_name = FullLoc.getManager().getFilename(FullLoc).str() + "_" + std::to_string(FullLoc.getSpellingLineNumber());
+        if(!ED->getNameAsString().empty())
+            enum_name = ED->getNameAsString();
+
         for (auto it = ED->enumerator_begin(); it != ED->enumerator_end(); ++it) {
+            EnumMap[enum_name].insert((*it)->getNameAsString());
             EnumConstants.push_back((*it)->getNameAsString());
+            
         }
 
         return true;
