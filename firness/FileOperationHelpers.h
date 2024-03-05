@@ -82,10 +82,16 @@ namespace FileOps {
             functionJson["ReturnType"] = function.return_type;
             nlohmann::json parametersJson;
             for (const auto& pair : function.Parameters) {
-                nlohmann::json parameterJson;
-                parameterJson["Name"] = pair.first;
-                parameterJson["Type"] = pair.second;
-                parametersJson.push_back(parameterJson);
+                nlohmann::json paramJson;
+                const Argument& arg = pair.second;
+                paramJson["arg_dir"] = arg.arg_dir;
+                paramJson["arg_type"] = arg.arg_type;
+                paramJson["variable"] = arg.variable;
+                paramJson["data_type"] = arg.data_type;
+                paramJson["assignment"] = arg.assignment;
+                paramJson["usage"] = arg.usage;
+                paramJson["potential_outputs"] = arg.potential_outputs;
+                parametersJson[pair.first] = paramJson;
             }
             functionJson["Parameters"] = parametersJson;
             functionJson["Includes"] = function.includes;

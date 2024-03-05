@@ -117,14 +117,13 @@ struct Call {
 struct Function {
     std::string FunctionName;
     std::string return_type;
-    std::vector<std::pair<std::string, std::string>> Parameters;
+    std::map<std::string, Argument> Parameters;
     std::set<std::string> includes;
 
     // Function to clear the Call object
     void clear() {
         FunctionName.clear();
         for (auto& pair : Parameters) {
-            pair.first.clear();
             pair.second.clear();
         }
         Parameters.clear();
