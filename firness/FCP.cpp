@@ -18,6 +18,7 @@ std::set<std::string> IncludeDirectives;
 std::set<std::pair<std::string, std::string>> SingleTypedefs;
 std::set<std::string> GeneratorTypes;
 std::set<std::pair<std::string, std::string>> HarnessFunctions;
+std::vector<Function> FunctionDeclMap;
 
 
 // Define command-line options for input file and output dir
@@ -66,6 +67,7 @@ int main(int argc, const char **argv) {
         FileOps::outputTypedefs(output_filename, SingleTypedefs);
         FileOps::outputMacros(output_filename, PreDefinedConstants);
         FileOps::outputEnums(output_filename, EnumMap);
+        FileOps::outputFunctionDecl(output_filename, FunctionDeclMap);
     }
     else
         FileOps::printCallMap(CallMap);

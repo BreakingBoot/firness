@@ -70,6 +70,33 @@ namespace FileOps {
     }
 
     /*
+        Responsible for writing the function information
+        gathered from the analysis to a json output file called functions
+    */
+    void outputFunctionDecl(const std::string &filename, const std::vector<Function>& functions) {
+        std::string file_path = filename + "/functions.json";
+        nlohmann::json j;
+        for (const auto& function : functions) {
+            nlohmann::json functionJson;
+            functionJson["Function"] = function.FunctionName;
+            functionJson["ReturnType"] = function.return_type;
+            nlohmann::json parametersJson;
+            for (const auto& pair : function.Parameters) {
+                nlohmann::json parameterJson;
+                parameterJson["Name"] = pair.first;
+                parameterJson["Type"] = pair.second;
+                parametersJson.push_back(parameterJson);
+            }
+            functionJson["Parameters"] = parametersJson;
+            functionJson["Includes"] = function.includes;
+            j.push_back(functionJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+
+    /*
         Prints all of the call site information obtained from the
         pass to a json file call call-database
         "Arguments": {

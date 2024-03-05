@@ -114,6 +114,25 @@ struct Call {
     }
 };
 
+struct Function {
+    std::string FunctionName;
+    std::string return_type;
+    std::vector<std::pair<std::string, std::string>> Parameters;
+    std::set<std::string> includes;
+
+    // Function to clear the Call object
+    void clear() {
+        FunctionName.clear();
+        for (auto& pair : Parameters) {
+            pair.first.clear();
+            pair.second.clear();
+        }
+        Parameters.clear();
+        includes.clear();
+        return_type.clear();
+    }
+};
+
 struct MacroDef {
     std::string Name;
     std::string Value;
@@ -143,3 +162,4 @@ extern std::map<std::string, std::set<std::string>> EnumMap;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
 extern std::set<std::string> GeneratorTypes;
+extern std::vector<Function> FunctionDeclMap;
