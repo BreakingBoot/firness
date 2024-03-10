@@ -57,6 +57,95 @@ public:
         return "UNKNOWN";
     }
 
+    bool isProtocol(std::string function_name) {
+        if(FunctionInfo.Parameters.empty())
+        {
+            return false;
+        }
+        std::string type = FunctionInfo.Parameters.begin()->second.arg_type;
+        if(type.empty())
+        {
+            return false;
+        }
+        // if(FunctionInfo.Service == "protocol")
+        // {
+        //     FunctionInfo.Arguments.begin()->second.variable = "__PROTOCOL__";
+        //     llvm::outs() << "Protocol: " << function_name << "\n";
+        //     return true;
+        // }
+        std::string guid;
+        for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
+        {
+            if(it->first == function_name)
+            {
+                if(!it->second.empty())
+                {
+                    guid = it->second;
+                }
+            }
+        }
+        if(guid.empty())
+        {
+            return false;
+        }
+        // drop the g and Guid from the string guid
+        guid = guid.substr(1, guid.length() - 5);
+
+        // make sure its all lowercase
+        std::transform(guid.begin(), guid.end(), guid.begin(), ::tolower);
+        guid.erase(std::remove(guid.begin(), guid.end(), '_'), guid.end());
+
+        // remove the all underscores from the data type string
+        type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
+
+        // make sure its all lowercase
+        std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+
+        // check if the type contains the guid
+        if (type.find(guid) != std::string::npos) {
+            FunctionInfo.Parameters.begin()->second.variable = "__PROTOCOL__";
+            return true;
+        }
+
+        return false;
+    }
+
+    bool isNonProtocol(std::string function_name)
+    {
+        for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
+        {
+            if(it->first == function_name)
+            {
+                if(it->second.empty())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void verifyFunctionInfo()
+    {
+        if(isNonProtocol(FunctionInfo.FunctionName) || isProtocol(FunctionInfo.FunctionName))
+        {
+            FunctionDeclMap.push_back(FunctionInfo);
+        }
+    }
+
+    void getFunctionHeaderFile(FunctionDecl *FD, ASTContext &Context) {
+        // Get the source range of the function declaration
+        SourceRange range = FD->getSourceRange();
+
+        // Get the file path of the header file
+        SourceLocation loc = range.getBegin();
+        FileID fileID = Context.getSourceManager().getFileID(loc);
+        const FileEntry *fileEntry = Context.getSourceManager().getFileEntryForID(fileID);
+        if (fileEntry) {
+            FunctionInfo.includes.insert(fileEntry->getName().str());
+        }
+    }
+
     bool VisitFunctionDecl(FunctionDecl *Func) {
         if (FunctionNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
             FunctionInfo.FunctionName = Func->getNameAsString();
@@ -68,7 +157,6 @@ public:
                 SourceManager &SM = Context->getSourceManager();
                 const LangOptions &LangOpts = Context->getLangOpts();
                 CharSourceRange Range = CharSourceRange::getTokenRange(Func->getSourceRange());
-                QualType OriginalType = Param->getOriginalType();
                 std::string ExprText = Lexer::getSourceText(Range, SM, LangOpts).str();
 
                 arg.arg_type = Param->getType().getAsString();
@@ -80,7 +168,10 @@ public:
             }
             //return type
             FunctionInfo.return_type = Func->getReturnType().getAsString();
-            FunctionDeclMap.push_back(FunctionInfo);
+            getFunctionHeaderFile(Func, *Context);
+            // FunctionInfo.includes = "protocol";
+            verifyFunctionInfo();
+            // FunctionDeclMap.push_back(FunctionInfo);
             FunctionInfo.clear();
         }
         return true;

@@ -46,13 +46,13 @@ public:
                 MacroDef mac;
                 mac.Name = MacroName.str();
                 // remove the first 6 directories from the path
-                std::string ShortPath = FilePath.str();
-                size_t pos = ShortPath.find('/');
-                for (int i = 0; i < 6; i++) {
-                    pos = ShortPath.find('/', pos + 1);
-                }
-                ShortPath = ShortPath.substr(pos + 1);
-                mac.File = ShortPath;
+                // std::string ShortPath = FilePath.str();
+                // size_t pos = ShortPath.find('/');
+                // for (int i = 0; i < 6; i++) {
+                //     pos = ShortPath.find('/', pos + 1);
+                // }
+                // ShortPath = ShortPath.substr(pos + 1);
+                mac.File = FilePath.str();
 
                 const LangOptions &LangOpts = Context->getLangOpts();
                 CharSourceRange Range = CharSourceRange::getTokenRange(MD->getMacroInfo()->getDefinitionLoc(), MD->getMacroInfo()->getDefinitionEndLoc());

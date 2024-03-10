@@ -59,6 +59,7 @@ namespace FileOps {
                 fieldJson["Type"] = fieldInfo.Type;
                 fieldsJson.push_back(fieldJson);
             }
+            typeJson["File"] = typeData.File;
             typeJson["Fields"] = fieldsJson;
 
             j.push_back(typeJson);
@@ -319,14 +320,16 @@ namespace FileOps {
     /*
         Output enums to a json file
     */
-    void outputEnums(const std::string& filename, const std::map<std::string, std::set<std::string>>& enums) {
+    void outputEnums(const std::string& filename, const std::map<std::string, EnumDef>& enums) {
         std::string file_path = filename + "/enums.json";
         nlohmann::json j;
         for (const auto& pair : enums) {
-            const std::set<std::string>& enumValues = pair.second;
+            const EnumDef& enumValues = pair.second;
             nlohmann::json enumJson;
             enumJson["Name"] = pair.first;
-            enumJson["Values"] = enumValues;
+            enumJson["Values"] = enumValues.Constants;
+            enumJson["File"] = enumValues.File;
+
             j.push_back(enumJson);
         }
         std::ofstream file(file_path);

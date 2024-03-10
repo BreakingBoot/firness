@@ -11,7 +11,7 @@ std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 std::vector<Call> CallMap;
 std::map<std::string, MacroDef> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
-std::map<std::string, std::set<std::string>> EnumMap;
+std::map<std::string, EnumDef> EnumMap;
 std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 std::vector<Call> GeneratorMap;
 std::set<std::string> IncludeDirectives;

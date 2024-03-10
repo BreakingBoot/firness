@@ -88,6 +88,7 @@ struct TypeData {
     TypedefDecl* TypeDec = nullptr;
     RecordDecl* record = nullptr;
     std::vector<FieldInfo> Fields;
+    std::string File;
 
     TypeData() = default;
     TypeData(const std::string& typeName, TypedefDecl* typeDec, RecordDecl* rec)
@@ -112,6 +113,11 @@ struct Call {
         includes.clear();
         return_type.clear();
     }
+};
+
+struct EnumDef {
+    std::set<std::string> Constants;
+    std::string File;
 };
 
 struct Function {
@@ -157,7 +163,7 @@ extern std::vector<Call> CallMap;
 extern std::map<std::string, MacroDef> PreDefinedConstants;
 extern std::set<std::string> IncludeDirectives;
 extern std::vector<std::string> EnumConstants;
-extern std::map<std::string, std::set<std::string>> EnumMap;
+extern std::map<std::string, EnumDef> EnumMap;
 extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
 extern std::set<std::string> GeneratorTypes;

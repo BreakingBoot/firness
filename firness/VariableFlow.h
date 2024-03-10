@@ -27,17 +27,18 @@ public:
         // Get the source location information
         SourceLocation Loc = ED->getLocation();
         FullSourceLoc FullLoc = Context->getFullLoc(Loc);
+        EnumDef enum_def;
 
-        // Print filename and line number
         std::string enum_name = FullLoc.getManager().getFilename(FullLoc).str() + "_" + std::to_string(FullLoc.getSpellingLineNumber());
+        enum_def.File = FullLoc.getManager().getFilename(FullLoc).str();
         if(!ED->getNameAsString().empty())
             enum_name = ED->getNameAsString();
 
         for (auto it = ED->enumerator_begin(); it != ED->enumerator_end(); ++it) {
-            EnumMap[enum_name].insert((*it)->getNameAsString());
+            enum_def.Constants.insert((*it)->getNameAsString());
             EnumConstants.push_back((*it)->getNameAsString());
-            
         }
+        EnumMap[enum_name] = enum_def;
 
         return true;
    }
@@ -59,6 +60,7 @@ public:
                     Type_Data.TypeName = TD->getNameAsString();
                     Type_Data.record = RD;
                     Type_Data.TypeDec = TD;
+                    Type_Data.File = Context->getSourceManager().getFilename(RD->getLocation()).str();
                     for (auto Field : RD->fields()) {
                         FieldInfo Field_Info;
                         Field_Info.FieldType = Field;

@@ -523,8 +523,8 @@ public:
                 {
                     ParameterDirection dir = argDirPair.second;
                     
-                    // Check if the argument direction is IN or IN_OUT
-                    if (dir == ParameterDirection::OUT || dir == ParameterDirection::IN_OUT) {
+                    // Check if the argument direction is OUT
+                    if (dir == ParameterDirection::OUT) {
                         // Assuming the argument has a method to get its type as a string
                         if (!CheckType(arg)) {
                             continue;
