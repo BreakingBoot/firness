@@ -1,6 +1,6 @@
 from typing import List, Dict
 import copy
-from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo
+from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef
 from common.utils import add_indents, remove_ref_symbols
 
 aliases_map = {}
@@ -168,12 +168,25 @@ def fuzzable_args(function: str,
                   indent: bool) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
-    output.append(f"ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});")
+    output.append(f'UINT8 {function}_{arg}_choice = 0;')
+    output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
+    output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
+    output.append(f'    case 0:')
+    output.append(f'        ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+    output.append(f'        break;')
+    output.append(f'    case 1:')
+    output.append('    {')
+    output.append(f'        UINTN RandomPointer = 0;')
+    output.append(f'        ReadBytes(Input, sizeof(RandomPointer), (VOID *)&RandomPointer);')
+    output.append(f'        {function}_{arg} = ({remove_ref_symbols(arg)} *)RandomPointer;')
+    output.append(f'        break;')
+    output.append('    }')
+    output.append('}')
     
     return add_indents(output, indent)
 
 def generate_inputs(function_block: FunctionBlock, 
-                    types: Dict[str, List[FieldInfo]], 
+                    types: Dict[str, TypeInfo], 
                     services: Dict[str, FunctionBlock], 
                     protocol_variable: str, 
                     generators: Dict[str, FunctionBlock],
@@ -182,7 +195,7 @@ def generate_inputs(function_block: FunctionBlock,
     output = []
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
-        if "IN" in arguments[0].arg_dir:
+        if "IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__" and not arguments[0].variable == "__PROTOCOL__":
             tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", remove_ref_symbols(arguments[0].arg_type) in types.keys()))
 
     if len(tmp) > 0:
@@ -196,7 +209,7 @@ def generate_inputs(function_block: FunctionBlock,
         if "IN" in arguments[0].arg_dir:
             total_elements = len(arguments)
             if total_elements > 1:
-                output.append(f'UINT8* {function_block.function}_{arg_key}_choice = 0;')
+                output.append(f'UINT8* {function_block.function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
                 output.append(f'ReadBytes(Input, sizeof({function_block.function}_{arg_key}_choice), (VOID *){function_block.function}_{arg_key}_choice);')
                 output.append(f'switch(*{function_block.function}_{arg_key}_choice % {total_elements})' + ' {')
             for arg in arguments:
@@ -286,7 +299,7 @@ def guid_args(function:str,
 def generator_struct_args(function: str, 
                           arg_key: str, 
                           arg: Argument, 
-                          types: Dict[str, List[FieldInfo]], 
+                          types: Dict[str, TypeInfo], 
                           services: Dict[str, FunctionBlock], 
                           protocol_variable: str,
                           generators: Dict[str, FunctionBlock],
@@ -315,8 +328,8 @@ def generator_struct_args(function: str,
     #     output.append('}')
     # else:
     if arg.variable.startswith('__FUZZABLE_') and arg.variable.endswith('_STRUCT__'):
-        struct_type = remove_ref_symbols(arg.arg_type) if len(types.get(remove_ref_symbols(arg.arg_type), [])) > 0 else (aliases_map.get(remove_ref_symbols(arg.arg_type), None))
-        for field in types[struct_type]:
+        struct_type = remove_ref_symbols(arg.arg_type) if len(types.get(remove_ref_symbols(arg.arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg.arg_type), None))
+        for field in types[struct_type].fields:
             output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)({function}_{arg_key}->{field.name}));')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
         # find the arg in the generator that is OUT and has the same type as the in function_arg_key
@@ -333,7 +346,7 @@ def function_body(function_block: FunctionBlock,
                   services: Dict[str, FunctionBlock], 
                   protocol_variable: str, 
                   generators: Dict[str, FunctionBlock], 
-                  types: Dict[str, List[FieldInfo]],
+                  types: Dict[str, TypeInfo],
                   indent: bool) -> List[str]:
     output = []
     arg_type_list = []
@@ -346,10 +359,10 @@ def function_body(function_block: FunctionBlock,
 
 def harness_generator(services: Dict[str, FunctionBlock], 
                       functions: Dict[str, FunctionBlock], 
-                      types: Dict[str, List[FieldInfo]], 
+                      types: Dict[str, TypeInfo], 
                       generators: Dict[str, FunctionBlock],
                       aliases: Dict[str, str],
-                      enums: Dict[str, List[str]]) -> List[str]:
+                      enums: Dict[str, EnumDef]) -> List[str]:
     aliases_map.update(aliases)
     enum_map.update(enums)
     # Initialize an empty string to store the generated content
@@ -375,8 +388,8 @@ def harness_generator(services: Dict[str, FunctionBlock],
         protocol_variable = ""
         if "protocol" in services[function].service:
             protocol_variable = "ProtocolVariable"
-            output.append(f"    {function_block.arguments['Arg_0'][0].arg_type} {protocol_variable};")
-            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{function_block.arguments["Arg_0"][0].usage}, NULL, (VOID *){protocol_variable});')
+            output.append(f"    {function_block.arguments['Arg_0'][0].arg_type} {protocol_variable} = NULL;")
+            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{function_block.arguments["Arg_0"][0].usage}, NULL, (VOID *)&{protocol_variable});')
             output.append('    if (EFI_ERROR(Status)) {')
             output.append('        return Status;')
             output.append('    }')

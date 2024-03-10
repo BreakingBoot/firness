@@ -4,17 +4,36 @@ import copy
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple
-from common.types import FunctionBlock, FieldInfo, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries
+from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries
 from common.utils import remove_ref_symbols, write_data, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 
 
 current_args_dict = defaultdict(list)
+all_includes = set()
+
+
+# Doesn't take into account if multiple function definitions are found with the same
+# name but different number of params
+def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
+    with open(json_file, 'r') as file:
+        raw_data = json.load(file)
+
+    function_dict = defaultdict(list)
+    for raw_function in raw_data:
+        arguments = {
+            arg_key: [Argument(**raw_argument)] 
+            for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
+        }
+        function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
+                            raw_function.get('Service'), raw_function.get('Includes'))
+        function_dict[function.function] = function
+
+    return function_dict
+
 
 #
 # load in the functions to be harnessed
 #
-
-
 def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
     # Load in the functions to be harnessed from the txt file
     # They are classified into 3 categories: OtherFunctions, BootServices, and RuntimeServices
@@ -32,13 +51,13 @@ def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
                         (line.split(':')[1].strip(), line.split(':')[0].strip()))
                 else:
                     function_dict[current_service].append((line.strip(), ""))
-
     return function_dict
 
 
 def sort_data(input_data: Dict[str, List[FunctionBlock]],
               harness_functions: Dict[str, List[Tuple[str, str]]],
-              best_guess: bool) -> Dict[str, List[FunctionBlock]]:
+              best_guess: bool,
+              function_decl: Dict[str, Tuple[str, str]]) -> Dict[str, List[FunctionBlock]]:
     sorted_data = {}
     # Determine the most common number of parameters for each function
     most_common_param_counts = {}
@@ -65,7 +84,7 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
             sorted_data[function].setdefault(param_counts.most_common(1)[
                                              0][0], []).extend(input_data[function])
             
-
+    
     # now loop through the sorted data and keep the groups of elements that have a corresponding service
     # in the harness_functions dictionary
     filtered_data = defaultdict(list)
@@ -76,8 +95,8 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                 continue
             arg_num_match = False
             for function_block in function_blocks:
-                for key in services_map.keys():
-                    if key in function_block.service:
+                for key, item in services_map.items():
+                    if key in function_block.service or item in function_block.service:
                         for harness_group in harness_functions[services_map[key]]:
                             if function in harness_group:
                                     # print(f'INFO: {function} with {key} parameters has been selected for harnessing!!')
@@ -100,8 +119,12 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                     break
                 filtered_data.setdefault(function, []).extend(function_blocks)
                 
-    # for function in filtered_data.keys():
-    #     print(f'INFO: {function} has been selected for harnessing!!')
+    # loop through the filtered data and add the function_decl function if it is not already in the filtered_data
+    for function, function_info in function_decl.items():
+        if function not in filtered_data.keys():
+            filtered_data[function].append(FunctionBlock(function_info.arguments, function, 
+                                            function_info.service, function_info.includes, function_info.return_type))
+            all_includes.update(function_info.includes)
     return filtered_data
 
 #
@@ -109,13 +132,12 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
 # the function calls to make sure to only keep the function calls that have
 # the same type of input args
 #
-
-
 def load_data(json_file: str,
               harness_functions: Dict[str, List[Tuple[str, str]]],
               macros: Dict[str, Macros],
               random: bool,
-              best_guess: bool) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
+              best_guess: bool,
+              function_decl: Dict[str, Tuple[str, str]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
@@ -136,7 +158,7 @@ def load_data(json_file: str,
     # Check if there is a single most common number of parameters for each function
     # and if not then take the one which has a service matching the harness_functions.keys()
     # note that if RT is in the service name, then it is a runtime service and BS is a boot service
-    filtered_function_dict = sort_data(function_dict, harness_functions, best_guess)
+    filtered_function_dict = sort_data(function_dict, harness_functions, best_guess, function_decl)
 
     void_star_data_type_counter = defaultdict(Counter)
     function_template = {}
@@ -172,8 +194,10 @@ def load_data(json_file: str,
                     function_template[function].service = "protocol"
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
-                argument[0].arg_type = function_template[function].arguments.get(arg_key)[
-                    0].arg_type
+                argument[0].arg_type = function_template[function].arguments.get(arg_key)[0].arg_type
+    # print all of the functions that are here
+    # for function, function_block in function_template.items():
+    #     print_function_block(function)
 
     return filtered_function_dict, function_template
 
@@ -229,12 +253,13 @@ def load_aliases(json_file: str) -> Dict[str, str]:
 #
 # Load enums
 #
-def load_enums(json_file: str) -> Dict[str, List[str]]:
+def load_enums(json_file: str) -> Dict[str, EnumDef]:
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
     enum_dict = defaultdict(list)
     for enum in raw_data:
-        enum_dict[enum["Name"]].extend(enum["Values"])
+        enum_def = EnumDef(enum["Name"], enum["Values"], enum["File"])
+        enum_dict[enum["Name"]] = enum_def
     return enum_dict
 
 #
@@ -253,7 +278,7 @@ def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
 #
 # Load in the type structures
 #
-def load_types(json_file: str) -> Dict[str, List[FieldInfo]]:
+def load_types(json_file: str) -> Dict[str, TypeInfo]:
     with open(json_file, 'r') as file:
         data = json.load(file)
     type_data_list = defaultdict(list)
@@ -262,12 +287,12 @@ def load_types(json_file: str) -> Dict[str, List[FieldInfo]]:
         for field_dict in type_data_dict['Fields']:
             field_info = FieldInfo(field_dict['Name'], field_dict['Type'])
             fields_list.append(field_info)
-        type_data_list[type_data_dict['TypeName']] = fields_list
+        type_data_list[type_data_dict['TypeName']] = TypeInfo(type_data_dict['TypeName'], fields_list, type_data_dict['File'])
     return type_data_list
 
 
 def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
-                      types: Dict[str, List[FieldInfo]],
+                      types: Dict[str, TypeInfo],
                       pre_processed_data: Dict[str, FunctionBlock],
                       aliases: Dict[str, str],
                       random: bool) -> Dict[str, FunctionBlock]:
@@ -310,11 +335,13 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
 #
 # search the enum list for a matching type or assignment/usage
 #
-def find_enum(argument: Argument, enums: Dict[str, List[str]]) -> str:
+def find_enum(argument: Argument, enums: Dict[str, EnumDef]) -> str:
     for enum_name, enum_values in enums.items():
         if argument.arg_type.lower() in enum_name.lower():
+            all_includes.add(enum_values.file)
             return enum_name
-        elif any(value.lower() in argument.assignment.lower() or value in argument.usage.lower() for value in enum_values):
+        elif any(value.lower() in argument.assignment.lower() or value in argument.usage.lower() for value in enum_values.values):
+            all_includes.add(enum_values.file)
             return enum_name
     return argument.usage
 
@@ -398,6 +425,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                                 if argument[0].assignment in macros.keys():
                                     matched_macros[macros[argument[0].assignment]
                                                    .name] = macros[argument[0].assignment].value
+                                    all_includes.add(macros[argument[0].assignment].file)
                                 current_args_dict[function].append(arg_key)
                                 usage_seen[function][arg_key].append(
                                     get_stripped_usage(argument_value, macros, aliases))
@@ -493,7 +521,7 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                    generators: Dict[str, List[FunctionBlock]],
                    function_template: Dict[str, FunctionBlock],
                    aliases: Dict[str, str],
-                   types: Dict[str, List[FieldInfo]]) -> Dict[str, FunctionBlock]:
+                   types: Dict[str, TypeInfo]) -> Dict[str, FunctionBlock]:
 
     matching_generators = {}  # Dictionary to store the matching generators
     for func_name, generator_blocks in generators.items():
@@ -504,25 +532,26 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                     # Look for a matching argument in function_template
                     for func_temp_name, func_temp_block in function_template.items():
                         for ft_arg_key, ft_argument in func_temp_block.arguments.items():
-                            # Check if argument types match and the argument is missing from known_inputs
-                            if (argument[0].arg_type == ft_argument[0].arg_type and #ft_arg_key not in current_args_dict[func_temp_name] and
-                                    ft_argument[0].arg_dir == "IN" and func_name not in matching_generators.setdefault(func_temp_name, [])):
-                                # Add a check to make sure all of the input arguments are fuzzable
-                                all_fuzzable = True
-                                for ft_arg_key2, ft_argument2 in generator_block.arguments.items():
-                                    if ft_argument2[0].arg_dir == "IN" and ft_arg_key2 not in current_args_dict[func_temp_name]:
-                                        if not is_fuzzable(remove_ref_symbols(ft_argument2[0].arg_type), aliases, types, 0) :
-                                            all_fuzzable = False
-                                            break
-                                # If matching generator is found, add it to the matching_generators dictionary
-                                if all_fuzzable:
-                                    matching_generators.setdefault(
-                                        func_temp_name, []).append(func_name)
-                                    generator_arg = Argument(
-                                        ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
-                                    # current_args_dict[func_temp_name].append(ft_arg_key)
-                                    pre_processed_data[func_temp_name].arguments.setdefault(
-                                        ft_arg_key, []).append(generator_arg)
+                            if not contains_void_star(argument[0].arg_type):
+                                # Check if argument types match and the argument is missing from known_inputs
+                                if (argument[0].arg_type == ft_argument[0].arg_type and #ft_arg_key not in current_args_dict[func_temp_name] and
+                                        ft_argument[0].arg_dir == "IN" and func_name not in matching_generators.setdefault(func_temp_name, [])):
+                                    # Add a check to make sure all of the input arguments are fuzzable
+                                    all_fuzzable = True
+                                    for ft_arg_key2, ft_argument2 in generator_block.arguments.items():
+                                        if ft_argument2[0].arg_dir == "IN" and ft_arg_key2 not in current_args_dict[func_temp_name]:
+                                            if not is_fuzzable(remove_ref_symbols(ft_argument2[0].arg_type), aliases, types, 0) :
+                                                all_fuzzable = False
+                                                break
+                                    # If matching generator is found, add it to the matching_generators dictionary
+                                    if all_fuzzable:
+                                        matching_generators.setdefault(
+                                            func_temp_name, []).append(func_name)
+                                        generator_arg = Argument(
+                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
+                                        # current_args_dict[func_temp_name].append(ft_arg_key)
+                                        pre_processed_data[func_temp_name].arguments.setdefault(
+                                            ft_arg_key, []).append(generator_arg)
 
     return pre_processed_data
 
@@ -562,12 +591,13 @@ def add_output_variables(function_template: Dict[str, FunctionBlock],
 
 def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                    function_template: Dict[str, FunctionBlock],
-                                   types: Dict[str, List[FieldInfo]],
+                                   types: Dict[str, TypeInfo],
                                    input_generators: Dict[str, List[FunctionBlock]],
                                    aliases: Dict[str, str],
                                    macros: Dict[str, Macros],
                                    enums: Dict[str, List[str]],
-                                   random: bool) -> Tuple[Dict[str, FunctionBlock], Dict[str, str], set, set]:
+                                   random: bool,
+                                   harness_functions: Dict[str, List[Tuple[str, str]]]) -> Tuple[Dict[str, FunctionBlock], Dict[str, str], set, set]:
     # Collect all of the arguments to be passed to the template
     pre_processed_data = initialize_data(function_template)
     pre_processed_data = get_intersect(input_data, pre_processed_data)
@@ -601,7 +631,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     # Step 5: Add the output variables
     pre_processed_data = add_output_variables(
         function_template, pre_processed_data)
-    print(f'INFO: Adding output variables complete!!')
+    print(f'INFO: Adding output variables complete!!')            
 
     # If there are still arguments missing then extend the level for fuzzable structs
     # continue recursively until all arguments have at least one input
@@ -630,6 +660,17 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
             function_block.arguments.keys())}
         function_block.arguments = sorted_arguments
 
+    # add the protocol to Arg_0 usage
+    for function, function_block in pre_processed_data.items():
+        for arg_key, argument in function_block.arguments.items():
+            if len(argument) > 0 and "protocol" in function_block.service.lower():
+                for harness_group, functions in harness_functions.items():
+                    if "protocol" in harness_group.lower():
+                        for func, guid in functions:
+                            if function in func:
+                                argument[0].usage = guid
+                                break
+
     return pre_processed_data, matched_macros, protocol_guids, driver_guids
 
 
@@ -651,7 +692,7 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
 def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
                        input_template: Dict[str, FunctionBlock],
                        aliases: Dict[str, str],
-                       types: Dict[str, List[FieldInfo]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+                       types: Dict[str, TypeInfo]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
     output_template = input_template.copy()
@@ -734,14 +775,16 @@ def analyze_data(macro_file: str,
                  alias_file: str,
                  random: bool,
                  harness_folder: str,
-                 best_guess: bool) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], List[str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]]]:
+                 best_guess: bool,
+                 functions: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], List[str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]]]:
 
     macros_val, macros_name = load_macros(macro_file)
     enum_map = load_enums(enum_file)
     generators = load_generators(generator_file, macros_val)
     harness_functions = load_functions(input_file)
+    function_declares = load_function_declares(functions)
     data, function_template = load_data(
-        data_file, harness_functions, macros_val, random, best_guess)
+        data_file, harness_functions, macros_val, random, best_guess, function_declares)
     types = load_types(types_file)
     aliases = load_aliases(alias_file)
     if not random:
@@ -757,14 +800,14 @@ def analyze_data(macro_file: str,
     # (i.e. more than one level of integrated structs) and the basic structs
     # that have all scalable fields will be directly generated with random input
     processed_data, matched_macros, protocol_guids, driver_guids = collect_all_function_arguments(
-        data, function_template, types, generators, aliases, macros_name, enum_map, random)
+        data, function_template, types, generators, aliases, macros_name, enum_map, random, harness_functions)
 
-    all_includes = get_union(processed_data, processed_generators)
-    all_includes = cleanup_paths(all_includes)
+    # all_includes = get_union(processed_data, processed_generators)
+    # all_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    all_includes = list(set(all_includes) | default_includes)
-    libraries = list(collect_libraries(all_includes) | default_libraries)
+    collected_includes = list(set(all_includes) | default_includes)
+    libraries = list(collect_libraries(collected_includes) | default_libraries)
     if not random:
         write_data(processed_generators,
                    f'{harness_folder}/processed_generators.json')
@@ -772,4 +815,4 @@ def analyze_data(macro_file: str,
 
     sanity_check(processed_data, harness_functions)
 
-    return processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map
+    return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map

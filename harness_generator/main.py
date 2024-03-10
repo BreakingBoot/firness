@@ -155,6 +155,8 @@ def main():
                         help='Path to the enums file (default: /output/tmp/enums.json)')
     parser.add_argument('-i', '--input-file', dest='input_file',
                         default='/input/input.txt', help='Path to the input file (default: /input/input.txt)')
+    parser.add_argument('-f', '--function-file', dest='function_file',
+                        default='/output/tmp/functions.json', help='Path to the function file (default: /output/tmp/functions.json)')
     parser.add_argument('-o', '--output', dest='output',
                         default='/output', help='Path to the output directory (default: /output)')
     parser.add_argument('-c', '--clean', dest='clean', action='store_true',
@@ -169,7 +171,7 @@ def main():
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
     processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
-                                                  args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess)
+                                                  args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess, args.function_file)
     generate_harness(processed_data, template, types, enums,
                      all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output)
 

@@ -3,9 +3,11 @@ import os
 import json
 from itertools import permutations
 from typing import List, Dict, Set
-from common.types import FunctionBlock, FieldInfo, Macros, scalable_params
+from common.types import FunctionBlock, FieldInfo, Macros, TypeInfo, scalable_params
 
 def is_whitespace(s: str) -> bool:
+    if s is None:
+        return True
     return len(s.strip()) == 0
 
 def remove_ref_symbols(type_str: str) -> str:
@@ -150,7 +152,7 @@ def contains_void_star(s):
 
 def is_fuzzable(type: str,
                 aliases: Dict[str, str],
-                typemap: Dict[str, List[FieldInfo]],
+                typemap: Dict[str, TypeInfo],
                 level: int) -> bool:
     if level > 2:
         return False
@@ -161,7 +163,7 @@ def is_fuzzable(type: str,
         return is_fuzzable(aliases[type], aliases, typemap, level)
     elif type in typemap.keys():
         fuzzable = False
-        for field_info in typemap[type]:
+        for field_info in typemap[type].fields:
             # If any of the fields are scalars, then the type is fuzzable
             # one level deep
             if is_fuzzable(field_info.type, aliases, typemap, level + 1):
@@ -214,7 +216,9 @@ def get_union(pre_processed_data: Dict[str, FunctionBlock],
               processed_generators: Dict[str, FunctionBlock]) -> List[str]:
     union = []
     for function, function_block in pre_processed_data.items():
-        union = list(set(union) | set(function_block.includes))
+        if function_block.includes is not None:
+            union = list(set(union) | set(function_block.includes))
     for function, function_block in processed_generators.items():
-        union = list(set(union) | set(function_block.includes))
+        if function_block.includes is not None:
+            union = list(set(union) | set(function_block.includes))
     return union

@@ -129,6 +129,20 @@ class Argument:
             'Variable': self.variable
         }
 
+class EnumDef:
+    def __init__(self, name: str, values: List[str], file: str = ""):
+        self.name = name
+        self.values = values
+        self.file = file
+
+class Function:
+    def __init__(self, function: str, arguments: List[Argument], return_type: str = "", service: str = "", includes: Set[str] = []):
+        self.function = function
+        self.return_type = return_type
+        self.arguments = arguments
+        self.service = service
+        self.includes = includes
+
 class FunctionBlock:
     def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
@@ -157,6 +171,12 @@ class FieldInfo:
     def __init__(self, name: str, type: str):
         self.name = name
         self.type = type
+
+class TypeInfo:
+    def __init__(self, name: str = "", fields: List[FieldInfo] = [], file: str = ""):
+        self.name = name
+        self.fields = fields
+        self.file = file
 
 class TypeTracker:
     def __init__(self, arg_type: str, variable: str, pointer_count: int, fuzzable: bool = False):
