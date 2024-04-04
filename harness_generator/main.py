@@ -133,7 +133,7 @@ def generate_harness_folder(dir: str):
     os.makedirs(full_path, exist_ok=True)
 
     # Copy the FirnessHelper.h to the full path
-    os.system(f'cp /llvm-source/HarnessHelpers/* {full_path}')
+    os.system(f'cp /workspace/HarnessHelpers/* {full_path}')
 
     # Return the full path of the inner directory
     return full_path
