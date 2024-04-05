@@ -15,20 +15,24 @@ all_includes = set()
 # Doesn't take into account if multiple function definitions are found with the same
 # name but different number of params
 def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
-    with open(json_file, 'r') as file:
-        raw_data = json.load(file)
+    try:
+        with open(json_file, 'r') as file:
+            raw_data = json.load(file)
 
-    function_dict = defaultdict(list)
-    for raw_function in raw_data:
-        arguments = {
-            arg_key: [Argument(**raw_argument)] 
-            for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
-        }
-        function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
-                            raw_function.get('Service'), raw_function.get('Includes'))
-        function_dict[function.function] = function
+        function_dict = defaultdict(list)
+        for raw_function in raw_data:
+            arguments = {
+                arg_key: [Argument(**raw_argument)] 
+                for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
+            }
+            function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
+                                raw_function.get('Service'), raw_function.get('Includes'))
+            function_dict[function.function] = function
 
-    return function_dict
+        return function_dict
+    except Exception as e:
+        print(f'ERROR: {e}')
+        return {}
 
 
 #
@@ -124,7 +128,7 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
         if function not in filtered_data.keys():
             filtered_data[function].append(FunctionBlock(function_info.arguments, function, 
                                             function_info.service, function_info.includes, function_info.return_type))
-            all_includes.update(function_info.includes)
+            # all_includes.update(function_info.includes)
     return filtered_data
 
 #
@@ -311,7 +315,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     if any('__FUZZABLE__' in var.variable for var in pre_processed_data[function].arguments.get(arg_key)):
                         continue
 
-                if argument[0].arg_dir == "IN" and not contains_fuzzable_struct[function][arg_key]:
+                if argument[0].arg_dir == "IN" and not contains_fuzzable_struct[function][arg_key] and (arg_key not in current_args_dict[function]):
                     if not contains_void_star(argument[0].arg_type):
                         if is_fuzzable(remove_ref_symbols(argument[0].arg_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type,
@@ -354,6 +358,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             pre_processed_data: Dict[str, FunctionBlock],
                             macros: Dict[str, Macros],
                             aliases: Dict[str, str],
+                            types: Dict[str, TypeInfo],
                             enums: Dict[str, List[str]]) -> Tuple[Dict[str, FunctionBlock], Dict[str, str], set, set]:
     # Keeps track of arg.usage values seen for each function and arg_key
     usage_seen = defaultdict(lambda: defaultdict(list))
@@ -373,20 +378,39 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                         if argument[0].usage not in usage_seen[function][arg_key]:
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(argument[0])
-                            current_args_dict[function].append(arg_key)
+                            # current_args_dict[function].append(arg_key)
                             usage_seen[function][arg_key].append(argument[0].usage)
                     # only want to add EFI_HANDLE once
                     elif "EFI_HANDLE" in argument[0].arg_type and usage_seen[function][arg_key] == []:
                         argument[0].variable = "__HANDLE__"
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(argument[0])
-                        current_args_dict[function].append(arg_key)
+                        # current_args_dict[function].append(arg_key)
                         usage_seen[function][arg_key].append(argument[0].usage)
                     # only need to add one protocol varibale to the harness
-                    elif argument[0].variable == "__PROTOCOL__" and usage_seen[function][arg_key] == []:
+                    elif argument[0].variable == "__PROTOCOL__":
+                        # if the assignment is LocatedProtocol then find the protocol guid from the assignment:
+                        # gBS->LocateProtocol ( &gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **)&mUnicodeCollation )
+                        if "locateprotocol" in argument[0].assignment.lower():
+                            protocol_guids.add(argument[0].assignment.split('->')[1].split('(')[1].split(',')[0].strip()[1:])
+
+                        if usage_seen[function][arg_key] == []:
+                            pre_processed_data[function].arguments.setdefault(
+                                arg_key, []).append(argument[0])
+                            # current_args_dict[function].append(arg_key)
+                            # save the file that the protocol is defined in
+                            all_includes.add(types[remove_ref_symbols(argument[0].arg_type)].file)
+                            usage_seen[function][arg_key].append(argument[0].usage)
+                    # add all contant values, but only one if its a sizeof(UINTN)
+                    elif ("__CONSTANT" in argument[0].variable and "__CONSTANT_" != argument[0].variable) and argument[0].usage not in usage_seen[function][arg_key]:
+                        if "__CONSTANT_SIZEOF__" in argument[0].variable:
+                            if not first_sizeof[arg_key]:
+                                continue
+                            else:
+                                first_sizeof[arg_key] = False
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(argument[0])
-                        current_args_dict[function].append(arg_key)
+                        # current_args_dict[function].append(arg_key)
                         usage_seen[function][arg_key].append(argument[0].usage)
                     # check if it is a guid
                     elif 'guid' in argument[0].arg_type.lower() and argument[0].variable.startswith('g') and argument[0].variable.endswith('Guid'):
@@ -401,19 +425,8 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             guid_arg.variable = "__GUID__"
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(guid_arg)
-                            current_args_dict[function].append(arg_key)
+                            # current_args_dict[function].append(arg_key)
                             usage_seen[function][arg_key].append(guid_arg.usage)
-                    # add all contant values, but only one if its a sizeof(UINTN)
-                    elif ("__CONSTANT" in argument[0].variable and "__CONSTANT_" != argument[0].variable) and argument[0].usage not in usage_seen[function][arg_key]:
-                        if "__CONSTANT_SIZEOF__" in argument[0].variable:
-                            if not first_sizeof[arg_key]:
-                                continue
-                            else:
-                                first_sizeof[arg_key] = False
-                        pre_processed_data[function].arguments.setdefault(
-                            arg_key, []).append(argument[0])
-                        current_args_dict[function].append(arg_key)
-                        usage_seen[function][arg_key].append(argument[0].usage)
                     # If there are multiple potential outputs, then add each one this would happen if there was masking
                     elif len(argument[0].potential_outputs) > 1:
                         for argument_value in argument[0].potential_outputs:
@@ -426,7 +439,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                                     matched_macros[macros[argument[0].assignment]
                                                    .name] = macros[argument[0].assignment].value
                                     all_includes.add(macros[argument[0].assignment].file)
-                                current_args_dict[function].append(arg_key)
+                                # current_args_dict[function].append(arg_key)
                                 usage_seen[function][arg_key].append(
                                     get_stripped_usage(argument_value, macros, aliases))
                     # elif not contains_usage(argument[0].usage, usage_seen[function][arg_key], macros, aliases):
@@ -444,7 +457,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
             if len(argument) < 3 and (argument[0].variable != "__ENUM_ARG__" and argument[0].variable != "__PROTOCOL__" and argument[0].variable != "__HANDLE__" and argument[0].variable != "__GUID__"):
                 for arg in argument:
                     argument.remove(arg)
-                current_args_dict[function].remove(arg_key)
+                # current_args_dict[function].remove(arg_key)
     return pre_processed_data, matched_macros, protocol_guids, driver_guids
 
 
@@ -606,7 +619,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     if not random:
         # Step 1: Collect the constant arguments
         pre_processed_data, matched_macros, protocol_guids, driver_guids = collect_known_constants(
-            input_data, pre_processed_data, macros, aliases, enums)
+            input_data, pre_processed_data, macros, aliases, types, enums)
         print(f'INFO: Collecting known constants complete!!')
     else:
         protocol_guids = set()
@@ -670,6 +683,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                             if function in func:
                                 argument[0].usage = guid
                                 break
+                break
 
     return pre_processed_data, matched_macros, protocol_guids, driver_guids
 
@@ -751,7 +765,7 @@ def cleanup_paths(includes: List[str]) -> List[str]:
         # Split the path into its components.
         components = include.split("/")
         # Remove the first 3 components.
-        include = "/".join(components[4:])
+        include = "/".join(components[6:])
         if len(include) > 0:
             modified_includes.append(include)
     return modified_includes
@@ -803,10 +817,10 @@ def analyze_data(macro_file: str,
         data, function_template, types, generators, aliases, macros_name, enum_map, random, harness_functions)
 
     # all_includes = get_union(processed_data, processed_generators)
-    # all_includes = cleanup_paths(all_includes)
+    update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    collected_includes = list(set(all_includes) | default_includes)
+    collected_includes = list(set(update_includes) | default_includes)
     libraries = list(collect_libraries(collected_includes) | default_libraries)
     if not random:
         write_data(processed_generators,

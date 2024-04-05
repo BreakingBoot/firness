@@ -9,7 +9,7 @@ def gen_firness_main(functions: Dict[str, FunctionBlock]) -> List[str]:
     output.append("")
     output.append("INPUT_BUFFER Input;")
     output.append("")
-    output.append("__attribute__((no_sanitize(\"address\"))")
+    output.append("__attribute__((no_sanitize(\"address\")))")
     output.append("EFI_STATUS")
     output.append("EFIAPI")
     output.append("FirnessMain (")

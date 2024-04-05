@@ -165,7 +165,8 @@ def declare_var(function: str,
 
 def fuzzable_args(function: str,
                   arg: str, 
-                  indent: bool) -> List[str]:
+                  indent: bool,
+                  arg_type_list: List[TypeTracker]) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
     output.append(f'UINT8 {function}_{arg}_choice = 0;')
@@ -178,7 +179,10 @@ def fuzzable_args(function: str,
     output.append('    {')
     output.append(f'        UINTN RandomPointer = 0;')
     output.append(f'        ReadBytes(Input, sizeof(RandomPointer), (VOID *)&RandomPointer);')
-    output.append(f'        {function}_{arg} = ({remove_ref_symbols(arg)} *)RandomPointer;')
+    for arg_type in arg_type_list:
+        if arg_type.name == arg:
+            output.append(f'        {function}_{arg} = ({arg_type.arg_type})RandomPointer;')
+            break
     output.append(f'        break;')
     output.append('    }')
     output.append('}')
@@ -217,7 +221,7 @@ def generate_inputs(function_block: FunctionBlock,
                     output.append(f'    case {arguments.index(arg)}:')
                     output.append('    {')
                 if arg.variable == "__FUZZABLE__":
-                    output.extend(fuzzable_args(function_block.function, arg_key, total_elements > 1))
+                    output.extend(fuzzable_args(function_block.function, arg_key, total_elements > 1, arg_type_list))
                 elif "__CONSTANT" in arg.variable or "__ENUM_ARG__" in arg.variable:
                     output.extend(constant_args(function_block.function, arg_key, arg, total_elements > 1))
                 elif "__FUNCTION_PTR__" in arg.variable:
@@ -377,6 +381,7 @@ def harness_generator(services: Dict[str, FunctionBlock],
         output.append(f"    This is a harness for fuzzing the {services[function].service} service")
         output.append(f"    called {function}.")
         output.append(f"*/")
+        output.append(f'__attribute__((no_sanitize("address")))')
         output.append(f"EFI_STATUS")
         output.append(f"EFIAPI")
         output.append(f"Fuzz{function}(")
