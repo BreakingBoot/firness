@@ -107,6 +107,8 @@ def call_function(function: str,
             tmp = f"    ImageHandle,"
         elif arguments[0].arg_dir == "IN" and arguments[0].variable == "__PROTOCOL__":
             tmp = f"    ProtocolVariable,"
+        elif arguments[0].arg_dir == "OPTIONAL":
+            tmp = f"    NULL,"
         else:
             tmp = f"    {cast_arg(function, arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
@@ -169,23 +171,24 @@ def fuzzable_args(function: str,
                   arg_type_list: List[TypeTracker]) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
-    output.append(f'UINT8 {function}_{arg}_choice = 0;')
-    output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
-    output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
-    output.append(f'    case 0:')
-    output.append(f'        ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
-    output.append(f'        break;')
-    output.append(f'    case 1:')
-    output.append('    {')
-    output.append(f'        UINTN RandomPointer = 0;')
-    output.append(f'        ReadBytes(Input, sizeof(RandomPointer), (VOID *)&RandomPointer);')
-    for arg_type in arg_type_list:
-        if arg_type.name == arg:
-            output.append(f'        {function}_{arg} = ({arg_type.arg_type})RandomPointer;')
-            break
-    output.append(f'        break;')
-    output.append('    }')
-    output.append('}')
+    output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+    # output.append(f'UINT8 {function}_{arg}_choice = 0;')
+    # output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
+    # output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
+    # output.append(f'    case 0:')
+    # output.append(f'        ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+    # output.append(f'        break;')
+    # output.append(f'    case 1:')
+    # output.append('    {')
+    # output.append(f'        UINTN RandomPointer = 0;')
+    # output.append(f'        ReadBytes(Input, sizeof(RandomPointer), (VOID *)&RandomPointer);')
+    # for arg_type in arg_type_list:
+    #     if arg_type.name == arg:
+    #         output.append(f'        {function}_{arg} = ({arg_type.arg_type})RandomPointer;')
+    #         break
+    # output.append(f'        break;')
+    # output.append('    }')
+    # output.append('}')
     
     return add_indents(output, indent)
 
@@ -253,7 +256,7 @@ def constant_args(function: str,
         output.append(f'UINT8* {function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
         output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), (VOID *){function}_{arg_key}_choice);')
         usages = []
-        for enum in enum_map[arg.usage]:
+        for enum in enum_map[arg.arg_type].values:
             tmp = copy.copy(arg)
             tmp.usage = enum
             usages.append(tmp)

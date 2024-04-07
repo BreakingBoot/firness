@@ -1,6 +1,7 @@
 import json
 import os
 import copy
+import fuzzywuzzy as fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple
@@ -47,8 +48,11 @@ def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
     current_service = ""
     for line in data:
         if line.strip() != "":
-            if line.startswith("["):
+            if line.strip().startswith("["):
                 current_service = line.strip().replace("[", "").replace("]", "")
+            # if the line is a comment, then skip it
+            elif line.strip().startswith("//"):
+                continue
             else:
                 if ':' in line:
                     function_dict[current_service].append(
@@ -199,9 +203,6 @@ def load_data(json_file: str,
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 argument[0].arg_type = function_template[function].arguments.get(arg_key)[0].arg_type
-    # print all of the functions that are here
-    # for function, function_block in function_template.items():
-    #     print_function_block(function)
 
     return filtered_function_dict, function_template
 
@@ -312,7 +313,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
             for arg_key, argument in function_block.arguments.items():
                 added_struct = False
                 if len(pre_processed_data[function].arguments.setdefault(arg_key, [])) > 0:
-                    if any('__FUZZABLE__' in var.variable for var in pre_processed_data[function].arguments.get(arg_key)):
+                    if any('__FUZZABLE__' in var.variable or '__ENUM_ARG__' in var.variable for var in pre_processed_data[function].arguments.get(arg_key)):
                         continue
 
                 if argument[0].arg_dir == "IN" and not contains_fuzzable_struct[function][arg_key] and (arg_key not in current_args_dict[function]):
@@ -541,9 +542,12 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
         for generator_block in generator_blocks:
             for argument in generator_block.arguments.values():
                 # Check if argument direction is OUT
-                if argument[0].arg_dir == "OUT":
+                if argument[0].arg_dir == "OUT" and not any(param.lower() in argument[0].arg_type.lower() for param in scalable_params):
                     # Look for a matching argument in function_template
                     for func_temp_name, func_temp_block in function_template.items():
+                        similar = fuzz.ratio(func_name, func_temp_name)
+                        if similar > 80:
+                            continue
                         for ft_arg_key, ft_argument in func_temp_block.arguments.items():
                             if not contains_void_star(argument[0].arg_type):
                                 # Check if argument types match and the argument is missing from known_inputs
@@ -602,6 +606,14 @@ def add_output_variables(function_template: Dict[str, FunctionBlock],
     return pre_processed_data
 
 
+def handle_optional_arguments(pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+    for function, function_block in pre_processed_data.items():
+        for arg_key, argument in function_block.arguments.items():
+            if len(argument) == 0:
+                pre_processed_data[function].arguments[arg_key].append(Argument("OPTIONAL", "VOID *", "NULL", "VOID *", "NULL", "__OPTIONAL__"))
+
+    return pre_processed_data
+
 def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                    function_template: Dict[str, FunctionBlock],
                                    types: Dict[str, TypeInfo],
@@ -644,7 +656,10 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     # Step 5: Add the output variables
     pre_processed_data = add_output_variables(
         function_template, pre_processed_data)
-    print(f'INFO: Adding output variables complete!!')            
+    print(f'INFO: Adding output variables complete!!')
+
+    pre_processed_data = handle_optional_arguments(pre_processed_data)  
+    print(f'INFO: Handling optional arguments complete!!')          
 
     # If there are still arguments missing then extend the level for fuzzable structs
     # continue recursively until all arguments have at least one input
