@@ -5,6 +5,7 @@ std::map<RecordDecl*, TypeData> varRecordInfo;
 
 std::set<std::string> FunctionNames;
 std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
+std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
 std::map<std::string, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
@@ -19,6 +20,7 @@ std::set<std::pair<std::string, std::string>> SingleTypedefs;
 std::set<std::string> GeneratorTypes;
 std::set<std::pair<std::string, std::string>> HarnessFunctions;
 std::vector<Function> FunctionDeclMap;
+std::set<std::pair<std::string, std::string>> FunctionAliases;
 
 
 // Define command-line options for input file and output dir
@@ -57,6 +59,7 @@ int main(int argc, const char **argv) {
         llvm::errs() << "Missing Input File\n";
         exit(1);
     }
+    Tool.run(newFrontendActionFactory<FCPAction>().get());
     Tool.run(newFrontendActionFactory<FCPAction>().get());
 
     if(!output_filename.empty())

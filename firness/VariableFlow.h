@@ -22,26 +22,22 @@ public:
     /*
         Capture all of the Enums because they are considered constants
     */
-   bool VisitEnumDecl(EnumDecl* ED)
-   {
-        // Get the source location information
+    bool VisitEnumType(EnumType *ET) {
+        QualType QT = ET->desugar();
+        EnumDecl *ED = ET->getDecl();
         SourceLocation Loc = ED->getLocation();
         FullSourceLoc FullLoc = Context->getFullLoc(Loc);
         EnumDef enum_def;
 
-        std::string enum_name = FullLoc.getManager().getFilename(FullLoc).str() + "_" + std::to_string(FullLoc.getSpellingLineNumber());
+        std::string enum_name = QT.getAsString();
         enum_def.File = FullLoc.getManager().getFilename(FullLoc).str();
-        if(!ED->getNameAsString().empty())
-            enum_name = ED->getNameAsString();
-
         for (auto it = ED->enumerator_begin(); it != ED->enumerator_end(); ++it) {
             enum_def.Constants.insert((*it)->getNameAsString());
             EnumConstants.push_back((*it)->getNameAsString());
         }
         EnumMap[enum_name] = enum_def;
-
         return true;
-   }
+    }
 
     /*
         Capture all of the custom structures 
@@ -272,6 +268,23 @@ public:
                     if (VarAssignments.find(VD) != VarAssignments.end()) {
                         VarAssignments[VD].push(std::make_pair(BO->getRHS(), ParameterDirection::DIRECT));
                     }
+                }
+            }
+            // I also need to handle the case where the LHS is an assignment to a member of a struct
+            // e.g. struct->member = value;
+            else if(MemberExpr* ME = dyn_cast<MemberExpr>(LHS)){
+                clang::DeclarationNameInfo nameInfo = ME->getMemberNameInfo();
+                if(FunctionNames.count(nameInfo.getAsString()))
+                {
+                    // get rhs
+                    if(auto *DRE = dyn_cast<DeclRefExpr>(BO->getRHS()->IgnoreImpCasts()))
+                    {
+                        FunctionNames.insert(DRE->getDecl()->getNameAsString());
+                        FunctionAliases.insert(std::make_pair(DRE->getDecl()->getNameAsString(), nameInfo.getAsString()));
+                    }
+                }
+                if(MemAssignments.find(ME) != MemAssignments.end()){
+                    MemAssignments[ME].push(std::make_pair(BO->getRHS(), ParameterDirection::DIRECT));
                 }
             }
         }

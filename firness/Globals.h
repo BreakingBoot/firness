@@ -122,6 +122,7 @@ struct EnumDef {
 
 struct Function {
     std::string FunctionName;
+    std::string alias;
     std::string return_type;
     std::map<std::string, Argument> Parameters;
     std::set<std::string> includes;
@@ -154,8 +155,10 @@ extern std::map<RecordDecl*, TypeData> varRecordInfo;
 
 extern std::set<std::string> FunctionNames;
 extern std::set<std::pair<std::string, std::string>> HarnessFunctions;
+extern std::set<std::pair<std::string, std::string>> FunctionAliases;
 extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
 extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
+extern std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
 extern std::map<std::string, TypeData> FinalTypes;
 extern std::map<CallExpr*, VarMap> CallExprMap;
 extern std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;

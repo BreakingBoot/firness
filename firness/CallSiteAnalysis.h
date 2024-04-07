@@ -9,8 +9,8 @@ public:
         : Context(Context) {}
 
     // Assume ParameterDirection is an enum with values INPUT and OUTPUT
-    Expr* getMostRelevantAssignment(VarDecl* var, int exprLineNumber, ASTContext &Ctx) {
-        std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = VarAssignments[var];
+    Expr* getMostRelevantAssignment(VarDecl* var, MemberExpr* ME, int exprLineNumber, ASTContext &Ctx) {
+        std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = (var == nullptr) ? MemAssignments[ME] : VarAssignments[var];
 
         // This loop checks the assignments from the most recent (top of the stack) to the earliest.
         while (!assignmentsStack.empty() && assignmentsStack.top().first != nullptr) {
@@ -65,11 +65,21 @@ public:
                 if (VarAssignments[VD].empty()) {
                     return;  // or some other default action
                 }
-
+                // print out the vardecl type
+                clang::QualType type = VD->getType();
                 // Fetch the most relevant assignment for this variable usage
-                Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
-
-                if (mostRelevantAssignment) {
+                Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, nullptr, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
+                if (type->isEnumeralType()) {
+                    VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE);  // Assuming this function creates a placeholder VarDecl for the enum value
+                    Argument_AST Arg;
+                    Arg.Assignment = DRE;
+                    Arg.Arg = CallArg;
+                    Arg.ArgNum = ParamNum;
+                    Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                    VarDeclMap[Var].push_back(Arg);
+                    return;
+                }
+                else if (mostRelevantAssignment) {
                     Argument_AST Arg;
                     Arg.Assignment = mostRelevantAssignment;
                     Arg.Arg = CallArg;
@@ -159,6 +169,18 @@ public:
             VarDecl *Var = createPlaceholderVarDecl(Ctx, CE); 
             Argument_AST Arg;
             Arg.Assignment = CE;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = HandleParameterDirection(ParameterDirection::INDIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+            VarDeclMap[Var].push_back(Arg);  
+            return;
+        }
+        else if (MemberExpr* ME = dyn_cast<MemberExpr>(S))
+        {
+            Expr* mostRelevantAssignment = getMostRelevantAssignment(nullptr, ME, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
+            VarDecl *Var = isa<VarDecl>(ME->getMemberDecl()) ? dyn_cast<VarDecl>(ME->getMemberDecl()) : createPlaceholderVarDecl(Ctx, ME); 
+            Argument_AST Arg;
+            Arg.Assignment = ME;
             Arg.Arg = CallArg;
             Arg.ArgNum = ParamNum;
             Arg.direction = HandleParameterDirection(ParameterDirection::INDIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
@@ -256,10 +278,24 @@ public:
                 name = "__ENUM_ARG__";
                 type = ECD->getType();
             }
+            else if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl()))
+            {
+                clang::QualType vartype = VD->getType();
+                if(vartype->isEnumeralType())
+                {
+                    name = "__ENUM_ARG__";
+                    type = vartype;
+                }
+            }
+
             else
             {
                 return nullptr;
             }
+        }
+        else if (auto *ME = dyn_cast<MemberExpr>(literal)){
+            name = ME->getMemberNameInfo().getAsString();
+            type = ME->getType();
         }
         else
         {
@@ -721,7 +757,6 @@ public:
 
         if(doesCallMatch(Call, *this->Context))
         {
-            //llvm::outs() << "Found match: " << Call->getNameAsString() << "\n";
             VarDeclMap.clear();
             CallInfo.clear();
             HandleMatchingExpr(Call, *this->Context);

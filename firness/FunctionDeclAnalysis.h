@@ -12,13 +12,35 @@ public:
     // Don't add repeat function decl of the same number of args
     bool ContainsFunction(FunctionDecl *FD) {
         for (auto &Func : FunctionDeclMap) {
-            if (Func.FunctionName == FD->getNameAsString() && Func.Parameters.size() == FD->getNumParams()) {
+            if ((Func.FunctionName == FD->getNameAsString()) && Func.Parameters.size() == FD->getNumParams()) {
                 return true;
+            }
+            // check the FunctionAliases map to see if the function is an alias
+            for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
+            {
+                if(it->first == FD->getNameAsString())
+                {
+                    if(it->second == Func.FunctionName)
+                    {
+                        return true;
+                    }
+                }
             }
         }
         return false;
     }
 
+    std::string getFunctionName(FunctionDecl *FD) {
+        std::string name = FD->getNameAsString();
+        for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
+        {
+            if(it->first == name)
+            {
+                return it->second;
+            }
+        }
+        return name;
+    }
 
     std::string DetermineDirection(int Param, std::string FuncText) {
         std::vector<std::string> parameters;
@@ -73,36 +95,36 @@ public:
         //     llvm::outs() << "Protocol: " << function_name << "\n";
         //     return true;
         // }
-        std::string guid;
-        for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
-        {
-            if(it->first == function_name)
-            {
-                if(!it->second.empty())
-                {
-                    guid = it->second;
-                }
-            }
-        }
-        if(guid.empty())
-        {
-            return false;
-        }
+        // std::string guid;
+        // for(auto it = HarnessFunctions.begin(); it != HarnessFunctions.end(); ++it)
+        // {
+        //     if(it->first == function_name)
+        //     {
+        //         if(!it->second.empty())
+        //         {
+        //             guid = it->second;
+        //         }
+        //     }
+        // }
+        // if(guid.empty())
+        // {
+        //     return false;
+        // }
         // drop the g and Guid from the string guid
-        guid = guid.substr(1, guid.length() - 5);
+        // guid = guid.substr(1, guid.length() - 5);
 
         // make sure its all lowercase
-        std::transform(guid.begin(), guid.end(), guid.begin(), ::tolower);
-        guid.erase(std::remove(guid.begin(), guid.end(), '_'), guid.end());
+        // std::transform(guid.begin(), guid.end(), guid.begin(), ::tolower);
+        // guid.erase(std::remove(guid.begin(), guid.end(), '_'), guid.end());
 
         // remove the all underscores from the data type string
-        type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
+        // type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
 
         // make sure its all lowercase
         std::transform(type.begin(), type.end(), type.begin(), ::tolower);
 
         // check if the type contains the guid
-        if (type.find(guid) != std::string::npos) {
+        if (type.find('protocol') != std::string::npos) {
             FunctionInfo.Parameters.begin()->second.variable = "__PROTOCOL__";
             return true;
         }
@@ -148,7 +170,8 @@ public:
 
     bool VisitFunctionDecl(FunctionDecl *Func) {
         if (FunctionNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
-            FunctionInfo.FunctionName = Func->getNameAsString();
+            // save the function name if there is no alias, otherwise save the alias
+            FunctionInfo.FunctionName = getFunctionName(Func);
             std::string arg_ID = "Arg_";
             for (unsigned i = 0; i < Func->getNumParams(); ++i) {
                 Argument arg;
@@ -171,7 +194,7 @@ public:
             getFunctionHeaderFile(Func, *Context);
             // FunctionInfo.includes = "protocol";
             verifyFunctionInfo();
-            // FunctionDeclMap.push_back(FunctionInfo);
+            FunctionDeclMap.push_back(FunctionInfo);
             FunctionInfo.clear();
         }
         return true;
