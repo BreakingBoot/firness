@@ -1,7 +1,7 @@
 import json
 import os
 import copy
-import fuzzywuzzy as fuzz
+from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple
@@ -546,7 +546,7 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                     # Look for a matching argument in function_template
                     for func_temp_name, func_temp_block in function_template.items():
                         similar = fuzz.ratio(func_name, func_temp_name)
-                        if similar > 80:
+                        if similar > 65:
                             continue
                         for ft_arg_key, ft_argument in func_temp_block.arguments.items():
                             if not contains_void_star(argument[0].arg_type):
@@ -795,6 +795,11 @@ def collect_libraries(includes: List[str]) -> set[str]:
 
     return libraries
 
+def natural_sort_key(key):
+    # Split the key into a prefix and a numeric suffix
+    prefix, suffix = key.split("_", 1)
+    return (prefix, int(suffix))
+
 def analyze_data(macro_file: str,
                  enum_file: str,
                  generator_file: str,
@@ -844,4 +849,15 @@ def analyze_data(macro_file: str,
 
     sanity_check(processed_data, harness_functions)
 
+    # sort the arguments for each function
+    for _, function_block in processed_data.items():
+        sorted_arguments = {k: function_block.arguments[k] for k in sorted(
+            function_block.arguments.keys(), key=natural_sort_key)}
+        function_block.arguments = sorted_arguments
+
+    for _, functions in harness_functions.items():
+        for _, protocol in functions:
+            if protocol == "":
+                continue
+            protocol_guids.add(protocol)
     return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map

@@ -15,13 +15,14 @@ def get_type(arg_type: str) -> str:
     else:
         return arg_type
 
-def set_undefined_constants(argument: Argument) -> str:
-    if "int" in get_type(argument.arg_type).lower() or argument.variable == "__ENUM_ARG__":
-        return "0"
-    elif "bool" in argument.arg_type.lower():
+def set_undefined_constants(arg_type: str) -> str:
+    if has_pointer(arg_type):
+        return "AllocateZeroPool(sizeof(" + remove_ref_symbols(arg_type) + "))"        
+    elif "bool" in arg_type.lower():
         return "FALSE"
     else:
-        return "NULL"
+        return "0"
+        
 
 def generate_outputs(function: str,
                      all_args: Dict[str, List[Argument]],
@@ -64,12 +65,12 @@ def cast_arg(function: str,
     update_arg = ""
     for arg in arg_type_list:
         if arg.name == arg_key:
-            if arg.arg_type != arguments[0].arg_type and not arg.fuzzable:
+            if arg.arg_type != arguments[0].arg_type:
                 update_arg += f'({arguments[0].arg_type})'
             if arguments[0].pointer_count > arg.pointer_count:
                 update_arg += f'&'
-            elif arg.fuzzable and arg.pointer_count == 0:
-                update_arg += f'*'
+            # elif arg.fuzzable and arg.pointer_count > 0:
+            #     update_arg += f'*'
             break
     if arguments[0].variable == '__GEN_INPUT__':
         update_arg += arguments[0].usage
@@ -102,6 +103,7 @@ def call_function(function: str,
         output.append(f"Status = {call_prefix}{function}(")
     else:
         output.append(f"{call_prefix}{function}(")
+
     for arg_key, arguments in function_block.arguments.items():
         if arguments[0].arg_dir == "IN" and arguments[0].variable == "__HANDLE__":
             tmp = f"    ImageHandle,"
@@ -149,19 +151,21 @@ def declare_var(function: str,
         # arg_type = f'{arg_type}[{arg_key}_array[0]]'
     else:
         if fuzzable:
-            arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else f'{remove_ref_symbols(arguments[0].arg_type)}*'
+            arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else f'{(arguments[0].arg_type)}'
         else:
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
         output.append(f'{arg_type} {function}_{arg_key} = AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
     else:
-        if fuzzable:
-            output.append(f'{arg_type} {function}_{arg_key} = NULL;')
-        elif isStruct:
-            output.append(f'{arg_type} {function}_{arg_key} = AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
-        else:
-            output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arguments[0])};")
+        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type)};")
+        # if fuzzable :
+        #     # output.append(f'{arg_type} {function}_{arg_key} = NULL;')
+            
+        # elif isStruct:
+        #     output.append(f'{arg_type} {function}_{arg_key} = AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
+        # else:
+        #     output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arguments[0])};")
     
     return add_indents(output, indent)
 
@@ -171,7 +175,16 @@ def fuzzable_args(function: str,
                   arg_type_list: List[TypeTracker]) -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
-    output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+    for arg_type in arg_type_list:
+        if arg_type.name == arg:
+            if arg_type.pointer_count == 0:
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *)&{function}_{arg});')
+                break
+            else:
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                break
+
+    # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
     # output.append(f'UINT8 {function}_{arg}_choice = 0;')
     # output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
     # output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
@@ -203,7 +216,8 @@ def generate_inputs(function_block: FunctionBlock,
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__" and not arguments[0].variable == "__PROTOCOL__":
-            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", remove_ref_symbols(arguments[0].arg_type) in types.keys()))
+            is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
+            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct))
 
     if len(tmp) > 0:
         output.append("/*")
@@ -303,6 +317,9 @@ def guid_args(function:str,
 
     return add_indents(output, indent)
 
+def has_pointer(arg_type: str) -> bool:
+    return arg_type.count('*') > 0
+
 def generator_struct_args(function: str, 
                           arg_key: str, 
                           arg: Argument, 
@@ -337,7 +354,10 @@ def generator_struct_args(function: str,
     if arg.variable.startswith('__FUZZABLE_') and arg.variable.endswith('_STRUCT__'):
         struct_type = remove_ref_symbols(arg.arg_type) if len(types.get(remove_ref_symbols(arg.arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg.arg_type), None))
         for field in types[struct_type].fields:
-            output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)({function}_{arg_key}->{field.name}));')
+            if not has_pointer(field.type):
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)&({function}_{arg_key}->{field.name}));')
+            else:
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)({function}_{arg_key}->{field.name}));')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
         # find the arg in the generator that is OUT and has the same type as the in function_arg_key
         for gen_arg_key, gen_arg in generators[arg.assignment].arguments.items():
