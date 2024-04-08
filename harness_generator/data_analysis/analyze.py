@@ -484,6 +484,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     only_void_star[arg_key] = False
                 if contains_void_star(argument[0].arg_type) and contains_void_star(argument[0].data_type):
                     only_void_star[arg_key] = True
+                elif contains_void_star(argument[0].arg_type) and aliases.get(remove_ref_symbols(argument[0].arg_type), "") == "":
+                    only_void_star[arg_key] = True
                 elif contains_void_star(argument[0].arg_type):
                     void_star_data_type_counter[arg_key].update(
                         [argument[0].data_type])
@@ -493,8 +495,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 if (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and (arg_key not in current_args_dict[function]):
-                    arg_type = argument[0].arg_type.lower()
-                    is_scalable = any(param.lower() in arg_type or param.lower() in aliases.get(arg_type, "").lower() for param in scalable_params)
+                    arg_type = remove_ref_symbols(argument[0].arg_type)
+                    is_scalable = any(param.lower() in arg_type.lower() or param.lower() in aliases.get(arg_type, "").lower() for param in scalable_params)
                     # if the argument is a fuzzable parameter, then add it to the pre_processed_data
                     if is_scalable:
                         scalable_arg = Argument(

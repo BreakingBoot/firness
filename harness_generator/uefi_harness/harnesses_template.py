@@ -181,7 +181,21 @@ def fuzzable_args(function: str,
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *)&{function}_{arg});')
                 break
             else:
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                output.append(f'UINT8 {function}_{arg}_choice = 0;')
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
+                output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
+                output.append(f'    case 0:')
+                output.append(f'        ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                output.append(f'        break;')
+                output.append(f'    case 1:')
+                output.append('    {')
+                output.append(f'        gBS->FreePool({function}_{arg});')
+                output.append(f'        {function}_{arg} = NULL;')
+                output.append(f'        break;')
+                output.append('    }')
+                output.append('}')
                 break
 
     # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
@@ -274,7 +288,7 @@ def constant_args(function: str,
             tmp = copy.copy(arg)
             tmp.usage = enum
             usages.append(tmp)
-        output.append(f'switch(*{function}_{arg_key}_choice % {len(usages)})' + ' {')
+        output.append(f'switch(*{function}_{arg_key}_choice % {len(usages)+1})' + ' {')
         for index, argument in enumerate(usages):
             output.append(f'    case {index}:')
             if argument.usage == "":
@@ -284,6 +298,12 @@ def constant_args(function: str,
             else:
                 output.append(f'        {function}_{arg_key} = {argument.usage};')
             output.append(f'        break;')
+        output.append(f'    case {len(usages)}:')
+        if has_pointer(arg.arg_type):
+            output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+        else:
+            output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
+        output.append(f'        break;')
         output.append('}')
     else:
         if arg.usage == "":
