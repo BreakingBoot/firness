@@ -9,6 +9,11 @@ std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
 std::map<std::string, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
+
+std::map<std::string, std::string> DebugMap;
+std::map<std::string, std::vector<std::string>> Aliases;
+
+std::set<std::string> FunctionTypes;
 std::vector<Call> CallMap;
 std::map<std::string, MacroDef> PreDefinedConstants;
 std::vector<std::string> EnumConstants;
@@ -71,6 +76,7 @@ int main(int argc, const char **argv) {
         FileOps::outputMacros(output_filename, PreDefinedConstants);
         FileOps::outputEnums(output_filename, EnumMap);
         FileOps::outputFunctionDecl(output_filename, FunctionDeclMap);
+        FileOps::outputAliases(output_filename, Aliases);
     }
     else
         FileOps::printCallMap(CallMap);

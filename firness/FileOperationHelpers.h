@@ -255,6 +255,24 @@ namespace FileOps {
     }
 
     /*
+        Responsible for writing the function aliases
+        gathered from the analysis to a json output file called function-aliases
+    */
+   void outputAliases(const std::string &filename, const std::map<std::string, std::vector<std::string>>& aliases) {
+        std::string file_path = filename + "/function-aliases.json";
+        nlohmann::json j;
+        for (const auto& pair : aliases) {
+            nlohmann::json aliasJson;
+            aliasJson["Function"] = pair.first;
+            aliasJson["Aliases"] = pair.second;
+            j.push_back(aliasJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+
+    /*
         Debugging function to print the Arg Map to stdout
     */
     void printCallMap(const std::vector<Call> &calls) {

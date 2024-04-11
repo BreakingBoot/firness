@@ -159,6 +159,11 @@ extern std::set<std::pair<std::string, std::string>> FunctionAliases;
 extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
 extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 extern std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
+extern std::set<std::string> FunctionTypes;
+
+extern std::map<std::string, std::string> DebugMap;
+extern std::map<std::string, std::vector<std::string>> Aliases;
+
 extern std::map<std::string, TypeData> FinalTypes;
 extern std::map<CallExpr*, VarMap> CallExprMap;
 extern std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;

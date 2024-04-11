@@ -19,6 +19,60 @@ public:
         return true;
     }
 
+    bool VisitInitListExpr(InitListExpr *ILE)
+    {
+        for (auto Expr : ILE->inits()) {
+            // get the initializer only if it is a FunctionToPointerDecay
+            if(auto *ICE = dyn_cast<ImplicitCastExpr>(Expr))
+            {
+                if(ICE->getCastKind() == CK_FunctionToPointerDecay)
+                {
+                    if(DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Expr->IgnoreImpCasts()))
+                    {  
+                        if(FunctionTypes.count(DRE->getType().getAsString()))
+                        {
+                            // llvm::outs() << "Init List Pointer: " << DRE->getNameInfo().getAsString() << " = " << DRE->getType().getAsString() << "\n\n";
+                            FunctionNames.insert(DRE->getNameInfo().getAsString());
+                            FunctionAliases.insert(std::make_pair(DRE->getNameInfo().getAsString(), DebugMap[DRE->getType().getAsString()]));
+                            Aliases[DebugMap[DRE->getType().getAsString()]].push_back(DRE->getNameInfo().getAsString());
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /*
+
+    */
+    bool VisitRecordDecl(RecordDecl *RD) {
+        for (auto field : RD->fields()) {
+            if(field->getType()->isFunctionPointerType())
+            {
+                // since is a function pointer I need to check if that function
+                // is a function in the FunctionNames set
+                if(FunctionNames.count(field->getNameAsString()))
+                {
+                    // I want to save the type of function pointer
+                    
+                    QualType QT = field->getType();
+                    if (QT->isPointerType()) {
+                        QT = QT->getPointeeType();
+                    }
+                    while (auto *TDT = dyn_cast<TypedefType>(QT)) {
+                        QT = TDT->getDecl()->getUnderlyingType();
+                    }
+
+                    // llvm::outs() << "Record Decl Pointer: " << field->getNameAsString() << " = " << QT.getAsString() << "\n";
+                    FunctionTypes.insert(QT.getAsString());
+                    DebugMap[QT.getAsString()] = field->getNameAsString();
+                }
+            }
+        }
+        return true;
+    }
+
     /*
         Capture all of the Enums because they are considered constants
     */
@@ -281,6 +335,7 @@ public:
                     {
                         FunctionNames.insert(DRE->getDecl()->getNameAsString());
                         FunctionAliases.insert(std::make_pair(DRE->getDecl()->getNameAsString(), nameInfo.getAsString()));
+                        Aliases[nameInfo.getAsString()].push_back(DRE->getDecl()->getNameAsString());
                     }
                 }
                 if(MemAssignments.find(ME) != MemAssignments.end()){
