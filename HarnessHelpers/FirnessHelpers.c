@@ -26,7 +26,7 @@ StrDuplicate (
   return Dest;
 }
 
-
+__attribute__((no_sanitize("address")))
 EFI_STATUS
 EFIAPI
 ReadBytes(
