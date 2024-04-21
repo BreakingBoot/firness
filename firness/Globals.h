@@ -145,6 +145,28 @@ struct MacroDef {
     std::string File;
 };
 
+struct GraphNodeInfo {
+    std::string FileName;
+    std::string FunctionName;
+    unsigned int StartLine;
+    unsigned int EndLine;
+
+    bool operator<(const GraphNodeInfo& other) const {
+        // if (FileName != other.FileName) {
+        //     return FileName < other.FileName;
+        // }
+        // if (FunctionName != other.FunctionName) {
+        //     return FunctionName < other.FunctionName;
+        // }
+        // if (StartLine != other.StartLine) {
+        //     return StartLine < other.StartLine;
+        // }
+        // return EndLine < other.EndLine;
+        return std::tie(FileName, FunctionName, StartLine, EndLine) <
+         std::tie(other.FileName, other.FunctionName, other.StartLine, other.EndLine);
+    }
+};
+
 
 typedef std::pair<Expr*, ParameterDirection> Assignment;
 typedef std::map<VarDecl*, std::vector<Argument_AST>> VarMap;
@@ -160,6 +182,10 @@ extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
 extern std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 extern std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
 extern std::set<std::string> FunctionTypes;
+
+extern std::map<std::string, std::set<std::string>> TotalDebugMap;
+extern std::map<std::string, std::set<std::string>> CallGraphMap;
+extern std::set<GraphNodeInfo> FunctionLineMap;
 
 extern std::map<std::string, std::string> DebugMap;
 extern std::map<std::string, std::vector<std::string>> Aliases;

@@ -19,6 +19,69 @@ public:
         return true;
     }
 
+    // Function to calculate the similarity between two strings
+    double similarity(const std::string& s1, const std::string& s2) {
+        size_t len1 = s1.size(), len2 = s2.size();
+        // Check if s2 ends with the pattern '__attribute__((ms_abi))'
+        std::string pattern = "__attribute__((ms_abi))";
+        if (s2.size() >= pattern.size()) {
+            // Ignore the pattern by reducing the length of s2
+            if(s2.substr(s2.size() - pattern.size()) == pattern)
+                len2 -= pattern.size();
+        }
+        if (s1.size() >= pattern.size()) {
+            // Ignore the pattern by reducing the length of s2
+            if(s1.substr(s1.size() - pattern.size()) == pattern)
+                len1 -= pattern.size();
+        }
+        const size_t maxlen = std::max(len1, len2);
+        size_t common_chars = 0;
+
+        for (size_t i = 0, j = 0; i < len1 && j < len2; ++i, ++j) {
+            if (std::tolower(s1[i]) == std::tolower(s2[j])) {
+                ++common_chars;
+            }
+        }
+
+        return static_cast<double>(common_chars) / maxlen;
+    }
+
+    // Function to check if two strings are 80% similar
+    bool fuzzyMatch(const std::string& s1, const std::string& s2) {
+        return similarity(s1, s2) >= 0.8;
+    }
+    bool matchType(const std::string& type) {
+        for(auto& functionType : FunctionTypes) {
+            if(fuzzyMatch(type, functionType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool guidMatch(std::string type) {
+        type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
+
+        for(auto& pair : HarnessFunctions) {
+            if(pair.second.size() > 1){
+                if(fuzzyMatch(type, (pair.second).substr(1))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    std::string getFuzzyMatch(const std::string& type) {
+        // go through the DebugMap and find the key that is 80% similar
+        for(auto& function : DebugMap) {
+            if(fuzzyMatch(type, function.first)) {
+                return function.second;
+            }
+        }
+        return "";
+    }
+
     bool VisitInitListExpr(InitListExpr *ILE)
     {
         for (auto Expr : ILE->inits()) {
@@ -29,12 +92,12 @@ public:
                 {
                     if(DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Expr->IgnoreImpCasts()))
                     {  
-                        if(FunctionTypes.count(DRE->getType().getAsString()))
+                        if(matchType(DRE->getType().getAsString()))
                         {
                             // llvm::outs() << "Init List Pointer: " << DRE->getNameInfo().getAsString() << " = " << DRE->getType().getAsString() << "\n\n";
                             FunctionNames.insert(DRE->getNameInfo().getAsString());
-                            FunctionAliases.insert(std::make_pair(DRE->getNameInfo().getAsString(), DebugMap[DRE->getType().getAsString()]));
-                            Aliases[DebugMap[DRE->getType().getAsString()]].push_back(DRE->getNameInfo().getAsString());
+                            FunctionAliases.insert(std::make_pair(DRE->getNameInfo().getAsString(), getFuzzyMatch(DRE->getType().getAsString())));
+                            Aliases[getFuzzyMatch(DRE->getType().getAsString())].push_back(DRE->getNameInfo().getAsString());
                         }
                     }
                 }
@@ -52,6 +115,7 @@ public:
             {
                 // since is a function pointer I need to check if that function
                 // is a function in the FunctionNames set
+
                 if(FunctionNames.count(field->getNameAsString()))
                 {
                     // I want to save the type of function pointer
@@ -65,8 +129,11 @@ public:
                     }
 
                     // llvm::outs() << "Record Decl Pointer: " << field->getNameAsString() << " = " << QT.getAsString() << "\n";
-                    FunctionTypes.insert(QT.getAsString());
-                    DebugMap[QT.getAsString()] = field->getNameAsString();
+                    if(guidMatch(RD->getNameAsString()))
+                    {
+                        FunctionTypes.insert(QT.getAsString());
+                        DebugMap[QT.getAsString()] = field->getNameAsString();
+                    }
                 }
             }
         }

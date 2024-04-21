@@ -406,6 +406,25 @@ namespace FileOps {
         return HarnessFunctions;
     }
 
+    void GenerateCallGraph(const std::string& filename, const std::map<std::string, std::set<std::string>>& call_graph) {
+        std::string file_path = filename + "/call-graph.dot";
+        std::ofstream file(file_path);
+        file << "digraph G {\n";
+        // Add all of the nodes to the graph
+        for (const auto& call : call_graph) {
+            file << "\t\"" << call.first << "\";\n";
+        }
+
+        // Add all the edges to the graph
+        for (const auto& call : call_graph) {
+            for (const auto& callSite : call.second) {
+                file << "\t\"" << call.first << "\" -> \"" << callSite << "\";\n";
+            }
+        }
+        file << "}\n";
+        file.close();
+    }
+
 }; // FileOps namespace
 
 #endif

@@ -10,6 +10,10 @@ std::map<std::string, TypeData> FinalTypes;
 std::map<CallExpr*, VarMap> CallExprMap;
 std::map<CallExpr*, std::map<Expr*, ParameterDirection>> CallArgMap;
 
+std::map<std::string, std::set<std::string>> CallGraphMap;
+std::map<std::string, std::set<std::string>> TotalDebugMap;
+std::set<GraphNodeInfo> FunctionLineMap;
+
 std::map<std::string, std::string> DebugMap;
 std::map<std::string, std::vector<std::string>> Aliases;
 
@@ -77,6 +81,7 @@ int main(int argc, const char **argv) {
         FileOps::outputEnums(output_filename, EnumMap);
         FileOps::outputFunctionDecl(output_filename, FunctionDeclMap);
         FileOps::outputAliases(output_filename, Aliases);
+        FileOps::GenerateCallGraph(output_filename, CallGraphMap);
     }
     else
         FileOps::printCallMap(CallMap);

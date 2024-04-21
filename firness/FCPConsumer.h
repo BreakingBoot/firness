@@ -6,22 +6,25 @@
 #include "CallSiteAnalysis.h"
 #include "FileOperationHelpers.h"
 #include "FunctionDeclAnalysis.h"
+#include "CallGraph.h"
 
 class FCPConsumer : public clang::ASTConsumer {
 public:
     explicit FCPConsumer(ASTContext *Context)
-        : VariableVisitor(Context), FunctionVisitor(Context), GeneratorVisitor(Context), CallVisitor(Context) {}
+        : VariableVisitor(Context), FunctionVisitor(Context), GeneratorVisitor(Context), CallVisitor(Context), CallGraphVisitor(Context) {}
 
     void HandleTranslationUnit(clang::ASTContext &Context) override {
         VariableVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         FunctionVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         GeneratorVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         CallVisitor.TraverseDecl(Context.getTranslationUnitDecl());
+        CallGraphVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         CallArgMap.clear();
     }
 private:
     VariableFlow VariableVisitor;
     CallSiteAnalysis CallVisitor;
+    CallGraph CallGraphVisitor;
     GeneratorAnalysis GeneratorVisitor;
     FunctionDeclAnalysis FunctionVisitor;
 };
