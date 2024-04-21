@@ -6,7 +6,7 @@ import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple
 from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries
-from common.utils import remove_ref_symbols, write_data, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
+from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 
 
 current_args_dict = defaultdict(list)
@@ -66,70 +66,79 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
               harness_functions: Dict[str, List[Tuple[str, str]]],
               best_guess: bool,
               function_decl: Dict[str, Tuple[str, str]]) -> Dict[str, List[FunctionBlock]]:
-    sorted_data = {}
-    # Determine the most common number of parameters for each function
-    most_common_param_counts = {}
-    for function, function_blocks in input_data.items():
-        param_counts = Counter(len(fb.arguments) for fb in function_blocks)
-        most_common_param_counts[function] = param_counts
-
-    # group the data based on the number of parameters
-    # and TODO: add a check for the parameters themselves
-    # i.e. if there are multiple functions with the same number of parameters
-    # then the arg_dir and arg_type must match
-    # Also, if the most common param count isn't at least 50% of the total number of the different param counts
-    # then don't keep any of the functions
-    for function, param_counts in most_common_param_counts.items():
-        if param_counts.most_common(1)[0][1] < math.floor(len(input_data[function]) / 2):
-            print(f'WARNING: {function} has too many different parameter counts to be harnessed!!')
-            continue
-        sorted_data[function] = {}
-        if len(param_counts) != 1:
-            for function_block in input_data[function]:
-                sorted_data[function].setdefault(
-                    len(function_block.arguments), []).append(function_block)
-        else:
-            sorted_data[function].setdefault(param_counts.most_common(1)[
-                                             0][0], []).extend(input_data[function])
-            
     
-    # now loop through the sorted data and keep the groups of elements that have a corresponding service
-    # in the harness_functions dictionary
     filtered_data = defaultdict(list)
-    for function, arg_num_pairs in sorted_data.items():
-        for _, function_blocks in arg_num_pairs.items():
-            if not any(function in pair[0] for pairs in harness_functions.values() for pair in pairs):
-                print(f'WARNING: {function} is not in the harness functions list!!')
+
+    if len(input_data) > 0:
+        sorted_data = {}
+        # Determine the most common number of parameters for each function
+        most_common_param_counts = {}
+        for function, function_blocks in input_data.items():
+            param_counts = Counter(len(fb.arguments) for fb in function_blocks)
+            most_common_param_counts[function] = param_counts
+
+        # group the data based on the number of parameters
+        # and TODO: add a check for the parameters themselves
+        # i.e. if there are multiple functions with the same number of parameters
+        # then the arg_dir and arg_type must match
+        # Also, if the most common param count isn't at least 50% of the total number of the different param counts
+        # then don't keep any of the functions
+        for function, param_counts in most_common_param_counts.items():
+            if param_counts.most_common(1)[0][1] < math.floor(len(input_data[function]) / 2):
+                print(f'WARNING: {function} has too many different parameter counts to be harnessed!!')
                 continue
-            arg_num_match = False
-            for function_block in function_blocks:
-                for key, item in services_map.items():
-                    if key in function_block.service or item in function_block.service:
-                        for harness_group in harness_functions[services_map[key]]:
-                            if function in harness_group:
-                                    # print(f'INFO: {function} with {key} parameters has been selected for harnessing!!')
-                                    arg_num_match = True
-                                    break
-                    if arg_num_match:
-                        break
-                if arg_num_match:
-                    break
-            if arg_num_match:
-                filtered_data.setdefault(function, []).extend(function_blocks)
-            elif any(function in pair[0] for pair in harness_functions["OtherFunctions"]):
-                filtered_data.setdefault(function, []).extend(function_blocks)
-    if best_guess:
+            sorted_data[function] = {}
+            if len(param_counts) != 1:
+                for function_block in input_data[function]:
+                    sorted_data[function].setdefault(
+                        len(function_block.arguments), []).append(function_block)
+            else:
+                sorted_data[function].setdefault(param_counts.most_common(1)[
+                                                0][0], []).extend(input_data[function])
+                
+        
+        # now loop through the sorted data and keep the groups of elements that have a corresponding service
+        # in the harness_functions dictionary
         for function, arg_num_pairs in sorted_data.items():
             for _, function_blocks in arg_num_pairs.items():
                 if not any(function in pair[0] for pairs in harness_functions.values() for pair in pairs):
+                    print(f'WARNING: {function} is not in the harness functions list!!')
                     continue
-                if function in filtered_data.keys():
-                    break
-                filtered_data.setdefault(function, []).extend(function_blocks)
+                arg_num_match = False
+                for function_block in function_blocks:
+                    for key, item in services_map.items():
+                        if key in function_block.service or item in function_block.service:
+                            for harness_group in harness_functions[services_map[key]]:
+                                if function in harness_group:
+                                        # print(f'INFO: {function} with {key} parameters has been selected for harnessing!!')
+                                        arg_num_match = True
+                                        break
+                        if arg_num_match:
+                            break
+                    if arg_num_match:
+                        break
+                if arg_num_match:
+                    filtered_data.setdefault(function, []).extend(function_blocks)
+                elif any(function in pair[0] for pair in harness_functions["OtherFunctions"]):
+                    filtered_data.setdefault(function, []).extend(function_blocks)
+        if best_guess:
+            for function, arg_num_pairs in sorted_data.items():
+                for _, function_blocks in arg_num_pairs.items():
+                    if not any(function in pair[0] for pairs in harness_functions.values() for pair in pairs):
+                        continue
+                    if function in filtered_data.keys():
+                        break
+                    filtered_data.setdefault(function, []).extend(function_blocks)
                 
     # loop through the filtered data and add the function_decl function if it is not already in the filtered_data
     for function, function_info in function_decl.items():
         if function not in filtered_data.keys():
+            if function_info.service == "" or function_info.service is None:
+                # search harness_functions for the function
+                for key, value in harness_functions.items():
+                    if any(function in pair[0] for pair in value):
+                        function_info.service = key
+                        break
             filtered_data[function].append(FunctionBlock(function_info.arguments, function, 
                                             function_info.service, function_info.includes, function_info.return_type))
             # all_includes.update(function_info.includes)
@@ -146,22 +155,26 @@ def load_data(json_file: str,
               random: bool,
               best_guess: bool,
               function_decl: Dict[str, Tuple[str, str]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
+
     with open(json_file, 'r') as file:
         raw_data = json.load(file)
 
     function_dict = defaultdict(list)
-    for raw_function_block in raw_data:
-        arguments = {
-            arg_key: [Argument(**raw_argument)]
-            for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
-        }
-        if random:
-            for arg_key, argument in arguments.items():
-                if argument[0].variable in known_contant_variables:
-                    argument[0].variable = ""
-        function_block = FunctionBlock(arguments, raw_function_block.get(
-            'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
-        function_dict[function_block.function].append(function_block)
+    try:
+        for raw_function_block in raw_data:
+            arguments = {
+                arg_key: [Argument(**raw_argument)]
+                for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
+            }
+            if random:
+                for arg_key, argument in arguments.items():
+                    if argument[0].variable in known_contant_variables:
+                        argument[0].variable = ""
+            function_block = FunctionBlock(arguments, raw_function_block.get(
+                'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
+            function_dict[function_block.function].append(function_block)
+    except Exception as e:
+        print(f'ERROR: {e}')
 
     # Check if there is a single most common number of parameters for each function
     # and if not then take the one which has a service matching the harness_functions.keys()
@@ -205,7 +218,6 @@ def load_data(json_file: str,
                 argument[0].arg_type = function_template[function].arguments.get(arg_key)[0].arg_type
 
     return filtered_function_dict, function_template
-
 
 def load_generators(json_file: str,
                     macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
@@ -400,7 +412,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                                 arg_key, []).append(argument[0])
                             # current_args_dict[function].append(arg_key)
                             # save the file that the protocol is defined in
-                            all_includes.add(types[remove_ref_symbols(argument[0].arg_type)].file)
+                            all_includes.add(types.get(remove_ref_symbols(argument[0].arg_type), TypeInfo()).file)
                             usage_seen[function][arg_key].append(argument[0].usage)
                     # add all contant values, but only one if its a sizeof(UINTN)
                     elif ("__CONSTANT" in argument[0].variable and "__CONSTANT_" != argument[0].variable) and argument[0].usage not in usage_seen[function][arg_key]:

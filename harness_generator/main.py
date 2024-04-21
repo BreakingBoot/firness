@@ -3,7 +3,7 @@ import argparse
 import os
 import uuid
 from datetime import datetime
-from common.types import FunctionBlock, FieldInfo
+from common.types import FunctionBlock, FieldInfo, EnumDef, scalable_params
 from common.utils import clean_harnesses, gen_file, compile
 from data_analysis.analyze import analyze_data
 import path_trace.header_template as tracer_header
@@ -63,9 +63,10 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
                   generators_dict: Dict[str, FunctionBlock],
                   aliases: Dict[str, str],
                   harness_folder,
-                  enums: Dict[str, List[str]]):
+                  enums: Dict[str, List[str]],
+                  random: bool = False):
     code = uefi_harnesses.harness_generator(
-        data_template, function_dict, types_dict, generators_dict, aliases, enums)
+        data_template, function_dict, types_dict, generators_dict, aliases, enums, random)
     gen_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
 
@@ -97,10 +98,11 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      protocol_guids: set,
                      driver_guids: set,
                      harness_folder: str,
-                     output_dir: str):
+                     output_dir: str,
+                     random: bool = False):
 
     generate_main(merged_data, harness_folder)
-    generate_code(merged_data, template, types, generators, aliases, harness_folder, enums)
+    generate_code(merged_data, template, types, generators, aliases, harness_folder, enums, random)
     generate_header(merged_data, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder, libraries, protocol_guids, driver_guids)
@@ -138,6 +140,52 @@ def generate_harness_folder(dir: str):
     # Return the full path of the inner directory
     return full_path
 
+def calculate_statistics(merged_data: Dict[str, FunctionBlock],
+                     generators: Dict[str, FunctionBlock],
+                     aliases: Dict[str, str],
+                     enums: Dict[str, EnumDef],
+                     harness_folder: str):
+    total_functions = len(merged_data)
+    total_generators = len(generators)
+
+    # collect total number of scalable types that aren't pointers
+    total_scalable_types = 0
+    total_pointer_types = 0
+    total_struct_types = 0
+    total_constants = 0
+    enum_list = []
+    for _, function_block in merged_data.items():
+        for _, argument in function_block.arguments.items():
+            is_scalable = any(param.lower() in argument[-1].arg_type.lower() or param.lower() in aliases.get(argument[-1].arg_type, "").lower() for param in scalable_params)
+            if '*' not in argument[-1].arg_type and (is_scalable or "__FUZZABLE__" == argument[-1].variable):
+                total_scalable_types += 1
+            elif (is_scalable or "__FUZZABLE__" == argument[-1].variable) and 'void' not in argument[-1].arg_type.lower():
+                total_pointer_types += 1
+            else:
+                total_struct_types += 1
+            for arg in argument:
+                if "CONSTANT" in arg.variable and arg.arg_dir == "IN":
+                    total_constants += 1
+                elif "__ENUM_ARG__" in arg.variable and arg.arg_type not in enum_list:
+                    total_constants += len(enums.get(arg.arg_type, EnumDef()).values)
+                    enum_list.append(arg.arg_type)
+    print(f"Total Functions: {total_functions}")
+    print(f"Total Generators: {total_generators}")
+    print(f"Total Scalable Types: {total_scalable_types}")
+    print(f"Total Pointer Types: {total_pointer_types}")
+    print(f"Total Struct Types: {total_struct_types}")
+    print(f"Total Constants: {total_constants}")
+
+    # output total stats to csv file
+    with open(f'{harness_folder}/stats.csv', 'w') as file:
+        file.write(f"Total Functions,{total_functions}\n")
+        file.write(f"Total Generators,{total_generators}\n")
+        file.write(f"Total Scalable Types,{total_scalable_types}\n")
+        file.write(f"Total Pointer Types,{total_pointer_types}\n")
+        file.write(f"Total Struct Types,{total_struct_types}\n")
+        file.write(f"Total Constants,{total_constants}\n")
+
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
@@ -172,8 +220,12 @@ def main():
     harness_folder = generate_harness_folder(args.output)
     processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                   args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess, args.function_file)
+    
+    main_dir = os.path.dirname(os.path.abspath(args.data_file))
+    calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir)
+
     generate_harness(processed_data, template, types, enums,
-                     all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output)
+                     all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random)
 
 
 if __name__ == '__main__':

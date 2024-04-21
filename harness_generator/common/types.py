@@ -130,7 +130,7 @@ class Argument:
         }
 
 class EnumDef:
-    def __init__(self, name: str, values: List[str], file: str = ""):
+    def __init__(self, name: str = "", values: List[str] = [], file: str = ""):
         self.name = name
         self.values = values
         self.file = file
@@ -144,7 +144,7 @@ class Function:
         self.includes = includes
 
 class FunctionBlock:
-    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str, includes: Set[str] = [], return_type: str = ""):
+    def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str = "", includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
         self.service = service
         self.function = function

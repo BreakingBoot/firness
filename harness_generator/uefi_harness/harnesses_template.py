@@ -33,7 +33,7 @@ def generate_outputs(function: str,
     
     for arg_key, arguments in all_args.items():
         if "OUT" == arguments[0].arg_dir and not arguments[0].variable == '__GEN_INPUT__':
-            tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False))
+            tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False, False))
             # This is being used to handle the case where the output is a pointer ( so randomly create a pointer)
             tmp.append(f"UINT8* {function}_{arg_key}_OutputChoice = AllocateZeroPool(sizeof(UINT8));")
             tmp.append(f"ReadBytes(Input, sizeof({function}_{arg_key}_OutputChoice), (VOID *){function}_{arg_key}_OutputChoice);")
@@ -134,7 +134,8 @@ def declare_var(function: str,
                 arg_type_list: List[TypeTracker],
                 indent: bool,
                 fuzzable: bool,
-                isStruct: bool) -> List[str]:
+                isStruct: bool,
+                random) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
         if arguments[0].arg_dir == "OUT":
@@ -145,12 +146,16 @@ def declare_var(function: str,
             return output
     elif arguments[0].pointer_count == 2:
         arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
+        if random:
+            arg_type = "UINTN*"
         arg_type_list.append(TypeTracker(arg_type, arg_key, 1, fuzzable))
         # output.append(f'UINT8 *{arg_key}_array = NULL;')
         # output.append(f'ReadBytes(&Input, sizeof({arg_key}_array), &{arg_key}_array);')
         # arg_type = f'{arg_type}[{arg_key}_array[0]]'
     else:
-        if fuzzable:
+        if random:
+            arg_type = "UINTN*"
+        elif fuzzable:
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else f'{(arguments[0].arg_type)}'
         else:
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
@@ -225,13 +230,14 @@ def generate_inputs(function_block: FunctionBlock,
                     protocol_variable: str, 
                     generators: Dict[str, FunctionBlock],
                     arg_type_list: List[TypeTracker],
-                    indent: bool) -> List[str]:
+                    indent: bool,
+                    random: bool) -> List[str]:
     output = []
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__" and not arguments[0].variable == "__PROTOCOL__":
             is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
-            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct))
+            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct, random))
 
     if len(tmp) > 0:
         output.append("/*")
@@ -251,7 +257,7 @@ def generate_inputs(function_block: FunctionBlock,
                 if total_elements > 1:
                     output.append(f'    case {arguments.index(arg)}:')
                     output.append('    {')
-                if arg.variable == "__FUZZABLE__":
+                if arg.variable == "__FUZZABLE__" or random:
                     output.extend(fuzzable_args(function_block.function, arg_key, total_elements > 1, arg_type_list))
                 elif "__CONSTANT" in arg.variable or "__ENUM_ARG__" in arg.variable:
                     output.extend(constant_args(function_block.function, arg_key, arg, total_elements > 1))
@@ -394,10 +400,11 @@ def function_body(function_block: FunctionBlock,
                   protocol_variable: str, 
                   generators: Dict[str, FunctionBlock], 
                   types: Dict[str, TypeInfo],
-                  indent: bool) -> List[str]:
+                  indent: bool,
+                  random: bool = False) -> List[str]:
     output = []
     arg_type_list = []
-    output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False))
+    output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False, random))
     output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False))
     output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False))
 
@@ -409,7 +416,8 @@ def harness_generator(services: Dict[str, FunctionBlock],
                       types: Dict[str, TypeInfo], 
                       generators: Dict[str, FunctionBlock],
                       aliases: Dict[str, str],
-                      enums: Dict[str, EnumDef]) -> List[str]:
+                      enums: Dict[str, EnumDef],
+                      random: bool = False) -> List[str]:
     aliases_map.update(aliases)
     enum_map.update(enums)
     # Initialize an empty string to store the generated content
@@ -442,7 +450,7 @@ def harness_generator(services: Dict[str, FunctionBlock],
             output.append('        return Status;')
             output.append('    }')
 
-        output.extend(function_body(function_block, services, protocol_variable, generators, types, True))
+        output.extend(function_body(function_block, services, protocol_variable, generators, types, True, random))
 
         output.append(f"    return Status;")
         output.append("}")

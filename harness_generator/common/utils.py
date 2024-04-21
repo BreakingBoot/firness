@@ -150,6 +150,11 @@ def contains_void_star(s):
     s_no_spaces = s.replace(" ", "").lower()
     return "void*" in s_no_spaces
 
+# def contains_void_star(s: str,
+#                        aliases: Dict[str, str]):
+#     s_no_spaces = s.replace(" ", "").lower()
+#     return "void*" in s_no_spaces or "void*" in aliases.get(remove_ref_symbols(s), "").replace(" ", "").lower()
+
 def is_fuzzable(type: str,
                 aliases: Dict[str, str],
                 typemap: Dict[str, TypeInfo],
