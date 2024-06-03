@@ -19,7 +19,10 @@ public:
         return true;
     }
 
-    // Function to calculate the similarity between two strings
+    /*
+        Function to calculate the similarity between two strings
+        utilizing the uefi hueristics
+    */
     double similarity(const std::string& s1, const std::string& s2) {
         size_t len1 = s1.size(), len2 = s2.size();
         // Check if s2 ends with the pattern '__attribute__((ms_abi))'
@@ -46,10 +49,17 @@ public:
         return static_cast<double>(common_chars) / maxlen;
     }
 
-    // Function to check if two strings are 80% similar
+    /*
+        Function to check if two strings are 75% similar.
+        75% was determined via testing.
+    */
     bool fuzzyMatch(const std::string& s1, const std::string& s2) {
-        return similarity(s1, s2) >= 0.8;
+        return similarity(s1, s2) >= 0.75;
     }
+
+    /*
+        Function to check if the type is a function type
+    */
     bool matchType(const std::string& type) {
         for(auto& functionType : FunctionTypes) {
             if(fuzzyMatch(type, functionType)) {
@@ -59,6 +69,9 @@ public:
         return false;
     }
 
+    /*
+        Function to check if the guid matches the function type
+    */
     bool guidMatch(std::string type) {
         type.erase(std::remove(type.begin(), type.end(), '_'), type.end());
 
@@ -72,16 +85,36 @@ public:
         return false;
     }
 
+    /*
+        Function to get the fuzzy match of a type
+    */
     std::string getFuzzyMatch(const std::string& type) {
-        // go through the DebugMap and find the key that is 80% similar
+        // go through the DebugMap and find the key that is 75% similar
+        // keep the key that is the most similar
+        std::string result = "";
+        double max_similarity = 0.0;
         for(auto& function : DebugMap) {
             if(fuzzyMatch(type, function.first)) {
-                return function.second;
+                double cur_similarity = similarity(type, function.first);
+                if(cur_similarity > max_similarity) {
+                    max_similarity = cur_similarity;
+                    result = function.second;
+                }
             }
         }
-        return "";
+        return result;
     }
 
+    /*
+        Function to match the function name to the alias assignment.
+        Ex.: 
+        EFI_REST_JSON_STRUCTURE_PROTOCOL  mRestJsonStructureProtocol = {
+            RestJsonStructureRegister,
+            RestJsonStructureToStruct,
+            RestJsonStructureToJson,
+            RestJsonStructureDestroyStruct
+            };
+    */
     bool VisitInitListExpr(InitListExpr *ILE)
     {
         for (auto Expr : ILE->inits()) {
@@ -94,10 +127,9 @@ public:
                     {  
                         if(matchType(DRE->getType().getAsString()))
                         {
-                            // llvm::outs() << "Init List Pointer: " << DRE->getNameInfo().getAsString() << " = " << DRE->getType().getAsString() << "\n\n";
-                            FunctionNames.insert(DRE->getNameInfo().getAsString());
+                            FunctionDeclNames.insert(DRE->getNameInfo().getAsString());
                             FunctionAliases.insert(std::make_pair(DRE->getNameInfo().getAsString(), getFuzzyMatch(DRE->getType().getAsString())));
-                            Aliases[getFuzzyMatch(DRE->getType().getAsString())].push_back(DRE->getNameInfo().getAsString());
+                            Aliases[getFuzzyMatch(DRE->getType().getAsString())].insert(DRE->getNameInfo().getAsString());
                         }
                     }
                 }
@@ -107,7 +139,7 @@ public:
     }
 
     /*
-
+        Capture all of the RecordDecls to get the function pointers
     */
     bool VisitRecordDecl(RecordDecl *RD) {
         for (auto field : RD->fields()) {
@@ -128,7 +160,6 @@ public:
                         QT = TDT->getDecl()->getUnderlyingType();
                     }
 
-                    // llvm::outs() << "Record Decl Pointer: " << field->getNameAsString() << " = " << QT.getAsString() << "\n";
                     if(guidMatch(RD->getNameAsString()))
                     {
                         FunctionTypes.insert(QT.getAsString());
@@ -168,8 +199,7 @@ public:
         // Check if it's an ElaboratedType
         if (const ElaboratedType *ET = dyn_cast<ElaboratedType>(T)) {
             // Get the RecordType from the ElaboratedType
-            const RecordType *RT = dyn_cast<RecordType>(ET->getNamedType().getTypePtr());
-            if (RT) {
+            if (const RecordType *RT = dyn_cast<RecordType>(ET->getNamedType().getTypePtr())) {
                 // Get the RecordDecl from the RecordType
                 RecordDecl *RD = RT->getDecl();
                 if (RD->isThisDeclarationADefinition()) {
@@ -187,6 +217,9 @@ public:
                     }
                     varTypeInfo[TD] = Type_Data;
                     varRecordInfo[RD] = Type_Data;
+                    if((FinalTypes.find(varRecordInfo[RD].TypeName) == FinalTypes.end())) {
+                        FinalTypes.insert(std::make_pair(varRecordInfo[RD].TypeName, varRecordInfo[RD]));
+                    }
                 }
             }
         }
@@ -356,6 +389,37 @@ public:
         return DetermineArgumentType(Param, FuncText, Arg, CE);
     }
 
+    /*
+        Capture all of the casting that is done in the code
+        that way all of the proper generator functions can be properly
+        labeled
+    */
+    bool VisitCStyleCastExpr(CStyleCastExpr *CCE) {
+        // Get the source and destination types
+        QualType SrcType = CCE->getSubExpr()->getType();
+        QualType DestType = CCE->getType();
+        std::string SrcStr = SrcType.getAsString();
+        std::string DestStr = DestType.getAsString();
+
+        // if void is in either the source or destination type, ignore it
+        if (SrcStr.find("void") != std::string::npos || DestStr.find("void") != std::string::npos) {
+            return true;
+        }
+
+        // remove all pointers from the source and destination via string manipulation
+        SrcStr.erase(std::remove(SrcStr.begin(), SrcStr.end(), '*'), SrcStr.end());
+        DestStr.erase(std::remove(DestStr.begin(), DestStr.end(), '*'), DestStr.end());
+        // remove all spaces from the source and destination via string manipulation
+        SrcStr.erase(std::remove(SrcStr.begin(), SrcStr.end(), ' '), SrcStr.end());
+        DestStr.erase(std::remove(DestStr.begin(), DestStr.end(), ' '), DestStr.end());
+
+        CastMap[SrcStr].insert(DestStr);
+        CastMap[DestStr].insert(SrcStr);
+
+        return true;
+
+    }
+
     //
     // Get all CallExpr for when Variables are set inside functions
     //
@@ -400,9 +464,9 @@ public:
                     // get rhs
                     if(auto *DRE = dyn_cast<DeclRefExpr>(BO->getRHS()->IgnoreImpCasts()))
                     {
-                        FunctionNames.insert(DRE->getDecl()->getNameAsString());
+                        FunctionDeclNames.insert(DRE->getDecl()->getNameAsString());
                         FunctionAliases.insert(std::make_pair(DRE->getDecl()->getNameAsString(), nameInfo.getAsString()));
-                        Aliases[nameInfo.getAsString()].push_back(DRE->getDecl()->getNameAsString());
+                        Aliases[nameInfo.getAsString()].insert(DRE->getDecl()->getNameAsString());
                     }
                 }
                 if(MemAssignments.find(ME) != MemAssignments.end()){
