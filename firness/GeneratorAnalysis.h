@@ -9,8 +9,8 @@ public:
         : Context(Context) {}
 
    // Assume ParameterDirection is an enum with values INPUT and OUTPUT
-    Expr* getMostRelevantAssignment(VarDecl* var, int exprLineNumber, ASTContext &Ctx) {
-        std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = VarAssignments[var];
+    Expr* getMostRelevantAssignment(VarDecl* var, MemberExpr* ME, int exprLineNumber, ASTContext &Ctx) {
+        std::stack<std::pair<clang::Expr *, ParameterDirection>> assignmentsStack = (var == nullptr) ? MemAssignments[ME] : VarAssignments[var];
 
         // This loop checks the assignments from the most recent (top of the stack) to the earliest.
         while (!assignmentsStack.empty() && assignmentsStack.top().first != nullptr) {
@@ -61,11 +61,21 @@ public:
                 if (VarAssignments[VD].empty()) {
                     return;  // or some other default action
                 }
-
+                // print out the vardecl type
+                clang::QualType type = VD->getType();
                 // Fetch the most relevant assignment for this variable usage
-                Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
-
-                if (mostRelevantAssignment) {
+                Expr* mostRelevantAssignment = getMostRelevantAssignment(VD, nullptr, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
+                if (type->isEnumeralType()) {
+                    VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE);  // Assuming this function creates a placeholder VarDecl for the enum value
+                    Argument_AST Arg;
+                    Arg.Assignment = DRE;
+                    Arg.Arg = CallArg;
+                    Arg.ArgNum = ParamNum;
+                    Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                    VarDeclMap[Var].push_back(Arg);
+                    return;
+                }
+                else if (mostRelevantAssignment) {
                     Argument_AST Arg;
                     Arg.Assignment = mostRelevantAssignment;
                     Arg.Arg = CallArg;
@@ -82,6 +92,27 @@ public:
                     Arg.direction = HandleParameterDirection(VarAssignments[VD].top().second, dyn_cast<CallExpr>(CurrentExpr), CallArg);
                     VarDeclMap[VD].push_back(Arg);
                 }
+                return;
+            }
+            else if (FunctionDecl *FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
+                // New handling code for FunctionDecl...
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE); 
+                Argument_AST Arg;
+                Arg.Assignment = DRE;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                VarDeclMap[Var].push_back(Arg);
+                return;
+            }
+            else if (EnumConstantDecl *ECD = dyn_cast<EnumConstantDecl>(DRE->getDecl())) {
+                VarDecl *Var = createPlaceholderVarDecl(Ctx, DRE);  // Assuming this function creates a placeholder VarDecl for the enum value
+                Argument_AST Arg;
+                Arg.Assignment = DRE;
+                Arg.Arg = CallArg;
+                Arg.ArgNum = ParamNum;
+                Arg.direction = HandleParameterDirection(ParameterDirection::DIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+                VarDeclMap[Var].push_back(Arg);
                 return;
             }
         }
@@ -140,6 +171,18 @@ public:
             VarDeclMap[Var].push_back(Arg);  
             return;
         }
+        else if (MemberExpr* ME = dyn_cast<MemberExpr>(S))
+        {
+            Expr* mostRelevantAssignment = getMostRelevantAssignment(nullptr, ME, PassHelpers::getLineNumber(CurrentExpr, Ctx), Ctx);
+            VarDecl *Var = isa<VarDecl>(ME->getMemberDecl()) ? dyn_cast<VarDecl>(ME->getMemberDecl()) : createPlaceholderVarDecl(Ctx, ME); 
+            Argument_AST Arg;
+            Arg.Assignment = ME;
+            Arg.Arg = CallArg;
+            Arg.ArgNum = ParamNum;
+            Arg.direction = HandleParameterDirection(ParameterDirection::INDIRECT, dyn_cast<CallExpr>(CurrentExpr), CallArg);
+            VarDeclMap[Var].push_back(Arg);  
+            return;
+        }
         for (Stmt *child : S->children()) {
             ParseArg(child, Ctx, CurrentExpr, CallArg, ParamNum);
         }
@@ -169,8 +212,6 @@ public:
                     // If the argument is an expression, get its type
                     type = sizeofExpr->getArgumentExpr()->getType();
                 }
-            } else {
-                return nullptr; 
             }
         } else if(auto *BO = dyn_cast<BinaryOperator>(literal)){
             if(BO->getOpcode() == BO_Or)
@@ -219,8 +260,41 @@ public:
         } else if (CallExpr *CE = dyn_cast<CallExpr>(literal)) {
             name = "__INDIRECT_CALL__";
             type = CE->getCallReturnType(Ctx);
-        } else {
-            return nullptr;
+        } else if (auto *DRE = dyn_cast<DeclRefExpr>(literal)){
+            if(auto *FD = dyn_cast<FunctionDecl>(DRE->getDecl()))
+            {
+                name = "__FUNCTION_PTR__";
+                type = FD->getReturnType();
+            }
+            else if(EnumConstantDecl *ECD = dyn_cast<EnumConstantDecl>(DRE->getDecl()))
+            {
+                name = "__ENUM_ARG__";
+                type = ECD->getType();
+            }
+            else if(VarDecl *VD = dyn_cast<VarDecl>(DRE->getDecl()))
+            {
+                clang::QualType vartype = VD->getType();
+                if(vartype->isEnumeralType())
+                {
+                    name = "__ENUM_ARG__";
+                    type = vartype;
+                }
+            }
+            else
+            {
+                name = "__UNKNOWN__";
+                type = DRE->getType();
+            }
+
+        }
+        else if (auto *ME = dyn_cast<MemberExpr>(literal)){
+            name = ME->getMemberNameInfo().getAsString();
+            type = ME->getType();
+        }
+        else
+        {
+            name += "UNKNOWN__";
+            type = Ctx.IntTy;
         }
 
         // Create the VarDecl with the computed name and type
@@ -373,17 +447,30 @@ public:
             {
                 Argument String_Arg;
                 String_Arg.data_type = VD->getType().getAsString();
-                String_Arg.variable = VD->getNameAsString();
+                if(Clang_Arg.ArgNum == 0 && CallInfo.Service == "protocol")
+                {
+                    String_Arg.variable = "__PROTOCOL__";
+                }
+                else
+                {
+                    String_Arg.variable = VD->getNameAsString();
+                }
+                // String_Arg.variable = VD->getNameAsString();
                 std::vector<std::string> potentialOutputs = GetPotentialOutputs(Clang_Arg.Arg);
                 if(potentialOutputs.size() > 1)
                 {
                     String_Arg.potential_outputs = potentialOutputs;
                     String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 }
+                else if(potentialOutputs.size() == 1)
+                {
+                    String_Arg.usage = PassHelpers::reduceWhitespace(potentialOutputs[0]);
+                }
                 else
                 {
                     String_Arg.usage = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Arg, *this->Context));
                 }
+
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
@@ -404,7 +491,13 @@ public:
         bool found = false;
 
         std::string CallExprString;
-        if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
+        /*if (FunctionDecl* FD = dyn_cast<FunctionDecl>(EX)) {
+            CallExprString = FD->getNameAsString();
+            CallInfo.Function = CallExprString;
+            CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
+            return true;
+        }
+        else*/ if (DeclRefExpr* DRE = dyn_cast<DeclRefExpr>(EX)) {
             if (FunctionDecl* FD = dyn_cast<FunctionDecl>(DRE->getDecl())) {
                 CallExprString = FD->getNameAsString();
                 CallInfo.Function = CallExprString;
@@ -415,6 +508,25 @@ public:
         else if (MemberExpr* MemExpr = dyn_cast<MemberExpr>(EX)) {
             CallExprString = MemExpr->getMemberNameInfo().getName().getAsString();
             CallInfo.Function = CallExprString;
+            if (auto *Base = dyn_cast<Expr>(MemExpr->getBase()))
+            {
+                // Base is of type Expr*
+                // Now, you can get the type information
+                QualType BaseType = Base->getType();
+                std::string type = BaseType.getAsString();
+                std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+
+                // check if the BaseType contains the phrase protocol and make sure its lowercase
+                if (type.find("protocol") != std::string::npos) {
+                    CallInfo.Service = "protocol";
+                    ///CallInfo.Arguments.begin()->second.variable = "__PROTOCOL__";
+                }
+                else
+                {
+                    CallInfo.Service = getSourceCode(Base, *this->Context);
+                }
+
+            }
             CallInfo.Arguments = GetVarDeclMap(VarDeclMap);
             return true;
         }
@@ -529,63 +641,25 @@ public:
                         if (!CheckType(arg)) {
                             continue;
                         }
-                        QualType qt = arg->getType();
-                        if(!qt.isNull())
+                        // make sure the type is a generator type
+                        if(GeneratorTypes.find(removeTrailingPointer(arg->getType().getAsString())) != GeneratorTypes.end())
                         {
-                            // Work through any typedefs to get to the ultimate
-                            // underlying type.
-                            while (qt->isAnyPointerType() || qt->isReferenceType()) {
-                                qt = qt->getPointeeType();
+                            HandleMatchingExpr(Call, *this->Context);
+                            GeneratorFunctionsMap[Call] = VarDeclMap;
+                            if(GenCallInfo(Call))
+                            {
+                                CallInfo.includes = IncludeDirectives;
+                                CallInfo.return_type = Call->getCallReturnType(*this->Context).getAsString();
+                                GeneratorMap.push_back(CallInfo);
                             }
-                            qt = qt.getCanonicalType();
-
-                            // Now, QT should be the actual type of the variable, without any typedefs
-                            // Check if it's a record type (i.e., a struct or class type).
-                            if (const RecordType *RT = dyn_cast<RecordType>(qt)) {
-                                // Get the RecordDecl for the record type.
-                                if(!qt.getAsString().empty())
-                                {
-                                    if(FinalTypes.find(qt.getAsString()) != FinalTypes.end())
-                                    {
-                                        HandleMatchingExpr(Call, *this->Context);
-                                        GeneratorFunctionsMap[Call] = VarDeclMap;
-                                        if(GenCallInfo(Call))
-                                        {
-                                            CallInfo.includes = IncludeDirectives;
-                                            CallInfo.return_type = Call->getCallReturnType(*this->Context).getAsString();
-                                            GeneratorMap.push_back(CallInfo);
-                                        }
-                                        VarDeclMap.clear();
-                                        CallInfo.clear();
-                                        return true;
-                                    }
-                                }
-                            } else if (const TypedefType *TDT = dyn_cast<TypedefType>(qt)) {
-                                // Get the TypedefNameDecl for the typedef type.
-                                TypedefNameDecl *TND = TDT->getDecl();
-                                llvm::outs() << TND->getNameAsString() << "\n";
-                                // This is never reached, but I keep incase it is needed in future analysis            
-                            }
+                            VarDeclMap.clear();
+                            CallInfo.clear();
+                            return true;
                         }
                     }
                 }
             }
         }
-        /*else if(GeneratorTypes.find(removeTrailingPointer(Call->getType().getAsString())) != GeneratorTypes.end())
-        {
-            llvm::outs() << "Found Generator Function: " << Call->getType().getAsString() << "\n";
-            Call->dump();
-            HandleMatchingExpr(Call, *this->Context);
-            GeneratorFunctionsMap[Call] = VarDeclMap;
-            if(GenCallInfo(Call))
-            {
-                CallInfo.includes = IncludeDirectives;
-                CallInfo.return_type = Call->getType().getAsString();
-                GeneratorMap.push_back(CallInfo);
-            }
-            VarDeclMap.clear();
-            CallInfo.clear();
-        }*/
 
         return true;
     }
