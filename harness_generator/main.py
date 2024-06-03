@@ -144,9 +144,9 @@ def calculate_statistics(merged_data: Dict[str, FunctionBlock],
                      generators: Dict[str, FunctionBlock],
                      aliases: Dict[str, str],
                      enums: Dict[str, EnumDef],
-                     harness_folder: str):
+                     harness_folder: str,
+                     total_generators: int):
     total_functions = len(merged_data)
-    total_generators = len(generators)
 
     # collect total number of scalable types that aren't pointers
     total_scalable_types = 0
@@ -159,7 +159,7 @@ def calculate_statistics(merged_data: Dict[str, FunctionBlock],
             is_scalable = any(param.lower() in argument[-1].arg_type.lower() or param.lower() in aliases.get(argument[-1].arg_type, "").lower() for param in scalable_params)
             if '*' not in argument[-1].arg_type and (is_scalable or "__FUZZABLE__" == argument[-1].variable):
                 total_scalable_types += 1
-            elif (is_scalable or "__FUZZABLE__" == argument[-1].variable) and 'void' not in argument[-1].arg_type.lower():
+            elif (is_scalable or "__FUZZABLE__" == argument[-1].variable):
                 total_pointer_types += 1
             else:
                 total_struct_types += 1
@@ -169,6 +169,7 @@ def calculate_statistics(merged_data: Dict[str, FunctionBlock],
                 elif "__ENUM_ARG__" in arg.variable and arg.arg_type not in enum_list:
                     total_constants += len(enums.get(arg.arg_type, EnumDef()).values)
                     enum_list.append(arg.arg_type)
+    
     print(f"Total Functions: {total_functions}")
     print(f"Total Generators: {total_generators}")
     print(f"Total Scalable Types: {total_scalable_types}")
@@ -205,6 +206,8 @@ def main():
                         default='/input/input.txt', help='Path to the input file (default: /input/input.txt)')
     parser.add_argument('-f', '--function-file', dest='function_file',
                         default='/output/tmp/functions.json', help='Path to the function file (default: /output/tmp/functions.json)')
+    parser.add_argument('-s', '--cast-file', dest='cast_file',
+                        default='/output/tmp/cast-map.json', help='Path to the cast file (default: /output/tmp/cast-map.json)')
     parser.add_argument('-o', '--output', dest='output',
                         default='/output', help='Path to the output directory (default: /output)')
     parser.add_argument('-c', '--clean', dest='clean', action='store_true',
@@ -218,11 +221,11 @@ def main():
 
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
-    processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
-                                                  args.data_file, args.types_file, args.alias_file, args.random, harness_folder, args.best_guess, args.function_file)
+    processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
+                                                  args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file)
     
     main_dir = os.path.dirname(os.path.abspath(args.data_file))
-    calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir)
+    calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
 
     generate_harness(processed_data, template, types, enums,
                      all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random)

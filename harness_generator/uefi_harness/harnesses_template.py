@@ -27,12 +27,15 @@ def set_undefined_constants(arg_type: str) -> str:
 def generate_outputs(function: str,
                      all_args: Dict[str, List[Argument]],
                      arg_type_list: List[TypeTracker],
-                     indent: bool) -> List[str]:
+                     indent: bool,
+                     prefix: str) -> List[str]:
     output = []
     tmp = []
     
     for arg_key, arguments in all_args.items():
         if "OUT" == arguments[0].arg_dir and not arguments[0].variable == '__GEN_INPUT__':
+            if prefix != "":
+                arg_key = f'{prefix}_{arg_key}'
             tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False, False))
             # This is being used to handle the case where the output is a pointer ( so randomly create a pointer)
             tmp.append(f"UINT8* {function}_{arg_key}_OutputChoice = AllocateZeroPool(sizeof(UINT8));")
@@ -85,16 +88,19 @@ def call_function(function: str,
                   services: Dict[str, FunctionBlock], 
                   protocol_variable: str,
                   arg_type_list: List[TypeTracker],                    
-                  indent: bool) -> List[str]:
+                  indent: bool,
+                  prefix: str) -> List[str]:
     output = []
-
-    if "protocol" in services[function].service:
+    lookup_function = function
+    if prefix != "":
+        lookup_function = f'{prefix}:{function}'
+    if "protocol" in services[lookup_function].service:
         call_prefix = protocol_variable + "->"
-    elif "BS" in services[function].service or "Boot" in services[function].service:
+    elif "BS" in services[lookup_function].service or "Boot" in services[lookup_function].service:
         call_prefix = "SystemTable->BootServices->"
-    elif "RT" in services[function].service or "Runtime" in services[function].service:
+    elif "RT" in services[lookup_function].service or "Runtime" in services[lookup_function].service:
         call_prefix = "SystemTable->RuntimeServices->"
-    elif "DS" in services[function].service or "DxeServices" in services[function].service:
+    elif "DS" in services[lookup_function].service or "DxeServices" in services[lookup_function].service:
         call_prefix = "gDS->"
     else:
         call_prefix = ""
@@ -105,6 +111,9 @@ def call_function(function: str,
         output.append(f"{call_prefix}{function}(")
 
     for arg_key, arguments in function_block.arguments.items():
+        original_arg_key = arg_key
+        if prefix != "":
+            arg_key = f'{prefix}_{arg_key}'
         if arguments[0].arg_dir == "IN" and arguments[0].variable == "__HANDLE__":
             tmp = f"    ImageHandle,"
         elif arguments[0].arg_dir == "IN" and arguments[0].variable == "__PROTOCOL__":
@@ -114,7 +123,7 @@ def call_function(function: str,
         else:
             tmp = f"    {cast_arg(function, arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
-        if arg_key == list(function_block.arguments.keys())[-1]:
+        if original_arg_key == list(function_block.arguments.keys())[-1]:
             tmp = tmp[:-1]
         output.append(tmp)
     output.append(f");")
@@ -231,12 +240,15 @@ def generate_inputs(function_block: FunctionBlock,
                     generators: Dict[str, FunctionBlock],
                     arg_type_list: List[TypeTracker],
                     indent: bool,
-                    random: bool) -> List[str]:
+                    random: bool,
+                    prefix: str) -> List[str]:
     output = []
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__" and not arguments[0].variable == "__PROTOCOL__":
             is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
+            if prefix != "":
+                arg_key = f'{prefix}_{arg_key}'
             tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct, random))
 
     if len(tmp) > 0:
@@ -248,6 +260,8 @@ def generate_inputs(function_block: FunctionBlock,
 
     for arg_key, arguments in function_block.arguments.items():
         if "IN" in arguments[0].arg_dir:
+            if prefix != "":
+                arg_key = f'{prefix}_{arg_key}'
             total_elements = len(arguments)
             if total_elements > 1:
                 output.append(f'UINT8* {function_block.function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
@@ -290,7 +304,10 @@ def constant_args(function: str,
         output.append(f'UINT8* {function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
         output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), (VOID *){function}_{arg_key}_choice);')
         usages = []
-        for enum in enum_map[arg.arg_type].values:
+        matched_enum = enum_map.get(remove_ref_symbols(arg.arg_type), None)
+        if matched_enum is None:
+            matched_enum = enum_map.get(remove_ref_symbols(arg.data_type), EnumDef())
+        for enum in matched_enum.values:
             tmp = copy.copy(arg)
             tmp.usage = enum
             usages.append(tmp)
@@ -391,7 +408,22 @@ def generator_struct_args(function: str,
                 gen_arg[0].variable = "__GEN_INPUT__"
                 gen_arg[0].usage = f'{function}_{arg_key}'
                 break
-        output.extend(function_body(generators[arg.assignment], services, protocol_variable, generators, types, indent))        
+        function_name = arg.assignment
+        prefix = ""
+        if ':' in arg.assignment:
+            prefix = arg.assignment.split(':')[0]
+            function_name = arg.assignment.split(':')[-1]
+
+        generators[arg.assignment].function = function_name
+        services[arg.assignment].function = function_name
+        if "protocol" in generators[arg.assignment].service.lower():
+            protocol_variable = f'{protocol_variable}_{prefix}'
+            output.append(f"    {generators[arg.assignment].arguments['Arg_0'][0].arg_type} {protocol_variable} = NULL;")
+            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{generators[arg.assignment].arguments["Arg_0"][0].usage}, NULL, (VOID *)&{protocol_variable});')
+            output.append('    if (EFI_ERROR(Status)) {')
+            output.append('        return Status;')
+            output.append('    }')
+        output.extend(function_body(generators[arg.assignment], services, protocol_variable, generators, types, indent, False, prefix))        
 
     return add_indents(output, indent)
 
@@ -401,12 +433,13 @@ def function_body(function_block: FunctionBlock,
                   generators: Dict[str, FunctionBlock], 
                   types: Dict[str, TypeInfo],
                   indent: bool,
-                  random: bool = False) -> List[str]:
+                  random: bool = False,
+                  prefix: str = "") -> List[str]:
     output = []
     arg_type_list = []
-    output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False, random))
-    output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False))
-    output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False))
+    output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False, random, prefix))
+    output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False, prefix))
+    output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False, prefix))
 
     return add_indents(output, indent)
 

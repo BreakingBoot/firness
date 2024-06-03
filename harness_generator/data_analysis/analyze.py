@@ -11,6 +11,7 @@ from common.utils import remove_ref_symbols, write_data, get_union, is_whitespac
 
 current_args_dict = defaultdict(list)
 all_includes = set()
+total_generators = set()
 
 
 # Doesn't take into account if multiple function definitions are found with the same
@@ -31,6 +32,27 @@ def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
             function_dict[function.function] = function
 
         return function_dict
+    except Exception as e:
+        print(f'ERROR: {e}')
+        return {}
+
+#
+# load in the castings
+#
+def load_castings(json_file: str) -> Dict[str, List[str]]:
+    try:
+        with open(json_file, 'r') as file:
+            raw_data = json.load(file)
+        casting_dict = defaultdict(list)
+        for raw_casting in raw_data:
+            # if the type isn't a scalar, then add it to the casting_dict
+            if not any(param.lower() in raw_casting["Type"].lower() for param in scalable_params):
+                casts = raw_casting["Casts"]
+                for cast in casts:
+                    # if the cast isn't a scalar, then add it to the casting_dict
+                    if not any(param.lower() in cast.lower() for param in scalable_params):
+                        casting_dict[raw_casting["Type"]].append(cast)
+        return casting_dict
     except Exception as e:
         print(f'ERROR: {e}')
         return {}
@@ -187,7 +209,7 @@ def load_data(json_file: str,
     # Collect data_type statistics for arg_type of "void *"
     for function, function_blocks in filtered_function_dict.items():
         if function not in function_template:
-            function_template[function] = function_blocks[0]
+            function_template[function] = function_blocks[0]        
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
                 if remove_ref_symbols(function_template[function].arguments.get(arg_key)[0].arg_type) in type_defs.values():
@@ -197,7 +219,10 @@ def load_data(json_file: str,
                                 arg_key)[0].arg_type = name
                     # function_template[function].arguments.get(
                     #     arg_key)[0].arg_type = argument[0].arg_type
-                
+                if argument[0].variable == "__FUNCTION_PTR__":
+                    for function_block2 in function_blocks:
+                        function_block2.arguments.get(arg_key)[0].variable = "__FUNCTION_PTR__"
+                        function_block2.arguments.get(arg_key)[0].data_type = argument[0].arg_type
                 if argument[0].assignment in macros.keys():
                     argument[0].usage = macros[argument[0].assignment].name
                     argument[0].assignment = macros[argument[0].assignment].name
@@ -237,17 +262,21 @@ def load_generators(json_file: str,
         }
         function_block = FunctionBlock(arguments, raw_function_block.get(
             'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
-        function_dict[function_block.function].append(function_block)
+        if function_block.service == "protocol":
+            function_dict[f'{remove_ref_symbols(function_block.arguments["Arg_0"][0].arg_type)}:{function_block.function}'].append(function_block)
+        else:
+            function_dict[function_block.function].append(function_block)
 
     # Determine the most common number of parameters for each function
-    most_common_param_counts = {}
-    for function, function_blocks in function_dict.items():
-        param_counts = Counter(len(fb.arguments) for fb in function_blocks)
-        most_common_param_counts[function] = param_counts.most_common(1)[0][0]
+    # most_common_param_counts = {}
+    # for function, function_blocks in function_dict.items():
+    #     param_counts = Counter(len(fb.arguments) for fb in function_blocks)
+    #     most_common_param_counts[function] = param_counts.most_common(1)[0][0]
 
-    # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
-    filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
-                              for function, function_blocks in function_dict.items()}
+    # # Filter the function_dict to only include FunctionBlock instances with the most common number of parameters
+    # filtered_function_dict = {function: [fb for fb in function_blocks if len(fb.arguments) == most_common_param_counts[function]]
+    #                           for function, function_blocks in function_dict.items()}
+    filtered_function_dict = function_dict
 
     for function, function_blocks in filtered_function_dict.items():
         for function_block in function_blocks:
@@ -312,6 +341,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                       types: Dict[str, TypeInfo],
                       pre_processed_data: Dict[str, FunctionBlock],
                       aliases: Dict[str, str],
+                      macros: Dict[str, Macros],
                       random: bool) -> Dict[str, FunctionBlock]:
     # for all of the functionblock argument data_types, check the types structure for the matching type
     # if the type is found and all of the fields are scalars, then add it to the create a new argument
@@ -325,7 +355,7 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
             for arg_key, argument in function_block.arguments.items():
                 added_struct = False
                 if len(pre_processed_data[function].arguments.setdefault(arg_key, [])) > 0:
-                    if any('__FUZZABLE__' in var.variable or '__ENUM_ARG__' in var.variable for var in pre_processed_data[function].arguments.get(arg_key)):
+                    if any('__FUZZABLE__' in var.variable or '__ENUM_ARG__' in var.variable or 'EFI_EVENT' in var.arg_type or "void" in remove_ref_symbols(get_underlying_type(var.arg_type, aliases, macros)) for var in pre_processed_data[function].arguments.get(arg_key)):
                         continue
 
                 if argument[0].arg_dir == "IN" and not contains_fuzzable_struct[function][arg_key] and (arg_key not in current_args_dict[function]):
@@ -394,7 +424,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             # current_args_dict[function].append(arg_key)
                             usage_seen[function][arg_key].append(argument[0].usage)
                     # only want to add EFI_HANDLE once
-                    elif "EFI_HANDLE" in argument[0].arg_type and usage_seen[function][arg_key] == []:
+                    elif ("EFI_HANDLE" in argument[0].arg_type or "EFI_HANDLE" in get_underlying_type(argument[0].arg_type, aliases, macros) ) and usage_seen[function][arg_key] == []:
                         argument[0].variable = "__HANDLE__"
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(argument[0])
@@ -405,8 +435,11 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                         # if the assignment is LocatedProtocol then find the protocol guid from the assignment:
                         # gBS->LocateProtocol ( &gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **)&mUnicodeCollation )
                         if "locateprotocol" in argument[0].assignment.lower():
-                            protocol_guids.add(argument[0].assignment.split('->')[1].split('(')[1].split(',')[0].strip()[1:])
-
+                            try:
+                                protocol_guids.add(argument[0].assignment.split('->')[1].split('(')[1].split(',')[0].strip()[1:])
+                            except:
+                                print(f'ERROR: {function} has a protocol assignment that could not be parsed!!')
+                                print(f'ERROR: {argument[0].assignment}')
                         if usage_seen[function][arg_key] == []:
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(argument[0])
@@ -473,6 +506,16 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                 # current_args_dict[function].remove(arg_key)
     return pre_processed_data, matched_macros, protocol_guids, driver_guids
 
+def get_underlying_type(data_type: str, 
+                        aliases: Dict[str, str], 
+                        macros: Dict[str, Macros]) -> str:
+    underlying_type = data_type
+    while remove_ref_symbols(underlying_type) in aliases.keys() or remove_ref_symbols(underlying_type) in macros.keys():
+        if remove_ref_symbols(underlying_type) in aliases.keys():
+            underlying_type = aliases[remove_ref_symbols(underlying_type)]
+        elif remove_ref_symbols(underlying_type) in macros.keys():
+            underlying_type = macros[remove_ref_symbols(underlying_type)].value
+    return underlying_type
 
 #
 # Get fuzzable saves the arguments that take scalar inputs and also saves void * inputs that vary argument type
@@ -483,6 +526,7 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
 def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                           pre_processed_data: Dict[str, FunctionBlock],
                           aliases: Dict[str, str],
+                          macros: Dict[str, Macros],
                           random: bool) -> Dict[str, FunctionBlock]:
 
     for function, function_blocks in input_data.items():
@@ -508,7 +552,7 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
             for arg_key, argument in function_block.arguments.items():
                 if (argument[0].arg_dir == "IN" or argument[0].arg_dir == "IN_OUT") and (arg_key not in current_args_dict[function]):
                     arg_type = remove_ref_symbols(argument[0].arg_type)
-                    is_scalable = any(param.lower() in arg_type.lower() or param.lower() in aliases.get(arg_type, "").lower() for param in scalable_params)
+                    is_scalable = any(param.lower() in arg_type.lower() or param.lower() in get_underlying_type(arg_type, aliases, macros).lower() for param in scalable_params)
                     # if the argument is a fuzzable parameter, then add it to the pre_processed_data
                     if is_scalable:
                         scalable_arg = Argument(
@@ -546,36 +590,39 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
 
 
 def get_generators(pre_processed_data: Dict[str, FunctionBlock],
-                   generators: Dict[str, List[FunctionBlock]],
-                   function_template: Dict[str, FunctionBlock],
+                   generators: Dict[str, FunctionBlock],
+                   input_data: Dict[str, List[FunctionBlock]],
                    aliases: Dict[str, str],
+                   castings: Dict[str, List[str]],
                    types: Dict[str, TypeInfo]) -> Dict[str, FunctionBlock]:
-
+    global total_generators
     matching_generators = {}  # Dictionary to store the matching generators
-    for func_name, generator_blocks in generators.items():
-        for generator_block in generator_blocks:
-            for argument in generator_block.arguments.values():
-                # Check if argument direction is OUT
-                if argument[0].arg_dir == "OUT" and not any(param.lower() in argument[0].arg_type.lower() for param in scalable_params):
-                    # Look for a matching argument in function_template
-                    for func_temp_name, func_temp_block in function_template.items():
+    for func_name, generator_block in generators.items():
+        for argument in generator_block.arguments.values():
+            # Check if argument direction is OUT
+            if argument[0].arg_dir == "OUT" and not any(param.lower() in argument[0].arg_type.lower() for param in scalable_params):
+                # Look for a matching argument in function_template
+                for func_temp_name, func_temp_blocks in input_data.items():
+                    for func_temp_block in func_temp_blocks:
+                        # Check if the function names are similar
                         similar = fuzz.ratio(func_name, func_temp_name)
                         if similar > 65:
                             continue
                         for ft_arg_key, ft_argument in func_temp_block.arguments.items():
                             if not contains_void_star(argument[0].arg_type):
                                 # Check if argument types match and the argument is missing from known_inputs
-                                if (argument[0].arg_type == ft_argument[0].arg_type and #ft_arg_key not in current_args_dict[func_temp_name] and
+                                if ((remove_ref_symbols(argument[0].arg_type) == remove_ref_symbols(ft_argument[0].arg_type) or remove_ref_symbols(argument[0].arg_type) in castings[remove_ref_symbols(ft_argument[0].arg_type)])and #ft_arg_key not in current_args_dict[func_temp_name] and
                                         ft_argument[0].arg_dir == "IN" and func_name not in matching_generators.setdefault(func_temp_name, [])):
                                     # Add a check to make sure all of the input arguments are fuzzable
                                     all_fuzzable = True
                                     for ft_arg_key2, ft_argument2 in generator_block.arguments.items():
-                                        if ft_argument2[0].arg_dir == "IN" and ft_arg_key2 not in current_args_dict[func_temp_name]:
+                                        if ft_argument2[0].arg_dir == "IN" and ft_arg_key2 not in current_args_dict[func_temp_name] and ft_argument2[0].variable != "__PROTOCOL__":
                                             if not is_fuzzable(remove_ref_symbols(ft_argument2[0].arg_type), aliases, types, 0) :
                                                 all_fuzzable = False
                                                 break
                                     # If matching generator is found, add it to the matching_generators dictionary
                                     if all_fuzzable:
+                                        total_generators.add(func_name)
                                         matching_generators.setdefault(
                                             func_temp_name, []).append(func_name)
                                         generator_arg = Argument(
@@ -583,7 +630,25 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                                         # current_args_dict[func_temp_name].append(ft_arg_key)
                                         pre_processed_data[func_temp_name].arguments.setdefault(
                                             ft_arg_key, []).append(generator_arg)
-
+                                elif ((remove_ref_symbols(argument[0].arg_type) == remove_ref_symbols(ft_argument[0].data_type) or remove_ref_symbols(argument[0].arg_type) in castings[remove_ref_symbols(ft_argument[0].data_type)])and #ft_arg_key not in current_args_dict[func_temp_name] and
+                                        ft_argument[0].arg_dir == "IN" and func_name not in matching_generators.setdefault(func_temp_name, [])):
+                                    # Add a check to make sure all of the input arguments are fuzzable
+                                    all_fuzzable = True
+                                    for ft_arg_key2, ft_argument2 in generator_block.arguments.items():
+                                        if ft_argument2[0].arg_dir == "IN" and ft_arg_key2 not in current_args_dict[func_temp_name]and ft_argument2[0].variable != "__PROTOCOL__":
+                                            if not is_fuzzable(remove_ref_symbols(ft_argument2[0].data_type), aliases, types, 0) :
+                                                all_fuzzable = False
+                                                break
+                                    # If matching generator is found, add it to the matching_generators dictionary
+                                    if all_fuzzable:
+                                        total_generators.add(func_name)
+                                        matching_generators.setdefault(
+                                            func_temp_name, []).append(func_name)
+                                        generator_arg = Argument(
+                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
+                                        # current_args_dict[func_temp_name].append(ft_arg_key)
+                                        pre_processed_data[func_temp_name].arguments.setdefault(
+                                            ft_arg_key, []).append(generator_arg)
     return pre_processed_data
 
 
@@ -605,7 +670,7 @@ def initialize_data(function_template: Dict[str, FunctionBlock]) -> Dict[str, Fu
             {}, func, func_block.service, {}, func_block.return_type)
     return initial_data
 
-# Now add the output variables because we aren't trying to fuzz those
+# Now add the output variables because we aren't trying to fuzz those necessarily
 
 
 def add_output_variables(function_template: Dict[str, FunctionBlock],
@@ -631,10 +696,11 @@ def handle_optional_arguments(pre_processed_data: Dict[str, FunctionBlock]) -> D
 def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                    function_template: Dict[str, FunctionBlock],
                                    types: Dict[str, TypeInfo],
-                                   input_generators: Dict[str, List[FunctionBlock]],
+                                   input_generators: Dict[str, FunctionBlock],
                                    aliases: Dict[str, str],
                                    macros: Dict[str, Macros],
                                    enums: Dict[str, List[str]],
+                                   casts: Dict[str, List[str]],
                                    random: bool,
                                    harness_functions: Dict[str, List[Tuple[str, str]]]) -> Tuple[Dict[str, FunctionBlock], Dict[str, str], set, set]:
     # Collect all of the arguments to be passed to the template
@@ -653,18 +719,18 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
 
     # Step 2: Collect the fuzzable arguments
     pre_processed_data = get_directly_fuzzable(
-        input_data, pre_processed_data, aliases, random)
+        input_data, pre_processed_data, aliases, macros, random)
     print(f'INFO: Collecting directly fuzzable arguments complete!!')
 
     if not random:
         # Step 3: collect the generator functions
         pre_processed_data = get_generators(
-            pre_processed_data, input_generators, function_template, aliases, types)
+            pre_processed_data, input_generators, input_data, aliases, casts, types)
         print(f'INFO: Collecting generator functions complete!!')
 
     # Step 4: Collect the fuzzable structs
     pre_processed_data = variable_fuzzable(
-        input_data, types, pre_processed_data, aliases, random)
+        input_data, types, pre_processed_data, aliases, macros, random)
     print(f'INFO: Collecting fuzzable structs complete!!')
 
     # Step 5: Add the output variables
@@ -735,6 +801,8 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
 def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
                        input_template: Dict[str, FunctionBlock],
                        aliases: Dict[str, str],
+                       macros: Dict[str, Macros],
+                       enums: Dict[str, List[str]],
                        types: Dict[str, TypeInfo]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
@@ -744,23 +812,26 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
     # generators = collect_known_constants(generators, generators)
     generators, generators_tempalate = initialize_generators(input_generators)
     generators = get_intersect(input_generators, generators)
+    generators, matched_macros, protocol_guids, driver_guids = collect_known_constants(
+            input_generators, generators, macros, aliases, types, enums)
 
     # Step 2: Collect the fuzzable arguments
-    generators = get_directly_fuzzable(input_generators, generators, aliases, True)
+    generators = get_directly_fuzzable(input_generators, generators, aliases, macros, True)
 
     # Step 3: Collect the fuzzable structs
     generators = variable_fuzzable(
-        input_generators, types, generators, aliases, False)
+        input_generators, types, generators, aliases, macros, False)
 
     # Step 4: Add the output variables
     generators = add_output_variables(generators_tempalate, generators)
+    generators = handle_optional_arguments(generators)  
 
     # Step 5: Sort the arguments
     for key, function_block in generators.items():
         sorted_arguments = {k: function_block.arguments[k] for k in sorted(
             function_block.arguments.keys())}
         function_block.arguments = sorted_arguments
-
+    
     # Step 6: remove the generators that are missing arguments from both
     # the input_generators and the generators_template
     incomplete_generators = []
@@ -821,12 +892,15 @@ def analyze_data(macro_file: str,
                  data_file: str,
                  types_file: str,
                  alias_file: str,
+                 cast_file: str,
                  random: bool,
                  harness_folder: str,
                  best_guess: bool,
-                 functions: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], List[str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]]]:
+                 functions: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], List[str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]], int]:
 
     macros_val, macros_name = load_macros(macro_file)
+    global total_generators
+    cast_map = load_castings(cast_file)
     enum_map = load_enums(enum_file)
     generators = load_generators(generator_file, macros_val)
     harness_functions = load_functions(input_file)
@@ -837,7 +911,7 @@ def analyze_data(macro_file: str,
     aliases = load_aliases(alias_file)
     if not random:
         generators, processed_generators, template = analyze_generators(
-            generators, function_template, aliases, types)
+            generators, function_template, aliases, macros_name, enum_map, types)
     else:
         processed_generators = {}
         template = function_template
@@ -848,7 +922,7 @@ def analyze_data(macro_file: str,
     # (i.e. more than one level of integrated structs) and the basic structs
     # that have all scalable fields will be directly generated with random input
     processed_data, matched_macros, protocol_guids, driver_guids = collect_all_function_arguments(
-        data, function_template, types, generators, aliases, macros_name, enum_map, random, harness_functions)
+        data, function_template, types, processed_generators, aliases, macros_name, enum_map, cast_map, random, harness_functions)
 
     # all_includes = get_union(processed_data, processed_generators)
     update_includes = cleanup_paths(all_includes)
@@ -874,4 +948,4 @@ def analyze_data(macro_file: str,
             if protocol == "":
                 continue
             protocol_guids.add(protocol)
-    return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map
+    return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map, len(total_generators)
