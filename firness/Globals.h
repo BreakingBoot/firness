@@ -51,6 +51,8 @@ struct Argument {
     std::string arg_dir;
     std::string arg_type;
 
+    Argument() = default;
+
     // Function to clear the Argument object
     void clear() {
         data_type.clear();
@@ -69,6 +71,8 @@ struct Argument_AST {
     int ArgNum;
     ParameterDirection direction;
 
+    Argument_AST() = default;
+
     void clear() {
         Arg = nullptr;
         Assignment = nullptr;
@@ -81,6 +85,8 @@ struct FieldInfo {
     std::string Name;
     std::string Type;
     FieldDecl* FieldType;
+
+    FieldInfo() = default;
 };
 
 struct TypeData {
@@ -102,6 +108,8 @@ struct Call {
     std::map<std::string, Argument> Arguments;
     std::set<std::string> includes;
 
+    Call() = default;
+
     // Function to clear the Call object
     void clear() {
         Function.clear();
@@ -118,6 +126,8 @@ struct Call {
 struct EnumDef {
     std::set<std::string> Constants;
     std::string File;
+
+    EnumDef() = default;
 };
 
 struct Function {
@@ -126,6 +136,8 @@ struct Function {
     std::string return_type;
     std::map<std::string, Argument> Parameters;
     std::set<std::string> includes;
+
+    Function() = default;
 
     // Function to clear the Call object
     void clear() {
@@ -143,6 +155,8 @@ struct MacroDef {
     std::string Name;
     std::string Value;
     std::string File;
+
+    MacroDef() = default;
 };
 
 struct GraphNodeInfo {
@@ -150,6 +164,8 @@ struct GraphNodeInfo {
     std::string FunctionName;
     unsigned int StartLine;
     unsigned int EndLine;
+
+    GraphNodeInfo() = default;
 
     bool operator<(const GraphNodeInfo& other) const {
         // if (FileName != other.FileName) {
@@ -176,6 +192,7 @@ extern std::map<TypedefDecl*, TypeData> varTypeInfo;
 extern std::map<RecordDecl*, TypeData> varRecordInfo;
 
 extern std::set<std::string> FunctionNames;
+extern std::set<std::string> FunctionDeclNames;
 extern std::set<std::pair<std::string, std::string>> HarnessFunctions;
 extern std::set<std::pair<std::string, std::string>> FunctionAliases;
 extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
@@ -188,7 +205,7 @@ extern std::map<std::string, std::set<std::string>> CallGraphMap;
 extern std::set<GraphNodeInfo> FunctionLineMap;
 
 extern std::map<std::string, std::string> DebugMap;
-extern std::map<std::string, std::vector<std::string>> Aliases;
+extern std::map<std::string, std::set<std::string>> Aliases;
 
 extern std::map<std::string, TypeData> FinalTypes;
 extern std::map<CallExpr*, VarMap> CallExprMap;
@@ -202,3 +219,4 @@ extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
 extern std::set<std::string> GeneratorTypes;
 extern std::vector<Function> FunctionDeclMap;
+extern std::map<std::string, std::set<std::string>> CastMap;
