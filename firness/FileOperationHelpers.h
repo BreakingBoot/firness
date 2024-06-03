@@ -258,7 +258,7 @@ namespace FileOps {
         Responsible for writing the function aliases
         gathered from the analysis to a json output file called function-aliases
     */
-   void outputAliases(const std::string &filename, const std::map<std::string, std::vector<std::string>>& aliases) {
+   void outputAliases(const std::string &filename, const std::map<std::string, std::set<std::string>>& aliases) {
         std::string file_path = filename + "/function-aliases.json";
         nlohmann::json j;
         for (const auto& pair : aliases) {
@@ -422,6 +422,20 @@ namespace FileOps {
             }
         }
         file << "}\n";
+        file.close();
+    }
+
+    void outputCastMap(const std::string &filename, const std::map<std::string, std::set<std::string>> &castMap) {
+        std::string file_path = filename + "/cast-map.json";
+        nlohmann::json j;
+        for (const auto& pair : castMap) {
+            nlohmann::json castJson;
+            castJson["Type"] = pair.first;
+            castJson["Casts"] = pair.second;
+            j.push_back(castJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
         file.close();
     }
 
