@@ -216,13 +216,22 @@ public:
                     // If the argument is an expression, get its type
                     type = sizeofExpr->getArgumentExpr()->getType();
                 }
-            } else {
-                return nullptr; 
+            }
+            else
+            {
+                name += "UNKNOWN__";
+                type = sizeofExpr->getType();
             }
         } else if(auto *BO = dyn_cast<BinaryOperator>(literal)){
             if(BO->getOpcode() == BO_Or)
             {
                 name += "INT__";
+                type = Ctx.IntTy;
+            }
+            else
+            {
+                name += "UNKNOWN__";
+                type = BO->getType();
             }
             /*else
             {
@@ -232,7 +241,7 @@ public:
                     name += "INT__";
                 }
             }*/
-            type = Ctx.IntTy;
+            
         } else if (isa<IntegerLiteral>(literal)) {
             // Get the string representation of the literal
             std::string literalString = getSourceCode(dyn_cast<IntegerLiteral>(literal), Ctx); 
@@ -262,6 +271,10 @@ public:
                 if (isSubstring) {
                     name += "MAYBE_INT__";
                 }
+                else
+                {
+                    name += "UNKNOWN__";
+                }
             }
             type = Ctx.IntTy;
         } else if (CallExpr *CE = dyn_cast<CallExpr>(literal)) {
@@ -286,11 +299,16 @@ public:
                     name = "__ENUM_ARG__";
                     type = vartype;
                 }
+                else
+                {
+                    name = "__UNKNOWN__";
+                    type = DRE->getType();
+                }
             }
-
             else
             {
-                return nullptr;
+                name = "__UNKNOWN__";
+                type = DRE->getType();
             }
         }
         else if (auto *ME = dyn_cast<MemberExpr>(literal)){
@@ -299,7 +317,8 @@ public:
         }
         else
         {
-            return nullptr;
+            name += "UNKNOWN__";
+            type = Ctx.IntTy;
         }
 
         // Create the VarDecl with the computed name and type
@@ -416,8 +435,24 @@ public:
                 String_Arg.assignment = PassHelpers::reduceWhitespace(PassHelpers::getSourceCode(Clang_Arg.Assignment, *this->Context));
                 String_Arg.arg_dir = GetAssignmentType(Clang_Arg.direction);
                 String_Arg.arg_type = Clang_Arg.Arg->getType().getAsString();
-
-                GeneratorTypes.insert(removeTrailingPointer(String_Arg.arg_type));
+                if(String_Arg.arg_dir == "OUT" || String_Arg.arg_dir == "IN_OUT")
+                {
+                    GeneratorTypes.insert(removeTrailingPointer(String_Arg.arg_type));
+                    for(auto cast : CastMap)
+                    {
+                        if(cast.first == removeTrailingPointer(String_Arg.arg_type))
+                        {
+                            for(auto cast_type : cast.second)
+                            {
+                                GeneratorTypes.insert(cast_type);
+                            }
+                            break;
+                        }
+                    
+                    }
+                }
+                
+                
                 ConvertedMap[arg_ID+std::to_string(Clang_Arg.ArgNum)] = String_Arg;
             }
         }
