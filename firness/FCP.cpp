@@ -4,6 +4,7 @@ std::map<TypedefDecl*, TypeData> varTypeInfo;
 std::map<RecordDecl*, TypeData> varRecordInfo;
 
 std::set<std::string> FunctionNames;
+std::set<std::string> FunctionDeclNames;
 std::map<VarDecl*, std::stack<Assignment>> VarAssignments;
 std::map<MemberExpr*, std::stack<Assignment>> MemAssignments;
 std::map<std::string, TypeData> FinalTypes;
@@ -15,7 +16,7 @@ std::map<std::string, std::set<std::string>> TotalDebugMap;
 std::set<GraphNodeInfo> FunctionLineMap;
 
 std::map<std::string, std::string> DebugMap;
-std::map<std::string, std::vector<std::string>> Aliases;
+std::map<std::string, std::set<std::string>> Aliases;
 
 std::set<std::string> FunctionTypes;
 std::vector<Call> CallMap;
@@ -30,6 +31,7 @@ std::set<std::string> GeneratorTypes;
 std::set<std::pair<std::string, std::string>> HarnessFunctions;
 std::vector<Function> FunctionDeclMap;
 std::set<std::pair<std::string, std::string>> FunctionAliases;
+std::map<std::string, std::set<std::string>> CastMap;
 
 
 // Define command-line options for input file and output dir
@@ -82,6 +84,7 @@ int main(int argc, const char **argv) {
         FileOps::outputFunctionDecl(output_filename, FunctionDeclMap);
         FileOps::outputAliases(output_filename, Aliases);
         FileOps::GenerateCallGraph(output_filename, CallGraphMap);
+        FileOps::outputCastMap(output_filename, CastMap);
     }
     else
         FileOps::printCallMap(CallMap);

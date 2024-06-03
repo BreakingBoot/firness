@@ -8,7 +8,9 @@ public:
 
     explicit FCPCallbacks(SourceManager &SM, ASTContext *Context) : SM(SM), Context(Context) {}
 
-
+    /*
+        Filter the macro definition to remove the macro name and any leading spaces.
+    */
     std::string filterMacroDefinition(const std::string &name, const std::string &value) {
         size_t pos = value.find(name);
         if (pos != std::string::npos) {
@@ -33,6 +35,9 @@ public:
         return value;
     }
 
+    /*
+        Capture all of the macro definitions per compilation command.
+    */
     void MacroDefined(const Token &MacroNameTok, const MacroDirective *MD) override {
         StringRef MacroName = MacroNameTok.getIdentifierInfo()->getName();
 
@@ -45,13 +50,6 @@ public:
             if (!FilePath.empty()) {
                 MacroDef mac;
                 mac.Name = MacroName.str();
-                // remove the first 6 directories from the path
-                // std::string ShortPath = FilePath.str();
-                // size_t pos = ShortPath.find('/');
-                // for (int i = 0; i < 6; i++) {
-                //     pos = ShortPath.find('/', pos + 1);
-                // }
-                // ShortPath = ShortPath.substr(pos + 1);
                 mac.File = FilePath.str();
 
                 const LangOptions &LangOpts = Context->getLangOpts();
@@ -64,6 +62,9 @@ public:
         }
     }
 
+    /*
+        Capture all of the includes per compilation command.
+    */
     void InclusionDirective (SourceLocation HashLoc, 
                             const Token & IncludeTok, 
                             StringRef FileName, 
@@ -77,7 +78,7 @@ public:
         // Need to also track the function calls -> include directives
         // Store the full path and other information as needed.
         std::string FullPath = SearchPath.str() + "/" + FileName.str();
-        // IncludeDirectives.insert(FullPath);
+
         if("AutoGen.h" != FileName.str())
             IncludeDirectives.insert(FullPath);
     }

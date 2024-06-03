@@ -14,6 +14,7 @@ public:
         : VariableVisitor(Context), FunctionVisitor(Context), GeneratorVisitor(Context), CallVisitor(Context), CallGraphVisitor(Context) {}
 
     void HandleTranslationUnit(clang::ASTContext &Context) override {
+        // add another pass specific to getting all of the protocol functions from just the protocol type
         VariableVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         FunctionVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         GeneratorVisitor.TraverseDecl(Context.getTranslationUnitDecl());
