@@ -169,7 +169,7 @@ public:
     }
 
     bool VisitFunctionDecl(FunctionDecl *Func) {
-        if (FunctionNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
+        if (FunctionDeclNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
             // save the function name if there is no alias, otherwise save the alias
             FunctionInfo.FunctionName = getFunctionName(Func);
             std::string arg_ID = "Arg_";
