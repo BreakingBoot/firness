@@ -78,9 +78,19 @@ public:
         // Need to also track the function calls -> include directives
         // Store the full path and other information as needed.
         std::string FullPath = SearchPath.str() + "/" + FileName.str();
+        std::string currentFile = SM.getFilename(HashLoc).str();
 
-        if("AutoGen.h" != FileName.str())
+        if(FileName.str().find("AutoGen") == std::string::npos)
+        {
             IncludeDirectives.insert(FullPath);
+            if(currentFile.find("AutoGen") == std::string::npos)
+            {
+                if (IncludesDependencyGraph.find(currentFile) == IncludesDependencyGraph.end()) {
+                    IncludesDependencyGraph[currentFile] = {};
+                }
+                IncludesDependencyGraph[currentFile].insert(FullPath);
+            }
+        }
     }
 
 private:

@@ -135,6 +135,7 @@ struct Function {
     std::string alias;
     std::string return_type;
     std::map<std::string, Argument> Parameters;
+    std::string File;
     std::set<std::string> includes;
 
     Function() = default;
@@ -147,6 +148,7 @@ struct Function {
         }
         Parameters.clear();
         includes.clear();
+        File.clear();
         return_type.clear();
     }
 };
@@ -193,6 +195,7 @@ extern std::map<RecordDecl*, TypeData> varRecordInfo;
 
 extern std::set<std::string> FunctionNames;
 extern std::set<std::string> FunctionDeclNames;
+extern std::set<std::string> GeneratorDeclNames;
 extern std::set<std::pair<std::string, std::string>> HarnessFunctions;
 extern std::set<std::pair<std::string, std::string>> FunctionAliases;
 extern std::set<std::pair<std::string, std::string>> SingleTypedefs;
@@ -219,4 +222,6 @@ extern std::map<CallExpr*, VarMap> GeneratorFunctionsMap;
 extern std::vector<Call> GeneratorMap;
 extern std::set<std::string> GeneratorTypes;
 extern std::vector<Function> FunctionDeclMap;
+extern std::vector<Function> GeneratorDeclMap;
 extern std::map<std::string, std::set<std::string>> CastMap;
+extern std::map<std::string, std::set<std::string>> IncludesDependencyGraph;

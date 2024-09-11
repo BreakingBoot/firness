@@ -95,6 +95,55 @@ namespace FileOps {
                 parametersJson[pair.first] = paramJson;
             }
             functionJson["Parameters"] = parametersJson;
+            functionJson["File"] = function.File;
+            functionJson["Includes"] = function.includes;
+            j.push_back(functionJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4); 
+        file.close();
+    }
+
+    void outputIncludesDependencyGraph(const std::string& filename, const std::map<std::string, std::set<std::string>>& includes) {
+        std::string file_path = filename + "/includes.json";
+        nlohmann::json j;
+        for (const auto& pair : includes) {
+            nlohmann::json includeJson;
+            includeJson["File"] = pair.first;
+            includeJson["Includes"] = pair.second;
+            j.push_back(includeJson);
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4);
+        file.close();
+    }
+
+    /*
+        Responsible for writing the function information
+        gathered from the analysis to a json output file called functions
+    */
+    void outputGeneratorDecl(const std::string &filename, const std::vector<Function>& functions) {
+        std::string file_path = filename + "/generators.json";
+        nlohmann::json j;
+        for (const auto& function : functions) {
+            nlohmann::json functionJson;
+            functionJson["Function"] = function.FunctionName;
+            functionJson["ReturnType"] = function.return_type;
+            nlohmann::json parametersJson;
+            for (const auto& pair : function.Parameters) {
+                nlohmann::json paramJson;
+                const Argument& arg = pair.second;
+                paramJson["arg_dir"] = arg.arg_dir;
+                paramJson["arg_type"] = arg.arg_type;
+                paramJson["variable"] = arg.variable;
+                paramJson["data_type"] = arg.data_type;
+                paramJson["assignment"] = arg.assignment;
+                paramJson["usage"] = arg.usage;
+                paramJson["potential_outputs"] = arg.potential_outputs;
+                parametersJson[pair.first] = paramJson;
+            }
+            functionJson["Parameters"] = parametersJson;
+            functionJson["File"] = function.File;
             functionJson["Includes"] = function.includes;
             j.push_back(functionJson);
         }

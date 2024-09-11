@@ -648,6 +648,7 @@ public:
                             GeneratorFunctionsMap[Call] = VarDeclMap;
                             if(GenCallInfo(Call))
                             {
+                                GeneratorDeclNames.insert(CallInfo.Function);
                                 CallInfo.includes = IncludeDirectives;
                                 CallInfo.return_type = Call->getCallReturnType(*this->Context).getAsString();
                                 GeneratorMap.push_back(CallInfo);

@@ -1,44 +1,44 @@
-#ifndef __FUNCTIONDECLANALYSIS_H__
-#define __FUNCTIONDECLANALYSIS_H__
+#ifndef __GENERATORDECLANALYSIS_H__
+#define __GENERATORDECLANALYSIS_H__
 
 #include "PassHelpers.h"
 #include "clang/AST/DeclBase.h"
 
-class FunctionDeclAnalysis : public RecursiveASTVisitor<FunctionDeclAnalysis> {
+class GeneratorDeclAnalysis : public RecursiveASTVisitor<GeneratorDeclAnalysis> {
 public:
-    explicit FunctionDeclAnalysis(ASTContext *Context)
+    explicit GeneratorDeclAnalysis(ASTContext *Context)
         : Context(Context) {}
 
     // Don't add repeat function decl of the same number of args
     bool ContainsFunction(FunctionDecl *FD) {
-        for (auto &Func : FunctionDeclMap) {
+        for (auto &Func : GeneratorDeclMap) {
             if ((Func.FunctionName == FD->getNameAsString()) && Func.Parameters.size() == FD->getNumParams()) {
                 return true;
             }
             // check the FunctionAliases map to see if the function is an alias
-            for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
-            {
-                if(it->first == FD->getNameAsString())
-                {
-                    if(it->second == Func.FunctionName)
-                    {
-                        return true;
-                    }
-                }
-            }
+            // for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
+            // {
+            //     if(it->first == FD->getNameAsString())
+            //     {
+            //         if(it->second == Func.FunctionName)
+            //         {
+            //             return true;
+            //         }
+            //     }
+            // }
         }
         return false;
     }
 
     std::string getFunctionName(FunctionDecl *FD) {
         std::string name = FD->getNameAsString();
-        for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
-        {
-            if(it->first == name)
-            {
-                return it->second;
-            }
-        }
+        // for(auto it = FunctionAliases.begin(); it != FunctionAliases.end(); ++it)
+        // {
+        //     if(it->first == name)
+        //     {
+        //         return it->second;
+        //     }
+        // }
         return name;
     }
 
@@ -151,7 +151,7 @@ public:
     {
         if(isNonProtocol(FunctionInfo.FunctionName) || isProtocol(FunctionInfo.FunctionName))
         {
-            FunctionDeclMap.push_back(FunctionInfo);
+            GeneratorDeclMap.push_back(FunctionInfo);
         }
     }
 
@@ -170,7 +170,7 @@ public:
     }
 
     bool VisitFunctionDecl(FunctionDecl *Func) {
-        if (FunctionDeclNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
+        if (GeneratorDeclNames.count(Func->getNameAsString()) && !ContainsFunction(Func)) {
             // save the function name if there is no alias, otherwise save the alias
             FunctionInfo.FunctionName = getFunctionName(Func);
             std::string arg_ID = "Arg_";
@@ -195,7 +195,7 @@ public:
             getFunctionHeaderFile(Func, *Context);
             // FunctionInfo.includes = "protocol";
             verifyFunctionInfo();
-            FunctionDeclMap.push_back(FunctionInfo);
+            GeneratorDeclMap.push_back(FunctionInfo);
             FunctionInfo.clear();
         }
         return true;
