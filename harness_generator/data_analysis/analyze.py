@@ -43,7 +43,7 @@ def load_include_deps(json_file: str) -> Dict[str, List[str]]:
             raw_data = json.load(file)
         include_dict = defaultdict(list)
         for raw_include in raw_data:
-            include_dict[raw_include["File"]] = raw_include["Includes"]
+            include_dict[raw_include["File"]] = raw_include["Includes"][::-1]
         return include_dict
     except Exception as e:
         print(f'ERROR: {e}')
@@ -1095,7 +1095,13 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
 
     # reverse the list to ensure that the includes are in the correct order
     ordered_includes.reverse()
-
+    mem_alloc = False
+    for include in ordered_includes:
+        if "MemoryAllocationLib" in include:
+            mem_alloc = True
+    if not mem_alloc:
+        # Add the MemoryAllocationLib right after BaseLib include
+        ordered_includes.insert(1, "Library/MemoryAllocationLib.h")
     return ordered_includes
 
 
@@ -1105,10 +1111,13 @@ def update_libs(libraries: List[str], libmap: Dict[str, Dict[str, list]]) -> Dic
     for lib in tmp_libs:
         if lib in libmap.keys():
             updated_libs[lib] = libmap[lib]["path"]
-
-    for lib in libraries:
+    remove_libs = []
+    for lib in updated_libs.keys():
         if "unittest" in lib.lower():
-            del updated_libs[lib]
+            remove_libs.append(lib)
+
+    for lib in remove_libs:
+        del updated_libs[lib]
 
     return updated_libs
 
