@@ -2,6 +2,7 @@ from typing import Dict, List
 import argparse
 import os
 import uuid
+import json
 from datetime import datetime
 from common.types import FunctionBlock, FieldInfo, EnumDef, scalable_params
 from common.utils import clean_harnesses, gen_file, compile
@@ -12,6 +13,7 @@ import path_trace.main_template as tracer_main
 import uefi_harness.harnesses_template as uefi_harnesses
 import uefi_harness.main_template as uefi_main
 import uefi_harness.inf_template as uefi_inf
+import uefi_harness.dsc_template as uefi_dsc
 import uefi_harness.headers_template as uefi_header
 
 def generate_main_std(function_dict: Dict[str, FunctionBlock], harness_folder):
@@ -77,12 +79,17 @@ def generate_header(function_dict: Dict[str, FunctionBlock],
     gen_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 
-def generate_inf(harness_folder: str, libraries: str, driver_guids: set = None, protocol_guids: set = None):
+def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: set = None, protocol_guids: set = None):
     code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
+def generate_dsc(harness_folder: str, libraries: Dict[str, str]):
+    code = uefi_dsc.gen_firness_dsc(libraries)
+    gen_file(f'{harness_folder}/Firness.dsc', code)
+
 def generate_includes(all_includes: List[str], harness_folder: str):
     code = uefi_header.harness_includes(all_includes)
+    gen_file(f'{harness_folder}/includes.txt', all_includes)
     gen_file(f'{harness_folder}/FirnessIncludes.h', code)
 
 
@@ -91,7 +98,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      types: Dict[str, List[FieldInfo]],
                      enums: Dict[str, List[str]],
                      all_includes: List[str],
-                     libraries: List[str],
+                     libraries: Dict[str, str],
                      generators: Dict[str, FunctionBlock],
                      aliases: Dict[str, str],
                      matched_macros: Dict[str, str],
@@ -106,6 +113,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_header(merged_data, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder, libraries, protocol_guids, driver_guids)
+    generate_dsc(harness_folder, libraries)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
     output_dir = os.path.join(output_dir, 'Firness')
@@ -190,10 +198,15 @@ def calculate_statistics(merged_data: Dict[str, FunctionBlock],
 
 def main():
     parser = argparse.ArgumentParser(description='Process some data.')
+    parser.add_argument('--edk2', dest='edk2', default='/workspace/tmp/edk2', help='Path to the edk2 directory (default: /workspace/tmp/edk2)')
     parser.add_argument('-d', '--data-file', dest='data_file', default='/output/tmp/call-database.json',
                         help='Path to the data file (default: /output/tmp/call-database.json)')
     parser.add_argument('-g', '--generator-file', dest='generator_file', default='/output/tmp/generator-database.json',
                         help='Path to the generator file (default: /output/tmp/generator-database.json)')
+    parser.add_argument('-gd', '--generators', dest='generators', default='/output/tmp/generators.json',
+                        help='Path to the generator file (default: /output/tmp/generators.json)')
+    parser.add_argument('-in', '--includes-file', dest='includes_file', default='/output/tmp/includes.json',
+                        help='Path to the includes file (default: /output/tmp/includes.json)')
     parser.add_argument('-t', '--types-file', dest='types_file', default='/output/tmp/types.json',
                         help='Path to the types file (default: /output/tmp/types.json)')
     parser.add_argument('-a', '--alias-file', dest='alias_file', default='/output/tmp/aliases.json',
@@ -222,7 +235,7 @@ def main():
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
     processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
-                                                  args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file)
+                                                  args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
     
     main_dir = os.path.dirname(os.path.abspath(args.data_file))
     calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)

@@ -31,7 +31,6 @@ default_libraries = {
     "DebugLib",
     "UefiBootServicesTableLib",
     "UefiRuntimeServicesTableLib",
-    "UefiDriverEntryPoint",
     "PcdLib",
     "DxeServicesTableLib",
     "HobLib"
@@ -136,16 +135,21 @@ class EnumDef:
         self.file = file
 
 class Function:
-    def __init__(self, function: str, arguments: List[Argument], return_type: str = "", service: str = "", includes: Set[str] = []):
+    def __init__(self, function: str, arguments: List[Argument], return_type: str = "", service: str = "", includes: Set[str] = [], file: str = ""):
         self.function = function
         self.return_type = return_type
         self.arguments = arguments
+        self.file = file
+        if service is None:
+            service = ""
         self.service = service
         self.includes = includes
 
 class FunctionBlock:
     def __init__(self, arguments: Dict[str, List[Argument]], function: str, service: str = "", includes: Set[str] = [], return_type: str = ""):
         self.arguments = arguments
+        if service is None:
+            service = ""
         self.service = service
         self.function = function
         self.includes = includes

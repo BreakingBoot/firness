@@ -1,9 +1,9 @@
-from typing import List
+from typing import Dict, List
 
 def gen_firness_inf(uuid: str, 
                     driver_guids: List[str], 
                     protocol_guids: List[str],
-                    libraries: List[str]) -> List[str]:
+                    libraries: Dict[str, str]) -> List[str]:
     output = []
 
     output.append("[Defines]")
@@ -40,22 +40,13 @@ def gen_firness_inf(uuid: str,
     output.append("  ShellPkg/ShellPkg.dec")
     output.append("  NetworkPkg/NetworkPkg.dec")
     output.append("  OvmfPkg/OvmfPkg.dec")
+    output.append("  UefiCpuPkg/UefiCpuPkg.dec")
 
     output.append("")
     output.append("[LibraryClasses]")
-    # for lib in libraries:
-    #     output.append(f'  {lib}')
-    output.append("  UefiApplicationEntryPoint")
-    output.append("  UefiLib")
-    output.append("  BaseLib")
-    output.append("  BaseMemoryLib")
-    output.append("  DebugLib")
-    output.append("  UefiBootServicesTableLib")
-    output.append("  UefiRuntimeServicesTableLib")
-    # output.append("  UefiDriverEntryPoint")
-    output.append("  PcdLib")
-    output.append("  DxeServicesTableLib")
-    output.append("  HobLib")
+    for lib in libraries.keys():
+        if lib != "NULL":
+            output.append(f'  {lib}')
 
     output.append("")
     output.append("[Guids]")

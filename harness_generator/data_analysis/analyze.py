@@ -4,15 +4,50 @@ import copy
 from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
 from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
-
+from common.generate_library_map import generate_libmap
 
 current_args_dict = defaultdict(list)
 all_includes = set()
 total_generators = set()
 
+
+# Doesn't take into account if multiple function definitions are found with the same
+# name but different number of params
+def load_generator_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
+    try:
+        with open(json_file, 'r') as file:
+            raw_data = json.load(file)
+
+        function_dict = defaultdict(list)
+        for raw_function in raw_data:
+            arguments = {
+                arg_key: [Argument(**raw_argument)] 
+                for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
+            }
+            function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
+                                raw_function.get('Service'), raw_function.get('Includes'), raw_function.get('File'))
+            function_dict[function.function] = function
+
+        return function_dict
+    except Exception as e:
+        print(f'ERROR: {e}')
+        return {}
+
+
+def load_include_deps(json_file: str) -> Dict[str, List[str]]:
+    try:
+        with open(json_file, 'r') as file:
+            raw_data = json.load(file)
+        include_dict = defaultdict(list)
+        for raw_include in raw_data:
+            include_dict[raw_include["File"]] = raw_include["Includes"]
+        return include_dict
+    except Exception as e:
+        print(f'ERROR: {e}')
+        return {}
 
 # Doesn't take into account if multiple function definitions are found with the same
 # name but different number of params
@@ -32,6 +67,13 @@ def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
             function_dict[function.function] = function
 
         return function_dict
+    except Exception as e:
+        print(f'ERROR: {e}')
+        return {}
+
+def load_libmap(edk2_dir: str, output_file: str) -> Dict[str, Dict[str, list]]:
+    try:
+        return generate_libmap(edk2_dir, output_file)
     except Exception as e:
         print(f'ERROR: {e}')
         return {}
@@ -465,7 +507,8 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             protocol_guids.add(argument[0].variable)
                         else:
                             # Add to the driver_guids set
-                            driver_guids.add(argument[0].variable)
+                            if argument[0].usage != "":
+                                driver_guids.add(argument[0].variable)
                         if argument[0].usage not in usage_seen[function][arg_key]:
                             guid_arg = copy.copy(argument[0])
                             guid_arg.variable = "__GUID__"
@@ -628,6 +671,7 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                                         generator_arg = Argument(
                                             ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
                                         # current_args_dict[func_temp_name].append(ft_arg_key)
+                                        all_includes.update(generator_block.includes)
                                         pre_processed_data[func_temp_name].arguments.setdefault(
                                             ft_arg_key, []).append(generator_arg)
                                 elif ((remove_ref_symbols(argument[0].arg_type) == remove_ref_symbols(ft_argument[0].data_type) or remove_ref_symbols(argument[0].arg_type) in castings[remove_ref_symbols(ft_argument[0].data_type)])and #ft_arg_key not in current_args_dict[func_temp_name] and
@@ -647,6 +691,7 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                                         generator_arg = Argument(
                                             ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
                                         # current_args_dict[func_temp_name].append(ft_arg_key)
+                                        all_includes.update(generator_block.includes)
                                         pre_processed_data[func_temp_name].arguments.setdefault(
                                             ft_arg_key, []).append(generator_arg)
     return pre_processed_data
@@ -798,7 +843,78 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
     return generators, generators_template
 
 
+def remove_unreachable_functions(input_data: Dict[str, FunctionBlock], function_template: Dict[str, FunctionBlock], generator_input_template: Dict[str, Function]) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+    # for all of the generator functions, check if they are reachable from the global scope
+    # reachable means that the function is either a protocol or from a library
+    # if the function is not reachable then remove it from the input_data and the function_template
+
+    # Step 1: Collect all of the reachable functions
+    reachable_functions = set()
+    for function, function_block in function_template.items():
+        for arg_key, argument in function_block.arguments.items():
+            if argument[0].variable == "__PROTOCOL__":
+                if function in generator_input_template.keys():
+                    if "protocol" in generator_input_template[function].file.lower():
+                        reachable_functions.add(function)
+                        break
+        if function in generator_input_template.keys():
+            if "library" in generator_input_template[function].file.lower():
+                reachable_functions.add(function)
+    
+    # Step 2: Remove all of the unreachable functions
+    for function in list(input_data.keys()):
+        if function not in reachable_functions:
+            del input_data[function]
+            del function_template[function]
+    
+    return input_data, function_template
+
+def is_cyclic(data_type: str, types: Dict[str, TypeInfo], aliases: Dict[str, str], macros: Dict[str, Macros], enums: Dict[str, List[str]]) -> bool:
+    # check if the data_type is a scalar
+    if is_fuzzable(data_type, aliases, types, 0):
+        return False
+    # check if the data_type is an enum
+    # if is_enum(data_type, enums):
+    #     return False
+    # check if the data_type is a macro
+    if data_type in macros.keys():
+        return False
+    # check if the data_type is a typedef
+    if data_type in aliases.keys():
+        return is_cyclic(aliases[data_type], types, aliases, macros, enums)
+    # check if the data_type is a struct
+    if data_type in types.keys():
+        for field in types[data_type].fields:
+            if data_type.lower() in field.type.lower():
+                return True
+    return False
+
+def remove_cyclic_dependencies(input_data: Dict[str, FunctionBlock], 
+                               function_template: Dict[str, FunctionBlock],
+                               aliases: Dict[str, str],
+                               macros: Dict[str, Macros],
+                               enums: Dict[str, List[str]],
+                               types: Dict[str, TypeInfo]) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+    # for all of the generator functions check if any of the arguments are cyclic
+    # if the argument is cyclic then remove the function from the input_data and the function_template
+    cyclic_functions = set()
+    for function, function_block in input_data.items():
+        for arg_key, argument in function_block.arguments.items():
+            if "ARG_LIST" in argument[0].arg_type:
+                print(f'ERROR: {function} has an argument that is an ARG_LIST!!')
+                print(is_cyclic(remove_ref_symbols(argument[0].arg_type), types, aliases, macros, enums))
+            if is_cyclic(remove_ref_symbols(argument[0].arg_type), types, aliases, macros, enums):
+                cyclic_functions.add(function)
+
+    for function in cyclic_functions:
+        del input_data[function]
+        del function_template[function]
+
+    return input_data, function_template
+
+
 def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
+                       generator_input_template: Dict[str, Function],
                        input_template: Dict[str, FunctionBlock],
                        aliases: Dict[str, str],
                        macros: Dict[str, Macros],
@@ -851,6 +967,12 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
         if function not in output_template.keys():
             output_template[function] = function_block
 
+    # Step 8: Remove any generator functions that are unreachable from a global scope
+    generators, output_template = remove_unreachable_functions(generators, output_template, generator_input_template)
+
+    # Step 9: Remove any generator functions that have cyclic dependencies
+    generators, output_template = remove_cyclic_dependencies(generators, output_template, aliases, macros, enums, types)
+
     return input_generators, generators, output_template
 
 def sanity_check(processed_data: Dict[str, FunctionBlock], harness_functions: Dict[str, List[Tuple[str, str]]]):
@@ -859,16 +981,136 @@ def sanity_check(processed_data: Dict[str, FunctionBlock], harness_functions: Di
             if function not in processed_data.keys():
                 print(f"WARNING: {function} was not able to be harnessed!!")
 
-def cleanup_paths(includes: List[str]) -> List[str]:
+def cleanup_paths(includes):
     modified_includes = []
     for include in includes:
+        if include.endswith(".c"):
+            continue
         # Split the path into its components.
         components = include.split("/")
         # Remove the first 3 components.
-        include = "/".join(components[6:])
-        if len(include) > 0:
-            modified_includes.append(include)
+        include = "/".join(components[-2:])
+        if len(components) > 4 and "edk2-platforms" not in components[3].lower():
+            if len(include.split("/")) == 2 and "include" in components[-3].lower():
+                modified_includes.append(include)
     return modified_includes
+
+def update_inc(includes: List[str], libmap: Dict[str, Dict[str, list]]) -> List[str]:
+    for include in includes:
+        match = False
+        if "library" in include.lower():
+            for lib in libmap.keys():
+                if lib in include:
+                    match = True
+            if not match:
+                includes.remove(include)
+        if "ppi" in include.lower():
+            includes.remove(include)
+    return includes
+
+def collect_all_lib_deps(libmap: Dict[str, Dict[str, List[str]]], lib: str, collected_deps: Set[str]) -> Set[str]:
+    # Add the current library to the set of collected dependencies
+    collected_deps.add(lib)
+    
+    # Iterate over the dependencies of the current library
+    if lib in libmap.keys():
+        for dep in libmap[lib]["dependencies"]:
+            # If the dependency is not yet collected, recursively collect its dependencies
+            if dep not in collected_deps:
+                collect_all_lib_deps(libmap, dep, collected_deps)
+    
+    return collected_deps
+
+def collect_all_deps_from_libmap(libraries: List[str], libmap: Dict[str, Dict[str, List[str]]]) -> Set[str]:
+    all_libs = set()
+    
+    # Iterate through each library and collect all of its dependencies recursively
+    for lib in libraries:
+        for libdef in libmap.keys():
+            if lib in libdef:
+                all_libs.add(libdef)
+                all_libs = collect_all_lib_deps(libmap, libdef, all_libs)
+    
+    return all_libs
+
+
+# Function to perform topological sort on the graph
+def topological_sort(graph: Dict[str, List[str]]):
+    visited = set()
+    temp_mark = set()
+    sorted_files = []
+
+    def visit(node):
+        if node in visited:
+            return
+        if node in temp_mark:
+            return
+
+        temp_mark.add(node)
+
+        for dep in graph.get(node, []):
+            visit(dep)
+
+        temp_mark.remove(node)
+        visited.add(node)
+        sorted_files.append(node)
+
+    for node in graph:
+        if node not in visited:
+            visit(node)
+
+    return sorted_files[::-1]
+
+def cleanup_include_dep_paths(include_deps: Dict[str, List[str]]):
+    modified_includes = dict()
+    for include, deps in include_deps.items():
+        if include.endswith(".c"):
+            continue
+        # Split the path into its components.
+        components = include.split("/")
+        # Remove the first 3 components.
+        include = "/".join(components[-2:])
+        if len(components) > 4 and "edk2-platforms" not in components[3].lower():
+            if len(include.split("/")) == 2 and "include" in components[-3].lower():
+                modified_includes[include] = cleanup_paths(deps)
+    return modified_includes
+
+# Function to ensure all dependencies are resolved in the correct order
+def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]]) -> List[str]:
+    # Cleanup the paths in the include dependencies
+    include_deps = cleanup_include_dep_paths(include_deps)
+
+    sorted_graph = topological_sort(include_deps)
+    
+    # Set to store files that are already included
+    included = set()
+
+    # Final ordered list of includes
+    ordered_includes = []
+
+    for file in sorted_graph:
+        if file in includes and file not in included:
+            ordered_includes.append(file)
+            included.add(file)
+
+    # reverse the list to ensure that the includes are in the correct order
+    ordered_includes.reverse()
+
+    return ordered_includes
+
+
+def update_libs(libraries: List[str], libmap: Dict[str, Dict[str, list]]) -> Dict[str, str]:
+    updated_libs = {}
+    tmp_libs = collect_all_deps_from_libmap(libraries, libmap)
+    for lib in tmp_libs:
+        if lib in libmap.keys():
+            updated_libs[lib] = libmap[lib]["path"]
+
+    for lib in libraries:
+        if "unittest" in lib.lower():
+            del updated_libs[lib]
+
+    return updated_libs
 
 def collect_libraries(includes: List[str]) -> set[str]:
     libraries = set()
@@ -896,7 +1138,10 @@ def analyze_data(macro_file: str,
                  random: bool,
                  harness_folder: str,
                  best_guess: bool,
-                 functions: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], List[str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]], int]:
+                 functions: str,
+                 generator_decl: str,
+                 edk2_dir: str,
+                 include_deps_file: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], Dict[str, str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]], int]:
 
     macros_val, macros_name = load_macros(macro_file)
     global total_generators
@@ -904,14 +1149,17 @@ def analyze_data(macro_file: str,
     enum_map = load_enums(enum_file)
     generators = load_generators(generator_file, macros_val)
     harness_functions = load_functions(input_file)
+    libmap = load_libmap(edk2_dir, os.path.join('/'.join(data_file.split("/")[:-1]), 'libmap.json'))
     function_declares = load_function_declares(functions)
+    generator_declares = load_generator_declares(generator_decl)
+    include_deps = load_include_deps(include_deps_file)
     data, function_template = load_data(
         data_file, harness_functions, macros_val, random, best_guess, function_declares)
     types = load_types(types_file)
     aliases = load_aliases(alias_file)
     if not random:
         generators, processed_generators, template = analyze_generators(
-            generators, function_template, aliases, macros_name, enum_map, types)
+            generators, generator_declares, function_template, aliases, macros_name, enum_map, types)
     else:
         processed_generators = {}
         template = function_template
@@ -929,7 +1177,10 @@ def analyze_data(macro_file: str,
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
     collected_includes = list(set(update_includes) | default_includes)
-    libraries = list(collect_libraries(collected_includes) | default_libraries)
+    collected_includes = update_inc(collected_includes, libmap)
+    libraries = update_libs(list(collect_libraries(collected_includes) | default_libraries), libmap)
+    collected_includes = handle_include_deps(collected_includes, include_deps)
+    
     if not random:
         write_data(processed_generators,
                    f'{harness_folder}/processed_generators.json')

@@ -17,7 +17,7 @@ def get_type(arg_type: str) -> str:
 
 def set_undefined_constants(arg_type: str) -> str:
     if has_pointer(arg_type):
-        return "AllocateZeroPool(sizeof(" + remove_ref_symbols(arg_type) + "))"        
+        return "("+arg_type+")AllocateZeroPool(sizeof(" + remove_ref_symbols(arg_type) + "))"        
     elif "bool" in arg_type.lower():
         return "FALSE"
     else:
@@ -170,7 +170,7 @@ def declare_var(function: str,
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
-        output.append(f'{arg_type} {function}_{arg_key} = AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
+        output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
     else:
         output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type)};")
         # if fuzzable :
