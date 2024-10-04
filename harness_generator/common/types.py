@@ -128,6 +128,13 @@ class Argument:
             'Variable': self.variable
         }
 
+class SmiInfo:
+    def __init__(self, name: str, type: str, guid: str, file: str = ""):
+        self.name = name
+        self.guid = guid
+        self.type = type
+        self.file = file
+
 class EnumDef:
     def __init__(self, name: str = "", values: List[str] = [], file: str = ""):
         self.name = name

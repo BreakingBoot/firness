@@ -35,6 +35,9 @@ std::vector<Function> GeneratorDeclMap;
 std::set<std::pair<std::string, std::string>> FunctionAliases;
 std::map<std::string, std::set<std::string>> CastMap;
 std::map<std::string, std::set<std::string>> IncludesDependencyGraph;
+std::map<std::string, SmiInfo> SmiFunctionGuidMap;
+std::set<std::string> SmiFunctionSet;
+bool SmiEnabled;
 
 
 // Define command-line options for input file and output dir
@@ -44,6 +47,7 @@ static llvm::cl::opt<std::string> InputFileName(
 static llvm::cl::opt<std::string> OutputFileName(
     "o", llvm::cl::desc("Specify the output directory"), llvm::cl::value_desc("filename"));
 
+static llvm::cl::opt<bool> Smi("smi", llvm::cl::desc("Enable SMI Analysis"), llvm::cl::init(false));
 
 int main(int argc, const char **argv) {
     llvm::cl::OptionCategory ToolingSampleCategory("Function Call Pass");
@@ -58,6 +62,7 @@ int main(int argc, const char **argv) {
     // Get the filename and output dir from command-line options
     std::string input_filename = InputFileName.getValue();
     std::string output_filename = OutputFileName.getValue();
+    SmiEnabled = Smi.getValue();
 
     // Use the filename to create a ClangTool instance
     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getCompilations().getAllFiles()); // For compilation database input
@@ -90,6 +95,7 @@ int main(int argc, const char **argv) {
         FileOps::GenerateCallGraph(output_filename, CallGraphMap);
         FileOps::outputCastMap(output_filename, CastMap);
         FileOps::outputIncludesDependencyGraph(output_filename, IncludesDependencyGraph);
+        FileOps::outputSmiFunctionGuidMap(output_filename, SmiFunctionGuidMap);
     }
     else
         FileOps::printCallMap(CallMap);

@@ -4,9 +4,10 @@ import os
 import uuid
 import json
 from datetime import datetime
-from common.types import FunctionBlock, FieldInfo, EnumDef, scalable_params
+from common.types import FunctionBlock, FieldInfo, EnumDef, scalable_params, SmiInfo
 from common.utils import clean_harnesses, gen_file, compile
 from data_analysis.analyze import analyze_data
+from data_analysis.analyze_smi import analyze_smi_data
 import path_trace.header_template as tracer_header
 import path_trace.harnesses_template as tracer_harnesses
 import path_trace.main_template as tracer_main
@@ -15,6 +16,7 @@ import uefi_harness.main_template as uefi_main
 import uefi_harness.inf_template as uefi_inf
 import uefi_harness.dsc_template as uefi_dsc
 import uefi_harness.headers_template as uefi_header
+import uefi_harness.smi_harness_template as uefi_smi_harness
 
 def generate_main_std(function_dict: Dict[str, FunctionBlock], harness_folder):
     code = tracer_main.gen_firness_main(function_dict)
@@ -71,6 +73,15 @@ def generate_code(function_dict: Dict[str, FunctionBlock],
         data_template, function_dict, types_dict, generators_dict, aliases, enums, random)
     gen_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
+def generate_smi_code(function_dict: Dict[str, SmiInfo],
+                  types_dict: Dict[str, List[FieldInfo]],
+                  aliases: Dict[str, str],
+                  harness_folder,
+                  enums: Dict[str, List[str]],
+                  random: bool = False):
+    code = uefi_smi_harness.harness_generator(
+        function_dict, types_dict, aliases, enums, random)
+    gen_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
 def generate_header(function_dict: Dict[str, FunctionBlock],
                     matched_macros: Dict[str, str],
@@ -108,9 +119,38 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      output_dir: str,
                      random: bool = False):
 
-    generate_main(merged_data, harness_folder)
+    function_list = list(merged_data.keys())
+    generate_main(function_list, harness_folder)
     generate_code(merged_data, template, types, generators, aliases, harness_folder, enums, random)
     generate_header(merged_data, matched_macros, harness_folder)
+    generate_includes(all_includes, harness_folder)
+    generate_inf(harness_folder, libraries, protocol_guids, driver_guids)
+    generate_dsc(harness_folder, libraries)
+    # generate_harness_debugger(merged_data, template,
+                            #   types, all_includes, generators, aliases, harness_folder)
+    output_dir = os.path.join(output_dir, 'Firness')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    os.system(f'cp {harness_folder}/* {output_dir}')
+
+
+def generate_smi_harness(smi_data: Dict[str, SmiInfo],
+                     types: Dict[str, List[FieldInfo]],
+                     enums: Dict[str, List[str]],
+                     all_includes: List[str],
+                     libraries: Dict[str, str],
+                     aliases: Dict[str, str],
+                     matched_macros: Dict[str, str],
+                     protocol_guids: set,
+                     driver_guids: set,
+                     harness_folder: str,
+                     output_dir: str,
+                     random: bool = False):
+    function_list = list(smi_data.keys())
+    print(harness_folder)
+    generate_main(function_list, harness_folder)
+    generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
+    generate_header(function_list, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder, libraries, protocol_guids, driver_guids)
     generate_dsc(harness_folder, libraries)
@@ -229,20 +269,27 @@ def main():
                         help='Use random input instead of structured input data (default: False)')
     parser.add_argument('-b', '--best-guess', dest='best_guess', action='store_true',
                         help='Choose the function match with the highest frequency even if it might not be the right one (default: False)')
+    parser.add_argument("--smi", dest="smi_enabled", action="store_true", help="Enable SMI generation")
+    parser.add_argument("-sm", dest="smi", default="/ouput/tmp/smi-function-guid-map.json", 
+                        help="Path to the smi file (default: /output/tmp/smi-function-guid-map.json)")
 
     args = parser.parse_args()
 
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
-    processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
-                                                  args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
+    if args.smi_enabled:
+        smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random)
+    else:
+        processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
+                                                    args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
+        
+        main_dir = os.path.dirname(os.path.abspath(args.data_file))
+        calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
+
+        generate_harness(processed_data, template, types, enums,
+                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random)
     
-    main_dir = os.path.dirname(os.path.abspath(args.data_file))
-    calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
-
-    generate_harness(processed_data, template, types, enums,
-                     all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random)
-
 
 if __name__ == '__main__':
     main()

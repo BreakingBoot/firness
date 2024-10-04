@@ -161,6 +161,19 @@ struct MacroDef {
     MacroDef() = default;
 };
 
+struct SmiInfo {
+    std::string Guid;
+    std::string Type;
+    std::string File;
+
+    SmiInfo() = default;
+    void clear() {
+        Guid.clear();
+        Type.clear();
+        File.clear();
+    }
+};
+
 struct GraphNodeInfo {
     std::string FileName;
     std::string FunctionName;
@@ -225,3 +238,6 @@ extern std::vector<Function> FunctionDeclMap;
 extern std::vector<Function> GeneratorDeclMap;
 extern std::map<std::string, std::set<std::string>> CastMap;
 extern std::map<std::string, std::set<std::string>> IncludesDependencyGraph;
+extern std::map<std::string, SmiInfo> SmiFunctionGuidMap;
+extern std::set<std::string> SmiFunctionSet;
+extern bool SmiEnabled;

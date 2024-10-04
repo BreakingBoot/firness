@@ -1,5 +1,4 @@
 from typing import List, Dict
-from common.types import FunctionBlock
 
 def harness_includes(includes: List[str]) -> List[str]:
     output = []
@@ -15,7 +14,7 @@ def harness_includes(includes: List[str]) -> List[str]:
 
     return output
 
-def harness_header(functions: Dict[str, FunctionBlock],
+def harness_header(functions: List[str],
                    matched_macros: Dict[str, str]) -> List[str]:
     output = []
     output.append("#ifndef __FIRNESS_HARNESSES__")
@@ -30,7 +29,7 @@ def harness_header(functions: Dict[str, FunctionBlock],
         output.append(f"#define {name} {value}")
     output.append("")
 
-    for function, _ in functions.items():
+    for function in functions:
         output.append(f"EFI_STATUS")
         output.append(f"EFIAPI")
         output.append(f"Fuzz{function}(")

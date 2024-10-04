@@ -1,7 +1,6 @@
 from typing import Dict, List
-from common.types import FunctionBlock
 
-def gen_firness_main(functions: Dict[str, FunctionBlock]) -> List[str]:
+def gen_firness_main(functions: List[str]) -> List[str]:
     output = []
 
     output.append("#include \"FirnessHarnesses.h\"")

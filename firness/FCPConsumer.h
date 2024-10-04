@@ -7,15 +7,19 @@
 #include "FileOperationHelpers.h"
 #include "FunctionDeclAnalysis.h"
 #include "GeneratorDeclAnalysis.h"
+#include "SmiFunctionAnalysis.h"
 #include "CallGraph.h"
 
 class FCPConsumer : public clang::ASTConsumer {
 public:
     explicit FCPConsumer(ASTContext *Context)
-        : VariableVisitor(Context), FunctionVisitor(Context), GeneratorVisitor(Context), CallVisitor(Context), CallGraphVisitor(Context), GeneratorDeclVisitor(Context) {}
+        : VariableVisitor(Context), FunctionVisitor(Context), GeneratorVisitor(Context), CallVisitor(Context), CallGraphVisitor(Context), GeneratorDeclVisitor(Context), SmiFunctionVisitor(Context) {}
 
     void HandleTranslationUnit(clang::ASTContext &Context) override {
         // add another pass specific to getting all of the protocol functions from just the protocol type
+        if(SmiEnabled) {
+            SmiFunctionVisitor.TraverseDecl(Context.getTranslationUnitDecl());
+        }
         VariableVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         FunctionVisitor.TraverseDecl(Context.getTranslationUnitDecl());
         GeneratorVisitor.TraverseDecl(Context.getTranslationUnitDecl());
@@ -31,6 +35,7 @@ private:
     GeneratorAnalysis GeneratorVisitor;
     FunctionDeclAnalysis FunctionVisitor;
     GeneratorDeclAnalysis GeneratorDeclVisitor;
+    SmiFunctionAnalysis SmiFunctionVisitor;
 };
 
 #endif 

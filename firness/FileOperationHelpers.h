@@ -104,6 +104,22 @@ namespace FileOps {
         file.close();
     }
 
+    void outputSmiFunctionGuidMap(const std::string& filename, const std::map<std::string, SmiInfo>& smiFunctionGuidMap) {
+        std::string file_path = filename + "/smi-function-guid-map.json";
+        nlohmann::json j;
+        for (const auto& pair : smiFunctionGuidMap) {
+            if(pair.second.Type == "") continue; // Skip if Guid is empty
+            const SmiInfo& smiInfo = pair.second;
+            nlohmann::json smiJson;
+            smiJson["Guid"] = smiInfo.Guid;
+            smiJson["Type"] = smiInfo.Type;
+            j[pair.first] = smiJson;
+        }
+        std::ofstream file(file_path);
+        file << j.dump(4);
+        file.close();
+    }
+
     void outputIncludesDependencyGraph(const std::string& filename, const std::map<std::string, std::set<std::string>>& includes) {
         std::string file_path = filename + "/includes.json";
         nlohmann::json j;
