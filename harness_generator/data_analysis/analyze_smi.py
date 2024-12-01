@@ -9,6 +9,11 @@ from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, 
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
 
+smi_includes = {
+    "Protocol/SmmCommunication.h",
+    "Guid/PiSmmCommunicationRegionTable.h"
+}
+
 all_includes = set()
 
 def load_include_deps(json_file: str) -> Dict[str, List[str]]:
@@ -307,7 +312,7 @@ def analyze_smi_data(macro_file: str,
     update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    collected_includes = list(set(update_includes) | default_includes)
+    collected_includes = list(set(update_includes) | default_includes | smi_includes)
     collected_includes = update_inc(collected_includes, libmap)
     libraries = update_libs(list(collect_libraries(collected_includes) | default_libraries), libmap)
     collected_includes = handle_include_deps(collected_includes, include_deps)
