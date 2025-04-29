@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FUZZUER_POC
+    bool "fuzzuer_poc"
+    help
+      FuzzUEr proof of concepts for EDK2
