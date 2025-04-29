@@ -48,7 +48,7 @@ ReadBytes(
   CopyMem((UINT8*)outputBuffer, inputBuffer->Buffer, actualBytes);
 
   // Update the input buffer to remove the extracted bytes
-  inputBuffer += actualBytes;
+  inputBuffer->Buffer += actualBytes;
   inputBuffer->Length -= actualBytes;
 
   return EFI_SUCCESS;
