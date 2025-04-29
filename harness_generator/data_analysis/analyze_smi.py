@@ -1,6 +1,7 @@
 import json
 import os
 import copy
+import re
 from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
@@ -10,6 +11,7 @@ from common.utils import remove_ref_symbols, write_data, get_union, is_whitespac
 from common.generate_library_map import generate_libmap
 
 smi_includes = {
+    "Protocol/MmCommunication.h",
     "Protocol/SmmCommunication.h",
     "Guid/PiSmmCommunicationRegionTable.h"
 }
@@ -101,13 +103,16 @@ def load_castings(json_file: str) -> Dict[str, List[str]]:
         print(f'ERROR: {e}')
         return {}
 
-def load_smi_data(smi_file: str) -> Dict[str, SmiInfo]:
+def load_smi_data(smi_file: str,
+                    types: Dict[str, TypeInfo]) -> Dict[str, SmiInfo]:
     with open(smi_file, 'r') as file:
         raw_data = json.load(file)
     smi_data = {}
     for smi, data in raw_data.items():
         smi_info = SmiInfo(smi, data["Type"], data["Guid"])
         smi_data[smi] = smi_info
+        if remove_ref_symbols(smi_info.type) in types.keys():
+            all_includes.add(types[remove_ref_symbols(smi_info.type)].file)
     return smi_data
 
 def cleanup_paths(includes):
@@ -122,6 +127,9 @@ def cleanup_paths(includes):
         if len(components) > 4 and "edk2-platforms" not in components[3].lower():
             if len(include.split("/")) == 2 and "include" in components[-3].lower():
                 modified_includes.append(include)
+            else:
+                include = "/".join(components[-3:])
+                modified_includes.append(include)
     return modified_includes
 
 def update_inc(includes: List[str], libmap: Dict[str, Dict[str, list]]) -> List[str]:
@@ -131,7 +139,7 @@ def update_inc(includes: List[str], libmap: Dict[str, Dict[str, list]]) -> List[
             for lib in libmap.keys():
                 if lib in include:
                     match = True
-            if not match:
+            if not match and include not in default_includes or include not in smi_includes:
                 includes.remove(include)
         if "ppi" in include.lower():
             includes.remove(include)
@@ -202,6 +210,10 @@ def cleanup_include_dep_paths(include_deps: Dict[str, List[str]]):
         if len(components) > 4 and "edk2-platforms" not in components[3].lower():
             if len(include.split("/")) == 2 and "include" in components[-3].lower():
                 modified_includes[include] = cleanup_paths(deps)
+            else:
+                include = "/".join(components[-3:])
+                modified_includes[include] = cleanup_paths(deps)
+
     return modified_includes
 
 # Function to ensure all dependencies are resolved in the correct order
@@ -221,7 +233,10 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
         if file in includes and file not in included:
             ordered_includes.append(file)
             included.add(file)
-
+    for file in includes:
+        if file not in ordered_includes and file not in included:
+            ordered_includes.append(file)
+            included.add(file)
     # reverse the list to ensure that the includes are in the correct order
     ordered_includes.reverse()
     mem_alloc = False
@@ -261,9 +276,8 @@ def collect_libraries(includes: List[str]) -> set[str]:
     return libraries
 
 def natural_sort_key(key):
-    # Split the key into a prefix and a numeric suffix
-    prefix, suffix = key.split("_", 1)
-    return (prefix, int(suffix))
+    # Split key into a list of strings and integers
+    return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', key)]
 
 
 def analyze_smi(smi_data: Dict[str, SmiInfo],
@@ -278,10 +292,20 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
     driver_guids = set()
     for smi in smi_data.values():
         # Perform analysis on each SMI
-        if smi.guid:
+        if "protocol" in smi.guid.lower():
             protocol_guids.add(smi.guid)
+        elif smi.guid:
+            driver_guids.add(smi.guid)
+    driver_guids.add("gEdkiiPiSmmCommunicationRegionTableGuid")
+    protocol_guids.add('gEfiSmmCommunicationProtocolGuid')
     return smi_data, protocol_guids, driver_guids
 
+priority_order = {"Library": 0, "Protocol": 1, "Guid": 2}
+
+def sort_key(path):
+    first_part = path.split("/")[0]
+    priority = priority_order.get(first_part, 3)  # 3 = default lowest priority
+    return (priority, natural_sort_key(path))
 
 def analyze_smi_data(macro_file: str,
                     enum_file: str,
@@ -300,22 +324,23 @@ def analyze_smi_data(macro_file: str,
     cast_map = load_castings(cast_file)
     enum_map = load_enums(enum_file)
     libmap = load_libmap(edk2_dir, os.path.join('/'.join(smi_file.split("/")[:-1]), 'libmap.json'))
-    smi_data = load_smi_data(smi_file)
-    include_deps = load_include_deps(include_deps_file)
     types = load_types(types_file)
+    smi_data = load_smi_data(smi_file, types)
+    include_deps = load_include_deps(include_deps_file)
     aliases = load_aliases(alias_file)
 
     # Analyze the SMI data
     analyzed_data, protocol_guids, driver_guids = analyze_smi(smi_data, macros_val, macros_name, enum_map, cast_map, types, aliases, include_deps)
 
-
     update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    collected_includes = list(set(update_includes) | default_includes | smi_includes)
-    collected_includes = update_inc(collected_includes, libmap)
+    collected_includes = list(set(update_includes))
+    # collected_includes = update_inc(collected_includes, libmap)
     libraries = update_libs(list(collect_libraries(collected_includes) | default_libraries), libmap)
-    collected_includes = handle_include_deps(collected_includes, include_deps)
-    
+    collected_includes = list(set(handle_include_deps(collected_includes, include_deps)) | smi_includes | default_includes)
+    # sort includes based off of the first word in the path: Library, Protocol, Guid
+    collected_includes.sort(key=sort_key)
+
 
     return analyzed_data, collected_includes, libraries, types, enum_map, aliases, protocol_guids, driver_guids, {}
