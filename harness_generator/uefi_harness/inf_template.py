@@ -41,6 +41,8 @@ def gen_firness_inf(uuid: str,
     output.append("  NetworkPkg/NetworkPkg.dec")
     output.append("  OvmfPkg/OvmfPkg.dec")
     output.append("  UefiCpuPkg/UefiCpuPkg.dec")
+    if 'gEfiSample2TestsDriverCommGuid' in driver_guids:
+        output.append("  Testcases/Testcases.dec")
 
     output.append("")
     output.append("[LibraryClasses]")
