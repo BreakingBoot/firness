@@ -349,7 +349,7 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append(f'__attribute__((no_sanitize("address")))')
         output.append(f"EFI_STATUS")
         output.append(f"EFIAPI")
-        output.append(f"FuzzSmi{function}(")
+        output.append(f"Fuzz{function}(")
         output.append(f"    IN INPUT_BUFFER *Input,")
         output.append(f"    IN EFI_SYSTEM_TABLE *SystemTable,")
         output.append(f"    IN EFI_HANDLE *ImageHandle")
