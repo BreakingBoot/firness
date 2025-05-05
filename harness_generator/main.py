@@ -136,8 +136,8 @@ def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: s
     code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
-def generate_dsc(harness_folder: str, libraries: Dict[str, str]):
-    code = uefi_dsc.gen_firness_dsc(libraries)
+def generate_dsc(harness_folder: str, libraries: Dict[str, str], asan: bool = False):
+    code = uefi_dsc.gen_firness_dsc(libraries, asan)
     gen_file(f'{harness_folder}/Firness.dsc', code)
 
 def generate_includes(all_includes: List[str], harness_folder: str):
@@ -160,7 +160,8 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      harness_folder: str,
                      output_dir: str,
                      random: bool = False,
-                     stateful: bool = False):
+                     stateful: bool = False,
+                     asan: bool = False):
 
     function_list = list(merged_data.keys())
     generate_main(function_list, stateful, harness_folder)
@@ -168,7 +169,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_header(merged_data, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder, libraries, driver_guids, protocol_guids)
-    generate_dsc(harness_folder, libraries)
+    generate_dsc(harness_folder, libraries, asan)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
     output_dir = os.path.join(output_dir, 'Firness')
@@ -189,14 +190,15 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      harness_folder: str,
                      output_dir: str,
                      random: bool = False,
-                     stateful: bool = False):
+                     stateful: bool = False,
+                     asan: bool = False):
     function_list = list(smi_data.keys())
     generate_main(function_list, stateful, harness_folder)
     generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
     generate_header(function_list, matched_macros, harness_folder)
     generate_includes(all_includes, harness_folder)
     generate_inf(harness_folder, libraries, driver_guids, protocol_guids)
-    generate_dsc(harness_folder, libraries)
+    generate_dsc(harness_folder, libraries, asan)
     generate_userspace_harness(smi_data, smi_data, types, enums, matched_macros, libraries, aliases, random, stateful, f'{harness_folder}/userspace_helpers')
     output_dir = os.path.join(output_dir, 'Firness')
     if not os.path.exists(output_dir):
@@ -314,6 +316,7 @@ def main():
                         help='Choose the function match with the highest frequency even if it might not be the right one (default: False)')
     parser.add_argument("--smi", dest="smi_enabled", action="store_true", help="Enable SMI generation")
     parser.add_argument("--stateful", dest="stateful", action="store_true", help="Enable stateful generation")
+    parser.add_argument("--asan", dest="asan", action="store_true", help="Enable ASAN generation")
     parser.add_argument("-sm", dest="smi", default="/ouput/tmp/smi-function-guid-map.json", 
                         help="Path to the smi file (default: /output/tmp/smi-function-guid-map.json)")
 
@@ -323,7 +326,7 @@ def main():
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
-        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, args.stateful)
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, args.stateful, args.asan)
     else:
         processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
@@ -332,7 +335,7 @@ def main():
         calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
 
         generate_harness(processed_data, template, types, enums,
-                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, args.stateful)
+                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, args.stateful, args.asan)
     
 
 if __name__ == '__main__':

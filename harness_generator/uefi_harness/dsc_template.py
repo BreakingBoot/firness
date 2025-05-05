@@ -25,7 +25,7 @@ default_dsc_libs = [
     "DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf"
     ]
 
-def gen_firness_dsc(libraries: Dict[str, str]) -> List[str]:
+def gen_firness_dsc(libraries: Dict[str, str], asan: bool) -> List[str]:
     output = []
     dsc_guid = str(uuid.uuid4()).upper()
 
@@ -43,10 +43,12 @@ def gen_firness_dsc(libraries: Dict[str, str]) -> List[str]:
     output.append("[LibraryClasses]")
     # for lib in default_dsc_libs:
     #     output.append(f'  {lib}')
-    output.append(f'  NULL|MdeModulePkg/Library/AsanLib/AsanLib.inf')
+    if asan:
+        output.append(f'  NULL|MdeModulePkg/Library/AsanLib/AsanLib.inf')
     for lib, path in libraries.items():
-        if "BaseMemoryLib" in lib:
-            path = "MdePkg/Library/AsanMemoryLibRepStr/AsanMemoryLibRepStr.inf"
+        if asan:
+            if "BaseMemoryLib" in lib:
+                path = "MdePkg/Library/AsanMemoryLibRepStr/AsanMemoryLibRepStr.inf"
         output.append(f'  {lib}|{path}')
     
     output.append("")
