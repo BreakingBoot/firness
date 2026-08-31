@@ -1,5 +1,44 @@
 from typing import List, Dict, Set
 
+# a few edk2 headers use types whose definition they do not include themselves. a driver
+# gets away with it because it already included the provider for its own reasons, but the
+# harness includes headers on their own, so it has to be told what has to come first
+include_prerequisites = {
+    "IndustryStandard/Tls1.h": ["Protocol/Tls.h"],
+    "Protocol/EfiShellInterface.h": ["Protocol/LoadedImage.h"],
+    "Protocol/EfiShellEnvironment2.h": ["Protocol/EfiShellInterface.h",
+                                        "Protocol/SimpleFileSystem.h",
+                                        "Guid/FileInfo.h"],
+    "Protocol/FirmwareVolume2.h": ["Pi/PiFirmwareFile.h", "Pi/PiFirmwareVolume.h"],
+    "Protocol/MpService.h": ["Pi/PiMultiPhase.h"],
+    "Pi/PiHob.h": ["Pi/PiBootMode.h"],
+    "Guid/MemoryStatusCodeRecord.h": ["Pi/PiStatusCode.h"],
+    "Guid/SmramMemoryReserve.h": ["Pi/PiMultiPhase.h"],
+    "Guid/VarCheckPolicyMmi.h": ["Protocol/MmCommunication.h"],
+    "Guid/VariableIndexTable.h": ["Guid/VariableFormat.h"],
+    "Protocol/FirmwareVolumeBlock.h": ["Pi/PiFirmwareVolume.h"],
+    "Protocol/SmmFirmwareVolumeBlock.h": ["Pi/PiFirmwareVolume.h"],
+    "Protocol/MmAccess.h": ["Pi/PiMultiPhase.h"],
+    "Protocol/SmmAccess2.h": ["Pi/PiMultiPhase.h"],
+    "Protocol/SmmCpuService.h": ["Pi/PiMultiPhase.h"],
+    "Protocol/PcdInfo.h": ["Pi/PiMultiPhase.h"],
+    "Protocol/PiPcdInfo.h": ["Pi/PiMultiPhase.h"],
+    "Protocol/StatusCode.h": ["Pi/PiStatusCode.h"],
+    "Protocol/ReportStatusCodeHandler.h": ["Pi/PiStatusCode.h"],
+    "Protocol/MmStatusCode.h": ["Pi/PiStatusCode.h"],
+    "Protocol/SmmStatusCode.h": ["Pi/PiStatusCode.h"],
+    "Protocol/MmReportStatusCodeHandler.h": ["Pi/PiStatusCode.h"],
+    "Protocol/SmmReportStatusCodeHandler.h": ["Pi/PiStatusCode.h"],
+    "Protocol/PxeBaseCodeCallBack.h": ["Protocol/PxeBaseCode.h"],
+}
+
+# headers that cannot be included from a harness at all. WiFiProfileSyncProtocol.h includes
+# WifiConnectionManagerDxe/WifiConnectionMgrConfig.h, which lives outside any package
+# Include directory, so no ordering can satisfy it
+unusable_includes = {
+    "Protocol/WiFiProfileSyncProtocol.h",
+}
+
 default_includes = {
     "Library/BaseLib.h",
     "Library/BaseMemoryLib.h",

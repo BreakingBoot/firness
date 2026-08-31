@@ -219,11 +219,13 @@ def get_intersect(input_data: Dict[str, List[FunctionBlock]],
 #
 def get_union(pre_processed_data: Dict[str, FunctionBlock],
               processed_generators: Dict[str, FunctionBlock]) -> List[str]:
+    # sorted, not list: a set of strings iterates in a different order every run, and this
+    # union feeds the harness include list
     union = []
     for function, function_block in pre_processed_data.items():
         if function_block.includes is not None:
-            union = list(set(union) | set(function_block.includes))
+            union = sorted(set(union) | set(function_block.includes))
     for function, function_block in processed_generators.items():
         if function_block.includes is not None:
-            union = list(set(union) | set(function_block.includes))
+            union = sorted(set(union) | set(function_block.includes))
     return union

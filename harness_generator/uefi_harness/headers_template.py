@@ -15,7 +15,8 @@ def harness_includes(includes: List[str]) -> List[str]:
     return output
 
 def harness_header(functions: List[str],
-                   matched_macros: Dict[str, str]) -> List[str]:
+                   matched_macros: Dict[str, str],
+                   guids=()) -> List[str]:
     output = []
     output.append("#ifndef __FIRNESS_HARNESSES__")
     output.append("#define __FIRNESS_HARNESSES__")
@@ -28,6 +29,14 @@ def harness_header(functions: List[str],
     for name, value in matched_macros.items():
         output.append(f"#define {name} {value}")
     output.append("")
+
+    # the inf lists these under [Guids]/[Protocols] so the linker resolves them, but the
+    # header that declares one is not necessarily part of the harness include set. edk2
+    # declares every guid this way, and repeating an extern declaration is harmless
+    for guid in sorted(guids):
+        output.append(f"extern EFI_GUID {guid};")
+    if guids:
+        output.append("")
 
     for function in functions:
         output.append(f"EFI_STATUS")

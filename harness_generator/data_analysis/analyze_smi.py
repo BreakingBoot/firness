@@ -5,7 +5,7 @@ from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
-from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, SmiInfo
+from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes, SmiInfo
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
 
@@ -125,17 +125,24 @@ def cleanup_paths(includes):
     return modified_includes
 
 def update_inc(includes: List[str], libmap: Dict[str, Dict[str, list]]) -> List[str]:
+    # building a new list rather than removing from the one being iterated: a remove
+    # shifts the tail down and the loop then skips the next entry, so the includes that
+    # actually got dropped depended on where in the list they happened to sit
+    kept = []
     for include in includes:
-        match = False
+        if include in unusable_includes:
+            continue
+        if "ppi" in include.lower():
+            continue
         if "library" in include.lower():
+            match = False
             for lib in libmap.keys():
                 if lib in include:
                     match = True
             if not match:
-                includes.remove(include)
-        if "ppi" in include.lower():
-            includes.remove(include)
-    return includes
+                continue
+        kept.append(include)
+    return kept
 
 def collect_all_lib_deps(libmap: Dict[str, Dict[str, List[str]]], lib: str, collected_deps: Set[str]) -> Set[str]:
     # Add the current library to the set of collected dependencies
@@ -204,6 +211,16 @@ def cleanup_include_dep_paths(include_deps: Dict[str, List[str]]):
                 modified_includes[include] = cleanup_paths(deps)
     return modified_includes
 
+# a header a listed one depends on has to be emitted ahead of it, and pulled in even when
+# nothing requested it directly
+def emit_include(file: str, ordered: List[str], emitted: Set[str]):
+    if file in emitted:
+        return
+    emitted.add(file)
+    for prereq in include_prerequisites.get(file, []):
+        emit_include(prereq, ordered, emitted)
+    ordered.append(file)
+
 # Function to ensure all dependencies are resolved in the correct order
 def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]]) -> List[str]:
     # Cleanup the paths in the include dependencies
@@ -224,6 +241,15 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
 
     # reverse the list to ensure that the includes are in the correct order
     ordered_includes.reverse()
+
+    # a header the dependency graph never saw is absent from sorted_graph, and dropping it
+    # here is what leaves the harness with an unknown type name. there is no ordering
+    # information for it, so it goes last, after everything it could depend on
+    for file in includes:
+        if file not in included:
+            ordered_includes.append(file)
+            included.add(file)
+
     mem_alloc = False
     for include in ordered_includes:
         if "MemoryAllocationLib" in include:
@@ -231,7 +257,12 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
     if not mem_alloc:
         # Add the MemoryAllocationLib right after BaseLib include
         ordered_includes.insert(1, "Library/MemoryAllocationLib.h")
-    return ordered_includes
+
+    resolved = []
+    emitted = set()
+    for file in ordered_includes:
+        emit_include(file, resolved, emitted)
+    return resolved
 
 
 def update_libs(libraries: List[str], libmap: Dict[str, Dict[str, list]]) -> Dict[str, str]:
@@ -312,9 +343,11 @@ def analyze_smi_data(macro_file: str,
     update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    collected_includes = list(set(update_includes) | default_includes | smi_includes)
+    # sorted, not list: a set of strings iterates in a different order every run, which
+    # made the include list and the resulting harness differ between identical runs
+    collected_includes = sorted(set(update_includes) | default_includes | smi_includes)
     collected_includes = update_inc(collected_includes, libmap)
-    libraries = update_libs(list(collect_libraries(collected_includes) | default_libraries), libmap)
+    libraries = update_libs(sorted(collect_libraries(collected_includes) | default_libraries), libmap)
     collected_includes = handle_include_deps(collected_includes, include_deps)
     
 

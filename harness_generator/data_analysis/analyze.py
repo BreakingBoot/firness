@@ -1,16 +1,19 @@
 import json
 import os
+import re
 import copy
 from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
-from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries
+from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
 
 current_args_dict = defaultdict(list)
 all_includes = set()
+# a string or character literal, with any of the edk2/C prefixes it may carry
+STRING_LITERAL = re.compile(r'(?:u8|[LuU])?(?:"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\')')
 total_generators = set()
 
 
@@ -19,17 +22,25 @@ total_generators = set()
 def load_generator_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
     try:
         with open(json_file, 'r') as file:
-            raw_data = json.load(file)
+            # a bare "null" is written when nothing was recorded
+            raw_data = json.load(file) or []
 
         function_dict = defaultdict(list)
         for raw_function in raw_data:
-            arguments = {
-                arg_key: [Argument(**raw_argument)] 
-                for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
-            }
-            function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
-                                raw_function.get('Service'), raw_function.get('Includes'), raw_function.get('File'))
-            function_dict[function.function] = function
+            # per entry, not around the loop: a single record with "Parameters": null used
+            # to abort the whole load and return nothing, which silently removed every
+            # generator from the run
+            try:
+                arguments = {
+                    arg_key: [Argument(**raw_argument)] 
+                    # "Parameters": null reaches get() as None, past the default
+                    for arg_key, raw_argument in (raw_function.get('Parameters') or {}).items()
+                }
+                function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
+                                    raw_function.get('Service'), raw_function.get('Includes'), raw_function.get('File'))
+                function_dict[function.function] = function
+            except Exception as e:
+                print(f'ERROR: {e}')
 
         return function_dict
     except Exception as e:
@@ -54,17 +65,22 @@ def load_include_deps(json_file: str) -> Dict[str, List[str]]:
 def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
     try:
         with open(json_file, 'r') as file:
-            raw_data = json.load(file)
+            # a bare "null" is written when nothing was recorded
+            raw_data = json.load(file) or []
 
         function_dict = defaultdict(list)
         for raw_function in raw_data:
-            arguments = {
-                arg_key: [Argument(**raw_argument)] 
-                for arg_key, raw_argument in raw_function.get('Parameters', {}).items()
-            }
-            function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
-                                raw_function.get('Service'), raw_function.get('Includes'))
-            function_dict[function.function] = function
+            # per entry, not around the loop, for the same reason as the generator loader
+            try:
+                arguments = {
+                    arg_key: [Argument(**raw_argument)] 
+                    for arg_key, raw_argument in (raw_function.get('Parameters') or {}).items()
+                }
+                function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
+                                    raw_function.get('Service'), raw_function.get('Includes'))
+                function_dict[function.function] = function
+            except Exception as e:
+                print(f'ERROR: {e}')
 
         return function_dict
     except Exception as e:
@@ -103,6 +119,174 @@ def load_castings(json_file: str) -> Dict[str, List[str]]:
 #
 # load in the functions to be harnessed
 #
+# turn a protocol GUID variable into the struct tag it names, so a requested
+# gEfiKmsProtocolGuid:GetServiceStatus can be checked against a call-site whose first
+# parameter is EFI_KMS_PROTOCOL *. without this the match is on the method name alone
+# and any protocol that happens to have a method of that name can be picked up --
+# which is how EfiKms ended up generating against _EFI_IPN_PROTOCOL
+
+# guid variable name -> the struct names declared in the same header. deriving the struct
+# from the guid name cannot work in general: the name is camel case, so it does not say
+# where an acronym ends (gEdkiiIoMmuProtocolGuid vs EDKII_IOMMU_PROTOCOL), and it is often
+# an abbreviation of the struct (gEfiSimpleTextOutProtocolGuid vs
+# EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL). the header that declares the guid is authoritative
+guid_struct_map = {}
+# guid -> the real spelling of the protocol struct declared beside it
+guid_protocol_name = {}
+# guid -> the header that declares it, as an absolute path
+guid_header = {}
+
+GUID_DECL = re.compile(r'extern\s+EFI_GUID\s+(g\w+)\s*;')
+STRUCT_NAMES = re.compile(r'\}\s*([A-Za-z_]\w*)\s*;|struct\s+([A-Za-z_]\w*)\s*\{'
+                          r'|typedef\s+(?:struct\s+)?([A-Za-z_]\w*)\s+([A-Za-z_]\w*)\s*;')
+
+
+def normalize_struct(name: str) -> str:
+    return (name or '').strip().lstrip('_').replace('_', '').upper()
+
+
+def build_guid_struct_map(edk2_dir: str):
+    if guid_struct_map or not edk2_dir or not os.path.isdir(edk2_dir):
+        return
+    for package in sorted(os.listdir(edk2_dir)):
+        for section in ('Protocol', 'Guid', 'Ppi'):
+            root = os.path.join(edk2_dir, package, 'Include', section)
+            if not os.path.isdir(root):
+                continue
+            for dirpath, _dirs, files in os.walk(root):
+                for name in files:
+                    if not name.endswith('.h'):
+                        continue
+                    try:
+                        with open(os.path.join(dirpath, name), 'r',
+                                  encoding='utf-8', errors='ignore') as handle:
+                            source = handle.read()
+                    except OSError:
+                        continue
+                    guids = GUID_DECL.findall(source)
+                    if not guids:
+                        continue
+                    for guid in guids:
+                        guid_header.setdefault(guid, os.path.join(dirpath, name))
+                    structs = {normalize_struct(part)
+                               for match in STRUCT_NAMES.findall(source)
+                               for part in match if part}
+                    structs.discard('')
+                    real = {part for match in STRUCT_NAMES.findall(source)
+                            for part in match if part}
+                    for guid in guids:
+                        guid_struct_map.setdefault(guid, set()).update(structs)
+                        if guid in guid_protocol_name:
+                            continue
+                        want = guid_to_struct(guid).replace('_', '')
+                        named = [r for r in sorted(real)
+                                 if normalize_struct(r).endswith('PROTOCOL')]
+                        # "typedef struct _X X;" yields both spellings, and only the
+                        # typedef is usable as a type on its own -- naming the tag emits
+                        # "_X *ProtocolVariable", which is not a declared type
+                        typedefs = [r for r in named if not r.startswith('_')]
+                        for pool in (typedefs, named):
+                            exact = [r for r in pool if normalize_struct(r) == want]
+                            if exact:
+                                guid_protocol_name[guid] = exact[0]
+                                break
+                        else:
+                            if typedefs or named:
+                                guid_protocol_name[guid] = (typedefs or named)[0]
+
+
+def guid_to_struct(guid: str) -> str:
+    if not guid:
+        return ""
+    name = guid[1:] if guid.startswith('g') else guid
+    if name.endswith('Guid'):
+        name = name[:-4]
+    out = []
+    for i, ch in enumerate(name):
+        if ch.isupper() and i and not name[i - 1].isupper():
+            out.append('_')
+        out.append(ch.upper())
+    return ''.join(out)
+
+
+# the call-site's first parameter type, stripped to a bare struct tag
+def arg0_struct(function_info) -> str:
+    args = getattr(function_info, 'arguments', None)
+    if not args:
+        return ""
+    first = args.get('Arg_0') if isinstance(args, dict) else None
+    if not first:
+        return ""
+    entry = first[0] if isinstance(first, list) else first
+    t = getattr(entry, 'arg_type', '') or ''
+    for junk in ('const', 'CONST', '*', 'struct'):
+        t = t.replace(junk, ' ')
+    # edk2 spells a protocol as "typedef struct _EFI_X_PROTOCOL EFI_X_PROTOCOL", so a call
+    # site records the tag with its leading underscore while the guid gives the plain name
+    return t.strip().lstrip('_').upper()
+
+
+# a requested (method, guid) matches a call-site name when the names are equal and,
+# when both sides know their protocol struct, the structs agree
+def harness_match(function: str, pair, function_info=None) -> bool:
+    name, guid = pair[0], (pair[1] if len(pair) > 1 else "")
+    if function != name:
+        return False
+    known = guid_struct_map.get(guid)
+    want = guid_to_struct(guid)
+    if (not want and not known) or function_info is None:
+        return True
+    got = arg0_struct(function_info)
+    if not got:
+        return True
+    # the header that declares the guid is authoritative when it is known; the name
+    # derived from the guid is only a fallback for a guid that was never found
+    if known:
+        return normalize_struct(got) in known
+    # compared without the separators: the guid name is split on camel case, which cannot
+    # know where an acronym ends, so gEdkiiIoMmuProtocolGuid yields EDKII_IO_MMU_PROTOCOL
+    # for a struct actually called EDKII_IOMMU_PROTOCOL. dropping the underscores still
+    # tells two different protocols apart
+    return got.replace('_', '') == want.replace('_', '')
+
+
+
+# the number of parameters a protocol member really takes, read from the header that
+# declares the protocol. a declaration found elsewhere can share a member's name and have a
+# different signature -- MdeModulePkg/Bus/Pci/PciBusDxe/PciIo.h declares a six parameter
+# CopyMem while EFI_PCI_IO_PROTOCOL.CopyMem takes seven -- and calling through the protocol
+# with the wrong count does not compile
+def protocol_member_arity(header_path: str, protocol_name: str, member: str):
+    try:
+        with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
+            source = handle.read()
+    except OSError:
+        return None
+    body = re.search(r'struct\s+_?' + re.escape(protocol_name) + r'\s*\{(.*?)\n\}', source, re.S)
+    if not body:
+        return None
+    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body.group(1))
+    if not field:
+        return None
+    signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(field.group(1)) +
+                          r'\s*\)\s*\((.*?)\)\s*;', source, re.S)
+    if not signature:
+        return None
+    params = signature.group(1).strip()
+    if not params or params.upper() == 'VOID':
+        return 0
+    depth = 0
+    count = 1
+    for character in params:
+        if character in '([':
+            depth += 1
+        elif character in ')]':
+            depth -= 1
+        elif character == ',' and depth == 0:
+            count += 1
+    return count
+
+
 def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
     # Load in the functions to be harnessed from the txt file
     # They are classified into 3 categories: OtherFunctions, BootServices, and RuntimeServices
@@ -164,8 +348,25 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
         # now loop through the sorted data and keep the groups of elements that have a corresponding service
         # in the harness_functions dictionary
         for function, arg_num_pairs in sorted_data.items():
-            for _, function_blocks in arg_num_pairs.items():
-                if not any(function in pair[0] for pairs in harness_functions.values() for pair in pairs):
+            # the call site carries the protocol struct in Arg_0, which separates a
+            # Configure on the requested protocol from a Configure on any other one that
+            # shares the name. that is a tie-breaker among same-named candidates rather
+            # than an absolute gate: edk2 puts the same guid on aliased protocols
+            # (FirmwareVolumeBlock and FirmwareVolumeBlock2), so when the struct rejects
+            # every group for a requested function, fall back to matching on name alone
+            groups = list(arg_num_pairs.values())
+            strict = any(harness_match(function, pair, blocks[0] if blocks else None)
+                         for blocks in groups
+                         for pairs in harness_functions.values() for pair in pairs)
+            for function_blocks in groups:
+                observed = function_blocks[0] if function_blocks else None
+                # the relaxation exists for aliased protocols, where Arg_0 is some other
+                # protocol struct. it must not admit a same-named function that is not a
+                # protocol member at all: BaseMemoryLib's CopyMem(dest, src, len) leads
+                # with a void*, and letting it through displaced the real PCI IO member
+                if not strict and normalize_struct(arg0_struct(observed)).endswith('PROTOCOL'):
+                    observed = None
+                if not any(harness_match(function, pair, observed) for pairs in harness_functions.values() for pair in pairs):
                     print(f'WARNING: {function} is not in the harness functions list!!')
                     continue
                 arg_num_match = False
@@ -183,12 +384,13 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                         break
                 if arg_num_match:
                     filtered_data.setdefault(function, []).extend(function_blocks)
-                elif any(function in pair[0] for pair in harness_functions["OtherFunctions"]):
+                elif any(harness_match(function, pair, observed) for pair in harness_functions["OtherFunctions"]):
                     filtered_data.setdefault(function, []).extend(function_blocks)
         if best_guess:
             for function, arg_num_pairs in sorted_data.items():
                 for _, function_blocks in arg_num_pairs.items():
-                    if not any(function in pair[0] for pairs in harness_functions.values() for pair in pairs):
+                    observed = function_blocks[0] if function_blocks else None
+                    if not any(harness_match(function, pair, observed) for pairs in harness_functions.values() for pair in pairs):
                         continue
                     if function in filtered_data.keys():
                         break
@@ -197,14 +399,60 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
     # loop through the filtered data and add the function_decl function if it is not already in the filtered_data
     for function, function_info in function_decl.items():
         if function not in filtered_data.keys():
-            if function_info.service == "" or function_info.service is None:
-                # search harness_functions for the function
-                for key, value in harness_functions.items():
-                    if any(function in pair[0] for pair in value):
-                        function_info.service = key
+            # only a declaration the user actually asked for may become a target. this
+            # used to append unconditionally, so when the analysis found no call sites
+            # for the requested protocol the generator still built a harness out of
+            # whatever else was declared -- which is how a request for EfiKms produced
+            # code against struct _EFI_IP4_PROTOCOL
+            matched_service = None
+            matched_guid = ""
+            for key, value in harness_functions.items():
+                for pair in value:
+                    if harness_match(function, pair, function_info):
+                        matched_service = key
+                        matched_guid = pair[1] if len(pair) > 1 else ""
                         break
-            filtered_data[function].append(FunctionBlock(function_info.arguments, function, 
-                                            function_info.service, function_info.includes, function_info.return_type))
+                if matched_service is not None:
+                    break
+            if matched_service is None:
+                continue
+            if function_info.service == "" or function_info.service is None:
+                function_info.service = matched_service
+
+            # the declaration pass marks the first parameter of anything declared in a
+            # protocol header as __PROTOCOL__, whatever its type. that is wrong for a
+            # protocol whose members do not take This: EFI_SHELL_PROTOCOL declares
+            # RemoveDupInFileList(EFI_SHELL_FILE_INFO **FileList), and treating the file
+            # list as the protocol both mistyped the located pointer and dropped the only
+            # real argument the call has
+            first = function_info.arguments.get('Arg_0')
+            protocol_name = guid_protocol_name.get(matched_guid)
+            # a same-named declaration from somewhere else is not this protocol's member
+            header = guid_header.get(matched_guid)
+            if protocol_name and header:
+                arity = protocol_member_arity(header, protocol_name, function)
+                if arity is not None and arity != len(function_info.arguments):
+                    print(f'WARNING: {function} declaration takes '
+                          f'{len(function_info.arguments)} argument(s) but '
+                          f'{protocol_name}.{function} takes {arity}!!')
+                    continue
+            if first and protocol_name and first[0].variable == "__PROTOCOL__":
+                if normalize_struct(remove_ref_symbols(first[0].arg_type)) != normalize_struct(protocol_name):
+                    first[0].variable = ""
+            block = FunctionBlock(function_info.arguments, function,
+                                  function_info.service, function_info.includes,
+                                  function_info.return_type)
+            # remember how to reach the protocol even when no parameter carries it, so the
+            # harness can still locate it for a member declared as (VOID)
+            if protocol_name and matched_guid:
+                block.protocol_type = f'{protocol_name} *'
+                block.protocol_guid = matched_guid
+                # nothing else in the harness references this protocol, so its header
+                # would not otherwise be included and the type would be undeclared
+                header = guid_header.get(matched_guid)
+                if header:
+                    all_includes.add(header)
+            filtered_data[function].append(block)
             # all_includes.update(function_info.includes)
     return filtered_data
 
@@ -221,14 +469,21 @@ def load_data(json_file: str,
               function_decl: Dict[str, Tuple[str, str]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
 
     with open(json_file, 'r') as file:
-        raw_data = json.load(file)
+        # firness writes a bare "null" when it recorded no call sites, and the declaration
+        # fallback further down still builds harnesses in that case
+        raw_data = json.load(file) or []
 
     function_dict = defaultdict(list)
-    try:
-        for raw_function_block in raw_data:
+    for raw_function_block in raw_data:
+        # the try sits inside the loop on purpose: wrapping the loop meant a single
+        # malformed entry aborted it and silently discarded every call site recorded
+        # after that point
+        try:
             arguments = {
                 arg_key: [Argument(**raw_argument)]
-                for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
+                # a recorded "Arguments": null reaches get() as None, which the default
+                # argument does not cover
+                for arg_key, raw_argument in (raw_function_block.get('Arguments') or {}).items()
             }
             if random:
                 for arg_key, argument in arguments.items():
@@ -237,8 +492,8 @@ def load_data(json_file: str,
             function_block = FunctionBlock(arguments, raw_function_block.get(
                 'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
             function_dict[function_block.function].append(function_block)
-    except Exception as e:
-        print(f'ERROR: {e}')
+        except Exception as e:
+            print(f'ERROR: {e}')
 
     # Check if there is a single most common number of parameters for each function
     # and if not then take the one which has a service matching the harness_functions.keys()
@@ -300,7 +555,9 @@ def load_generators(json_file: str,
     for raw_function_block in raw_data:
         arguments = {
             arg_key: [Argument(**raw_argument)]
-            for arg_key, raw_argument in raw_function_block.get('Arguments', {}).items()
+            # a recorded "Arguments": null reaches get() as None, which the default does
+            # not cover, and there is no handler here to absorb it
+            for arg_key, raw_argument in (raw_function_block.get('Arguments') or {}).items()
         }
         function_block = FunctionBlock(arguments, raw_function_block.get(
             'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
@@ -632,6 +889,78 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
     return pre_processed_data
 
 
+
+# the callee of a recorded assignment expression, e.g.
+#   "PciIo->AllocateBuffer (PciIo, AllocateAnyPages, ..., &BufHost, 0)"  ->  AllocateBuffer
+ASSIGNMENT_CALLEE = re.compile(r'(?:->|\.|\b)([A-Za-z_]\w*)\s*\(')
+
+
+# VariableFlow already resolves, for each argument, the call that last wrote the variable
+# being passed, and CallSiteAnalysis serialises it as source text in "assignment". That is
+# a real producer/consumer edge observed in the firmware, and nothing downstream used it:
+# generator selection is purely type based, and it skips anything void shaped, which is
+# exactly the shape an OUT parameter of a buffer allocator has. This registers the observed
+# producer as a generator choice for that argument.
+def register_observed_producers(input_data: Dict[str, List[FunctionBlock]],
+                                pre_processed_data: Dict[str, FunctionBlock],
+                                generators: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+    # generators for a protocol member are keyed "<STRUCT>:<Method>"
+    by_name = {}
+    for key in generators.keys():
+        by_name.setdefault(key.split(':')[-1], key)
+
+    # a producer that itself consumes the function it feeds would make the emitter inline
+    # the pair into each other; the codegen has no depth limit, so refuse the cycle
+    consumes = defaultdict(set)
+    for consumer, blocks in input_data.items():
+        for block in blocks:
+            for arguments in block.arguments.values():
+                for argument in arguments:
+                    for callee in ASSIGNMENT_CALLEE.findall(argument.assignment or ''):
+                        consumes[consumer].add(callee)
+
+    added = 0
+    for consumer, blocks in input_data.items():
+        if consumer not in pre_processed_data:
+            continue
+        for block in blocks:
+            for arg_key, arguments in block.arguments.items():
+                for argument in arguments:
+                    if argument.arg_dir != "IN":
+                        continue
+                    for callee in ASSIGNMENT_CALLEE.findall(argument.assignment or ''):
+                        key = by_name.get(callee)
+                        if key is None or callee == consumer:
+                            continue
+                        if consumer in consumes[callee]:
+                            continue
+                        producer = generators[key]
+                        # only when the producer really yields this type, either directly
+                        # or through one more level of indirection
+                        base = remove_ref_symbols(argument.arg_type)
+                        fits = any(out[0].arg_dir == "OUT"
+                                   and remove_ref_symbols(out[0].arg_type) == base
+                                   and out[0].pointer_count in (argument.pointer_count,
+                                                                argument.pointer_count + 1)
+                                   for out in producer.arguments.values())
+                        if not fits:
+                            continue
+                        existing = pre_processed_data[consumer].arguments.get(arg_key, [])
+                        if any(e.variable == "__GENERATOR_FUNCTION__" and e.assignment == key
+                               for e in existing):
+                            continue
+                        pre_processed_data[consumer].arguments.setdefault(arg_key, []).append(
+                            Argument(argument.arg_dir, argument.arg_type, key,
+                                     argument.data_type, argument.usage,
+                                     "__GENERATOR_FUNCTION__"))
+                        all_includes.update(producer.includes or [])
+                        added += 1
+                        break
+    if added:
+        print(f'INFO: {added} observed producer edge(s) reused as generators!!')
+    return pre_processed_data
+
+
 def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                    generators: Dict[str, FunctionBlock],
                    input_data: Dict[str, List[FunctionBlock]],
@@ -730,11 +1059,23 @@ def add_output_variables(function_template: Dict[str, FunctionBlock],
     return pre_processed_data
 
 
-def handle_optional_arguments(pre_processed_data: Dict[str, FunctionBlock]) -> Dict[str, FunctionBlock]:
+def handle_optional_arguments(pre_processed_data: Dict[str, FunctionBlock],
+                              function_template: Dict[str, FunctionBlock] = None) -> Dict[str, FunctionBlock]:
     for function, function_block in pre_processed_data.items():
+        template = (function_template or {}).get(function)
         for arg_key, argument in function_block.arguments.items():
             if len(argument) == 0:
-                pre_processed_data[function].arguments[arg_key].append(Argument("OPTIONAL", "VOID *", "NULL", "VOID *", "NULL", "__OPTIONAL__"))
+                # keep the parameter's real type. filling every unresolved argument with
+                # "VOID *" made the call site pass NULL for things that are not pointers,
+                # such as EFI_PCI_IO_PROTOCOL_WIDTH, which does not compile
+                arg_type = "VOID *"
+                if template is not None:
+                    declared = template.arguments.get(arg_key)
+                    if declared and declared[0].arg_type:
+                        arg_type = declared[0].arg_type
+                usage = "NULL" if '*' in arg_type else ""
+                pre_processed_data[function].arguments[arg_key].append(
+                    Argument("OPTIONAL", arg_type, usage, arg_type, usage, "__OPTIONAL__"))
 
     return pre_processed_data
 
@@ -773,6 +1114,9 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
             pre_processed_data, input_generators, input_data, aliases, casts, types)
         print(f'INFO: Collecting generator functions complete!!')
 
+        pre_processed_data = register_observed_producers(
+            input_data, pre_processed_data, input_generators)
+
     # Step 4: Collect the fuzzable structs
     pre_processed_data = variable_fuzzable(
         input_data, types, pre_processed_data, aliases, macros, random)
@@ -783,7 +1127,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
         function_template, pre_processed_data)
     print(f'INFO: Adding output variables complete!!')
 
-    pre_processed_data = handle_optional_arguments(pre_processed_data)  
+    pre_processed_data = handle_optional_arguments(pre_processed_data, function_template)  
     print(f'INFO: Handling optional arguments complete!!')          
 
     # If there are still arguments missing then extend the level for fuzzable structs
@@ -798,14 +1142,62 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     #                 input_data, types, pre_processed_data, aliases, random)
     #             missing_arg = True
 
-    # Step 6: add the includes for constants/macro definitions
+    # every name the harness is able to write down: the macros it can define or include,
+    # the enum constants, and the type names that appear inside casts. protocol and driver
+    # guids belong here too -- they are extern EFI_GUID globals rather than macros, and
+    # their declaring header is already pulled in with the protocol
+    # only types the harness can actually include: a driver-private struct is in the types
+    # table but its header is outside any Include directory, so naming it in an expression
+    # like "SNP_MEM_PAGES (sizeof (SNP_DRIVER))" does not compile
+    includable_types = {name for name, info in types.items()
+                        if cleanup_paths([getattr(info, 'file', '') or ''])}
+    nameable = set(macros.keys()) | includable_types | set(aliases.keys()) | set(aliases.values())
+    for enum_def in enums.values():
+        nameable.update(getattr(enum_def, 'values', None) or [])
+    nameable |= set(protocol_guids) | set(driver_guids)
+    nameable.update(('sizeof', 'NULL', 'TRUE', 'FALSE', 'VOID', 'CONST', 'IN', 'OUT'))
+
+    # Step 6: add the includes for constants/macro definitions, and drop a recorded usage
+    # the harness has no way to name
     for function, function_block in pre_processed_data.items():
         for arg_key, arguments in function_block.arguments.items():
             for arg in arguments:
-                if arg.assignment in macros.keys():
-                    function_block.includes.append(macros[arg.assignment].file)
-                elif arg.usage in macros.keys():
-                    function_block.includes.append(macros[arg.usage].file)
+                for name in (arg.assignment, arg.usage):
+                    if name not in macros.keys():
+                        continue
+                    macro = macros[name]
+                    # the same test the include pipeline applies: a macro in a .c, or in a
+                    # driver-private header outside any Include directory, cannot be
+                    # reached by including its file, so define it in the harness instead
+                    if cleanup_paths([macro.file]):
+                        function_block.includes.append(macro.file)
+                        # the per-function list is not folded into the harness include set
+                        # (get_union is not called), so without this the constant is
+                        # emitted with nothing declaring it
+                        all_includes.add(macro.file)
+                    else:
+                        matched_macros[macro.name] = macro.value
+                    break
+                # a usage recorded at a call site can name locals of the function it was
+                # taken from, as in "DeltaY + EFI_GLYPH_HEIGHT". blanking it here makes the
+                # argument fall back to a default value rather than to code that will not
+                # compile. an edk2 guid global is spelled gFooGuid and is declared by the
+                # header the protocol already brings in, so it stays nameable.
+                # assignment is deliberately left alone: it keys the generator lookup
+                # string and character literals are removed before tokenizing: their
+                # payload is not made of identifiers, and treating L"Setup" as the names
+                # L and Setup threw away every recorded string constant
+                expression = STRING_LITERAL.sub(' ', arg.usage or '')
+                unknown = [token for token in re.findall(r'[A-Za-z_]\w*', expression)
+                           if token not in nameable]
+                # an operand that went missing leaves the expression malformed, as in
+                # "| | | EFI_PCI_IO_ATTRIBUTE_VGA_IO": remove_casts strips every
+                # parenthesised group, so a usage written as "(UINT64)(A) | (UINT64)(B)"
+                # comes back with holes where its operands were
+                malformed = any(part.strip() == ""
+                                for part in re.split(r'[|&^]', arg.usage or 'x'))
+                if unknown or malformed:
+                    arg.usage = ""
 
     # Step 6: Sort the arguments
     for key, function_block in pre_processed_data.items():
@@ -820,7 +1212,7 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                 for harness_group, functions in harness_functions.items():
                     if "protocol" in harness_group.lower():
                         for func, guid in functions:
-                            if function in func:
+                            if function == func:
                                 argument[0].usage = guid
                                 break
                 break
@@ -843,7 +1235,7 @@ def initialize_generators(input_generators: Dict[str, List[FunctionBlock]]) -> T
     return generators, generators_template
 
 
-def remove_unreachable_functions(input_data: Dict[str, FunctionBlock], function_template: Dict[str, FunctionBlock], generator_input_template: Dict[str, Function]) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+def remove_unreachable_functions(input_data: Dict[str, FunctionBlock], function_template: Dict[str, FunctionBlock], generator_input_template: Dict[str, Function], protected: Set[str] = frozenset()) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # for all of the generator functions, check if they are reachable from the global scope
     # reachable means that the function is either a protocol or from a library
     # if the function is not reachable then remove it from the input_data and the function_template
@@ -865,7 +1257,11 @@ def remove_unreachable_functions(input_data: Dict[str, FunctionBlock], function_
     for function in list(input_data.keys()):
         if function not in reachable_functions:
             del input_data[function]
-            del function_template[function]
+            # the template holds harness targets as well as generators, and the two
+            # namespaces collide on bare names, so an unreachable generator must not take
+            # a target's service entry with it
+            if function not in protected:
+                function_template.pop(function, None)
     
     return input_data, function_template
 
@@ -894,7 +1290,8 @@ def remove_cyclic_dependencies(input_data: Dict[str, FunctionBlock],
                                aliases: Dict[str, str],
                                macros: Dict[str, Macros],
                                enums: Dict[str, List[str]],
-                               types: Dict[str, TypeInfo]) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
+                               types: Dict[str, TypeInfo],
+                               protected: Set[str] = frozenset()) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock]]:
     # for all of the generator functions check if any of the arguments are cyclic
     # if the argument is cyclic then remove the function from the input_data and the function_template
     cyclic_functions = set()
@@ -908,7 +1305,10 @@ def remove_cyclic_dependencies(input_data: Dict[str, FunctionBlock],
 
     for function in cyclic_functions:
         del input_data[function]
-        del function_template[function]
+        # same collision as above: a cyclic generator named CopyMem must not remove the
+        # service entry for the protocol member that happens to share its name
+        if function not in protected:
+            function_template.pop(function, None)
 
     return input_data, function_template
 
@@ -923,6 +1323,9 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
     # just like for normal functions we want to determine the fuzzable arguments and fuzzable structs
     # for the generator functions
     output_template = input_template.copy()
+    # every name already in the template is a requested harness target; step 7 below adds
+    # the generators alongside them, after which the two are only distinguishable by this
+    harness_targets = set(input_template.keys())
 
     # Step 1: Collect the constant arguments
     # generators = collect_known_constants(generators, generators)
@@ -940,7 +1343,7 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
 
     # Step 4: Add the output variables
     generators = add_output_variables(generators_tempalate, generators)
-    generators = handle_optional_arguments(generators)  
+    generators = handle_optional_arguments(generators, generators_tempalate)  
 
     # Step 5: Sort the arguments
     for key, function_block in generators.items():
@@ -968,10 +1371,10 @@ def analyze_generators(input_generators: Dict[str, List[FunctionBlock]],
             output_template[function] = function_block
 
     # Step 8: Remove any generator functions that are unreachable from a global scope
-    generators, output_template = remove_unreachable_functions(generators, output_template, generator_input_template)
+    generators, output_template = remove_unreachable_functions(generators, output_template, generator_input_template, harness_targets)
 
     # Step 9: Remove any generator functions that have cyclic dependencies
-    generators, output_template = remove_cyclic_dependencies(generators, output_template, aliases, macros, enums, types)
+    generators, output_template = remove_cyclic_dependencies(generators, output_template, aliases, macros, enums, types, harness_targets)
 
     return input_generators, generators, output_template
 
@@ -996,17 +1399,24 @@ def cleanup_paths(includes):
     return modified_includes
 
 def update_inc(includes: List[str], libmap: Dict[str, Dict[str, list]]) -> List[str]:
+    # building a new list rather than removing from the one being iterated: a remove
+    # shifts the tail down and the loop then skips the next entry, so the includes that
+    # actually got dropped depended on where in the list they happened to sit
+    kept = []
     for include in includes:
-        match = False
+        if include in unusable_includes:
+            continue
+        if "ppi" in include.lower():
+            continue
         if "library" in include.lower():
+            match = False
             for lib in libmap.keys():
                 if lib in include:
                     match = True
             if not match:
-                includes.remove(include)
-        if "ppi" in include.lower():
-            includes.remove(include)
-    return includes
+                continue
+        kept.append(include)
+    return kept
 
 def collect_all_lib_deps(libmap: Dict[str, Dict[str, List[str]]], lib: str, collected_deps: Set[str]) -> Set[str]:
     # Add the current library to the set of collected dependencies
@@ -1075,6 +1485,16 @@ def cleanup_include_dep_paths(include_deps: Dict[str, List[str]]):
                 modified_includes[include] = cleanup_paths(deps)
     return modified_includes
 
+# a header a listed one depends on has to be emitted ahead of it, and pulled in even when
+# nothing requested it directly
+def emit_include(file: str, ordered: List[str], emitted: Set[str]):
+    if file in emitted:
+        return
+    emitted.add(file)
+    for prereq in include_prerequisites.get(file, []):
+        emit_include(prereq, ordered, emitted)
+    ordered.append(file)
+
 # Function to ensure all dependencies are resolved in the correct order
 def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]]) -> List[str]:
     # Cleanup the paths in the include dependencies
@@ -1095,6 +1515,15 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
 
     # reverse the list to ensure that the includes are in the correct order
     ordered_includes.reverse()
+
+    # a header the dependency graph never saw is absent from sorted_graph, and dropping it
+    # here is what leaves the harness with an unknown type name. there is no ordering
+    # information for it, so it goes last, after everything it could depend on
+    for file in includes:
+        if file not in included:
+            ordered_includes.append(file)
+            included.add(file)
+
     mem_alloc = False
     for include in ordered_includes:
         if "MemoryAllocationLib" in include:
@@ -1102,7 +1531,12 @@ def handle_include_deps(includes: List[str], include_deps: Dict[str, List[str]])
     if not mem_alloc:
         # Add the MemoryAllocationLib right after BaseLib include
         ordered_includes.insert(1, "Library/MemoryAllocationLib.h")
-    return ordered_includes
+
+    resolved = []
+    emitted = set()
+    for file in ordered_includes:
+        emit_include(file, resolved, emitted)
+    return resolved
 
 
 def update_libs(libraries: List[str], libmap: Dict[str, Dict[str, list]]) -> Dict[str, str]:
@@ -1152,6 +1586,7 @@ def analyze_data(macro_file: str,
                  edk2_dir: str,
                  include_deps_file: str) -> Tuple[Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, FunctionBlock], Dict[str, List[FieldInfo]], List[str], Dict[str, str], Dict[str, str], Dict[str, str], set, set, Dict[str, List[str]], int]:
 
+    build_guid_struct_map(edk2_dir)
     macros_val, macros_name = load_macros(macro_file)
     global total_generators
     cast_map = load_castings(cast_file)
@@ -1181,13 +1616,16 @@ def analyze_data(macro_file: str,
     processed_data, matched_macros, protocol_guids, driver_guids = collect_all_function_arguments(
         data, function_template, types, processed_generators, aliases, macros_name, enum_map, cast_map, random, harness_functions)
 
+
     # all_includes = get_union(processed_data, processed_generators)
     update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})
     # all_includes = get_union({}, {})
-    collected_includes = list(set(update_includes) | default_includes)
+    # sorted, not list: a set of strings iterates in a different order every run, which
+    # made the include list and the resulting harness differ between identical runs
+    collected_includes = sorted(set(update_includes) | default_includes)
     collected_includes = update_inc(collected_includes, libmap)
-    libraries = update_libs(list(collect_libraries(collected_includes) | default_libraries), libmap)
+    libraries = update_libs(sorted(collect_libraries(collected_includes) | default_libraries), libmap)
     collected_includes = handle_include_deps(collected_includes, include_deps)
     
     if not random:

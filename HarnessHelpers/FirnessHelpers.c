@@ -41,14 +41,27 @@ ReadBytes(
     return EFI_ABORTED;
   }
 
-  // Determine the actual number of bytes to extract
-  UINTN actualBytes = (inputBuffer->Length - numBytes >= 0) ? numBytes : inputBuffer->Length;
+  if (inputBuffer->Buffer == NULL)
+  {
+    inputBuffer->Length = 0;
+  }
+
+  // Determine the actual number of bytes to extract. Both operands are UINTN, so
+  // "Length - numBytes >= 0" would always be true and over-read a short buffer.
+  UINTN actualBytes = (inputBuffer->Length >= numBytes) ? numBytes : inputBuffer->Length;
+
+  // Bytes the input cannot supply are zero, per the contract in FirnessHelpers.h
+  SetMem(outputBuffer, numBytes, 0);
 
   // Copy the bytes from the input buffer to the output buffer
-  CopyMem((UINT8*)outputBuffer, inputBuffer->Buffer, actualBytes);
+  if (actualBytes > 0)
+  {
+    CopyMem((UINT8*)outputBuffer, inputBuffer->Buffer, actualBytes);
+  }
 
-  // Update the input buffer to remove the extracted bytes
-  inputBuffer += actualBytes;
+  // Update the input buffer to remove the extracted bytes. Advance the cursor inside
+  // the buffer; advancing inputBuffer itself walks the struct pointer off its object.
+  inputBuffer->Buffer += actualBytes;
   inputBuffer->Length -= actualBytes;
 
   return EFI_SUCCESS;

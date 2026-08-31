@@ -34,6 +34,23 @@ def is_uefi_app_lib(lib_name):
                     return True
     return False
 
+# return the LIBRARY_CLASS an .inf actually provides, or None. a DSC line reads
+# <Class>|<path/to/Instance.inf>, but the left-hand side is not always a real class --
+# RedfishPkg/RedfishLibs.dsc.inc says BaseSortLib|.../BaseSortLib.inf even though that
+# .inf declares LIBRARY_CLASS = SortLib. harvesting it verbatim puts two instances of
+# the same class in the generated DSC and the harness fails to link
+def declared_library_class(inf_path):
+    if not (os.path.exists(inf_path) and os.path.isfile(inf_path)):
+        return None
+    with open(inf_path, 'r', errors='ignore') as file:
+        for line in file:
+            line = line.split('#')[0].strip()
+            if line.startswith('LIBRARY_CLASS') and '=' in line:
+                value = line.split('=', 1)[1].strip()
+                return value.split('|')[0].strip() or None
+    return None
+
+
 def parse_library_classes_section(file_path: str, root: str, lib_map: Dict[str, Dict[str, list]]) -> Dict[str, Dict[str, list]]:
     with open(file_path, 'r') as file:
         inside_library_classes = False
@@ -54,11 +71,22 @@ def parse_library_classes_section(file_path: str, root: str, lib_map: Dict[str, 
                 if len(parts) > 1 and not line.strip().startswith('#'):
                     # Remove extra spaces from each part
                     parts = [part.strip() for part in parts]
-                    # Add to the library map
-                    if "pei" not in parts[1].lower() and parts[0] not in lib_map.keys():
-                        if is_uefi_app_lib(os.path.join(root, parts[1])):
-                            if ((parts[0] in lib_map.keys()) and ("null" not in parts[1].lower())) or parts[0] not in lib_map.keys() :
-                                lib_map[parts[0]] = {"path": parts[1], "dependencies": parse_inf_file(os.path.join(root, parts[1]))}
+                    inf_path = os.path.join(root, parts[1])
+                    if "pei" in parts[1].lower() or not is_uefi_app_lib(inf_path):
+                        continue
+                    # Only trust the DSC's left-hand side if the instance really
+                    # provides that class; otherwise a DSC typo becomes a duplicate
+                    # library class in the generated harness DSC.
+                    provided = declared_library_class(inf_path)
+                    if provided is not None and provided != parts[0]:
+                        continue
+                    # First writer wins. Which DSC that turns out to be is an
+                    # os.walk ordering accident, so any class the harness genuinely
+                    # depends on is pinned in uefi_harness/dsc_template.py rather
+                    # than left to this lottery.
+                    if parts[0] in lib_map:
+                        continue
+                    lib_map[parts[0]] = {"path": parts[1], "dependencies": parse_inf_file(inf_path)}
     return lib_map
 
 def parse_edk2(folder_path: str) -> Dict[str, Dict[str, list]]:

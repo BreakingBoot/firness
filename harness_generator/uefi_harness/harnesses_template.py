@@ -1,10 +1,12 @@
 from typing import List, Dict
 import copy
+import re
 from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef
 from common.utils import add_indents, remove_ref_symbols
 
 aliases_map = {}
 enum_map = {}
+IDENTIFIER = re.compile(r'[A-Za-z_]\w*')
 
 # this is a function that will return the underlying data type for any function
 # so given EFI_PHYSICAL_ADDRESS it will return UINT64 by searching the aliases
@@ -14,6 +16,12 @@ def get_type(arg_type: str) -> str:
         return arg_type.replace(remove_ref_symbols(arg_type), aliases_map[remove_ref_symbols(arg_type)])
     else:
         return arg_type
+
+# a parameter whose type is a function pointer cannot be declared from the recorded type,
+# and there is nothing useful to fuzz in it: a random value is a jump to an address that
+# is not code, so it is passed as NULL instead
+def is_function_pointer(arg_type: str) -> bool:
+    return "(*)" in arg_type.replace(" ", "")
 
 def set_undefined_constants(arg_type: str) -> str:
     if has_pointer(arg_type):
@@ -33,7 +41,9 @@ def generate_outputs(function: str,
     tmp = []
     
     for arg_key, arguments in all_args.items():
-        if "OUT" == arguments[0].arg_dir and not arguments[0].variable == '__GEN_INPUT__':
+        # an arg whose recorded usage is empty is indistinguishable from a normal one, and
+        # cast_arg falls back to naming it, so it still needs its declaration here
+        if "OUT" == arguments[0].arg_dir and not (arguments[0].variable == '__GEN_INPUT__' and arguments[0].usage):
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
             tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False, False))
@@ -65,22 +75,31 @@ def cast_arg(function: str,
              arguments: List[Argument],
              arg_type_list: List[TypeTracker]) -> str:
     
+    # a __GEN_INPUT__ arg is spelled by the expression the analysis recorded for it, but
+    # that expression is empty whenever the analysis saw the argument without being able
+    # to attribute a value to it, which leaves a hole in the call
+    if arguments[0].variable == '__GEN_INPUT__' and arguments[0].usage:
+        operand = arguments[0].usage
+    else:
+        operand = f'{function}_{arg_key}'
+
     update_arg = ""
     for arg in arg_type_list:
         if arg.name == arg_key:
             if arg.arg_type != arguments[0].arg_type:
                 update_arg += f'({arguments[0].arg_type})'
             if arguments[0].pointer_count > arg.pointer_count:
-                update_arg += f'&'
+                # only a named variable has an address to take. a recorded usage can be a
+                # literal, and &0 is not an expression
+                if IDENTIFIER.fullmatch(operand):
+                    update_arg += f'&'
+                elif arg.arg_type == arguments[0].arg_type:
+                    update_arg += f'({arguments[0].arg_type})'
             # elif arg.fuzzable and arg.pointer_count > 0:
             #     update_arg += f'*'
             break
-    if arguments[0].variable == '__GEN_INPUT__':
-        update_arg += arguments[0].usage
-    else:
-        update_arg += f'{function}_{arg_key}'
 
-    return update_arg
+    return update_arg + operand
     
 
 def call_function(function: str, 
@@ -89,12 +108,16 @@ def call_function(function: str,
                   protocol_variable: str,
                   arg_type_list: List[TypeTracker],                    
                   indent: bool,
-                  prefix: str) -> List[str]:
+                  prefix: str,
+                  types: Dict[str, TypeInfo] = None) -> List[str]:
     output = []
     lookup_function = function
     if prefix != "":
         lookup_function = f'{prefix}:{function}'
-    if "protocol" in services[lookup_function].service:
+    # lowered: the service reads "protocol" when it came from a call site and "Protocols"
+    # when it came from the requested service, and the capitalised form failed this test,
+    # which emitted a bare call to a protocol member
+    if "protocol" in services[lookup_function].service.lower() and protocol_variable:
         call_prefix = protocol_variable + "->"
     elif "BS" in services[lookup_function].service or "Boot" in services[lookup_function].service:
         call_prefix = "SystemTable->BootServices->"
@@ -105,6 +128,18 @@ def call_function(function: str,
     else:
         call_prefix = ""
     
+    # a protocol member has to be called through the protocol pointer. emitting the bare
+    # name only links when the implementation happens to be a non-static symbol that got
+    # compiled into the harness, which is why most protocols failed with
+    # "implicit declaration of function '<Member>'". a callback is handed the protocol as
+    # its first argument too, so that alone does not make this a member: check the struct
+    if call_prefix == "" and function_block.arguments:
+        first = list(function_block.arguments.values())[0][0]
+        if first.variable == "__PROTOCOL__":
+            members = protocol_members(first.arg_type, types)
+            if not members or function in members:
+                call_prefix = "ProtocolVariable->"
+
     if function_block.return_type == "EFI_STATUS":
         output.append(f"Status = {call_prefix}{function}(")
     else:
@@ -114,12 +149,21 @@ def call_function(function: str,
         original_arg_key = arg_key
         if prefix != "":
             arg_key = f'{prefix}_{arg_key}'
-        if arguments[0].arg_dir == "IN" and arguments[0].variable == "__HANDLE__":
+        # "IN" in arg_dir, not equality: the declaration loops use the substring test, so
+        # an IN_OUT handle is skipped there. testing equality here let it fall through to
+        # a variable name that nothing had declared
+        if "IN" in arguments[0].arg_dir and arguments[0].variable == "__HANDLE__":
             tmp = f"    ImageHandle,"
-        elif arguments[0].arg_dir == "IN" and arguments[0].variable == "__PROTOCOL__":
+        elif "IN" in arguments[0].arg_dir and arguments[0].variable == "__PROTOCOL__":
             tmp = f"    ProtocolVariable,"
-        elif arguments[0].arg_dir == "OPTIONAL":
-            tmp = f"    NULL,"
+        elif arguments[0].arg_dir == "OPTIONAL" or is_function_pointer(arguments[0].arg_type):
+            # NULL only converts to a pointer. edk2 has parameters that are unions or
+            # scalars passed by value (ACPI_RESOURCE_HEADER_PTR), and those need a zero of
+            # their own type instead
+            if has_pointer(arguments[0].arg_type) or is_function_pointer(arguments[0].arg_type):
+                tmp = f"    NULL,"
+            else:
+                tmp = f"    ({arguments[0].arg_type}){{0}},"
         else:
             tmp = f"    {cast_arg(function, arg_key, arguments, arg_type_list)},"
         # if the last iteration remove the comma
@@ -147,12 +191,13 @@ def declare_var(function: str,
                 random) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
-        if arguments[0].arg_dir == "OUT":
-            arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
-            arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
-        else:
-            print(f"ERROR: {function} {arg_key} has more than 2 pointers")
-            return output
+        arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
+        if arguments[0].arg_dir != "OUT":
+            # not bailing out here on purpose: the call site names this variable either
+            # way, so skipping the declaration only turns a bad argument into a
+            # harness that does not compile
+            print(f"WARNING: {function} {arg_key} has more than 2 pointers")
+        arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     elif arguments[0].pointer_count == 2:
         arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
         if random:
@@ -171,6 +216,9 @@ def declare_var(function: str,
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
         output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
+    elif isStruct and arguments[0].pointer_count == 0:
+        # a struct passed by value has no pointer to allocate and cannot be assigned 0
+        output.append(f'{arg_type} {function}_{arg_key} = {{0}};')
     else:
         output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type)};")
         # if fuzzable :
@@ -245,7 +293,9 @@ def generate_inputs(function_block: FunctionBlock,
     output = []
     tmp = []
     for arg_key, arguments in function_block.arguments.items():
-        if "IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__" and not arguments[0].variable == "__PROTOCOL__":
+        if ("IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__"
+                and not arguments[0].variable == "__PROTOCOL__"
+                and not is_function_pointer(arguments[0].arg_type)):
             is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
@@ -259,7 +309,12 @@ def generate_inputs(function_block: FunctionBlock,
         output.append("")
 
     for arg_key, arguments in function_block.arguments.items():
-        if "IN" in arguments[0].arg_dir:
+        # the same exclusions the declaration loop above applies. a handle or protocol
+        # argument is spelled directly at the call site and never gets a variable, so
+        # assigning to one emits a name that was never declared
+        if ("IN" in arguments[0].arg_dir and not arguments[0].variable == "__HANDLE__"
+                and not arguments[0].variable == "__PROTOCOL__"
+                and not is_function_pointer(arguments[0].arg_type)):
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
             total_elements = len(arguments)
@@ -307,7 +362,12 @@ def constant_args(function: str,
         matched_enum = enum_map.get(remove_ref_symbols(arg.arg_type), None)
         if matched_enum is None:
             matched_enum = enum_map.get(remove_ref_symbols(arg.data_type), EnumDef())
-        for enum in matched_enum.values:
+        # an enum declared in a driver's own header cannot be named from the harness:
+        # TerminalTypeLinux lives in MdeModulePkg/Universal/Console/TerminalDxe/Terminal.h,
+        # outside any Include directory, so the constants are dropped and the argument is
+        # read from the input instead
+        values = matched_enum.values if is_nameable_enum(matched_enum) else []
+        for enum in values:
             tmp = copy.copy(arg)
             tmp.usage = enum
             usages.append(tmp)
@@ -315,7 +375,7 @@ def constant_args(function: str,
         for index, argument in enumerate(usages):
             output.append(f'    case {index}:')
             if argument.usage == "":
-                output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument)};')
+                output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument.arg_type)};')
             elif "char" in argument.arg_type.lower():
                 output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
             else:
@@ -330,7 +390,7 @@ def constant_args(function: str,
         output.append('}')
     else:
         if arg.usage == "":
-            output.append(f'{function}_{arg_key} = {set_undefined_constants(arg)};')
+            output.append(f'{function}_{arg_key} = {set_undefined_constants(arg.arg_type)};')
         elif "char" in arg.arg_type.lower():
             output.append(f'{function}_{arg_key} = StrDuplicate({arg.usage});')
         else:
@@ -356,9 +416,31 @@ def guid_args(function:str,
               indent: bool) -> List[str]:
     output = []
     output.append("// EFI_GUID Variable Initialization")
-    output.append(f'{function}_{arg_key} = {arg.usage};')
+    # the recorded name is dropped when the harness cannot reference it, and an empty
+    # usage here would emit "X = ;"
+    if arg.usage:
+        output.append(f'{function}_{arg_key} = {arg.usage};')
+    else:
+        output.append(f'{function}_{arg_key} = {set_undefined_constants(arg.arg_type)};')
 
     return add_indents(output, indent)
+
+# the fields of the protocol struct behind this argument type, empty when it cannot be
+# resolved -- callers treat that as "no opinion" rather than as "not a member"
+def protocol_members(arg_type: str, types: Dict[str, TypeInfo]) -> set:
+    if not types:
+        return set()
+    name = remove_ref_symbols(arg_type)
+    struct = types.get(name) or types.get(aliases_map.get(name, ""))
+    fields = getattr(struct, 'fields', None)
+    return {field.name for field in fields} if fields else set()
+
+# only a header under some package's Include directory can be pulled into the harness, so
+# only the constants declared in one can be written by name
+def is_nameable_enum(enum_def) -> bool:
+    path = (getattr(enum_def, 'file', '') or '').replace('\\', '/').lower()
+    return '/include/' in path
+
 
 def has_pointer(arg_type: str) -> bool:
     return arg_type.count('*') > 0
@@ -396,17 +478,37 @@ def generator_struct_args(function: str,
     # else:
     if arg.variable.startswith('__FUZZABLE_') and arg.variable.endswith('_STRUCT__'):
         struct_type = remove_ref_symbols(arg.arg_type) if len(types.get(remove_ref_symbols(arg.arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg.arg_type), None))
-        for field in types[struct_type].fields:
+        # a struct passed by value is reached through '.', and taking the address of a
+        # member of a pointer that was never declared as one does not compile
+        accessor = '->' if arg.pointer_count > 0 else '.'
+        # types is a defaultdict(list), so indexing a struct name it does not know returns
+        # a list rather than a TypeInfo and inserts the junk entry as a side effect
+        for field in types.get(struct_type, TypeInfo()).fields:
             if not has_pointer(field.type):
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)&({function}_{arg_key}->{field.name}));')
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
             else:
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}->{field.name}), (VOID *)({function}_{arg_key}->{field.name}));')
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)({function}_{arg_key}{accessor}{field.name}));')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
+        # a private copy per use: the wiring below rewrites the producer's OUT parameter to
+        # name the consumer's variable, and generators are shared between consumers. when a
+        # later consumer did not re-match that parameter it inherited the previous one's
+        # name, so FuzzFreeBuffer referred to FuzzMap's Map_Arg_4
+        producer = copy.deepcopy(generators[arg.assignment])
         # find the arg in the generator that is OUT and has the same type as the in function_arg_key
-        for gen_arg_key, gen_arg in generators[arg.assignment].arguments.items():
-            if gen_arg[0].arg_dir == 'OUT' and arg.arg_type == gen_arg[0].arg_type:
+        for gen_arg_key, gen_arg in producer.arguments.items():
+            if gen_arg[0].arg_dir != 'OUT':
+                continue
+            # an OUT parameter usually carries one more level of indirection than the
+            # value it yields: AllocateBuffer writes a VOID* through a VOID**, and Map
+            # then takes that VOID*. requiring the spellings to be equal meant those
+            # producers were found by the analysis and then never wired to anything
+            same_base = remove_ref_symbols(arg.arg_type) == remove_ref_symbols(gen_arg[0].arg_type)
+            indirect = same_base and gen_arg[0].pointer_count == arg.pointer_count + 1
+            if arg.arg_type == gen_arg[0].arg_type or indirect:
                 gen_arg[0].variable = "__GEN_INPUT__"
-                gen_arg[0].usage = f'{function}_{arg_key}'
+                # the generator is handed the address of the consumer's variable when it
+                # writes through an extra level of indirection
+                gen_arg[0].usage = f'&{function}_{arg_key}' if indirect else f'{function}_{arg_key}'
                 break
         function_name = arg.assignment
         prefix = ""
@@ -414,16 +516,17 @@ def generator_struct_args(function: str,
             prefix = arg.assignment.split(':')[0]
             function_name = arg.assignment.split(':')[-1]
 
-        generators[arg.assignment].function = function_name
+        producer.function = function_name
         services[arg.assignment].function = function_name
-        if "protocol" in generators[arg.assignment].service.lower():
+        producer_first = producer.arguments.get('Arg_0')
+        if "protocol" in producer.service.lower() and producer_first:
             protocol_variable = f'{protocol_variable}_{prefix}'
-            output.append(f"    {generators[arg.assignment].arguments['Arg_0'][0].arg_type} {protocol_variable} = NULL;")
-            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{generators[arg.assignment].arguments["Arg_0"][0].usage}, NULL, (VOID *)&{protocol_variable});')
+            output.append(f"    {producer_first[0].arg_type} {protocol_variable} = NULL;")
+            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{producer_first[0].usage}, NULL, (VOID *)&{protocol_variable});')
             output.append('    if (EFI_ERROR(Status)) {')
             output.append('        return Status;')
             output.append('    }')
-        output.extend(function_body(generators[arg.assignment], services, protocol_variable, generators, types, indent, False, prefix))        
+        output.extend(function_body(producer, services, protocol_variable, generators, types, indent, False, prefix))        
 
     return add_indents(output, indent)
 
@@ -439,7 +542,7 @@ def function_body(function_block: FunctionBlock,
     arg_type_list = []
     output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False, random, prefix))
     output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False, prefix))
-    output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False, prefix))
+    output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False, prefix, types))
 
     return add_indents(output, indent)
 
@@ -459,6 +562,21 @@ def harness_generator(services: Dict[str, FunctionBlock],
     output.append("#include \"FirnessHarnesses.h\"")
     output.append("")
 
+    # the Arg_0 of any protocol member, used for the members that declare no parameters
+    protocol_arg_0 = None
+    for candidate, candidate_block in functions.items():
+        if candidate in services and "protocol" in services[candidate].service.lower():
+            first = candidate_block.arguments.get('Arg_0')
+            # it has to be the protocol itself: plenty of members take something else
+            # first, and EFI_SHELL_PROTOCOL.RemoveDupInFileList leads with a file list
+            if first and first[0].usage and first[0].variable == "__PROTOCOL__":
+                protocol_arg_0 = first
+                break
+    if protocol_arg_0 is None:
+        for candidate_block in functions.values():
+            if getattr(candidate_block, 'protocol_type', None):
+                break
+
     # Iterate through functions and generate harnesses
     for function, function_block in functions.items():
         output.append(f"/*")
@@ -475,13 +593,35 @@ def harness_generator(services: Dict[str, FunctionBlock],
         output.append(") {")
         output.append(f"    EFI_STATUS Status = EFI_SUCCESS;")
         protocol_variable = ""
-        if "protocol" in services[function].service:
-            protocol_variable = "ProtocolVariable"
-            output.append(f"    {function_block.arguments['Arg_0'][0].arg_type} {protocol_variable} = NULL;")
-            output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{function_block.arguments["Arg_0"][0].usage}, NULL, (VOID *)&{protocol_variable});')
-            output.append('    if (EFI_ERROR(Status)) {')
-            output.append('        return Status;')
-            output.append('    }')
+        if "protocol" in services[function].service.lower():
+            # a protocol member does not have to take the protocol: EFI_SHELL_PROTOCOL
+            # declares BatchIsActive(VOID) and four others with no parameters at all, so
+            # there is no Arg_0 to read the type and guid from. every method here belongs
+            # to the same protocol, so borrow them from whichever sibling does have one
+            first = function_block.arguments.get('Arg_0')
+            if first is not None and first[0].variable != "__PROTOCOL__":
+                first = None
+            if first is None:
+                first = protocol_arg_0
+            # the analysis records the protocol type and guid on the block when no
+            # parameter carries them, which is how a member declared (VOID) is reached
+            template_block = services.get(function)
+            declared_type = getattr(template_block, 'protocol_type', None)
+            declared_guid = getattr(template_block, 'protocol_guid', None)
+            if first is not None:
+                protocol_variable = "ProtocolVariable"
+                output.append(f"    {first[0].arg_type} {protocol_variable} = NULL;")
+                output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{first[0].usage}, NULL, (VOID *)&{protocol_variable});')
+                output.append('    if (EFI_ERROR(Status)) {')
+                output.append('        return Status;')
+                output.append('    }')
+            elif declared_type and declared_guid:
+                protocol_variable = "ProtocolVariable"
+                output.append(f"    {declared_type} {protocol_variable} = NULL;")
+                output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{declared_guid}, NULL, (VOID *)&{protocol_variable});')
+                output.append('    if (EFI_ERROR(Status)) {')
+                output.append('        return Status;')
+                output.append('    }')
 
         output.extend(function_body(function_block, services, protocol_variable, generators, types, True, random))
 
