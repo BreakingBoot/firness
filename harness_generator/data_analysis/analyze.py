@@ -256,16 +256,96 @@ def harness_match(function: str, pair, function_info=None) -> bool:
 # different signature -- MdeModulePkg/Bus/Pci/PciBusDxe/PciIo.h declares a six parameter
 # CopyMem while EFI_PCI_IO_PROTOCOL.CopyMem takes seven -- and calling through the protocol
 # with the wrong count does not compile
+# the parameter list of a protocol member, taken from the header that declares the
+# protocol. a member is a function pointer inside the struct rather than a free function,
+# so the declaration pass never records one, and for a protocol with no call sites the only
+# same-named declarations belong to unrelated drivers. the header is authoritative
 def protocol_member_arity(header_path: str, protocol_name: str, member: str):
+    params = protocol_member_params(header_path, protocol_name, member)
+    return None if params is None else len(params)
+
+
+
+# edk2 tags a protocol struct as _EFI_X_PROTOCOL, tdEFI_X_PROTOCOL or just EFI_X_PROTOCOL,
+# and sometimes leaves it anonymous with the name only on the closing brace
+def protocol_struct_body(source: str, protocol_name: str):
+    match = re.search(r'struct\s+\w*?' + re.escape(protocol_name) + r'\s*\{(.*?)\n\}',
+                      source, re.S)
+    if match:
+        return match.group(1)
+    match = re.search(r'typedef\s+struct\s*\{(.*?)\n\}\s*' + re.escape(protocol_name) + r'\s*;',
+                      source, re.S)
+    return match.group(1) if match else None
+
+
+def protocol_member_return(header_path: str, protocol_name: str, member: str) -> str:
+    try:
+        with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
+            source = handle.read()
+    except OSError:
+        return 'EFI_STATUS'
+    body = protocol_struct_body(source, protocol_name)
+    if not body:
+        return 'EFI_STATUS'
+    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
+    if not field:
+        return 'EFI_STATUS'
+    typed = re.search(r'typedef\s+([A-Za-z_]\w*)\s*\(\s*EFIAPI\s*\*\s*'
+                      + re.escape(field.group(1)) + r'\s*\)', source)
+    return typed.group(1) if typed else 'EFI_STATUS'
+
+
+def protocol_member_signature(header_path: str, protocol_name: str, member: str):
+    raw = protocol_member_params(header_path, protocol_name, member)
+    if raw is None:
+        return None
+    parsed = []
+    for index, param in enumerate(raw):
+        # a variadic member has nothing to generate for the "..." and cannot be called
+        # through a fixed argument list
+        if '...' in param:
+            return None
+        text = ' '.join(param.replace('*', ' * ').split())
+        # an array parameter is a pointer at the call boundary; keeping "[N]" in the type
+        # emitted "UINT8 Csn[SIZE] GetCsn_Arg_2"
+        # the extent is dropped here and the pointer added after the parameter name has
+        # been removed, or "UINT8 Csn[SIZE]" becomes the type "UINT8 Csn *"
+        array = re.search(r'\[[^\]]*\]', text)
+        if array:
+            text = text[:array.start()].strip()
+        direction = 'IN'
+        if 'OPTIONAL' in text:
+            direction = 'OPTIONAL'
+        elif re.search(r'\bIN\b', text) and re.search(r'\bOUT\b', text):
+            direction = 'IN_OUT'
+        elif re.search(r'\bOUT\b', text):
+            direction = 'OUT'
+        words = [w for w in text.split()
+                 if w not in ('IN', 'OUT', 'OPTIONAL', 'CONST', 'const')]
+        if not words:
+            return None
+        # the trailing identifier is the parameter name unless the whole thing is a type
+        if len(words) > 1 and re.match(r'^[A-Za-z_]\w*$', words[-1]):
+            words = words[:-1]
+        arg_type = ' '.join(words).replace(' *', ' *').strip()
+        if array:
+            arg_type = (arg_type + ' *').strip()
+        if not arg_type:
+            return None
+        parsed.append((f'Arg_{index}', arg_type, direction))
+    return parsed
+
+
+def protocol_member_params(header_path: str, protocol_name: str, member: str):
     try:
         with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
             source = handle.read()
     except OSError:
         return None
-    body = re.search(r'struct\s+_?' + re.escape(protocol_name) + r'\s*\{(.*?)\n\}', source, re.S)
+    body = protocol_struct_body(source, protocol_name)
     if not body:
         return None
-    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body.group(1))
+    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
     if not field:
         return None
     signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(field.group(1)) +
@@ -274,17 +354,20 @@ def protocol_member_arity(header_path: str, protocol_name: str, member: str):
         return None
     params = signature.group(1).strip()
     if not params or params.upper() == 'VOID':
-        return 0
-    depth = 0
-    count = 1
+        return []
+    pieces, depth, current = [], 0, ''
     for character in params:
         if character in '([':
             depth += 1
         elif character in ')]':
             depth -= 1
-        elif character == ',' and depth == 0:
-            count += 1
-    return count
+        if character == ',' and depth == 0:
+            pieces.append(current)
+            current = ''
+        else:
+            current += character
+    pieces.append(current)
+    return [p.strip() for p in pieces if p.strip()]
 
 
 def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
@@ -397,7 +480,7 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                     filtered_data.setdefault(function, []).extend(function_blocks)
                 
     # loop through the filtered data and add the function_decl function if it is not already in the filtered_data
-    for function, function_info in function_decl.items():
+    for function, candidates in function_decl.items():
         if function not in filtered_data.keys():
             # only a declaration the user actually asked for may become a target. this
             # used to append unconditionally, so when the analysis found no call sites
@@ -406,11 +489,18 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
             # code against struct _EFI_IP4_PROTOCOL
             matched_service = None
             matched_guid = ""
+            function_info = None
+            # every declaration sharing this name is tried: Reset is declared by many
+            # protocols, and only one of them is the one being harnessed
             for key, value in harness_functions.items():
                 for pair in value:
-                    if harness_match(function, pair, function_info):
-                        matched_service = key
-                        matched_guid = pair[1] if len(pair) > 1 else ""
+                    for candidate in (candidates if isinstance(candidates, list) else [candidates]):
+                        if harness_match(function, pair, candidate):
+                            function_info = candidate
+                            matched_service = key
+                            matched_guid = pair[1] if len(pair) > 1 else ""
+                            break
+                    if matched_service is not None:
                         break
                 if matched_service is not None:
                     break
@@ -454,6 +544,49 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                     all_includes.add(header)
             filtered_data[function].append(block)
             # all_includes.update(function_info.includes)
+
+    # A protocol member is a function pointer inside the struct, so the declaration pass
+    # never records it as a function. When the analysis found no call sites the only
+    # same-named declarations belong to unrelated drivers -- EFI_BLOCK_IO_PROTOCOL's Reset
+    # rather than EFI_USB_HC_PROTOCOL's. Build the missing ones from the header, which is
+    # the authoritative description of what the member takes.
+    synthesised = 0
+    for service, pairs in harness_functions.items():
+        for pair in pairs:
+            name = pair[0]
+            guid = pair[1] if len(pair) > 1 else ""
+            if not guid or name in filtered_data:
+                continue
+            protocol_name = guid_protocol_name.get(guid)
+            header = guid_header.get(guid)
+            if not (protocol_name and header):
+                continue
+            # a header the include pipeline refuses cannot declare the protocol type
+            trimmed = cleanup_paths([header])
+            if not trimmed or trimmed[0] in unusable_includes:
+                continue
+            params = protocol_member_signature(header, protocol_name, name)
+            # an empty list is a member declared (VOID) and still worth harnessing
+            if params is None:
+                continue
+            arguments = {}
+            for arg_key, arg_type, direction in params:
+                is_self = (arg_key == 'Arg_0'
+                           and normalize_struct(remove_ref_symbols(arg_type))
+                           == normalize_struct(protocol_name))
+                arguments[arg_key] = [Argument(direction, arg_type, "", arg_type,
+                                               guid if is_self else "",
+                                               "__PROTOCOL__" if is_self else "")]
+            block = FunctionBlock(arguments, name, service, [header],
+                                  protocol_member_return(header, protocol_name, name))
+            block.protocol_type = f'{protocol_name} *'
+            block.protocol_guid = guid
+            filtered_data[name].append(block)
+            all_includes.add(header)
+            synthesised += 1
+    if synthesised:
+        print(f'INFO: {synthesised} protocol member(s) built from their header!!')
+
     return filtered_data
 
 #

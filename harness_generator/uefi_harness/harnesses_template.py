@@ -484,8 +484,18 @@ def generator_struct_args(function: str,
         # types is a defaultdict(list), so indexing a struct name it does not know returns
         # a list rather than a TypeInfo and inserts the junk entry as a side effect
         for field in types.get(struct_type, TypeInfo()).fields:
-            if not has_pointer(field.type):
+            if '[' in field.type:
+                # an array field is not assignable and its type carries the extent, so it
+                # is filled in place; sizeof and & are both fine on an array
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
+            elif not has_pointer(field.type):
+                # through a temporary of the field's own type: a bit field has neither a
+                # size nor an address of its own, so sizeof and & on one do not compile
+                output.append('{')
+                output.append(f'    {field.type} Firness_{field.name};')
+                output.append(f'    ReadBytes(Input, sizeof(Firness_{field.name}), (VOID *)&Firness_{field.name});')
+                output.append(f'    {function}_{arg_key}{accessor}{field.name} = Firness_{field.name};')
+                output.append('}')
             else:
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)({function}_{arg_key}{accessor}{field.name}));')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
