@@ -273,7 +273,8 @@ def protocol_struct_body(source: str, protocol_name: str):
                       source, re.S)
     if match:
         return match.group(1)
-    match = re.search(r'typedef\s+struct\s*\{(.*?)\n\}\s*' + re.escape(protocol_name) + r'\s*;',
+    # the closing name carries the same optional tag prefix as the opening one
+    match = re.search(r'typedef\s+struct\s*\{(.*?)\n\}\s*\w*?' + re.escape(protocol_name) + r'\s*;',
                       source, re.S)
     return match.group(1) if match else None
 
