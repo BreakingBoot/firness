@@ -242,8 +242,11 @@ def declare_var(function: str,
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
         output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
-    elif isStruct and arguments[0].pointer_count == 0:
-        # a struct passed by value has no pointer to allocate and cannot be assigned 0
+    elif arguments[0].pointer_count == 0:
+        # a struct passed by value has no pointer to allocate and cannot be assigned 0.
+        # this is not limited to types the analysis recognised as structs: a member built
+        # from its header can name one the types map never saw, such as
+        # EFI_80211_MAC_ADDRESS. {0} initialises a scalar just as well as an aggregate.
         output.append(f'{arg_type} {function}_{arg_key} = {{0}};')
     else:
         output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type)};")

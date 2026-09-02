@@ -4,6 +4,9 @@ from typing import List, Dict, Set
 # gets away with it because it already included the provider for its own reasons, but the
 # harness includes headers on their own, so it has to be told what has to come first
 include_prerequisites = {
+    # WiFiProfileSyncProtocol.h pulls in WifiConnectionMgrConfig.h, which uses
+    # EFI_80211_NETWORK without declaring it
+    "Protocol/WiFiProfileSyncProtocol.h": ["Protocol/WiFi2.h"],
     "IndustryStandard/Tls1.h": ["Protocol/Tls.h"],
     "Protocol/EfiShellInterface.h": ["Protocol/LoadedImage.h"],
     "Protocol/EfiShellEnvironment2.h": ["Protocol/EfiShellInterface.h",
@@ -35,9 +38,8 @@ include_prerequisites = {
 # headers that cannot be included from a harness at all. WiFiProfileSyncProtocol.h includes
 # WifiConnectionManagerDxe/WifiConnectionMgrConfig.h, which lives outside any package
 # Include directory, so no ordering can satisfy it
-unusable_includes = {
-    "Protocol/WiFiProfileSyncProtocol.h",
-}
+# headers that cannot be included at all, whatever prerequisites they are given
+unusable_includes = set()
 
 default_includes = {
     "Library/BaseLib.h",
