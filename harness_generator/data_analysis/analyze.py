@@ -291,9 +291,15 @@ def protocol_member_return(header_path: str, protocol_name: str, member: str) ->
     field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
     if not field:
         return 'EFI_STATUS'
-    typed = re.search(r'typedef\s+([A-Za-z_]\w*)\s*\(\s*EFIAPI\s*\*\s*'
+    # the return type can be a pointer -- DuplicateDevicePath is declared
+    # "typedef EFI_DEVICE_PATH_PROTOCOL * (EFIAPI *EFI_DEVICE_PATH_UTILS_DUPLICATE...)"
+    # and an identifier-only pattern never matched it, so every such member looked like it
+    # returned EFI_STATUS and the harness assigned a pointer to Status
+    typed = re.search(r'typedef\s+([A-Za-z_]\w*(?:\s*\*)*)\s*\(\s*EFIAPI\s*\*\s*'
                       + re.escape(field.group(1)) + r'\s*\)', source)
-    return typed.group(1) if typed else 'EFI_STATUS'
+    if not typed:
+        return 'EFI_STATUS'
+    return re.sub(r'\s*\*', ' *', typed.group(1).strip()).strip()
 
 
 def protocol_member_signature(header_path: str, protocol_name: str, member: str):
@@ -335,6 +341,23 @@ def protocol_member_signature(header_path: str, protocol_name: str, member: str)
             return None
         parsed.append((f'Arg_{index}', arg_type, direction))
     return parsed
+
+
+PARAM_DIRECTION = re.compile(r'\b(IN|OUT|OPTIONAL|CONST)\b')
+
+
+def param_type(spec: str) -> str:
+    """The type of one parameter from a protocol typedef, without its name."""
+    text = PARAM_DIRECTION.sub(' ', spec).strip()
+    # an array parameter decays to a pointer, but only after the name is stripped
+    array = '[' in text
+    text = re.sub(r'\[.*?\]', '', text).strip()
+    match = re.match(r'^(.*?)([A-Za-z_]\w*)\s*$', text)
+    if match and match.group(1).strip():
+        text = match.group(1).strip()
+    if array:
+        text += ' *'
+    return re.sub(r'\s*\*', ' *', text).strip()
 
 
 def protocol_member_params(header_path: str, protocol_name: str, member: str):
@@ -527,12 +550,33 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                           f'{len(function_info.arguments)} argument(s) but '
                           f'{protocol_name}.{function} takes {arity}!!')
                     continue
+                # the declaration's parameter types can disagree with the protocol's own
+                # typedef. EFI_EXT_SCSI_PASS_THRU_PROTOCOL.BuildDevicePath takes
+                # EFI_DEVICE_PATH_PROTOCOL **DevicePath, and a declaration recording one
+                # level less made the harness pass the pointer where its address is wanted.
+                # only the pointer depth is corrected, so a merely differently spelled type
+                # is left alone
+                declared_params = protocol_member_params(header, protocol_name, function)
+                if declared_params and len(declared_params) == len(function_info.arguments):
+                    ordered = sorted(function_info.arguments, key=natural_sort_key)
+                    for arg_name, spec in zip(ordered, declared_params):
+                        true_type = param_type(spec)
+                        if not true_type:
+                            continue
+                        for argument in function_info.arguments[arg_name]:
+                            if true_type.count('*') != argument.arg_type.count('*'):
+                                argument.arg_type = true_type
+                                argument.pointer_count = true_type.count('*')
             if first and protocol_name and first[0].variable == "__PROTOCOL__":
                 if normalize_struct(remove_ref_symbols(first[0].arg_type)) != normalize_struct(protocol_name):
                     first[0].variable = ""
             block = FunctionBlock(function_info.arguments, function,
                                   function_info.service, function_info.includes,
                                   function_info.return_type)
+            # the declaration's return type is not always the member's, and the protocol's
+            # own typedef is the authority for what the call site can assign
+            if protocol_name and header:
+                block.return_type = protocol_member_return(header, protocol_name, function)
             # remember how to reach the protocol even when no parameter carries it, so the
             # harness can still locate it for a member declared as (VOID)
             if protocol_name and matched_guid:
@@ -1751,33 +1795,47 @@ def analyze_data(macro_file: str,
         data, function_template, types, processed_generators, aliases, macros_name, enum_map, cast_map, random, harness_functions)
 
 
-    # A generator is called by name too, so it needs a declaration in a header the harness
-    # can include. CreateBdsEvent's only declaration is in a MinPlatformPkg .c file, which
-    # cleanup_paths rejects for being both a .c and outside edk2, so a harness that calls it
-    # fails with an implicit declaration and then fails to link.
-    dropped_generators = set()
-    for name in list(processed_generators):
+    # A generator is called by name, so the harness must be able to declare it: its
+    # declaration has to sit in a header, and that header has to survive into the include
+    # list. CreateBdsEvent is declared only in a MinPlatformPkg .c file; SerializeVariables-
+    # NewInstance is in an OvmfPkg header that update_inc drops because the harness does not
+    # link that library. Either way the call does not compile, so the generator goes.
+    def generator_headers(name):
         declarations = generator_declares.get(name) or []
         # the map holds a single Function for some entries and a list for others
         if not isinstance(declarations, list):
             declarations = [declarations]
-        files = [d.file for d in declarations if getattr(d, 'file', None)]
-        # no recorded file means nothing to judge it on, so keep it
-        if files and not any(cleanup_paths([f]) for f in files):
-            dropped_generators.add(name)
-    for name in sorted(dropped_generators):
-        print(f'INFO: dropping generator {name} -- declared only outside an includable header')
-        del processed_generators[name]
+        headers = set()
+        for declaration in declarations:
+            path = getattr(declaration, 'file', None)
+            if path:
+                headers.update(cleanup_paths([path]))
+        return headers, bool([d for d in declarations if getattr(d, 'file', None)])
 
-    # an argument that was going to be produced by a dropped generator has to come from
-    # somewhere: fuzz it directly rather than leaving a call to a function that is gone
-    if dropped_generators:
-        for block in processed_data.values():
-            for arguments in block.arguments.values():
-                for argument in arguments:
-                    if argument.assignment in dropped_generators:
-                        argument.variable = '__FUZZABLE__'
-                        argument.assignment = ''
+    def prune_generators(includable):
+        dropped = set()
+        for name in list(processed_generators):
+            headers, had_file = generator_headers(name)
+            # nothing recorded to judge it on, so keep it
+            if not had_file:
+                continue
+            if not headers or (includable is not None and not (headers & includable)):
+                dropped.add(name)
+        for name in sorted(dropped):
+            print(f'INFO: dropping generator {name} -- no declaration the harness can include')
+            del processed_generators[name]
+        # an argument produced by a dropped generator has to come from somewhere: fuzz it
+        # directly rather than leaving behind a call to a function that is gone
+        if dropped:
+            for block in processed_data.values():
+                for arguments in block.arguments.values():
+                    for argument in arguments:
+                        if argument.assignment in dropped:
+                            argument.variable = '__FUZZABLE__'
+                            argument.assignment = ''
+        return dropped
+
+    prune_generators(None)
 
     # A function called directly by name needs a declaration the harness can include.
     # CreateBdsEvent is defined in a MinPlatformPkg library .c with no header anywhere in
@@ -1803,6 +1861,10 @@ def analyze_data(macro_file: str,
     collected_includes = update_inc(collected_includes, libmap)
     libraries = update_libs(sorted(collect_libraries(collected_includes) | default_libraries), libmap)
     collected_includes = handle_include_deps(collected_includes, include_deps)
+
+    # second pass, now that the include list is final: a generator whose header did not
+    # survive update_inc cannot be declared, however valid its declaration looked earlier
+    prune_generators(set(collected_includes))
     
     if not random:
         write_data(processed_generators,

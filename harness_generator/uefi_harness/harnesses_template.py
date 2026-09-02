@@ -181,6 +181,17 @@ def add_ptrs(arg_type: str,
     else:
         return add_ptrs(f"{arg_type}*", num_ptrs - 1)
 
+def drop_one_pointer(arg_type: str) -> str:
+    # the recorded type is spelled "EFI_BIS_DATA * *" as often as "EFI_BIS_DATA **", so a
+    # literal replace('**', '*') leaves both stars in place. The declaration then carries one
+    # more level than the type tracker records, and cast_arg adds an & on top of it, which
+    # is how EFI_BIS_DATA ** reached the call site as EFI_BIS_DATA ***.
+    base = arg_type.rstrip()
+    if base.endswith('*'):
+        base = base[:-1].rstrip()
+    return base
+
+
 def declare_var(function: str,
                 arg_key: str, 
                 arguments: List[Argument],
@@ -199,7 +210,7 @@ def declare_var(function: str,
             print(f"WARNING: {function} {arg_key} has more than 2 pointers")
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     elif arguments[0].pointer_count == 2:
-        arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower()  else arguments[0].arg_type.replace('**', '*')
+        arg_type = "UINTN*" if "void" in arguments[0].arg_type.lower() else drop_one_pointer(arguments[0].arg_type)
         if random:
             arg_type = "UINTN*"
         arg_type_list.append(TypeTracker(arg_type, arg_key, 1, fuzzable))
