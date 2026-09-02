@@ -395,6 +395,13 @@ def main():
 
     args = parser.parse_args()
 
+    # FirnessBackend.h refuses to compile the Nyx backend on a host without Intel PT, and
+    # that #error lands in the middle of an edk2 build log. Say it here instead.
+    if args.backend == 'nyx':
+        print('WARNING: the Nyx backend is not implemented -- FirnessBackend.h stops the '
+              'build with an #error because Intel PT is unavailable here. The harness will '
+              'generate but will not compile; use --backend qemu (libafl-qemu) instead.')
+
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
