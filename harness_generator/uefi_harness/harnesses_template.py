@@ -541,6 +541,11 @@ def generator_struct_args(function: str,
             # through a temporary makes clang emit a memcpy -- which does not exist in UEFI
             # and fails at link time with "undefined reference to memcpy"
             scalar = field.type.strip().upper() in SCALAR_FIELD_TYPES
+            # a random function pointer is not an input worth generating: the first call
+            # through it jumps to an arbitrary address and everything reported afterwards
+            # is noise. the field keeps the zero AllocateZeroPool gave it
+            if is_function_pointer(field.type):
+                continue
             if not nameable or (not scalar and not has_pointer(field.type)):
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
             elif not has_pointer(field.type):
@@ -552,12 +557,16 @@ def generator_struct_args(function: str,
                 output.append(f'    {function}_{arg_key}{accessor}{field.name} = Firness_{field.name};')
                 output.append('}')
             else:
-                # the write lands in the target, so sizeof the target: sizeof of the
-                # pointer is 8 and overflows anything smaller. VOID * has no target size
+                # the struct came from AllocateZeroPool, so this pointer field is NULL and
+                # writing through it wrote to address 0. Give it something to point at
+                # first. VOID * has no target size, so a machine word stands in.
                 field_ref = f'{function}_{arg_key}{accessor}{field.name}'
-                field_size = (f'sizeof({field_ref})' if 'VOID' in field.type.upper()
+                field_size = ('sizeof(UINTN)' if 'VOID' in field.type.upper()
                               else f'sizeof(*{field_ref})')
-                output.append(f'ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
+                output.append(f'{field_ref} = ({field.type})AllocateZeroPool({field_size});')
+                output.append(f'if ({field_ref} != NULL) ' + '{')
+                output.append(f'    ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
+                output.append('}')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
         # a private copy per use: the wiring below rewrites the producer's OUT parameter to
         # name the consumer's variable, and generators are shared between consumers. when a
