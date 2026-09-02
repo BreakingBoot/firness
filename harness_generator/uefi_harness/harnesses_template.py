@@ -292,7 +292,15 @@ def declare_var(function: str,
         else:
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
-    if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
+    if (arguments[0].pointer_count >= 2 and "OUT" in arguments[0].arg_dir
+            and not "char" in arguments[0].arg_type.lower()):
+        # An OUT X ** is the callee's to allocate: UEFI's convention is that it fills in
+        # the pointer when it is NULL. Handing it a zeroed object instead means "write into
+        # this one", and the object's own pointers are NULL -- HiiStringToImage took a
+        # zeroed EFI_IMAGE_OUTPUT that way and drew through a NULL Image.Bitmap, which was
+        # 6,130 of EfiHiiFont's faults. Start at NULL and let the callee do its job.
+        output.append(f'{arg_type} {function}_{arg_key} = NULL;')
+    elif (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
         # a raw buffer is sized by a separate argument the fuzzer also controls, so give it
         # a page rather than one element
         base = remove_ref_symbols(arg_type)
