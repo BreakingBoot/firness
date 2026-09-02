@@ -1,5 +1,16 @@
 from typing import Dict, List
 
+# The packages the harness inf declares. The harness is built with WORKSPACE pointing at
+# the edk2 tree alone, so these are the only .dec files whose guids the build can resolve.
+HARNESS_PACKAGES = [
+    'MdePkg/MdePkg.dec',
+    'MdeModulePkg/MdeModulePkg.dec',
+    'ShellPkg/ShellPkg.dec',
+    'NetworkPkg/NetworkPkg.dec',
+    'OvmfPkg/OvmfPkg.dec',
+    'UefiCpuPkg/UefiCpuPkg.dec',
+]
+
 def gen_firness_inf(uuid: str, 
                     driver_guids: List[str], 
                     protocol_guids: List[str],
@@ -35,12 +46,8 @@ def gen_firness_inf(uuid: str,
 
     output.append("")
     output.append("[Packages]")
-    output.append("  MdePkg/MdePkg.dec")
-    output.append("  MdeModulePkg/MdeModulePkg.dec")
-    output.append("  ShellPkg/ShellPkg.dec")
-    output.append("  NetworkPkg/NetworkPkg.dec")
-    output.append("  OvmfPkg/OvmfPkg.dec")
-    output.append("  UefiCpuPkg/UefiCpuPkg.dec")
+    for package in HARNESS_PACKAGES:
+        output.append(f'  {package}')
 
     output.append("")
     output.append("[LibraryClasses]")

@@ -1751,6 +1751,48 @@ def analyze_data(macro_file: str,
         data, function_template, types, processed_generators, aliases, macros_name, enum_map, cast_map, random, harness_functions)
 
 
+    # A generator is called by name too, so it needs a declaration in a header the harness
+    # can include. CreateBdsEvent's only declaration is in a MinPlatformPkg .c file, which
+    # cleanup_paths rejects for being both a .c and outside edk2, so a harness that calls it
+    # fails with an implicit declaration and then fails to link.
+    dropped_generators = set()
+    for name in list(processed_generators):
+        declarations = generator_declares.get(name) or []
+        # the map holds a single Function for some entries and a list for others
+        if not isinstance(declarations, list):
+            declarations = [declarations]
+        files = [d.file for d in declarations if getattr(d, 'file', None)]
+        # no recorded file means nothing to judge it on, so keep it
+        if files and not any(cleanup_paths([f]) for f in files):
+            dropped_generators.add(name)
+    for name in sorted(dropped_generators):
+        print(f'INFO: dropping generator {name} -- declared only outside an includable header')
+        del processed_generators[name]
+
+    # an argument that was going to be produced by a dropped generator has to come from
+    # somewhere: fuzz it directly rather than leaving a call to a function that is gone
+    if dropped_generators:
+        for block in processed_data.values():
+            for arguments in block.arguments.values():
+                for argument in arguments:
+                    if argument.assignment in dropped_generators:
+                        argument.variable = '__FUZZABLE__'
+                        argument.assignment = ''
+
+    # A function called directly by name needs a declaration the harness can include.
+    # CreateBdsEvent is defined in a MinPlatformPkg library .c with no header anywhere in
+    # the tree, so a harness that calls it fails with an implicit declaration. Protocol
+    # members are reached through the protocol pointer and are declared by the protocol
+    # struct itself, so they are kept whether or not a standalone declaration exists.
+    undeclarable = [
+        name for name, block in processed_data.items()
+        if 'protocol' not in (getattr(block, 'service', '') or '').lower()
+        and name not in function_declares
+    ]
+    for name in undeclarable:
+        print(f'INFO: dropping {name} -- called directly but declared in no includable header')
+        del processed_data[name]
+
     # all_includes = get_union(processed_data, processed_generators)
     update_includes = cleanup_paths(all_includes)
     # all_includes = get_union(processed_data, {})

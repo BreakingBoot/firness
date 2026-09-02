@@ -378,6 +378,11 @@ def constant_args(function: str,
                 output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument.arg_type)};')
             elif "char" in argument.arg_type.lower():
                 output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
+            elif has_pointer(argument.arg_type):
+                # an OUT enum arrives as a pointer, and the declaration above already
+                # allocated it. the enumerator is a value, so it belongs in the pointee --
+                # assigning it to the pointer itself does not compile
+                output.append(f'        *{function}_{arg_key} = {argument.usage};')
             else:
                 output.append(f'        {function}_{arg_key} = {argument.usage};')
             output.append(f'        break;')

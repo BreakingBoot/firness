@@ -115,6 +115,87 @@ def generate_includes(all_includes: List[str], harness_folder: str):
 # the guids the generated harness actually names. a guid reached through a generator
 # function never appears in the protocol/driver sets the analysis returns, so it would be
 # neither declared nor listed in the inf; collecting them from the emitted code covers
+# Which inf section a guid belongs in is not a guess: every guid edk2 knows is declared in
+# some package's .dec, under [Guids], [Protocols] or [Ppis]. Emitting one under the wrong
+# heading fails the build ("Value of Protocol [g...] is not found under [Protocols]"), and
+# emitting one whose package the harness does not include fails the same way.
+DEC_GUID_DECL = re.compile(r'^(g\w*Guid)\s*=\s*(\{.*\})\s*$')
+
+
+def dec_guid_index(edk2_dir):
+    """Map guid name -> (section, package relative path, value) across every .dec."""
+    index = {}
+    roots = [edk2_dir]
+    # edk2-platforms sits beside edk2 and declares guids the harness may reference even
+    # though it cannot include the package
+    sibling = os.path.join(os.path.dirname(os.path.abspath(edk2_dir)), 'edk2-platforms')
+    if os.path.isdir(sibling):
+        roots.append(sibling)
+    for root in roots:
+        for dirpath, _dirs, files in os.walk(root):
+            for name in files:
+                if not name.endswith('.dec'):
+                    continue
+                path = os.path.join(dirpath, name)
+                package = os.path.relpath(path, root).replace(os.sep, '/')
+                section = ''
+                try:
+                    with open(path, 'r', encoding='utf-8', errors='ignore') as handle:
+                        for line in handle:
+                            line = line.split('#')[0].strip()
+                            if line.startswith('['):
+                                section = line.strip('[]').split('.')[0].strip().lower()
+                                continue
+                            if section not in ('guids', 'protocols', 'ppis'):
+                                continue
+                            match = DEC_GUID_DECL.match(line)
+                            if match:
+                                index.setdefault(match.group(1),
+                                                 (section, package, match.group(2)))
+                except OSError:
+                    continue
+    return index
+
+
+def classify_guids(names, edk2_dir):
+    """Split guids into the inf's [Protocols] and [Guids] plus ones to define locally."""
+    index = dec_guid_index(edk2_dir)
+    available = set(uefi_inf.HARNESS_PACKAGES)
+    protocols, guids, local = set(), set(), {}
+    for name in sorted(set(names)):
+        entry = index.get(name)
+        if entry is None:
+            # not declared in any .dec we can see; leave it to the linker rather than
+            # inventing a section for it
+            continue
+        section, package, value = entry
+        if package not in available:
+            local[name] = value
+        elif section == 'protocols':
+            protocols.add(name)
+        else:
+            guids.add(name)
+    return protocols, guids, local
+
+
+# A guid from a package the harness cannot include still has a value, and the value is all
+# the harness needs. Define it in the one translation unit that uses it -- the header is
+# included by both FirnessMain.c and FirnessHarnesses.c, so a definition there would be a
+# duplicate symbol.
+def define_local_guids(harness_folder, local):
+    if not local:
+        return
+    path = os.path.join(harness_folder, 'FirnessHarnesses.c')
+    if not os.path.isfile(path):
+        return
+    lines = ['', '// Declared in a package this harness does not include, so the value is',
+             '// carried here rather than resolved through the inf.']
+    for name, value in sorted(local.items()):
+        lines.append(f'EFI_GUID {name} = {value};')
+    with open(path, 'a', encoding='utf-8') as handle:
+        handle.write('\n'.join(lines) + '\n')
+
+
 # every path and adds nothing the harness does not reference
 GUID_REFERENCE = re.compile(r'\bg[A-Z]\w*Guid\b')
 
@@ -143,7 +224,8 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      harness_folder: str,
                      output_dir: str,
                      random: bool = False,
-                     backend: int = 1):
+                     backend: int = 1,
+                     edk2_dir: str = ""):
 
     function_list = list(merged_data.keys())
     generate_main(function_list, harness_folder)
@@ -151,8 +233,10 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     used_guids = referenced_guids(harness_folder)
     generate_header(merged_data, matched_macros, harness_folder, used_guids)
     generate_includes(all_includes, harness_folder)
-    generate_inf(harness_folder, libraries, protocol_guids,
-                 set(driver_guids) | (used_guids - set(protocol_guids)))
+    inf_protocols, inf_guids, local_guids = classify_guids(
+        used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
+    define_local_guids(harness_folder, local_guids)
+    generate_inf(harness_folder, libraries, inf_guids, inf_protocols)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -174,7 +258,8 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      harness_folder: str,
                      output_dir: str,
                      random: bool = False,
-                     backend: int = 1):
+                     backend: int = 1,
+                     edk2_dir: str = ""):
     function_list = list(smi_data.keys())
     print(harness_folder)
     generate_main(function_list, harness_folder)
@@ -182,8 +267,10 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     used_guids = referenced_guids(harness_folder)
     generate_header(function_list, matched_macros, harness_folder, used_guids)
     generate_includes(all_includes, harness_folder)
-    generate_inf(harness_folder, libraries, protocol_guids,
-                 set(driver_guids) | (used_guids - set(protocol_guids)))
+    inf_protocols, inf_guids, local_guids = classify_guids(
+        used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
+    define_local_guids(harness_folder, local_guids)
+    generate_inf(harness_folder, libraries, inf_guids, inf_protocols)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -312,7 +399,7 @@ def main():
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
-        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend])
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2)
     else:
         processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
@@ -321,7 +408,7 @@ def main():
         calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
 
         generate_harness(processed_data, template, types, enums,
-                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend])
+                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2)
     
 
 if __name__ == '__main__':
