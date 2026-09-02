@@ -1,10 +1,14 @@
 from typing import Dict, List
 
 # how many calls one fuzzing iteration may chain together
+# How many calls one fuzzing iteration chains together. Every step costs a full protocol
+# call, and under emulation some protocols are slow enough that the chain, not the fuzzer,
+# sets the iteration rate: EfiShell managed 8 iterations in 600s at 8 steps, and 0 in the
+# run after that. Lower it for those; the sequence is still stateful, just shorter.
 MAX_SEQUENCE_STEPS = 8
 
 
-def gen_firness_main(functions: List[str]) -> List[str]:
+def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) -> List[str]:
     output = []
 
     output.append("#include \"FirnessHarnesses.h\"")
@@ -62,7 +66,7 @@ def gen_firness_main(functions: List[str]) -> List[str]:
     output.append("    UINTN Step = 0;")
     output.append("    UINTN Steps = 0;")
     output.append("    ReadBytes(&Input, sizeof(SequenceLength), (VOID *)&SequenceLength);")
-    output.append(f"    Steps = (UINTN)(SequenceLength % {MAX_SEQUENCE_STEPS}) + 1;")
+    output.append(f"    Steps = (UINTN)(SequenceLength % {max_steps}) + 1;")
     output.append("")
     output.append("    for (Step = 0; Step < Steps; Step++) {")
     output.append("        UINT8 DriverChoice = 0;")
