@@ -1370,6 +1370,14 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
     for function, function_block in pre_processed_data.items():
         for arg_key, arguments in function_block.arguments.items():
             for arg in arguments:
+                # a usage that invokes a macro, "SNP_MEM_PAGES (4096)", never equals a
+                # macro name, so the exact-name test below skips it and the invocation is
+                # emitted with nothing declaring it. a function-like macro cannot be
+                # redefined here either, since its parameter list was never recorded
+                invoked = re.match(r'^\s*([A-Za-z_]\w*)\s*\(', arg.usage or '')
+                if (invoked and invoked.group(1) in macros
+                        and not cleanup_paths([macros[invoked.group(1)].file])):
+                    arg.usage = ''
                 for name in (arg.assignment, arg.usage):
                     if name not in macros.keys():
                         continue
