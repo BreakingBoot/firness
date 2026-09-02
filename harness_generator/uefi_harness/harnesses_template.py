@@ -49,7 +49,7 @@ def generate_outputs(function: str,
             tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False, False))
             # This is being used to handle the case where the output is a pointer ( so randomly create a pointer)
             tmp.append(f"UINT8* {function}_{arg_key}_OutputChoice = AllocateZeroPool(sizeof(UINT8));")
-            tmp.append(f"ReadBytes(Input, sizeof({function}_{arg_key}_OutputChoice), (VOID *){function}_{arg_key}_OutputChoice);")
+            tmp.append(f"ReadBytes(Input, sizeof(*{function}_{arg_key}_OutputChoice), (VOID *){function}_{arg_key}_OutputChoice);")
             tmp.append(f"if(*{function}_{arg_key}_OutputChoice % 2)")
             tmp.append("{")
             if arguments[0].pointer_count > 0:
@@ -331,7 +331,7 @@ def generate_inputs(function_block: FunctionBlock,
             total_elements = len(arguments)
             if total_elements > 1:
                 output.append(f'UINT8* {function_block.function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
-                output.append(f'ReadBytes(Input, sizeof({function_block.function}_{arg_key}_choice), (VOID *){function_block.function}_{arg_key}_choice);')
+                output.append(f'ReadBytes(Input, sizeof(*{function_block.function}_{arg_key}_choice), (VOID *){function_block.function}_{arg_key}_choice);')
                 output.append(f'switch(*{function_block.function}_{arg_key}_choice % {total_elements})' + ' {')
             for arg in arguments:
                 if total_elements > 1:
@@ -368,7 +368,7 @@ def constant_args(function: str,
     output.append("// Constant Variable Initialization")
     if arg.variable == "__ENUM_ARG__":
         output.append(f'UINT8* {function}_{arg_key}_choice = AllocateZeroPool(sizeof(UINT8));')
-        output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}_choice), (VOID *){function}_{arg_key}_choice);')
+        output.append(f'ReadBytes(Input, sizeof(*{function}_{arg_key}_choice), (VOID *){function}_{arg_key}_choice);')
         usages = []
         matched_enum = enum_map.get(remove_ref_symbols(arg.arg_type), None)
         if matched_enum is None:
