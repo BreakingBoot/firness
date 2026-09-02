@@ -484,9 +484,12 @@ def generator_struct_args(function: str,
         # types is a defaultdict(list), so indexing a struct name it does not know returns
         # a list rather than a TypeInfo and inserts the junk entry as a side effect
         for field in types.get(struct_type, TypeInfo()).fields:
-            if '[' in field.type:
-                # an array field is not assignable and its type carries the extent, so it
-                # is filled in place; sizeof and & are both fine on an array
+            # only a plainly nameable type can back a temporary. an array carries its
+            # extent in the type and is not assignable, and an anonymous union is reported
+            # as "union (unnamed union at ...)", which is not a declaration. both have a
+            # size and an address, so they are filled in place
+            nameable = re.fullmatch(r'[A-Za-z_]\w*', field.type.strip()) is not None
+            if not nameable:
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
             elif not has_pointer(field.type):
                 # through a temporary of the field's own type: a bit field has neither a
