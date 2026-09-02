@@ -533,11 +533,18 @@ def generator_struct_args(function: str,
             # producers were found by the analysis and then never wired to anything
             same_base = remove_ref_symbols(arg.arg_type) == remove_ref_symbols(gen_arg[0].arg_type)
             indirect = same_base and gen_arg[0].pointer_count == arg.pointer_count + 1
-            if arg.arg_type == gen_arg[0].arg_type or indirect:
+            # "EFI_DEVICE_PATH_PROTOCOL * *" and "EFI_DEVICE_PATH_PROTOCOL **" are the same
+            # type spelled two ways, and comparing the strings missed the match
+            same_type = re.sub(r'\s+', '', arg.arg_type or '') == re.sub(r'\s+', '', gen_arg[0].arg_type or '')
+            if same_type or indirect:
                 gen_arg[0].variable = "__GEN_INPUT__"
-                # the generator is handed the address of the consumer's variable when it
-                # writes through an extra level of indirection
-                gen_arg[0].usage = f'&{function}_{arg_key}' if indirect else f'{function}_{arg_key}'
+                # what the consumer's variable is actually declared as, which is not always
+                # the argument's own depth: declare_var drops a level for a two star
+                # argument, so even an identical spelling needs its address taken here
+                declared_depth = arg.pointer_count - 1 if arg.pointer_count == 2 else arg.pointer_count
+                gen_arg[0].usage = (f'&{function}_{arg_key}'
+                                    if gen_arg[0].pointer_count > declared_depth
+                                    else f'{function}_{arg_key}')
                 break
         function_name = arg.assignment
         prefix = ""
