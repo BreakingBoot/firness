@@ -55,6 +55,28 @@ def is_string_pointer(arg_type: str) -> bool:
     return has_pointer(arg_type) and 'CHAR' in remove_ref_symbols(arg_type).upper()
 
 
+# A device path is walked node by node, and each step advances by the node's own Length.
+# A zeroed EFI_DEVICE_PATH_PROTOCOL has Length 0, so NextDevicePathNode never moves and
+# GetDevicePathSize runs off the allocation -- which is where the Shell's faults landed
+# (DevicePathType, NextDevicePathNode, GetDevicePathSize). Give it a real End node: the
+# same idea as terminating a fuzzed string, so the callee can walk it and stop.
+DEVICE_PATH_TYPES = ('EFI_DEVICE_PATH_PROTOCOL', 'EFI_DEVICE_PATH')
+
+
+def is_device_path(arg_type: str) -> bool:
+    return remove_ref_symbols(arg_type).strip().upper() in (
+        t.upper() for t in DEVICE_PATH_TYPES)
+
+
+def end_device_path(variable: str) -> List[str]:
+    return ['if (%s != NULL) {' % variable,
+            '    %s->Type = 0x7F;' % variable,
+            '    %s->SubType = 0xFF;' % variable,
+            '    %s->Length[0] = 4;' % variable,
+            '    %s->Length[1] = 0;' % variable,
+            '}']
+
+
 def set_undefined_constants(arg_type: str) -> str:
     if has_pointer(arg_type):
         base = remove_ref_symbols(arg_type)
@@ -294,13 +316,15 @@ def declare_var(function: str,
         # else:
         #     output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arguments[0])};")
     
+    # whichever branch declared it, a device path has to be walkable
+    if has_pointer(arg_type) and is_device_path(arg_type):
+        output.extend(end_device_path(f'{function}_{arg_key}'))
     return add_indents(output, indent)
 
 SIZE_NAME_SUFFIXES = ('SIZE', 'LENGTH', 'LEN', 'COUNT', 'BYTES', 'NUMBEROFBYTES')
 
 
 FIRNESS_LIST_ENTRIES = 4
-
 
 def count_field_for(list_name: str, fields) -> str:
     """The field that counts the entries of a list field, e.g. OptionList -> OptionCount."""
