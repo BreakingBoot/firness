@@ -30,6 +30,19 @@ def harness_header(functions: List[str],
         output.append(f"#define {name} {value}")
     output.append("")
 
+    # The sanitizer is gated around the call under test so that only the firmware's own
+    # faults become solutions. AsanLib is linked into the harness by Firness.dsc, but the
+    # declaration stays weak so a build without it still links, and the wrapper is inline
+    # so no non-EFIAPI helper is called across the ms_abi boundary.
+    output.append('extern VOID AsanSetFuzzingActive(BOOLEAN Active) __attribute__((weak));')
+    output.append('static inline VOID FirnessSanitizer(BOOLEAN Active)')
+    output.append('{')
+    output.append('    if (AsanSetFuzzingActive != NULL) {')
+    output.append('        AsanSetFuzzingActive(Active);')
+    output.append('    }')
+    output.append('}')
+    output.append("")
+
     # the inf lists these under [Guids]/[Protocols] so the linker resolves them, but the
     # header that declares one is not necessarily part of the harness include set. edk2
     # declares every guid this way, and repeating an extern declaration is harmless

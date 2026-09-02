@@ -178,6 +178,12 @@ def call_function(function: str,
             if not members or function in members:
                 call_prefix = "ProtocolVariable->"
 
+    # Only the call under test should be able to report. Everything around it -- reading
+    # the input, allocating buffers, filling structs -- is the harness's own work, and a
+    # sanitizer report from there says something about the harness, not the firmware.
+    # AsanSetFuzzingActive gates the escalation to the fuzzer, so bracketing the call with
+    # it means only a fault inside the firmware counts as a solution.
+    output.append("FirnessSanitizer(TRUE);")
     if function_block.return_type == "EFI_STATUS":
         output.append(f"Status = {call_prefix}{function}(")
     else:
@@ -209,6 +215,7 @@ def call_function(function: str,
             tmp = tmp[:-1]
         output.append(tmp)
     output.append(f");")
+    output.append("FirnessSanitizer(FALSE);")
 
     return add_indents(output, indent)
 

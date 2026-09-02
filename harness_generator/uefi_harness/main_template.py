@@ -41,7 +41,9 @@ def gen_firness_main(functions: List[str]) -> List[str]:
     # from here on a sanitizer report also ends the iteration as a solution; before
     # this point the ~630 boot-time reports would kill every boot
     output.append("    if (AsanSetFuzzingActive != NULL) {")
-    output.append("        AsanSetFuzzingActive(TRUE);")
+    # start with reporting off: each harness turns it on around its own call and off
+    # again afterwards, so the harness's own marshalling never raises a solution
+    output.append("        AsanSetFuzzingActive(FALSE);")
     output.append("    }")
     output.append("")
     output.append("    Input.Buffer = buffer;")
