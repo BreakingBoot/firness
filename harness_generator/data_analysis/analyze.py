@@ -295,7 +295,11 @@ def protocol_member_return(header_path: str, protocol_name: str, member: str) ->
     # "typedef EFI_DEVICE_PATH_PROTOCOL * (EFIAPI *EFI_DEVICE_PATH_UTILS_DUPLICATE...)"
     # and an identifier-only pattern never matched it, so every such member looked like it
     # returned EFI_STATUS and the harness assigned a pointer to Status
-    typed = re.search(r'typedef\s+([A-Za-z_]\w*(?:\s*\*)*)\s*\(\s*EFIAPI\s*\*\s*'
+    # the return type can be more than one word: EFI_SHELL_GET_MAP_FROM_DEVICE_PATH
+    # returns CONST CHAR16 *, and a single-identifier pattern missed it, so the member
+    # looked like it returned EFI_STATUS and the harness assigned a pointer to Status
+    typed = re.search(r'typedef\s+((?:[A-Za-z_]\w*\s+)*[A-Za-z_]\w*(?:\s*\*)*)\s*'
+                      r'\(\s*EFIAPI\s*\*\s*'
                       + re.escape(field.group(1)) + r'\s*\)', source)
     if not typed:
         return 'EFI_STATUS'

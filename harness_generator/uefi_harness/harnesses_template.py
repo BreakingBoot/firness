@@ -23,6 +23,10 @@ def get_type(arg_type: str) -> str:
 def is_function_pointer(arg_type: str) -> bool:
     return "(*)" in arg_type.replace(" ", "")
 
+# StrDuplicate takes a CHAR16 *, so only a real string literal can be passed to it
+STRING_LITERAL_USAGE = re.compile(r'^\s*L?["\']')
+
+
 # The only field types that can be declared as a bit field, and so the only ones that need
 # to be read through a temporary rather than filled in place.
 SCALAR_FIELD_TYPES = {
@@ -398,8 +402,16 @@ def constant_args(function: str,
             output.append(f'    case {index}:')
             if argument.usage == "":
                 output.append(f'        {function}_{arg_key} = {set_undefined_constants(argument.arg_type)};')
-            elif "char" in argument.arg_type.lower():
+            elif ("char" in argument.arg_type.lower()
+                  and STRING_LITERAL_USAGE.match(argument.usage or '')):
                 output.append(f'        {function}_{arg_key} = StrDuplicate({argument.usage});')
+            elif "char" in argument.arg_type.lower():
+                # a recorded usage that is not a string literal cannot be handed to
+                # StrDuplicate, which takes a CHAR16 *; read the buffer from the input
+                if has_pointer(argument.arg_type):
+                    output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+                else:
+                    output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
             elif has_pointer(argument.arg_type):
                 # an OUT enum arrives as a pointer, and the declaration above already
                 # allocated it. the enumerator is a value, so it belongs in the pointee --
@@ -418,8 +430,13 @@ def constant_args(function: str,
     else:
         if arg.usage == "":
             output.append(f'{function}_{arg_key} = {set_undefined_constants(arg.arg_type)};')
-        elif "char" in arg.arg_type.lower():
+        elif "char" in arg.arg_type.lower() and STRING_LITERAL_USAGE.match(arg.usage or ''):
             output.append(f'{function}_{arg_key} = StrDuplicate({arg.usage});')
+        elif "char" in arg.arg_type.lower():
+            if has_pointer(arg.arg_type):
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+            else:
+                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
         else:
             output.append(f'{function}_{arg_key} = {arg.usage};')
 
