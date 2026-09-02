@@ -36,6 +36,14 @@ SCALAR_FIELD_TYPES = {
 }
 
 
+# How large a raw buffer argument gets. A VOID * or UINT8 * parameter is a buffer, and the
+# size the callee is told to use is a separate, fuzzed argument. Allocating sizeof(UINTN)
+# for it means any fuzzed size above 8 sends the driver past the end of the allocation:
+# EfiBlockIo2's ReadBlocksEx was told to read a fuzzed 64 bit BufferSize into 8 bytes.
+# A page absorbs the sizes worth exercising without pretending the pairing is understood.
+FIRNESS_BUFFER_BYTES = 4096
+
+
 # How many characters a fuzzed string argument gets. A callee walks a string to its
 # terminator, so a one character buffer filled with fuzzed bytes has no terminator and
 # sends StrLen off the end of the allocation into unmapped memory. That is a fault in the
@@ -256,7 +264,13 @@ def declare_var(function: str,
             arg_type = "UINTN* " if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
         arg_type_list.append(TypeTracker(arg_type, arg_key, arguments[0].pointer_count, fuzzable))
     if (arguments[0].pointer_count > 0 and not "char" in arguments[0].arg_type.lower()) and not "IN" in arguments[0].arg_dir:
-        output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool(sizeof({remove_ref_symbols(arg_type)}));')
+        # a raw buffer is sized by a separate argument the fuzzer also controls, so give it
+        # a page rather than one element
+        base = remove_ref_symbols(arg_type)
+        raw_buffer = ('void' in arguments[0].arg_type.lower()
+                      or base.strip().upper() in ('UINT8', 'UINTN', 'CHAR8'))
+        allocation = (str(FIRNESS_BUFFER_BYTES) if raw_buffer else f'sizeof({base})')
+        output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool({allocation});')
     elif arguments[0].pointer_count == 0:
         # a struct passed by value has no pointer to allocate and cannot be assigned 0.
         # this is not limited to types the analysis recognised as structs: a member built
