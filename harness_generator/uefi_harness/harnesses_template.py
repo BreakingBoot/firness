@@ -332,6 +332,27 @@ def declare_var(function: str,
 SIZE_NAME_SUFFIXES = ('SIZE', 'LENGTH', 'LEN', 'COUNT', 'BYTES', 'NUMBEROFBYTES')
 
 
+# A field that describes the extent of its own struct. VARIABLE_POLICY_ENTRY.Size is the
+# caller's statement of how long the (variable-length) entry is, and the driver copies that
+# many bytes -- it has no other way to know. Fuzzing it makes the callee read past whatever
+# the harness allocated, which is a caller contract violation rather than a firmware bug:
+# it was every one of EdkiiVariablePolicy's 700 ASan reports, a 2,534 byte read in
+# VariableSmmRuntimeDxe. Set it to the allocation instead of fuzzing it.
+SELF_SIZE_FIELDS = ('SIZE', 'LENGTH', 'STRUCTSIZE', 'HEADERSIZE', 'ENTRYSIZE')
+
+
+def describes_own_struct(field_name: str, fields) -> bool:
+    name = (field_name or '').upper()
+    if name not in SELF_SIZE_FIELDS:
+        return False
+    # a size that names a buffer beside it is that buffer's, not the struct's
+    stem = name[:-4] if name.endswith('SIZE') else name
+    for other in fields or []:
+        if has_pointer(other.type) and (other.name or '').upper() == stem:
+            return False
+    return True
+
+
 FIRNESS_LIST_ENTRIES = 4
 
 def count_field_for(list_name: str, fields) -> str:
@@ -714,6 +735,13 @@ def generator_struct_args(function: str,
             if is_function_pointer(field.type):
                 continue
             field_ref = f'{function}_{arg_key}{accessor}{field.name}'
+            # a scalar only: EFI_DEVICE_PATH_PROTOCOL.Length is UINT8[2], an array that
+            # carries the node's length and is not assignable
+            if (not has_pointer(field.type)
+                    and field.type.strip().upper() in SCALAR_FIELD_TYPES
+                    and describes_own_struct(field.name, struct_fields)):
+                output.append(f'{field_ref} = sizeof({struct_type});')
+                continue
             # Pointer fields are decided before the nameable test on purpose. A type like
             # "EFI_DHCP6_PACKET_OPTION **" is not a bare identifier, so it used to fall to
             # the fill-in-place branch, which writes random bytes into the pointer itself
