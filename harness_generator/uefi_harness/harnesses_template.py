@@ -289,6 +289,20 @@ def declare_var(function: str,
     
     return add_indents(output, indent)
 
+INTEGER_ARG_TYPES = {'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
+                     'INT8', 'INT16', 'INT32', 'INT64', 'INTN'}
+
+
+def takes_raw_buffer(arg_type_list) -> bool:
+    """Whether any argument of this call is a raw buffer the fuzzer also sizes."""
+    for tracked in arg_type_list:
+        if tracked.pointer_count > 0 and remove_ref_symbols(
+                tracked.arg_type).strip().upper() in ('VOID', 'UINT8', 'UINTN',
+                                                      'CHAR8', 'CHAR16'):
+            return True
+    return False
+
+
 def fuzzable_args(function: str,
                   arg: str, 
                   indent: bool,
@@ -299,6 +313,16 @@ def fuzzable_args(function: str,
         if arg_type.name == arg:
             if arg_type.pointer_count == 0:
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *)&{function}_{arg});')
+                # In a call that also takes a raw buffer, the integer arguments are the
+                # sizes and offsets into it. An unbounded one just tells the callee to walk
+                # past the end of an allocation the harness made, which faults every time
+                # and says nothing about the firmware -- EfiUnicodeCollation reported one
+                # site 1089 times this way. Bound them to the buffer the harness allocates.
+                if (takes_raw_buffer(arg_type_list)
+                        and remove_ref_symbols(arg_type.arg_type).strip().upper()
+                        in INTEGER_ARG_TYPES):
+                    output.append(f'{function}_{arg} = {function}_{arg} % '
+                                  f'({FIRNESS_BUFFER_BYTES} + 1);')
                 break
             else:
                 # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
