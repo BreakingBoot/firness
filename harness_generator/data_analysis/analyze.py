@@ -331,8 +331,12 @@ def protocol_member_signature(header_path: str, protocol_name: str, member: str)
             direction = 'IN_OUT'
         elif re.search(r'\bOUT\b', text):
             direction = 'OUT'
-        words = [w for w in text.split()
-                 if w not in ('IN', 'OUT', 'OPTIONAL', 'CONST', 'const')]
+        # CONST is dropped so the variable stays assignable, except on a nested pointer:
+        # passing EFI_GUID ** where CONST EFI_GUID ** is wanted is an error C does not
+        # forgive, while a single CONST X * converts silently and needs no qualifier here
+        keep_const = text.count('*') >= 2
+        dropped = ('IN', 'OUT', 'OPTIONAL') if keep_const else ('IN', 'OUT', 'OPTIONAL', 'CONST', 'const')
+        words = [w for w in text.split() if w not in dropped]
         if not words:
             return None
         # the trailing identifier is the parameter name unless the whole thing is a type
@@ -585,10 +589,14 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                             if true_type.count('*') != argument.arg_type.count('*'):
                                 argument.arg_type = true_type
                                 argument.pointer_count = true_type.count('*')
-                            # the declaration drops CONST so the variable stays assignable;
-                            # the call site still has to cast with it
-                            if qualified != true_type:
-                                argument.cast_type = qualified
+                            # keep CONST on the type itself: a dynamic attribute does not
+                            # survive collect_all_function_arguments rebuilding the
+                            # Argument, and declare_var already maps a void type to UINTN*
+                            # and a const one to a const pointer, both of which are
+                            # assignable through the casts the harness already emits
+                            if qualified != true_type and qualified.count('*') >= 2:
+                                argument.arg_type = qualified
+                                argument.pointer_count = qualified.count('*')
             if first and protocol_name and first[0].variable == "__PROTOCOL__":
                 if normalize_struct(remove_ref_symbols(first[0].arg_type)) != normalize_struct(protocol_name):
                     first[0].variable = ""
