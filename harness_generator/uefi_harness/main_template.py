@@ -8,6 +8,20 @@ from typing import Dict, List
 MAX_SEQUENCE_STEPS = 8
 
 
+# Names that put a protocol into a usable state. A sequence that opens before it reads
+# gets past the entry checks; one that reads first can only ever return EFI_NOT_STARTED,
+# and with a uniform choice most sequences start on the wrong call.
+SETUP_PREFIXES = ('Configure', 'Create', 'Open', 'Start', 'Init', 'Register', 'Allocate',
+                  'Reset', 'Set', 'Add', 'Install', 'Connect', 'Enable', 'Map', 'Attach')
+
+
+def setup_first(functions):
+    """Order the dispatch so state-establishing calls come first, and say how many."""
+    setup = [f for f in functions if f.startswith(SETUP_PREFIXES)]
+    rest = [f for f in functions if not f.startswith(SETUP_PREFIXES)]
+    return setup + rest, len(setup)
+
+
 def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) -> List[str]:
     output = []
 
@@ -68,6 +82,10 @@ def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) 
     output.append("    ReadBytes(&Input, sizeof(SequenceLength), (VOID *)&SequenceLength);")
     output.append(f"    Steps = (UINTN)(SequenceLength % {max_steps}) + 1;")
     output.append("")
+    # the first call of a sequence chooses only among the setup calls when there are any,
+    # so the driver is in a usable state before the rest of the sequence runs
+    functions, setup_count = setup_first(list(functions))
+    output.append(f"    UINTN Choices = {len(functions)};")
     output.append("    for (Step = 0; Step < Steps; Step++) {")
     output.append("        UINT8 DriverChoice = 0;")
     # once the input is spent ReadBytes zero-fills, so every remaining step would repeat
@@ -76,7 +94,9 @@ def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) 
     output.append("            break;")
     output.append("        }")
     output.append("        ReadBytes(&Input, sizeof(DriverChoice), (VOID *)&DriverChoice);")
-    output.append(f'        switch(DriverChoice%{len(functions)})')
+    if setup_count:
+        output.append(f"        Choices = (Step == 0) ? {setup_count} : {len(functions)};")
+    output.append("        switch(DriverChoice % Choices)")
     output.append("        {")
     for index, function in enumerate(functions):
         output.append(f'            case {index}:')
