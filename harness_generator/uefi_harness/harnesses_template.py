@@ -36,9 +36,24 @@ SCALAR_FIELD_TYPES = {
 }
 
 
+# How many characters a fuzzed string argument gets. A callee walks a string to its
+# terminator, so a one character buffer filled with fuzzed bytes has no terminator and
+# sends StrLen off the end of the allocation into unmapped memory. That is a fault in the
+# harness, not a finding: EdkiiVarCheck reported 914 "solutions" in 6225 iterations this way.
+FIRNESS_STRING_CHARS = 32
+
+
+def is_string_pointer(arg_type: str) -> bool:
+    return has_pointer(arg_type) and 'CHAR' in remove_ref_symbols(arg_type).upper()
+
+
 def set_undefined_constants(arg_type: str) -> str:
     if has_pointer(arg_type):
-        return "("+arg_type+")AllocateZeroPool(sizeof(" + remove_ref_symbols(arg_type) + "))"        
+        base = remove_ref_symbols(arg_type)
+        if is_string_pointer(arg_type):
+            # room for a string, not for one character
+            return f'({arg_type})AllocateZeroPool({FIRNESS_STRING_CHARS} * sizeof({base}))'
+        return "("+arg_type+")AllocateZeroPool(sizeof(" + base + "))"        
     elif "bool" in arg_type.lower():
         return "FALSE"
     else:
@@ -278,7 +293,14 @@ def fuzzable_args(function: str,
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
                 output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
                 output.append(f'    case 0:')
-                output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg}), (VOID *){function}_{arg});')
+                if is_string_pointer(arg_type.arg_type):
+                    # fill all but the last character and leave that one zero, so the
+                    # string the callee receives is terminated inside its own allocation
+                    output.append(f'        ReadBytes(Input, {FIRNESS_STRING_CHARS - 1} * '
+                                  f'sizeof(*{function}_{arg}), (VOID *){function}_{arg});')
+                    output.append(f'        {function}_{arg}[{FIRNESS_STRING_CHARS - 1}] = 0;')
+                else:
+                    output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg}), (VOID *){function}_{arg});')
                 output.append(f'        break;')
                 output.append(f'    case 1:')
                 output.append('    {')
