@@ -299,6 +299,27 @@ def declare_var(function: str,
 SIZE_NAME_SUFFIXES = ('SIZE', 'LENGTH', 'LEN', 'COUNT', 'BYTES', 'NUMBEROFBYTES')
 
 
+FIRNESS_LIST_ENTRIES = 4
+
+
+def count_field_for(list_name: str, fields) -> str:
+    """The field that counts the entries of a list field, e.g. OptionList -> OptionCount."""
+    stem = (list_name or '')
+    for tail in ('List', 'Array', 'Buffer', 'Table'):
+        if stem.endswith(tail) and len(stem) > len(tail):
+            stem = stem[:-len(tail)]
+            break
+    upper = stem.upper()
+    for other in fields or []:
+        name = (other.name or '').upper()
+        if has_pointer(other.type):
+            continue
+        for suffix in SIZE_NAME_SUFFIXES:
+            if name == upper + suffix:
+                return other.name
+    return ''
+
+
 def buffer_for_size(size_name: str, all_args) -> str:
     """The arg_key of the buffer a size parameter names, e.g. BufferSize -> Buffer.
 
@@ -643,7 +664,8 @@ def generator_struct_args(function: str,
         accessor = '->' if arg.pointer_count > 0 else '.'
         # types is a defaultdict(list), so indexing a struct name it does not know returns
         # a list rather than a TypeInfo and inserts the junk entry as a side effect
-        for field in types.get(struct_type, TypeInfo()).fields:
+        struct_fields = types.get(struct_type, TypeInfo()).fields
+        for field in struct_fields:
             # only a plainly nameable type can back a temporary. an array carries its
             # extent in the type and is not assignable, and an anonymous union is reported
             # as "union (unnamed union at ...)", which is not a declaration. both have a
@@ -659,26 +681,53 @@ def generator_struct_args(function: str,
             # is noise. the field keeps the zero AllocateZeroPool gave it
             if is_function_pointer(field.type):
                 continue
-            if not nameable or (not scalar and not has_pointer(field.type)):
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
-            elif not has_pointer(field.type):
+            field_ref = f'{function}_{arg_key}{accessor}{field.name}'
+            # Pointer fields are decided before the nameable test on purpose. A type like
+            # "EFI_DHCP6_PACKET_OPTION **" is not a bare identifier, so it used to fall to
+            # the fill-in-place branch, which writes random bytes into the pointer itself
+            # and hands the driver a wild address to dereference. That was the largest
+            # remaining source of faults: Dhcp6Impl.c dereferences OptionList[Index]->OpCode.
+            if has_pointer(field.type):
+                if field.type.count('*') >= 2 and 'VOID' not in field.type.upper():
+                    # a list of pointers, counted by a sibling field. One zeroed entry is
+                    # worse than none, since each entry is dereferenced: allocate the
+                    # entries, point each at a zeroed object, and hold the count to what
+                    # was actually built
+                    counter = count_field_for(field.name, struct_fields)
+                    output.append(f'{field_ref} = ({field.type})AllocateZeroPool('
+                                  f'{FIRNESS_LIST_ENTRIES} * sizeof(*{field_ref}));')
+                    output.append(f'if ({field_ref} != NULL) ' + '{')
+                    output.append(f'    for (UINTN FirnessEntry = 0; FirnessEntry < '
+                                  f'{FIRNESS_LIST_ENTRIES}; FirnessEntry++) ' + '{')
+                    output.append(f'        {field_ref}[FirnessEntry] = AllocateZeroPool('
+                                  f'sizeof(**{field_ref}));')
+                    output.append('    }')
+                    output.append('}')
+                    if counter:
+                        counter_ref = f'{function}_{arg_key}{accessor}{counter}'
+                        output.append(f'{counter_ref} = {counter_ref} % '
+                                      f'({FIRNESS_LIST_ENTRIES} + 1);')
+                else:
+                    # the struct came from AllocateZeroPool, so this field is NULL: give it
+                    # something to point at before writing through it. VOID * has no target
+                    # size, so a machine word stands in
+                    field_size = ('sizeof(UINTN)' if 'VOID' in field.type.upper()
+                                  else f'sizeof(*{field_ref})')
+                    output.append(f'{field_ref} = ({field.type})AllocateZeroPool({field_size});')
+                    output.append(f'if ({field_ref} != NULL) ' + '{')
+                    output.append(f'    ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
+                    output.append('}')
+            elif not nameable or not scalar:
+                # an array or an anonymous union: it has a size and an address, so it is
+                # filled where it sits
+                output.append(f'ReadBytes(Input, sizeof({field_ref}), (VOID *)&({field_ref}));')
+            else:
                 # through a temporary of the field's own type: a bit field has neither a
                 # size nor an address of its own, so sizeof and & on one do not compile
                 output.append('{')
                 output.append(f'    {field.type} Firness_{field.name};')
                 output.append(f'    ReadBytes(Input, sizeof(Firness_{field.name}), (VOID *)&Firness_{field.name});')
-                output.append(f'    {function}_{arg_key}{accessor}{field.name} = Firness_{field.name};')
-                output.append('}')
-            else:
-                # the struct came from AllocateZeroPool, so this pointer field is NULL and
-                # writing through it wrote to address 0. Give it something to point at
-                # first. VOID * has no target size, so a machine word stands in.
-                field_ref = f'{function}_{arg_key}{accessor}{field.name}'
-                field_size = ('sizeof(UINTN)' if 'VOID' in field.type.upper()
-                              else f'sizeof(*{field_ref})')
-                output.append(f'{field_ref} = ({field.type})AllocateZeroPool({field_size});')
-                output.append(f'if ({field_ref} != NULL) ' + '{')
-                output.append(f'    ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
+                output.append(f'    {field_ref} = Firness_{field.name};')
                 output.append('}')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
         # a private copy per use: the wiring below rewrites the producer's OUT parameter to
