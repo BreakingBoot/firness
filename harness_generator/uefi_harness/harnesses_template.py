@@ -68,7 +68,7 @@ def generate_outputs(function: str,
             if arguments[0].pointer_count > 0:
                 tmp.append(f"    ReadBytes(Input, sizeof(*{function}_{arg_key}), (VOID *){function}_{arg_key});")
             else:
-                tmp.append(f"    ReadBytes(Input, sizeof({function}_{arg_key}), {function}_{arg_key});")
+                tmp.append(f"    ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});")
             tmp.append("}") 
     
     if len(tmp) > 0:
@@ -275,7 +275,7 @@ def fuzzable_args(function: str,
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
                 output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
                 output.append(f'    case 0:')
-                output.append(f'        ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg}), (VOID *){function}_{arg});')
                 output.append(f'        break;')
                 output.append(f'    case 1:')
                 output.append('    {')
@@ -409,7 +409,7 @@ def constant_args(function: str,
                 # a recorded usage that is not a string literal cannot be handed to
                 # StrDuplicate, which takes a CHAR16 *; read the buffer from the input
                 if has_pointer(argument.arg_type):
-                    output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+                    output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg_key}), (VOID *){function}_{arg_key});')
                 else:
                     output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
             elif has_pointer(argument.arg_type):
@@ -422,7 +422,7 @@ def constant_args(function: str,
             output.append(f'        break;')
         output.append(f'    case {len(usages)}:')
         if has_pointer(arg.arg_type):
-            output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+            output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg_key}), (VOID *){function}_{arg_key});')
         else:
             output.append(f'        ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
         output.append(f'        break;')
@@ -434,7 +434,7 @@ def constant_args(function: str,
             output.append(f'{function}_{arg_key} = StrDuplicate({arg.usage});')
         elif "char" in arg.arg_type.lower():
             if has_pointer(arg.arg_type):
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *){function}_{arg_key});')
+                output.append(f'ReadBytes(Input, sizeof(*{function}_{arg_key}), (VOID *){function}_{arg_key});')
             else:
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});')
         else:
@@ -549,7 +549,12 @@ def generator_struct_args(function: str,
                 output.append(f'    {function}_{arg_key}{accessor}{field.name} = Firness_{field.name};')
                 output.append('}')
             else:
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)({function}_{arg_key}{accessor}{field.name}));')
+                # the write lands in the target, so sizeof the target: sizeof of the
+                # pointer is 8 and overflows anything smaller. VOID * has no target size
+                field_ref = f'{function}_{arg_key}{accessor}{field.name}'
+                field_size = (f'sizeof({field_ref})' if 'VOID' in field.type.upper()
+                              else f'sizeof(*{field_ref})')
+                output.append(f'ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
     elif "__GENERATOR_FUNCTION__" in arg.variable:
         # a private copy per use: the wiring below rewrites the producer's OUT parameter to
         # name the consumer's variable, and generators are shared between consumers. when a
