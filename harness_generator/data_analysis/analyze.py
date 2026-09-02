@@ -340,18 +340,30 @@ def protocol_member_signature(header_path: str, protocol_name: str, member: str)
         if not words:
             return None
         # the trailing identifier is the parameter name unless the whole thing is a type
+        name = ''
         if len(words) > 1 and re.match(r'^[A-Za-z_]\w*$', words[-1]):
+            name = words[-1]
             words = words[:-1]
         arg_type = ' '.join(words).replace(' *', ' *').strip()
         if array:
             arg_type = (arg_type + ' *').strip()
         if not arg_type:
             return None
-        parsed.append((f'Arg_{index}', arg_type, direction))
+        parsed.append((f'Arg_{index}', arg_type, direction, name))
     return parsed
 
 
 PARAM_DIRECTION = re.compile(r'\b(IN|OUT|OPTIONAL|CONST)\b')
+
+
+def param_name(spec: str) -> str:
+    """The name a protocol typedef gives one parameter, or '' if it names only a type."""
+    text = PARAM_DIRECTION.sub(' ', spec).strip()
+    text = re.sub(r'\[.*?\]', '', text).strip()
+    match = re.match(r'^(.*?)([A-Za-z_]\w*)\s*$', text)
+    if match and match.group(1).strip():
+        return match.group(2)
+    return ''
 
 
 def param_type_qualified(spec: str) -> str:
@@ -585,7 +597,10 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                         if not true_type:
                             continue
                         qualified = param_type_qualified(spec)
+                        declared_name = param_name(spec)
                         for argument in function_info.arguments[arg_name]:
+                            if declared_name:
+                                argument.param_name = declared_name
                             if true_type.count('*') != argument.arg_type.count('*'):
                                 argument.arg_type = true_type
                                 argument.pointer_count = true_type.count('*')
@@ -645,13 +660,14 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
             if params is None:
                 continue
             arguments = {}
-            for arg_key, arg_type, direction in params:
+            for arg_key, arg_type, direction, declared_name in params:
                 is_self = (arg_key == 'Arg_0'
                            and normalize_struct(remove_ref_symbols(arg_type))
                            == normalize_struct(protocol_name))
                 arguments[arg_key] = [Argument(direction, arg_type, "", arg_type,
                                                guid if is_self else "",
-                                               "__PROTOCOL__" if is_self else "")]
+                                               "__PROTOCOL__" if is_self else "",
+                                               param_name=declared_name)]
             block = FunctionBlock(arguments, name, service, [header],
                                   protocol_member_return(header, protocol_name, name))
             block.protocol_type = f'{protocol_name} *'
@@ -869,7 +885,8 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     if not contains_void_star(argument[0].arg_type):
                         if is_fuzzable(remove_ref_symbols(argument[0].arg_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type,
-                                                  argument[0].usage, "__FUZZABLE_ARG_STRUCT__", argument[0].potential_outputs)
+                                                  argument[0].usage, "__FUZZABLE_ARG_STRUCT__", argument[0].potential_outputs,
+                                                  param_name=argument[0].param_name)
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
@@ -878,7 +895,8 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     if not contains_void_star(argument[0].data_type) and not added_struct:
                         if is_fuzzable(remove_ref_symbols(argument[0].data_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type,
-                                                  argument[0].usage, "__FUZZABLE_DATA_STRUCT__", argument[0].potential_outputs)
+                                                  argument[0].usage, "__FUZZABLE_DATA_STRUCT__", argument[0].potential_outputs,
+                                                  param_name=argument[0].param_name)
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
@@ -986,7 +1004,8 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                         for argument_value in argument[0].potential_outputs:
                             if not contains_usage(argument_value, usage_seen[function][arg_key], macros, aliases):
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment,
-                                                   argument[0].data_type, argument_value, argument[0].variable, [])
+                                                   argument[0].data_type, argument_value, argument[0].variable, [],
+                                                   param_name=argument[0].param_name)
                                 pre_processed_data[function].arguments.setdefault(
                                     arg_key, []).append(new_arg)
                                 if argument[0].assignment in macros.keys():
@@ -1064,7 +1083,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     # if the argument is a fuzzable parameter, then add it to the pre_processed_data
                     if is_scalable:
                         scalable_arg = Argument(
-                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
+                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__",
+                            param_name=argument[0].param_name)
                         current_args_dict[function].append(arg_key)
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(scalable_arg)
@@ -1072,7 +1092,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     # if the argument is a void * and the data_type is not a void * and the data_type is not a scalar
                     elif (contains_void_star(argument[0].arg_type) or contains_void_star(aliases.get(remove_ref_symbols(argument[0].arg_type), "").lower())) and (len(void_star_data_type_counter[arg_key]) > math.floor(len(function_blocks)/2) or random):
                         scalable_arg = Argument(
-                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
+                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__",
+                            param_name=argument[0].param_name)
                         current_args_dict[function].append(arg_key)
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(scalable_arg)
@@ -1080,7 +1101,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     # if the data type is scalable because the function is expecting a void so no futher an
                     elif any(param.lower() in argument[0].data_type or param.lower() in aliases.get(argument[0].data_type, "").lower() for param in scalable_params) and contains_void_star(argument[0].arg_type):
                         scalable_arg = Argument(
-                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
+                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__",
+                            param_name=argument[0].param_name)
                         current_args_dict[function].append(arg_key)
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(scalable_arg)
@@ -1088,7 +1110,8 @@ def get_directly_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                     # if the argument is a void * and the data_type is a void *
                     elif only_void_star[arg_key]:
                         scalable_arg = Argument(
-                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__")
+                            argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type, argument[0].usage, "__FUZZABLE__",
+                            param_name=argument[0].param_name)
                         current_args_dict[function].append(arg_key)
                         pre_processed_data[function].arguments.setdefault(
                             arg_key, []).append(scalable_arg)
@@ -1206,7 +1229,8 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                                         matching_generators.setdefault(
                                             func_temp_name, []).append(func_name)
                                         generator_arg = Argument(
-                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
+                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__",
+                                            param_name=ft_argument[0].param_name)
                                         # current_args_dict[func_temp_name].append(ft_arg_key)
                                         all_includes.update(generator_block.includes)
                                         pre_processed_data[func_temp_name].arguments.setdefault(
@@ -1226,7 +1250,8 @@ def get_generators(pre_processed_data: Dict[str, FunctionBlock],
                                         matching_generators.setdefault(
                                             func_temp_name, []).append(func_name)
                                         generator_arg = Argument(
-                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__")
+                                            ft_argument[0].arg_dir, ft_argument[0].arg_type, func_name, ft_argument[0].data_type, ft_argument[0].usage, "__GENERATOR_FUNCTION__",
+                                            param_name=ft_argument[0].param_name)
                                         # current_args_dict[func_temp_name].append(ft_arg_key)
                                         all_includes.update(generator_block.includes)
                                         pre_processed_data[func_temp_name].arguments.setdefault(
@@ -1896,6 +1921,36 @@ def analyze_data(macro_file: str,
     for name in undeclarable:
         print(f'INFO: dropping {name} -- called directly but declared in no includable header')
         del processed_data[name]
+
+    # Parameter names are what let a size argument be bound by the buffer it names --
+    # BufferSize by Buffer, FatSize by Fat. They are set here rather than in sort_data
+    # because a function reaches processed_data by several routes and only one of them
+    # consults the protocol typedef, so names set there went missing for most protocols.
+    named_parameters = 0
+    for service, pairs in harness_functions.items():
+        for pair in pairs:
+            member = pair[0]
+            guid = pair[1] if len(pair) > 1 else ""
+            block = processed_data.get(member)
+            if block is None or not guid:
+                continue
+            protocol_name = guid_protocol_name.get(guid)
+            header = guid_header.get(guid)
+            if not (protocol_name and header):
+                continue
+            specs = protocol_member_params(header, protocol_name, member)
+            if not specs or len(specs) != len(block.arguments):
+                continue
+            ordered = sorted(block.arguments, key=natural_sort_key)
+            for arg_name, spec in zip(ordered, specs):
+                declared = param_name(spec)
+                if not declared:
+                    continue
+                for argument in block.arguments[arg_name]:
+                    argument.param_name = declared
+                named_parameters += 1
+    if named_parameters:
+        print(f'INFO: named {named_parameters} parameter(s) from their protocol typedef!!')
 
     # all_includes = get_union(processed_data, processed_generators)
     update_includes = cleanup_paths(all_includes)

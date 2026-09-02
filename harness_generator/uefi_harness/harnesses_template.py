@@ -289,6 +289,29 @@ def declare_var(function: str,
     
     return add_indents(output, indent)
 
+SIZE_NAME_SUFFIXES = ('SIZE', 'LENGTH', 'LEN', 'COUNT', 'BYTES', 'NUMBEROFBYTES')
+
+
+def buffer_for_size(size_name: str, all_args) -> str:
+    """The arg_key of the buffer a size parameter names, e.g. BufferSize -> Buffer.
+
+    UEFI spells the pair after the buffer: ReadBlocksEx takes BufferSize and Buffer,
+    FatToStr takes FatSize and Fat, GetVariable takes DataSize and Data. Matching the
+    stem is what lets a size be bounded by the buffer it actually describes rather than
+    by a blanket constant.
+    """
+    upper = (size_name or '').upper()
+    for suffix in SIZE_NAME_SUFFIXES:
+        if not upper.endswith(suffix) or len(upper) == len(suffix):
+            continue
+        stem = upper[:-len(suffix)]
+        for other_key, other in (all_args or {}).items():
+            name = (other[0].param_name or '').upper()
+            if name == stem and other[0].pointer_count > 0:
+                return other_key
+    return ''
+
+
 INTEGER_ARG_TYPES = {'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
                      'INT8', 'INT16', 'INT32', 'INT64', 'INTN'}
 
@@ -306,7 +329,9 @@ def takes_raw_buffer(arg_type_list) -> bool:
 def fuzzable_args(function: str,
                   arg: str, 
                   indent: bool,
-                  arg_type_list: List[TypeTracker]) -> List[str]:
+                  arg_type_list: List[TypeTracker],
+                  all_args=None,
+                  prefix: str = "") -> List[str]:
     output = []
     output.append("// Fuzzable Variable Initialization")
     for arg_type in arg_type_list:
@@ -318,11 +343,32 @@ def fuzzable_args(function: str,
                 # past the end of an allocation the harness made, which faults every time
                 # and says nothing about the firmware -- EfiUnicodeCollation reported one
                 # site 1089 times this way. Bound them to the buffer the harness allocates.
-                if (takes_raw_buffer(arg_type_list)
-                        and remove_ref_symbols(arg_type.arg_type).strip().upper()
-                        in INTEGER_ARG_TYPES):
-                    output.append(f'{function}_{arg} = {function}_{arg} % '
-                                  f'({FIRNESS_BUFFER_BYTES} + 1);')
+                if remove_ref_symbols(arg_type.arg_type).strip().upper() in INTEGER_ARG_TYPES:
+                    own_name = ''
+                    if all_args and arg in all_args:
+                        own_name = all_args[arg][0].param_name
+                    elif all_args:
+                        # the key carries the prefix of an unrolled struct argument
+                        bare = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
+                        if bare in all_args:
+                            own_name = all_args[bare][0].param_name
+                    paired = buffer_for_size(own_name, all_args)
+                    if paired:
+                        # bound it by the allocation of the buffer it names, so the size the
+                        # callee is given actually describes the memory it is handed. A
+                        # string buffer is FIRNESS_STRING_CHARS elements, a raw one a page
+                        paired_type = all_args[paired][0].arg_type
+                        paired_base = remove_ref_symbols(paired_type).strip().upper()
+                        if is_string_pointer(paired_type):
+                            limit = f'({FIRNESS_STRING_CHARS} * sizeof({remove_ref_symbols(paired_type)}))'
+                        elif paired_base in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+                            limit = str(FIRNESS_BUFFER_BYTES)
+                        else:
+                            limit = f'sizeof({remove_ref_symbols(paired_type)})'
+                        output.append(f'{function}_{arg} = {function}_{arg} % ({limit} + 1);')
+                    elif takes_raw_buffer(arg_type_list):
+                        output.append(f'{function}_{arg} = {function}_{arg} % '
+                                      f'({FIRNESS_BUFFER_BYTES} + 1);')
                 break
             else:
                 # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
@@ -416,7 +462,7 @@ def generate_inputs(function_block: FunctionBlock,
                     output.append(f'    case {arguments.index(arg)}:')
                     output.append('    {')
                 if arg.variable == "__FUZZABLE__" or random:
-                    output.extend(fuzzable_args(function_block.function, arg_key, total_elements > 1, arg_type_list))
+                    output.extend(fuzzable_args(function_block.function, arg_key, total_elements > 1, arg_type_list, function_block.arguments, prefix))
                 elif "__CONSTANT" in arg.variable or "__ENUM_ARG__" in arg.variable:
                     output.extend(constant_args(function_block.function, arg_key, arg, total_elements > 1))
                 elif "__FUNCTION_PTR__" in arg.variable:
