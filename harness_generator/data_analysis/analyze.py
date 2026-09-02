@@ -1372,7 +1372,15 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                         # emitted with nothing declaring it
                         all_includes.add(macro.file)
                     else:
-                        matched_macros[macro.name] = macro.value
+                        # a function-like macro is recorded without its parameter list, so
+                        # defining it here produces
+                        # "#define SNP_MEM_PAGES (((x) - 1) / 4096 + 1)" and any use of it
+                        # leaves x undeclared. drop the usage and let the argument be fuzzed
+                        if re.match(r'^\s*' + re.escape(macro.name) + r'\s*\(',
+                                    arg.usage or ''):
+                            arg.usage = ''
+                        else:
+                            matched_macros[macro.name] = macro.value
                     break
                 # a usage recorded at a call site can name locals of the function it was
                 # taken from, as in "DeltaY + EFI_GLYPH_HEIGHT". blanking it here makes the

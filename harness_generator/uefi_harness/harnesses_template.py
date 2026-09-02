@@ -23,6 +23,15 @@ def get_type(arg_type: str) -> str:
 def is_function_pointer(arg_type: str) -> bool:
     return "(*)" in arg_type.replace(" ", "")
 
+# The only field types that can be declared as a bit field, and so the only ones that need
+# to be read through a temporary rather than filled in place.
+SCALAR_FIELD_TYPES = {
+    'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
+    'INT8', 'INT16', 'INT32', 'INT64', 'INTN',
+    'BOOLEAN', 'CHAR8', 'CHAR16',
+}
+
+
 def set_undefined_constants(arg_type: str) -> str:
     if has_pointer(arg_type):
         return "("+arg_type+")AllocateZeroPool(sizeof(" + remove_ref_symbols(arg_type) + "))"        
@@ -507,7 +516,12 @@ def generator_struct_args(function: str,
             # as "union (unnamed union at ...)", which is not a declaration. both have a
             # size and an address, so they are filled in place
             nameable = re.fullmatch(r'[A-Za-z_]\w*', field.type.strip()) is not None
-            if not nameable:
+            # the temporary below exists for bit fields, which have neither a size nor an
+            # address. only the integer types can be bit fields, and copying anything larger
+            # through a temporary makes clang emit a memcpy -- which does not exist in UEFI
+            # and fails at link time with "undefined reference to memcpy"
+            scalar = field.type.strip().upper() in SCALAR_FIELD_TYPES
+            if not nameable or (not scalar and not has_pointer(field.type)):
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg_key}{accessor}{field.name}), (VOID *)&({function}_{arg_key}{accessor}{field.name}));')
             elif not has_pointer(field.type):
                 # through a temporary of the field's own type: a bit field has neither a
