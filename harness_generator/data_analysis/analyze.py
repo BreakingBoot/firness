@@ -346,6 +346,19 @@ def protocol_member_signature(header_path: str, protocol_name: str, member: str)
 PARAM_DIRECTION = re.compile(r'\b(IN|OUT|OPTIONAL|CONST)\b')
 
 
+def param_type_qualified(spec: str) -> str:
+    """param_type, but keeping CONST, for casting at the call site."""
+    text = re.sub(r'\b(IN|OUT|OPTIONAL)\b', ' ', spec).strip()
+    array = '[' in text
+    text = re.sub(r'\[.*?\]', '', text).strip()
+    match = re.match(r'^(.*?)([A-Za-z_]\w*)\s*$', text)
+    if match and match.group(1).strip():
+        text = match.group(1).strip()
+    if array:
+        text += ' *'
+    return re.sub(r'\s+', ' ', re.sub(r'\s*\*', ' *', text)).strip()
+
+
 def param_type(spec: str) -> str:
     """The type of one parameter from a protocol typedef, without its name."""
     text = PARAM_DIRECTION.sub(' ', spec).strip()
@@ -563,10 +576,15 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                         true_type = param_type(spec)
                         if not true_type:
                             continue
+                        qualified = param_type_qualified(spec)
                         for argument in function_info.arguments[arg_name]:
                             if true_type.count('*') != argument.arg_type.count('*'):
                                 argument.arg_type = true_type
                                 argument.pointer_count = true_type.count('*')
+                            # the declaration drops CONST so the variable stays assignable;
+                            # the call site still has to cast with it
+                            if qualified != true_type:
+                                argument.cast_type = qualified
             if first and protocol_name and first[0].variable == "__PROTOCOL__":
                 if normalize_struct(remove_ref_symbols(first[0].arg_type)) != normalize_struct(protocol_name):
                     first[0].variable = ""

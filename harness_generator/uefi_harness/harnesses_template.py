@@ -86,8 +86,10 @@ def cast_arg(function: str,
     update_arg = ""
     for arg in arg_type_list:
         if arg.name == arg_key:
+            # cast_type carries the qualifier the declaration had to drop, when there is one
+            cast_type = getattr(arguments[0], 'cast_type', '') or arguments[0].arg_type
             if arg.arg_type != arguments[0].arg_type:
-                update_arg += f'({arguments[0].arg_type})'
+                update_arg += f'({cast_type})'
             if arguments[0].pointer_count > arg.pointer_count:
                 # only a named variable has an address to take. a recorded usage can be a
                 # literal, and &0 is not an expression
