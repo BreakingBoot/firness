@@ -685,6 +685,42 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
 # the function calls to make sure to only keep the function calls that have
 # the same type of input args
 #
+# The order the firmware itself calls things in.
+#
+# Which call should open a sequence was a guess from its name -- Configure, Open, Start and
+# so on. That misses anything named differently: EFI_DISK_IO2_PROTOCOL's WriteDiskEx runs
+# before ReadDiskEx in FatQueueTask, and neither name looks like setup. The analyzer now
+# records the body each call sits in and its position, so pairs seen in the same body give
+# a real precedence instead of a naming convention.
+def observed_precedence(data_file):
+    """Function names ranked by how often each runs before the others."""
+    try:
+        with open(data_file, 'r') as handle:
+            raw = json.load(handle) or []
+    except (OSError, ValueError):
+        return []
+    bodies = defaultdict(list)
+    for record in raw:
+        if not isinstance(record, dict):
+            continue
+        body = record.get('EnclosingFunction')
+        if not body:
+            continue
+        bodies[(record.get('EnclosingFile'), body)].append(
+            (record.get('CallOrder', 0), record.get('Function')))
+    score = Counter()
+    for calls in bodies.values():
+        calls.sort()
+        for index, (_order, earlier) in enumerate(calls):
+            for _later_order, later in calls[index + 1:]:
+                if earlier and later and earlier != later:
+                    score[earlier] += 1
+                    score[later] -= 1
+    if not score:
+        return []
+    return [name for name, _ in score.most_common()]
+
+
 def load_data(json_file: str,
               harness_functions: Dict[str, List[Tuple[str, str]]],
               macros: Dict[str, Macros],
@@ -1985,4 +2021,4 @@ def analyze_data(macro_file: str,
             if protocol == "":
                 continue
             protocol_guids.add(protocol)
-    return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map, len(total_generators)
+    return processed_data, processed_generators, template, types, collected_includes, libraries, matched_macros, aliases, driver_guids, protocol_guids, enum_map, len(total_generators), observed_precedence(data_file)

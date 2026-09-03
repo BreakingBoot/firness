@@ -15,14 +15,27 @@ SETUP_PREFIXES = ('Configure', 'Create', 'Open', 'Start', 'Init', 'Register', 'A
                   'Reset', 'Set', 'Add', 'Install', 'Connect', 'Enable', 'Map', 'Attach')
 
 
-def setup_first(functions):
-    """Order the dispatch so state-establishing calls come first, and say how many."""
+def setup_first(functions, precedence=()):
+    """Order the dispatch so state-establishing calls come first, and say how many.
+
+    A precedence observed in the firmware beats the naming convention: EFI_DISK_IO2's
+    WriteDiskEx runs before ReadDiskEx in FatQueueTask, and neither name looks like setup.
+    The names are the fallback for protocols the analysis saw no ordering for.
+    """
+    observed = [f for f in precedence if f in functions]
+    if observed:
+        rest = [f for f in functions if f not in observed]
+        ordered = observed + rest
+        # the calls seen running before others open the sequence
+        leading = max(1, len(observed) // 2)
+        return ordered, leading
     setup = [f for f in functions if f.startswith(SETUP_PREFIXES)]
     rest = [f for f in functions if not f.startswith(SETUP_PREFIXES)]
     return setup + rest, len(setup)
 
 
-def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) -> List[str]:
+def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS,
+                     precedence=()) -> List[str]:
     output = []
 
     output.append("#include \"FirnessHarnesses.h\"")
@@ -84,7 +97,7 @@ def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS) 
     output.append("")
     # the first call of a sequence chooses only among the setup calls when there are any,
     # so the driver is in a usable state before the rest of the sequence runs
-    functions, setup_count = setup_first(list(functions))
+    functions, setup_count = setup_first(list(functions), precedence)
     output.append(f"    UINTN Choices = {len(functions)};")
     output.append("    for (Step = 0; Step < Steps; Step++) {")
     output.append("        UINT8 DriverChoice = 0;")

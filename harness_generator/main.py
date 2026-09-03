@@ -57,8 +57,8 @@ def generate_harness_debugger(merged_data: Dict[str, FunctionBlock],
     generate_header_std(merged_data, all_includes, types, aliases, harness_folder)
     compile(harness_folder)
 
-def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder, max_steps: int = 8):
-    code = uefi_main.gen_firness_main(function_dict, max_steps)
+def generate_main(function_dict: Dict[str, FunctionBlock], harness_folder, max_steps: int = 8, precedence=()):
+    code = uefi_main.gen_firness_main(function_dict, max_steps, precedence)
     gen_file(f'{harness_folder}/FirnessMain.c', code)
 
 
@@ -226,10 +226,11 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
                      random: bool = False,
                      backend: int = 1,
                      edk2_dir: str = "",
-                     max_steps: int = 8):
+                     max_steps: int = 8,
+                     precedence=()):
 
     function_list = list(merged_data.keys())
-    generate_main(function_list, harness_folder, max_steps)
+    generate_main(function_list, harness_folder, max_steps, precedence)
     generate_code(merged_data, template, types, generators, aliases, harness_folder, enums, random)
     used_guids = referenced_guids(harness_folder)
     generate_header(merged_data, matched_macros, harness_folder, used_guids)
@@ -261,7 +262,8 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      random: bool = False,
                      backend: int = 1,
                      edk2_dir: str = "",
-                     max_steps: int = 8):
+                     max_steps: int = 8,
+                     precedence=()):
     function_list = list(smi_data.keys())
     print(harness_folder)
     generate_main(function_list, harness_folder)
@@ -413,14 +415,14 @@ def main():
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
         generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps)
     else:
-        processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
+        processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators, precedence = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
         
         main_dir = os.path.dirname(os.path.abspath(args.data_file))
         calculate_statistics(processed_data, processed_generators, aliases, enums, main_dir, total_generators)
 
         generate_harness(processed_data, template, types, enums,
-                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps)
+                        all_includes, libraries, processed_generators, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, precedence)
     
 
 if __name__ == '__main__':
