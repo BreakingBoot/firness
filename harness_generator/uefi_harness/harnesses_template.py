@@ -342,14 +342,24 @@ SELF_SIZE_FIELDS = ('SIZE', 'LENGTH', 'STRUCTSIZE', 'HEADERSIZE', 'ENTRYSIZE')
 
 
 def describes_own_struct(field_name: str, fields) -> bool:
+    # by suffix, not exact name: EFI_HII_PACKAGE_LIST_HEADER calls its own extent
+    # PackageLength, and an exact-match rule let that through to be fuzzed
     name = (field_name or '').upper()
-    if name not in SELF_SIZE_FIELDS:
+    suffix = next((s for s in SELF_SIZE_FIELDS if name.endswith(s)), '')
+    if not suffix:
         return False
-    # a size that names a buffer beside it is that buffer's, not the struct's
-    stem = name[:-4] if name.endswith('SIZE') else name
+    stem = name[:-len(suffix)]
+    # a size that names a buffer beside it describes that buffer, not the struct
     for other in fields or []:
         if has_pointer(other.type) and (other.name or '').upper() == stem:
             return False
+    # names do not always correspond: EFI_ARP_CONFIG_DATA pairs SwAddressLength with
+    # StationAddress, and reading the length as the struct's own made the driver copy
+    # sizeof(struct) bytes out of an 8 byte buffer. If the struct holds any pointer at all,
+    # the size may well be describing it, so only an exact size word is taken as the
+    # struct's own here
+    if name != suffix and any(has_pointer(o.type) for o in (fields or [])):
+        return False
     return True
 
 
@@ -769,10 +779,15 @@ def generator_struct_args(function: str,
                                       f'({FIRNESS_LIST_ENTRIES} + 1);')
                 else:
                     # the struct came from AllocateZeroPool, so this field is NULL: give it
-                    # something to point at before writing through it. VOID * has no target
-                    # size, so a machine word stands in
-                    field_size = ('sizeof(UINTN)' if 'VOID' in field.type.upper()
-                                  else f'sizeof(*{field_ref})')
+                    # something to point at before writing through it. A raw buffer gets a
+                    # page, because a sibling field states its length and the callee copies
+                    # that many bytes -- EFI_ARP_CONFIG_DATA.StationAddress with an 8 byte
+                    # allocation and SwAddressLength saying more is a read off the end
+                    base_type = remove_ref_symbols(field.type).strip().upper()
+                    if base_type in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+                        field_size = str(FIRNESS_BUFFER_BYTES)
+                    else:
+                        field_size = f'sizeof(*{field_ref})'
                     output.append(f'{field_ref} = ({field.type})AllocateZeroPool({field_size});')
                     output.append(f'if ({field_ref} != NULL) ' + '{')
                     output.append(f'    ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
