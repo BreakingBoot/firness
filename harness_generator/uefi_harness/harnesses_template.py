@@ -205,6 +205,15 @@ def call_function(function: str,
     # sanitizer report from there says something about the harness, not the firmware.
     # AsanSetFuzzingActive gates the escalation to the fuzzer, so bracketing the call with
     # it means only a fault inside the firmware counts as a solution.
+    # let a later call take what an earlier one produced
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        declared = declared_arg_type(argument)
+        if (declared in live_types and 'IN' in argument.arg_dir
+                and has_declared_variable(argument)):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.extend(draw_live(declared, f'{function}_{name}',
+                                    f'{function}_{name}_LiveChoice'))
     output.append("FirnessSanitizer(TRUE);")
     if function_block.return_type == "EFI_STATUS":
         output.append(f"Status = {call_prefix}{function}(")
@@ -238,6 +247,14 @@ def call_function(function: str,
         output.append(tmp)
     output.append(f");")
     output.append("FirnessSanitizer(FALSE);")
+    # publish what this call produced for the rest of the sequence
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        declared = declared_arg_type(argument)
+        if (declared in live_types and 'OUT' in argument.arg_dir
+                and has_declared_variable(argument)):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.extend(register_live(declared, f'{function}_{name}'))
 
     return add_indents(output, indent)
 
@@ -870,6 +887,114 @@ def function_body(function_block: FunctionBlock,
     return add_indents(output, indent)
 
 
+# Threading what one call produces into what a later call consumes.
+#
+# Every Fuzz function used to build all of its arguments from scratch, so a sequence that
+# called Open and then Read discarded the handle Open produced and handed Read a freshly
+# zeroed one. The driver accumulated state but the objects did not flow, which is why so
+# many calls returned early and why median coverage sat far below the best protocols.
+#
+# A type that some function yields as OUT and another takes as IN is worth carrying. Each
+# such type gets a small table; a call registers what it produced, and a later call may
+# draw from it. The fuzzer chooses whether to draw, so both the fresh and the threaded
+# input stay reachable. tsffs restores the snapshot per iteration, so the tables reset
+# with it and state never leaks between iterations.
+FIRNESS_LIVE_SLOTS = 4
+live_types = set()
+
+
+def has_declared_variable(argument) -> bool:
+    """Whether this argument actually gets a variable of its own.
+
+    Several kinds are spelled straight into the call instead: the protocol and image
+    handle, a function pointer, an OPTIONAL argument passed as NULL, and a __GEN_INPUT__
+    whose recorded usage is an expression. Threading a value into one of those names emits
+    an assignment to an identifier that was never declared.
+    """
+    if is_function_pointer(argument.arg_type):
+        return False
+    if argument.variable in ('__HANDLE__', '__PROTOCOL__'):
+        return False
+    if argument.arg_dir == 'OPTIONAL':
+        return False
+    if argument.variable == '__GEN_INPUT__' and argument.usage:
+        return False
+    return 'IN' in argument.arg_dir or argument.arg_dir == 'OUT'
+
+
+def declared_arg_type(argument) -> str:
+    """The type declare_var actually gives this argument's variable.
+
+    It is not the parameter type: a two pointer argument is declared one level shallower
+    and passed with &, so a table typed on the parameter would not be assignable to it.
+    """
+    arg_type = argument.arg_type
+    if 'void' in arg_type.lower():
+        return ''          # declare_var rewrites these to UINTN*, not worth threading
+    if argument.pointer_count == 2:
+        return drop_one_pointer(arg_type).strip()
+    if argument.pointer_count > 2:
+        return arg_type.strip()
+    return arg_type.strip()
+
+
+def threadable_types(functions):
+    """Types produced as OUT by one call and consumed as IN by another."""
+    produced, consumed = set(), set()
+    for block in functions.values():
+        for arguments in block.arguments.values():
+            argument = arguments[0]
+            if not has_pointer(argument.arg_type):
+                continue
+            if not has_declared_variable(argument):
+                continue
+            name = declared_arg_type(argument)
+            if not name:
+                continue
+            if 'OUT' in argument.arg_dir:
+                produced.add(name)
+            if 'IN' in argument.arg_dir:
+                consumed.add(name)
+    return sorted(produced & consumed)
+
+
+def live_table_name(arg_type: str) -> str:
+    return 'FirnessLive_' + re.sub(r'\W', '_', arg_type.strip())
+
+
+def live_tables(threadable) -> List[str]:
+    output = []
+    if not threadable:
+        return output
+    output.append('//')
+    output.append('// Objects produced by one call in a sequence, available to later ones.')
+    output.append('// Reset every iteration, because the fuzzer restores the machine.')
+    output.append('//')
+    for arg_type in threadable:
+        table = live_table_name(arg_type)
+        output.append(f'{arg_type} {table}[{FIRNESS_LIVE_SLOTS}];')
+        output.append(f'UINTN {table}_Count = 0;')
+    output.append('')
+    return output
+
+
+def register_live(arg_type: str, variable: str) -> List[str]:
+    table = live_table_name(arg_type)
+    return [f'if ({table}_Count < {FIRNESS_LIVE_SLOTS} && {variable} != NULL) ' + '{',
+            f'    {table}[{table}_Count++] = {variable};',
+            '}']
+
+
+def draw_live(arg_type: str, variable: str, chooser: str) -> List[str]:
+    table = live_table_name(arg_type)
+    return [f'UINT8 {chooser} = 0;',
+            f'ReadBytes(Input, sizeof({chooser}), (VOID *)&{chooser});',
+            # only draw when something has been produced, and let the fuzzer decide
+            f'if ({table}_Count > 0 && ({chooser} & 1)) ' + '{',
+            f'    {variable} = {table}[{chooser} % {table}_Count];',
+            '}']
+
+
 def harness_generator(services: Dict[str, FunctionBlock], 
                       functions: Dict[str, FunctionBlock], 
                       types: Dict[str, TypeInfo], 
@@ -884,6 +1009,10 @@ def harness_generator(services: Dict[str, FunctionBlock],
 
     output.append("#include \"FirnessHarnesses.h\"")
     output.append("")
+
+    live_types.clear()
+    live_types.update(threadable_types(functions))
+    output.extend(live_tables(sorted(live_types)))
 
     # the Arg_0 of any protocol member, used for the members that declare no parameters
     protocol_arg_0 = None
