@@ -771,8 +771,38 @@ public:
     {
         if(isNonProtocol(CallInfo.Function) || isProtocol(CallInfo.Function))
         {
+            // Which body this call sits in, and where in it. Two calls sharing a body are
+            // the evidence that one feeds the other; the argument usages alone cannot show
+            // it, because names like "Buffer" recur across unrelated functions.
+            CallInfo.EnclosingFunction = CurrentFunction;
+            CallInfo.EnclosingFile = CurrentFile;
+            CallInfo.CallOrder = CallsInCurrentFunction++;
             CallMap.push_back(CallInfo);
         }
+    }
+
+    /*
+        Remember which function body is being walked, so each recorded call can say where
+        it came from and in what order.
+    */
+    bool TraverseFunctionDecl(FunctionDecl *FD) {
+        std::string PreviousFunction = CurrentFunction;
+        std::string PreviousFile = CurrentFile;
+        unsigned PreviousCount = CallsInCurrentFunction;
+        if (FD != nullptr) {
+            CurrentFunction = FD->getNameAsString();
+            CallsInCurrentFunction = 0;
+            SourceManager &SM = Context->getSourceManager();
+            SourceLocation Loc = FD->getLocation();
+            if (Loc.isValid()) {
+                CurrentFile = SM.getFilename(SM.getSpellingLoc(Loc)).str();
+            }
+        }
+        bool Result = RecursiveASTVisitor<CallSiteAnalysis>::TraverseFunctionDecl(FD);
+        CurrentFunction = PreviousFunction;
+        CurrentFile = PreviousFile;
+        CallsInCurrentFunction = PreviousCount;
+        return Result;
     }
 
     /*
@@ -806,6 +836,10 @@ public:
 
 private:
     ASTContext *Context;
+    // the body currently being walked, for the call-site context above
+    std::string CurrentFunction;
+    std::string CurrentFile;
+    unsigned CallsInCurrentFunction = 0;
     VarMap VarDeclMap;
     Call CallInfo;
 };

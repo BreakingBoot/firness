@@ -107,6 +107,13 @@ struct Call {
     std::string return_type;
     std::map<std::string, Argument> Arguments;
     std::set<std::string> includes;
+    // Where this call sits. Two calls in the same body, in order, are what shows that one
+    // produces what the other consumes -- the argument usages alone cannot say it, because
+    // a name like "Buffer" or "Attributes" recurs in unrelated functions and matching on it
+    // conflates them. The harness uses this to order a sequence the way the firmware does.
+    std::string EnclosingFunction;
+    std::string EnclosingFile;
+    unsigned CallOrder = 0;
 
     Call() = default;
 
@@ -114,6 +121,9 @@ struct Call {
     void clear() {
         Function.clear();
         Service.clear();
+        EnclosingFunction.clear();
+        EnclosingFile.clear();
+        CallOrder = 0;
         for (auto& pair : Arguments) {
             pair.second.clear();
         }

@@ -216,6 +216,9 @@ namespace FileOps {
             nlohmann::json callObject;
             callObject["Function"] = call.Function;
             callObject["Service"] = call.Service;
+            callObject["EnclosingFunction"] = call.EnclosingFunction;
+            callObject["EnclosingFile"] = call.EnclosingFile;
+            callObject["CallOrder"] = call.CallOrder;
             callObject["Include"] = call.includes;
             callObject["ReturnType"] = call.return_type;
 
@@ -292,6 +295,9 @@ namespace FileOps {
             nlohmann::json callObject;
             callObject["Function"] = call.Function;
             callObject["Service"] = call.Service;
+            callObject["EnclosingFunction"] = call.EnclosingFunction;
+            callObject["EnclosingFile"] = call.EnclosingFile;
+            callObject["CallOrder"] = call.CallOrder;
             callObject["Include"] = call.includes;
             callObject["ReturnType"] = call.return_type;
 
