@@ -77,12 +77,16 @@ def end_device_path(variable: str) -> List[str]:
             '}']
 
 
-def set_undefined_constants(arg_type: str) -> str:
+def set_undefined_constants(arg_type: str, array_like: bool = False) -> str:
     if has_pointer(arg_type):
         base = remove_ref_symbols(arg_type)
         if is_string_pointer(arg_type):
             # room for a string, not for one character
             return f'({arg_type})AllocateZeroPool({FIRNESS_STRING_CHARS} * sizeof({base}))'
+        if array_like:
+            # the call carries dimensions, so the callee walks this pointer as an array.
+            # Over-allocating can never produce a false overflow; under-allocating always can
+            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
         # A raw buffer gets a page whichever direction it is. declare_var only page-sized
         # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
         # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
@@ -289,7 +293,8 @@ def declare_var(function: str,
                 indent: bool,
                 fuzzable: bool,
                 isStruct: bool,
-                random) -> List[str]:
+                random,
+                array_like: bool = False) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
         arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
@@ -328,7 +333,8 @@ def declare_var(function: str,
         # a page rather than one element
         base = remove_ref_symbols(arg_type)
         raw_buffer = ('void' in arguments[0].arg_type.lower()
-                      or base.strip().upper() in ('UINT8', 'UINTN', 'CHAR8'))
+                      or base.strip().upper() in ('UINT8', 'UINTN', 'CHAR8')
+                      or array_like)
         allocation = (str(FIRNESS_BUFFER_BYTES) if raw_buffer else f'sizeof({base})')
         output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool({allocation});')
     elif arguments[0].pointer_count == 0:
@@ -338,7 +344,7 @@ def declare_var(function: str,
         # EFI_80211_MAC_ADDRESS. {0} initialises a scalar just as well as an aggregate.
         output.append(f'{arg_type} {function}_{arg_key} = {{0}};')
     else:
-        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type)};")
+        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type, array_like)};")
         # if fuzzable :
         #     # output.append(f'{arg_type} {function}_{arg_key} = NULL;')
             
@@ -353,6 +359,42 @@ def declare_var(function: str,
     return add_indents(output, indent)
 
 SIZE_NAME_SUFFIXES = ('SIZE', 'LENGTH', 'LEN', 'COUNT', 'BYTES', 'NUMBEROFBYTES')
+
+# Width/Height/Delta size a buffer just as surely as Size/Length do, but they were not in
+# SIZE_NAME_SUFFIXES, so buffer_for_size never paired them and the pointer they describe was
+# allocated as one element. EFI_GRAPHICS_OUTPUT_PROTOCOL.Blt got a BltBuffer of
+# sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL) -- four bytes -- and was then told to move
+# Width * Height pixels through it, which QemuVideoDxe duly read, 32 bytes at a stride,
+# straight into the redzones. That is a heap-buffer-overflow in the harness, not the driver,
+# and it was the only genuine asan finding in matrix v7: 3 sites across 5 protocols.
+DIMENSION_NAME_SUFFIXES = ('WIDTH', 'HEIGHT', 'DELTA', 'ROWS', 'COLUMNS', 'PIXELS')
+# a dimension is squared (or cubed, with Delta) before it indexes the buffer, so it cannot be
+# bounded by the buffer size the way a byte count is: 16 * 16 * 16 == FIRNESS_BUFFER_BYTES
+FIRNESS_DIMENSION_MAX = 16
+
+
+# Width and Height bound the extent, but the coordinates offset where that extent starts,
+# and for the buffer side of a Blt they index the harness's allocation just as directly. A
+# bounded Width with an unbounded DestinationY still walks off the end.
+COORDINATE_PREFIXES = ('SOURCE', 'DESTINATION', 'DEST')
+
+
+def is_dimension_name(name: str) -> bool:
+    if not name:
+        return False
+    upper = name.strip().upper()
+    if upper.endswith(DIMENSION_NAME_SUFFIXES):
+        return True
+    # only SourceX/DestinationY and friends, never anything that merely ends in x -- Index
+    # would otherwise qualify
+    return upper.startswith(COORDINATE_PREFIXES) and upper.endswith(('X', 'Y'))
+
+
+def has_dimension_arg(all_args) -> bool:
+    """Whether this call sizes a buffer with dimensions rather than a byte count."""
+    if not all_args:
+        return False
+    return any(is_dimension_name(args[0].param_name) for args in all_args.values())
 
 
 # A field that describes the extent of its own struct. VARIABLE_POLICY_ENTRY.Size is the
@@ -471,7 +513,12 @@ def fuzzable_args(function: str,
                         if bare in all_args:
                             own_name = all_args[bare][0].param_name
                     paired = buffer_for_size(own_name, all_args)
-                    if paired:
+                    if is_dimension_name(own_name):
+                        # bounding a dimension by the buffer size would still allow
+                        # Width * Height to run far past it, so cap the dimension itself
+                        output.append(f'{function}_{arg} = {function}_{arg} % '
+                                      f'({FIRNESS_DIMENSION_MAX} + 1);')
+                    elif paired:
                         # bound it by the allocation of the buffer it names, so the size the
                         # callee is given actually describes the memory it is handed. A
                         # string buffer is FIRNESS_STRING_CHARS elements, a raw one a page
@@ -519,7 +566,10 @@ def fuzzable_args(function: str,
                     # only a numeric pointee can be bounded: *p % N does not compile when p
                     # points at EFI_GUID or EFI_DEVICE_PATH_PROTOCOL
                     pointee = remove_ref_symbols(arg_type.arg_type).strip().upper()
-                    if (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
+                    if is_dimension_name(own_name) and pointee in INTEGER_ARG_TYPES:
+                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
+                                      f'({FIRNESS_DIMENSION_MAX} + 1);')
+                    elif (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
                         output.append(f'        *{function}_{arg} = *{function}_{arg} % '
                                       f'({FIRNESS_BUFFER_BYTES} + 1);')
                     elif is_device_path(arg_type.arg_type):
@@ -576,7 +626,8 @@ def generate_inputs(function_block: FunctionBlock,
             is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
-            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct, random))
+            tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct, random,
+                                   has_dimension_arg(function_block.arguments)))
 
     if len(tmp) > 0:
         output.append("/*")
