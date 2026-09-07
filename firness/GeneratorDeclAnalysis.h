@@ -79,6 +79,31 @@ public:
         return "UNKNOWN";
     }
 
+    // EDK2 marks a parameter the caller may omit with OPTIONAL, after the name:
+    //   IN CONST EFI_GUID *Guid OPTIONAL
+    // It expands to nothing, so it is gone by the time the AST is built -- but
+    // DetermineDirection already works on the declaration's source text for exactly that
+    // reason, and OPTIONAL sits in the same string. Without it the harness cannot tell a
+    // parameter that accepts NULL from one that does not, so it passes NULL to both and
+    // the callee faults on the ones that never allowed it. That is most of what is left
+    // in the crash tables after harness-origin and boot-repeat reports are removed.
+    bool DetermineOptional(int Param, std::string FuncText) {
+        std::vector<std::string> parameters;
+        size_t pos = 0;
+        size_t found;
+        while ((found = FuncText.find(",", pos)) != std::string::npos) {
+            parameters.push_back(FuncText.substr(pos, found - pos));
+            pos = found + 1;
+        }
+        parameters.push_back(FuncText.substr(pos));
+
+        if (Param < parameters.size()) {
+            std::regex optionalRegex(R"(\bOPTIONAL\b)");
+            return std::regex_search(parameters[Param], optionalRegex);
+        }
+        return false;
+    }
+
     bool isProtocol(std::string function_name) {
         if(FunctionInfo.Parameters.empty())
         {
@@ -188,6 +213,7 @@ public:
                 // capture the other qualifiers for the argument
                 // Need to do it via the lexer
                 arg.arg_dir = DetermineDirection(i, ExprText);
+                arg.is_optional = DetermineOptional(i, ExprText);
                 FunctionInfo.Parameters[arg_ID+std::to_string(i)] = arg;
             }
             //return type

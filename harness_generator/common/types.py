@@ -151,8 +151,12 @@ class Argument:
     # tell a size from the buffer it sizes: "BufferSize" belongs to "Buffer". It is a real
     # field rather than an attribute set later because collect_all_function_arguments
     # rebuilds every Argument, and anything not in __init__/to_dict is lost there.
-    def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str, potential_outputs: List[str] = [], param_name: str = ""):
+    # is_optional is EDK2's OPTIONAL marker, recovered by the analyser from the
+    # declaration text. It says whether the callee accepts NULL for this parameter, which
+    # is what decides whether the harness is allowed to pass one.
+    def __init__(self, arg_dir: str, arg_type: str, assignment: str, data_type: str, usage: str, variable: str, potential_outputs: List[str] = [], param_name: str = "", is_optional: bool = False):
         self.param_name = param_name
+        self.is_optional = bool(is_optional)
         self.arg_dir = arg_dir
         self.arg_type = arg_type.replace('const ', '')
         self.assignment = assignment
@@ -172,7 +176,8 @@ class Argument:
             'Pointer Count': self.pointer_count,
             'Potential Values': self.potential_outputs,
             'Variable': self.variable,
-            'Param Name': self.param_name
+            'Param Name': self.param_name,
+            'Is Optional': self.is_optional
         }
 
 class SmiInfo:

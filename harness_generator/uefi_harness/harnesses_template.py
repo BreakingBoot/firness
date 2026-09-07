@@ -379,6 +379,24 @@ FIRNESS_DIMENSION_MAX = 16
 COORDINATE_PREFIXES = ('SOURCE', 'DESTINATION', 'DEST')
 
 
+def optional_info_available() -> bool:
+    """Whether the analysis this run was given records EDK2's OPTIONAL marker."""
+    try:
+        from data_analysis import analyze
+        return bool(analyze.OPTIONAL_INFO_AVAILABLE)
+    except Exception:
+        return False
+
+
+def is_optional_arg(arg, all_args, prefix: str = "") -> bool:
+    if not all_args:
+        return False
+    entry = all_args.get(arg)
+    if entry is None and prefix and arg.startswith(prefix):
+        entry = all_args.get(arg[len(prefix) + 1:])
+    return bool(entry and getattr(entry[0], 'is_optional', False))
+
+
 def is_dimension_name(name: str) -> bool:
     if not name:
         return False
@@ -538,9 +556,19 @@ def fuzzable_args(function: str,
             else:
                 # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
                 # output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *){function}_{arg});')
+                # case 1 frees the buffer and passes NULL. UEFI marks the parameters
+                # that accept NULL with OPTIONAL, and passing one to a parameter without
+                # it is a caller contract violation -- the callee is entitled to fault,
+                # and the resulting NullPointerUse says nothing about the firmware. Only
+                # offer the NULL arm where the declaration allows it. Analyses made
+                # before the OPTIONAL pass carry no such information, and there the old
+                # behaviour is kept rather than dropping NULL coverage everywhere.
+                may_be_null = (not optional_info_available()
+                               or is_optional_arg(arg, all_args, prefix))
+                arms = 2 if may_be_null else 1
                 output.append(f'UINT8 {function}_{arg}_choice = 0;')
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
-                output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
+                output.append(f'switch({function}_{arg}_choice % {arms})' + ' {')
                 output.append(f'    case 0:')
                 # everything this case emits dereferences the pointer, and the pointer can
                 # be NULL: AllocateZeroPool can fail, and case 1 below deliberately frees
@@ -590,6 +618,9 @@ def fuzzable_args(function: str,
                     output.extend('    ' + line for line in case0_body)
                     output.append('        }')
                 output.append(f'        break;')
+                if not may_be_null:
+                    output.append('}')
+                    break
                 output.append(f'    case 1:')
                 output.append('    {')
                 output.append(f'        gBS->FreePool({function}_{arg});')

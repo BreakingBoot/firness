@@ -50,11 +50,14 @@ struct Argument {
     std::string usage;
     std::string arg_dir;
     std::string arg_type;
+    // EDK2's OPTIONAL marker: this parameter accepts NULL, so the harness may pass it
+    bool is_optional = false;
 
     Argument() = default;
 
     // Function to clear the Argument object
     void clear() {
+        is_optional = false;
         data_type.clear();
         variable.clear();
         assignment.clear();

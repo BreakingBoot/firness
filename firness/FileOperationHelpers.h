@@ -86,6 +86,7 @@ namespace FileOps {
                 nlohmann::json paramJson;
                 const Argument& arg = pair.second;
                 paramJson["arg_dir"] = arg.arg_dir;
+                paramJson["is_optional"] = arg.is_optional;
                 paramJson["arg_type"] = arg.arg_type;
                 paramJson["variable"] = arg.variable;
                 paramJson["data_type"] = arg.data_type;
@@ -150,6 +151,7 @@ namespace FileOps {
                 nlohmann::json paramJson;
                 const Argument& arg = pair.second;
                 paramJson["arg_dir"] = arg.arg_dir;
+                paramJson["is_optional"] = arg.is_optional;
                 paramJson["arg_type"] = arg.arg_type;
                 paramJson["variable"] = arg.variable;
                 paramJson["data_type"] = arg.data_type;
@@ -230,6 +232,7 @@ namespace FileOps {
                 argObject["variable"] = arg.variable;
                 argObject["assignment"] = arg.assignment;
                 argObject["arg_dir"] = arg.arg_dir;
+                argObject["is_optional"] = arg.is_optional;
                 argObject["arg_type"] = arg.arg_type;
                 argObject["usage"] = arg.usage;
                 argObject["potential_outputs"] = arg.potential_outputs;
@@ -309,6 +312,7 @@ namespace FileOps {
                 argObject["variable"] = arg.variable;
                 argObject["assignment"] = arg.assignment;
                 argObject["arg_dir"] = arg.arg_dir;
+                argObject["is_optional"] = arg.is_optional;
                 argObject["arg_type"] = arg.arg_type;
                 argObject["usage"] = arg.usage;
 

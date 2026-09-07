@@ -19,6 +19,20 @@ total_generators = set()
 
 # Doesn't take into account if multiple function definitions are found with the same
 # name but different number of params
+# Analyses produced before the OPTIONAL pass have no is_optional key at all. Everything
+# would then default to "not optional", and the harness would silently stop passing NULL
+# anywhere rather than passing it only where it is allowed. Notice the difference and keep
+# the old behaviour for old caches instead of quietly losing coverage.
+OPTIONAL_INFO_AVAILABLE = False
+
+
+def note_optional_info(raw_argument):
+    global OPTIONAL_INFO_AVAILABLE
+    if isinstance(raw_argument, dict) and 'is_optional' in raw_argument:
+        OPTIONAL_INFO_AVAILABLE = True
+    return raw_argument
+
+
 def load_generator_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
     try:
         with open(json_file, 'r') as file:
@@ -32,7 +46,7 @@ def load_generator_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
             # generator from the run
             try:
                 arguments = {
-                    arg_key: [Argument(**raw_argument)] 
+                    arg_key: [Argument(**note_optional_info(raw_argument))] 
                     # "Parameters": null reaches get() as None, past the default
                     for arg_key, raw_argument in (raw_function.get('Parameters') or {}).items()
                 }
@@ -73,7 +87,7 @@ def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
             # per entry, not around the loop, for the same reason as the generator loader
             try:
                 arguments = {
-                    arg_key: [Argument(**raw_argument)] 
+                    arg_key: [Argument(**note_optional_info(raw_argument))] 
                     for arg_key, raw_argument in (raw_function.get('Parameters') or {}).items()
                 }
                 function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
@@ -740,7 +754,7 @@ def load_data(json_file: str,
         # after that point
         try:
             arguments = {
-                arg_key: [Argument(**raw_argument)]
+                arg_key: [Argument(**note_optional_info(raw_argument))]
                 # a recorded "Arguments": null reaches get() as None, which the default
                 # argument does not cover
                 for arg_key, raw_argument in (raw_function_block.get('Arguments') or {}).items()
@@ -814,7 +828,7 @@ def load_generators(json_file: str,
     function_dict = defaultdict(list)
     for raw_function_block in raw_data:
         arguments = {
-            arg_key: [Argument(**raw_argument)]
+            arg_key: [Argument(**note_optional_info(raw_argument))]
             # a recorded "Arguments": null reaches get() as None, which the default does
             # not cover, and there is no handler here to absorb it
             for arg_key, raw_argument in (raw_function_block.get('Arguments') or {}).items()
@@ -922,7 +936,8 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                         if is_fuzzable(remove_ref_symbols(argument[0].arg_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type,
                                                   argument[0].usage, "__FUZZABLE_ARG_STRUCT__", argument[0].potential_outputs,
-                                                  param_name=argument[0].param_name)
+                                                  param_name=argument[0].param_name,
+                                                  is_optional=argument[0].is_optional)
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
@@ -932,7 +947,8 @@ def variable_fuzzable(input_data: Dict[str, List[FunctionBlock]],
                         if is_fuzzable(remove_ref_symbols(argument[0].data_type), aliases, types, 0):
                             struct_arg = Argument(argument[0].arg_dir, argument[0].arg_type, "", argument[0].data_type,
                                                   argument[0].usage, "__FUZZABLE_DATA_STRUCT__", argument[0].potential_outputs,
-                                                  param_name=argument[0].param_name)
+                                                  param_name=argument[0].param_name,
+                                                  is_optional=argument[0].is_optional)
                             pre_processed_data[function].arguments.setdefault(
                                 arg_key, []).append(struct_arg)
                             current_args_dict[function].append(arg_key)
@@ -1041,7 +1057,8 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             if not contains_usage(argument_value, usage_seen[function][arg_key], macros, aliases):
                                 new_arg = Argument(argument[0].arg_dir, argument[0].arg_type, argument[0].assignment,
                                                    argument[0].data_type, argument_value, argument[0].variable, [],
-                                                   param_name=argument[0].param_name)
+                                                   param_name=argument[0].param_name,
+                                                   is_optional=argument[0].is_optional)
                                 pre_processed_data[function].arguments.setdefault(
                                     arg_key, []).append(new_arg)
                                 if argument[0].assignment in macros.keys():
