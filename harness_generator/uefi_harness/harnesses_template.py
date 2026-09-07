@@ -83,6 +83,12 @@ def set_undefined_constants(arg_type: str) -> str:
         if is_string_pointer(arg_type):
             # room for a string, not for one character
             return f'({arg_type})AllocateZeroPool({FIRNESS_STRING_CHARS} * sizeof({base}))'
+        # A raw buffer gets a page whichever direction it is. declare_var only page-sized
+        # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
+        # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
+        # read 4096 bytes out of it. EFI_BLOCK_IO_PROTOCOL.WriteBlocks was one of ~79.
+        if base.strip().upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
         return "("+arg_type+")AllocateZeroPool(sizeof(" + base + "))"        
     elif "bool" in arg_type.lower():
         return "FALSE"
@@ -384,19 +390,23 @@ FIRNESS_LIST_ENTRIES = 4
 
 def count_field_for(list_name: str, fields) -> str:
     """The field that counts the entries of a list field, e.g. OptionList -> OptionCount."""
-    stem = (list_name or '')
+    full = (list_name or '')
+    stem = full
     for tail in ('List', 'Array', 'Buffer', 'Table'):
         if stem.endswith(tail) and len(stem) > len(tail):
             stem = stem[:-len(tail)]
             break
-    upper = stem.upper()
+    # both spellings: EFI_DNS4_CONFIG_DATA counts DnsServerList with DnsServerListCount,
+    # keeping the whole name, while others drop the tail and say DnsServerCount
+    candidates = {full.upper(), stem.upper()}
     for other in fields or []:
         name = (other.name or '').upper()
         if has_pointer(other.type):
             continue
-        for suffix in SIZE_NAME_SUFFIXES:
-            if name == upper + suffix:
-                return other.name
+        for base in candidates:
+            for suffix in SIZE_NAME_SUFFIXES:
+                if name == base + suffix:
+                    return other.name
     return ''
 
 
@@ -493,6 +503,30 @@ def fuzzable_args(function: str,
                     output.append(f'        {function}_{arg}[{FIRNESS_STRING_CHARS - 1}] = 0;')
                 else:
                     output.append(f'        ReadBytes(Input, sizeof(*{function}_{arg}), (VOID *){function}_{arg});')
+                    # A size handed over by pointer needs the same bound as one passed by
+                    # value. UEFI spells most of these as IN OUT UINTN *BufferSize with an
+                    # OUT VOID *Buffer beside it, so this was the common form and it was
+                    # the unbounded one: eight fuzzed bytes made *BufferSize 2^64-1 over a
+                    # 4096 byte buffer.
+                    own_name = ''
+                    if all_args and arg in all_args:
+                        own_name = all_args[arg][0].param_name
+                    elif all_args:
+                        bare = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
+                        if bare in all_args:
+                            own_name = all_args[bare][0].param_name
+                    paired = buffer_for_size(own_name, all_args)
+                    # only a numeric pointee can be bounded: *p % N does not compile when p
+                    # points at EFI_GUID or EFI_DEVICE_PATH_PROTOCOL
+                    pointee = remove_ref_symbols(arg_type.arg_type).strip().upper()
+                    if (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
+                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
+                                      f'({FIRNESS_BUFFER_BYTES} + 1);')
+                    elif is_device_path(arg_type.arg_type):
+                        # the fill above overwrote the End node declare_var wrote, so the
+                        # path the callee walks has Length 0 again
+                        output.extend('        ' + line
+                                      for line in end_device_path(f'{function}_{arg}'))
                 output.append(f'        break;')
                 output.append(f'    case 1:')
                 output.append('    {')
@@ -801,14 +835,28 @@ def generator_struct_args(function: str,
                     # that many bytes -- EFI_ARP_CONFIG_DATA.StationAddress with an 8 byte
                     # allocation and SwAddressLength saying more is a read off the end
                     base_type = remove_ref_symbols(field.type).strip().upper()
-                    if base_type in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+                    counter = count_field_for(field.name, struct_fields)
+                    if counter and base_type not in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+                        # a plain array counted by a sibling: EFI_DNS4_CONFIG_DATA pairs
+                        # DnsServerList with DnsServerListCount, and one element against an
+                        # unbounded count is the same read off the end, one indirection
+                        # shallower than the pointer-list case above
+                        field_size = f'({FIRNESS_LIST_ENTRIES} * sizeof(*{field_ref}))'
+                        counter_ref = f'{function}_{arg_key}{accessor}{counter}'
+                        pending_count_bound = (f'{counter_ref} = {counter_ref} % '
+                                               f'({FIRNESS_LIST_ENTRIES} + 1);')
+                    elif base_type in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
                         field_size = str(FIRNESS_BUFFER_BYTES)
+                        pending_count_bound = ''
                     else:
                         field_size = f'sizeof(*{field_ref})'
+                        pending_count_bound = ''
                     output.append(f'{field_ref} = ({field.type})AllocateZeroPool({field_size});')
                     output.append(f'if ({field_ref} != NULL) ' + '{')
                     output.append(f'    ReadBytes(Input, {field_size}, (VOID *)({field_ref}));')
                     output.append('}')
+                    if pending_count_bound:
+                        output.append(pending_count_bound)
             elif not nameable or not scalar:
                 # an array or an anonymous union: it has a size and an address, so it is
                 # filled where it sits
