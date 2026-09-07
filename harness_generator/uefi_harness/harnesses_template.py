@@ -542,6 +542,12 @@ def fuzzable_args(function: str,
                 output.append(f'ReadBytes(Input, sizeof({function}_{arg}_choice), (VOID *)&{function}_{arg}_choice);')
                 output.append(f'switch({function}_{arg}_choice % 2)' + ' {')
                 output.append(f'    case 0:')
+                # everything this case emits dereferences the pointer, and the pointer can
+                # be NULL: AllocateZeroPool can fail, and case 1 below deliberately frees
+                # and nulls it, so a later step in the same iteration finds it gone. Six
+                # NullPointerUse sites in matrix v7 were the generated harness faulting on
+                # its own argument this way, not the firmware
+                case0_start = len(output)
                 if is_string_pointer(arg_type.arg_type):
                     # fill all but the last character and leave that one zero, so the
                     # string the callee receives is terminated inside its own allocation
@@ -577,6 +583,12 @@ def fuzzable_args(function: str,
                         # path the callee walks has Length 0 again
                         output.extend('        ' + line
                                       for line in end_device_path(f'{function}_{arg}'))
+                case0_body = output[case0_start:]
+                del output[case0_start:]
+                if case0_body:
+                    output.append(f'        if ({function}_{arg} != NULL) ' + '{')
+                    output.extend('    ' + line for line in case0_body)
+                    output.append('        }')
                 output.append(f'        break;')
                 output.append(f'    case 1:')
                 output.append('    {')
