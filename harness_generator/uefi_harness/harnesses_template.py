@@ -234,6 +234,32 @@ def call_function(function: str,
             output.append(f'VOID *{function}_{name} = '
                           f'AllocateZeroPool({FIRNESS_BUFFER_BYTES});')
 
+    # a handle the callee writes needs storage that is not the image handle. it starts
+    # NULL because these are iterators: GetNextRootBridge reads the slot to decide where
+    # to resume, and answers the first bridge only when it is given nothing. seeded with
+    # the image handle it looks for a bridge that was never in the list and returns
+    # NOT_FOUND every time, so nothing is ever produced for the rest of the sequence
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        if needs_handle_slot(argument):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            slot = handle_slot_name(function, name)
+            output.append(f'{EFI_HANDLE_TYPE} {slot} = NULL;')
+            if EFI_HANDLE_TYPE in live_types and 'IN' in argument.arg_dir:
+                # resuming from a handle an earlier call produced walks the list
+                output.extend(draw_live(EFI_HANDLE_TYPE, slot, f'{slot}_LiveChoice'))
+
+    # an IN handle can be one an earlier call produced instead of the image handle, which
+    # is what gets a sequence past the handle check at the top of most members
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        if (EFI_HANDLE_TYPE in live_types and is_efi_handle_arg(argument)
+                and 'IN' in argument.arg_dir and argument.pointer_count == 0):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            slot = handle_slot_name(function, name)
+            output.append(f'{EFI_HANDLE_TYPE} {slot} = ({EFI_HANDLE_TYPE})ImageHandle;')
+            output.extend(draw_live(EFI_HANDLE_TYPE, slot, f'{slot}_LiveChoice'))
+
     # let a later call take what an earlier one produced
     for arg_key, arguments in function_block.arguments.items():
         argument = arguments[0]
@@ -256,7 +282,12 @@ def call_function(function: str,
         # "IN" in arg_dir, not equality: the declaration loops use the substring test, so
         # an IN_OUT handle is skipped there. testing equality here let it fall through to
         # a variable name that nothing had declared
-        if "IN" in arguments[0].arg_dir and arguments[0].variable == "__HANDLE__":
+        if needs_handle_slot(arguments[0]):
+            tmp = f"    &{handle_slot_name(function, arg_key)},"
+        elif (EFI_HANDLE_TYPE in live_types and is_efi_handle_arg(arguments[0])
+                and "IN" in arguments[0].arg_dir and arguments[0].pointer_count == 0):
+            tmp = f"    {handle_slot_name(function, arg_key)},"
+        elif "IN" in arguments[0].arg_dir and arguments[0].variable == "__HANDLE__":
             tmp = f"    ImageHandle,"
         elif "IN" in arguments[0].arg_dir and arguments[0].variable == "__PROTOCOL__":
             tmp = f"    ProtocolVariable,"
@@ -287,6 +318,14 @@ def call_function(function: str,
                 and has_declared_variable(argument)):
             name = f'{prefix}_{arg_key}' if prefix else arg_key
             output.extend(register_live(declared, f'{function}_{name}'))
+        produced_handle = produced_handle_type(argument)
+        if produced_handle in live_types and produced_handle:
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.extend(register_live(produced_handle, f'{function}_{name}', deref=True))
+        if EFI_HANDLE_TYPE in live_types and needs_handle_slot(argument):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.extend(register_live(EFI_HANDLE_TYPE,
+                                        handle_slot_name(function, name)))
 
     return add_indents(output, indent)
 
@@ -1102,6 +1141,78 @@ def declared_arg_type(argument) -> str:
     return arg_type.strip()
 
 
+EFI_HANDLE_TYPE = 'EFI_HANDLE'
+
+
+def is_efi_handle_arg(argument) -> bool:
+    """A __HANDLE__ argument, which analyze.py stamps on anything EFI_HANDLE shaped."""
+    return (argument.variable == '__HANDLE__'
+            and EFI_HANDLE_TYPE in argument.arg_type)
+
+
+def needs_handle_slot(argument) -> bool:
+    """Whether this __HANDLE__ argument must be given a slot of its own.
+
+    FirnessMain passes the image handle by value into a parameter declared EFI_HANDLE *,
+    so inside a harness the name ImageHandle holds a handle wearing a pointer's type.
+    Handing that to an IN parameter works out, but handing it to an OUT one lets the
+    callee write through it: GetNextRootBridge(IN_OUT EFI_HANDLE *) stores the root bridge
+    handle over the first bytes of the image handle's own object. The fault that follows
+    belongs to the harness, not the firmware.
+    """
+    return (is_efi_handle_arg(argument) and 'OUT' in argument.arg_dir
+            and argument.pointer_count >= 1)
+
+
+def handle_slot_name(function: str, name: str) -> str:
+    return f'{function}_{name}_Handle'
+
+
+def is_handle_typedef(arg_type: str) -> bool:
+    """Whether this spelling is an opaque handle: a typedef to a pointer, written bare.
+
+    EFI_HII_HANDLE is "void *" behind the typedef, so it carries an object exactly the way
+    an explicit pointer does, but it has no star to see. The alias chain is what separates
+    it from the scalar handles: TPM_HANDLE resolves to UINT32 and SMBIOS_HANDLE to UINT16,
+    and those are values, not objects worth threading.
+    """
+    name = remove_ref_symbols(arg_type).strip()
+    if '*' in arg_type or not name:
+        return False
+    for _ in range(8):                     # bounded: aliases.json has chains, not cycles
+        resolved = aliases_map.get(name)
+        if resolved is None:
+            return False
+        if '*' in resolved:
+            return True
+        name = remove_ref_symbols(resolved).strip()
+    return False
+
+
+def produced_handle_type(argument) -> str:
+    """The handle an OUT argument fills in, for a caller that passes T * to receive a T.
+
+    NewPackageList takes OUT EFI_HII_HANDLE *, and declare_var gives it a one element
+    buffer; the object the rest of the sequence wants is the EFI_HII_HANDLE inside it.
+    """
+    if 'OUT' not in argument.arg_dir or argument.pointer_count != 1:
+        return ''
+    if not has_declared_variable(argument):
+        return ''
+    base = drop_one_pointer(argument.arg_type).strip()
+    return base if is_handle_typedef(base) else ''
+
+
+def consumed_handle_type(argument) -> str:
+    """The handle an IN argument takes by value."""
+    if 'IN' not in argument.arg_dir or argument.pointer_count != 0:
+        return ''
+    if not has_declared_variable(argument):
+        return ''
+    base = argument.arg_type.strip()
+    return base if is_handle_typedef(base) else ''
+
+
 def threadable_types(functions):
     """Types produced as OUT by one call and consumed as IN by another."""
     produced, consumed = set(), set()
@@ -1119,6 +1230,27 @@ def threadable_types(functions):
                 produced.add(name)
             if 'IN' in argument.arg_dir:
                 consumed.add(name)
+    # handles cross the seam between protocols: HiiDatabase.NewPackageList makes the
+    # EFI_HII_HANDLE that HiiString.NewString and HiiFont.StringIdToImage both need, and
+    # without it every one of those consumers is called on the {0} it was declared with
+    for block in functions.values():
+        for arguments in block.arguments.values():
+            argument = arguments[0]
+            produced_handle = produced_handle_type(argument)
+            if produced_handle:
+                produced.add(produced_handle)
+            consumed_handle = consumed_handle_type(argument)
+            if consumed_handle:
+                consumed.add(consumed_handle)
+            # EFI_HANDLE never reaches the loops above, because analyze.py replaces the
+            # variable with __HANDLE__ before the generator sees it. The handle a root
+            # bridge or package list lookup hands back is the one thing that makes the
+            # rest of those protocols reachable, so read the flow off the direction
+            if needs_handle_slot(argument):
+                produced.add(EFI_HANDLE_TYPE)
+            if (is_efi_handle_arg(argument) and 'IN' in argument.arg_dir
+                    and argument.pointer_count == 0):
+                consumed.add(EFI_HANDLE_TYPE)
     return sorted(produced & consumed)
 
 
@@ -1142,10 +1274,14 @@ def live_tables(threadable) -> List[str]:
     return output
 
 
-def register_live(arg_type: str, variable: str) -> List[str]:
+def register_live(arg_type: str, variable: str, deref: bool = False) -> List[str]:
     table = live_table_name(arg_type)
-    return [f'if ({table}_Count < {FIRNESS_LIVE_SLOTS} && {variable} != NULL) ' + '{',
-            f'    {table}[{table}_Count++] = {variable};',
+    # a handle arrives through a one element out buffer, so the buffer has to be checked
+    # before the handle inside it can be
+    guard = f'{variable} != NULL && *{variable} != NULL' if deref else f'{variable} != NULL'
+    value = f'*{variable}' if deref else variable
+    return [f'if ({table}_Count < {FIRNESS_LIVE_SLOTS} && {guard}) ' + '{',
+            f'    {table}[{table}_Count++] = {value};',
             '}']
 
 
