@@ -308,6 +308,15 @@ def guid_args(function:str,
 
     return add_indents(output, indent)
 
+def drop_one_pointer(arg_type: str) -> str:
+    # the recorded type is spelled "TYPE * *" as often as "TYPE **", so a literal
+    # replace('**', '*') leaves both stars in place
+    base = arg_type.rstrip()
+    if base.endswith('*'):
+        base = base[:-1].rstrip()
+    return base
+
+
 def has_pointer(arg_type: str) -> bool:
     return arg_type.count('*') > 0
 
@@ -371,6 +380,12 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append(f'                &gEdkiiPiSmmCommunicationRegionTableGuid,')
         output.append(f'                (VOID **)&PiSmmCommunicationRegionTable')
         output.append(f'            );')
+        # the status was dropped here and the table only ASSERTed on. ASSERT compiles to
+        # nothing in a RELEASE build, so a firmware without the table dereferenced NULL
+        # and every iteration died in the harness rather than in a handler
+        output.append('    if (EFI_ERROR(Status) || PiSmmCommunicationRegionTable == NULL) {')
+        output.append('        return EFI_NOT_FOUND;')
+        output.append('    }')
         output.append("")
         output.append(f'    Status = gBS->LocateProtocol(')
         output.append(f'                    &gEfiSmmCommunicationProtocolGuid,')
@@ -381,7 +396,6 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append(f'        Print(L"Failed to handle SMM Communication Protocol");')
         output.append(f'        return Status;')
         output.append('    }')
-        output.append('    ASSERT (PiSmmCommunicationRegionTable != NULL);')
         output.append('    Entry = (EFI_MEMORY_DESCRIPTOR *)(PiSmmCommunicationRegionTable + 1);')
         output.append('    Size  = 0;')
         output.append('    for (Index = 0; Index < PiSmmCommunicationRegionTable->NumberOfEntries; Index++) {')
@@ -395,20 +409,51 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append(f'        Entry = (EFI_MEMORY_DESCRIPTOR *)((UINT8 *)Entry + PiSmmCommunicationRegionTable->DescriptorSize);')
         output.append('    }')
         output.append("")
-        output.append(f'    ASSERT (Index < PiSmmCommunicationRegionTable->NumberOfEntries);')
+        output.append('    if (Index >= PiSmmCommunicationRegionTable->NumberOfEntries) {')
+        output.append('        return EFI_OUT_OF_RESOURCES;')
+        output.append('    }')
         output.append(f'    CommBuffer = (UINT8 *)(UINTN)Entry->PhysicalStart;')
         output.append("")
         output.append(f'    CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];')
 
 
         output.append(f'    CopyMem (&CommHeader->HeaderGuid, &{smi_info.guid}, sizeof ({smi_info.guid}));')
-        output.append(f'    CommHeader->MessageLength = sizeof ({smi_info.type});')
+        # smi_info.type is the POINTER spelling -- line below declares HandlerData with
+        # it -- so sizeof(smi_info.type) is 8 on X64 whatever the payload really is. Every
+        # handler that checks MessageLength against its own parameter block rejected the
+        # call before looking at a single fuzzed byte.
+        payload_type = drop_one_pointer(smi_info.type).strip()
+        # The analysis names the type of the parameter block a handler reads, which is not
+        # always the whole message: VarCheckPolicyLibMmiHandler wants a
+        # VAR_CHECK_POLICY_COMM_HEADER in front of its params, so at
+        # sizeof(VAR_CHECK_POLICY_COMM_IS_ENABLED_PARAMS) it answered "Bad comm buffer
+        # size! 1 < 20" and nothing past the size check was ever reached. Start at the
+        # payload size and let the fuzzer grow the message up to the region it was given,
+        # so both the size validation and the logic behind it are reachable.
+        output.append(f'    CommHeader->MessageLength = sizeof ({payload_type});')
+        output.append('    UINT8 MessageLengthChoice = 0;')
+        output.append('    ReadBytes(Input, sizeof(MessageLengthChoice), '
+                      '(VOID *)&MessageLengthChoice);')
+        output.append('    if ((MessageLengthChoice & 1) != 0) {')
+        output.append('        UINTN MessageLengthRoom = Size - '
+                      'OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data);')
+        output.append('        CommHeader->MessageLength += '
+                      '((UINTN)MessageLengthChoice >> 1);')
+        output.append('        if (CommHeader->MessageLength > MessageLengthRoom) {')
+        output.append('            CommHeader->MessageLength = MessageLengthRoom;')
+        output.append('        }')
+        output.append('    }')
         output.append(f'    {smi_info.type} HandlerData = ({smi_info.type})&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];')
         
         output.extend(generator_struct_args(smi_info.type, 'HandlerData', aliases, types, indent=True))
 
         output.append(f'    CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;')
+        # Without this the harness can never report anything: FirnessMain clears
+        # mAsanFuzzingActive after HARNESS_START, and only FirnessSanitizer(TRUE) arms the
+        # escalation, so a fault inside an SMI handler was logged and then ignored.
+        output.append('    FirnessSanitizer(TRUE);')
         output.append(f'    Status   = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);')
+        output.append('    FirnessSanitizer(FALSE);')
         output.append(f"    return Status;")
         output.append("}")
         output.append("")
