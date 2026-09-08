@@ -31,10 +31,18 @@ def harness_header(functions: List[str],
     output.append("")
 
     # The sanitizer is gated around the call under test so that only the firmware's own
-    # faults become solutions. AsanLib is linked into the harness by Firness.dsc, but the
-    # declaration stays weak so a build without it still links, and the wrapper is inline
-    # so no non-EFIAPI helper is called across the ms_abi boundary.
-    output.append('extern VOID AsanSetFuzzingActive(BOOLEAN Active) __attribute__((weak));')
+    # faults become solutions. AsanLib defines AsanSetFuzzingActive and Firness.dsc links
+    # it in for the tsffs backend; the other backends do not instrument at all, and a weak
+    # DECLARATION left over from that arrangement is undefined at link time. The ELF link
+    # tolerates that, and then GenFw refuses the image -- "Bad definition for symbol
+    # 'AsanSetFuzzingActive'@0 or unsupported symbol type" -- because PE/COFF has nowhere
+    # to put an undefined weak. A weak DEFINITION covers both: AsanLib's strong one wins
+    # wherever it is linked, and this no-op stands in where it is not. The wrapper stays
+    # inline so no non-EFIAPI helper is called across the ms_abi boundary.
+    output.append('__attribute__((weak)) VOID AsanSetFuzzingActive(BOOLEAN Active)')
+    output.append('{')
+    output.append('    (VOID)Active;')
+    output.append('}')
     output.append('static inline VOID FirnessSanitizer(BOOLEAN Active)')
     output.append('{')
     output.append('    if (AsanSetFuzzingActive != NULL) {')

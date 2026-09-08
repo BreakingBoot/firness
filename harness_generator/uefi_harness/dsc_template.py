@@ -43,22 +43,36 @@ def gen_firness_dsc(libraries: Dict[str, str], backend: int = 1) -> List[str]:
     # UEFI_APPLICATION harness depends on. discovery resolves each class from whichever
     # .dsc os.walk reaches first, which is how MemoryAllocationLib ended up on
     # BaseMemoryAllocationLibNull, whose AllocatePages() is ASSERT(FALSE); return NULL
+    #
+    # The sanitizers only work on firmware that publishes gAsanInfoGuid: AsanLib's
+    # constructor reads that HOB to find the shadow region. The Simics platform build
+    # publishes it, OVMF does not, and a harness carrying the instrumentation onto
+    # firmware that does not faults during its own constructors. So instrument for tsffs
+    # and not otherwise -- under libafl-qemu the coverage and the crash detection both
+    # come from the emulator, so nothing is lost by dropping it.
+    #
+    asan = backend == 1
+    memory_lib = ("MdePkg/Library/AsanMemoryLibRepStr/AsanMemoryLibRepStr.inf" if asan
+                  else "MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr.inf")
     resolved = {}
     for lib, path in libraries.items():
         if lib == "NULL":
             continue
         if "BaseMemoryLib" in lib:
-            path = "MdePkg/Library/AsanMemoryLibRepStr/AsanMemoryLibRepStr.inf"
+            path = memory_lib
         resolved[lib] = path
     for entry in default_dsc_libs:
         lib, _, path = entry.partition('|')
         if lib == "NULL":
             continue
+        if "BaseMemoryLib" in lib:
+            path = memory_lib
         resolved[lib] = path
 
     output.append("")
     output.append("[LibraryClasses]")
-    output.append(f'  NULL|MdeModulePkg/Library/AsanLib/AsanLib.inf')
+    if asan:
+        output.append(f'  NULL|MdeModulePkg/Library/AsanLib/AsanLib.inf')
     for lib in sorted(resolved):
         output.append(f'  {lib}|{resolved[lib]}')
     
@@ -73,5 +87,13 @@ def gen_firness_dsc(libraries: Dict[str, str], backend: int = 1) -> List[str]:
         output.append("")
         output.append("[BuildOptions]")
         output.append(f'  GCC:*_*_*_CC_FLAGS = -D FIRNESS_BACKEND={backend}')
+        # SAN_FLAGS is a variable of its own and build_rule appends it AFTER CC_FLAGS
+        # ("$(CC) $(DEPS_FLAGS) $(CC_FLAGS) $(SAN_FLAGS) -c ..."), so -fno-sanitize in
+        # CC_FLAGS is overridden and the module stays instrumented. It carries
+        # -fsanitize=address, -fsanitize=undefined and -fsanitize-coverage=trace-pc
+        # together, so replacing it with "==" is what turns all three off; leaving the
+        # sanitizers on here would also leave __asan_* and __sanitizer_cov_trace_pc
+        # undefined, because the ASan libraries are not in the list above.
+        output.append(f'  *_CLANGSAN_X64_SAN_FLAGS == -Wno-frame-address')
 
     return output
