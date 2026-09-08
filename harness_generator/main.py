@@ -8,6 +8,8 @@ from datetime import datetime
 from common.types import FunctionBlock, FieldInfo, EnumDef, scalable_params, SmiInfo
 from common.utils import clean_harnesses, gen_file, compile
 from data_analysis.analyze import analyze_data
+from linux_harness import guid_values as linux_guid_values
+from linux_harness import smi_driver_template as linux_smi_driver
 from data_analysis.analyze_smi import analyze_smi_data
 import path_trace.header_template as tracer_header
 import path_trace.harnesses_template as tracer_harnesses
@@ -248,6 +250,43 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     os.system(f'cp {harness_folder}/* {output_dir}')
 
 
+BACKENDS_BY_ID = {value: name for name, value in
+                  (('tsffs', 1), ('qemu', 2), ('nyx', 3), ('none', 4))}
+
+
+def generate_smi_linux_driver(smi_data, harness_folder, edk2_dir, backend_name):
+    """Emit the kernel module form of the SMI harness.
+
+    Deliberately writes into the same harness folder as the UEFI form, and nothing else:
+    a driver has no .dsc, no .inf and no edk2 library resolution, so none of the machinery
+    the UEFI path runs afterwards applies to it.
+    """
+    roots = [edk2_dir] if edk2_dir else []
+    guids = linux_guid_values.collect(roots)
+    module = 'firness_smi'
+    files = {
+        f'{module}.c': linux_smi_driver.driver(smi_data, guids, module),
+        'Makefile': linux_smi_driver.makefile(module),
+        linux_smi_driver.FIRNESS_BACKEND_HEADER: linux_smi_driver.backend_header(),
+    }
+    os.makedirs(harness_folder, exist_ok=True)
+    # generate_harness_folder copies HarnessHelpers in wholesale for the UEFI path. None
+    # of it belongs next to a kernel module -- it is edk2 C that cannot compile here --
+    # and leaving it makes it unclear which files are the harness.
+    for name in os.listdir(harness_folder):
+        if name not in files:
+            path = os.path.join(harness_folder, name)
+            if os.path.isfile(path):
+                os.remove(path)
+    for name, lines in files.items():
+        with open(os.path.join(harness_folder, name), 'w') as handle:
+            handle.write('\n'.join(lines) + '\n')
+    resolved = sum(1 for info in smi_data.values() if info.guid in guids)
+    print(f'Linux SMI driver: {resolved}/{len(smi_data)} handler(s) with a resolvable '
+          f'GUID, backend {backend_name}, in {harness_folder}')
+    return 0
+
+
 def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      types: Dict[str, List[FieldInfo]],
                      enums: Dict[str, List[str]],
@@ -263,9 +302,13 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      backend: int = 1,
                      edk2_dir: str = "",
                      max_steps: int = 8,
-                     precedence=()):
+                     precedence=(),
+                     host: str = 'uefi'):
     function_list = list(smi_data.keys())
     print(harness_folder)
+    if host == 'linux':
+        return generate_smi_linux_driver(smi_data, harness_folder, edk2_dir,
+                                         BACKENDS_BY_ID.get(backend, 'tsffs'))
     generate_main(function_list, harness_folder)
     generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
     used_guids = referenced_guids(harness_folder)
@@ -399,6 +442,11 @@ def main():
                         help='Fuzzer the harness talks to (default: tsffs)')
     parser.add_argument("-sm", dest="smi", default="/ouput/tmp/smi-function-guid-map.json", 
                         help="Path to the smi file (default: /output/tmp/smi-function-guid-map.json)")
+    parser.add_argument('--host', dest='host', default='uefi', choices=('uefi', 'linux'),
+                        help='What the SMI harness is: a UEFI application that runs before '
+                             'an OS (default), or a Linux kernel module that drives the same '
+                             'handlers from ring 0 after ExitBootServices. SMI only -- a '
+                             'protocol harness has no meaning once boot services are gone.')
 
     args = parser.parse_args()
 
@@ -409,11 +457,16 @@ def main():
               'build with an #error because Intel PT is unavailable here. The harness will '
               'generate but will not compile; use --backend qemu (libafl-qemu) instead.')
 
+    if args.host == 'linux' and not args.smi_enabled:
+        print('Error: --host linux is only for SMI handlers (--smi). A protocol harness '
+              'calls boot services, which are gone by the time a kernel module runs.')
+        return 1
+
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
-        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps)
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host)
     else:
         processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators, precedence = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
