@@ -215,6 +215,25 @@ def call_function(function: str,
     # sanitizer report from there says something about the harness, not the firmware.
     # AsanSetFuzzingActive gates the escalation to the fuzzer, so bracketing the call with
     # it means only a fault inside the firmware counts as a solution.
+    # An argument the analysis found no data for is recorded as arg_dir "OPTIONAL" with
+    # usage NULL -- see the len(argument) == 0 branch in analyze.py -- and the call site
+    # then passes a literal NULL. The declaration usually says nothing of the sort:
+    # EBC_VM_TEST_EXECUTE takes "IN VM_CONTEXT *VmPtr", VM_CONTEXT has no public header so
+    # nothing could be declared for it, and every call handed EbcDxe a NULL it is entitled
+    # to dereference. That accounted for all 16 of EfiEbcVmTest's findings.
+    #
+    # Give the callee a valid zeroed buffer instead. It is declared VOID * because the real
+    # type is exactly what could not be named; C converts void * to any object pointer
+    # implicitly, so the call still compiles. Over-supplying a pointer is never a caller
+    # contract violation, while passing NULL to a parameter that never allowed it always is.
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        if (argument.arg_dir == 'OPTIONAL' and has_pointer(argument.arg_type)
+                and not is_function_pointer(argument.arg_type)):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.append(f'VOID *{function}_{name} = '
+                          f'AllocateZeroPool({FIRNESS_BUFFER_BYTES});')
+
     # let a later call take what an earlier one produced
     for arg_key, arguments in function_block.arguments.items():
         argument = arguments[0]
@@ -245,8 +264,11 @@ def call_function(function: str,
             # NULL only converts to a pointer. edk2 has parameters that are unions or
             # scalars passed by value (ACPI_RESOURCE_HEADER_PTR), and those need a zero of
             # their own type instead
-            if has_pointer(arguments[0].arg_type) or is_function_pointer(arguments[0].arg_type):
+            if is_function_pointer(arguments[0].arg_type):
+                # a garbage function pointer is a jump to nowhere, not a test
                 tmp = f"    NULL,"
+            elif has_pointer(arguments[0].arg_type):
+                tmp = f"    {function}_{arg_key},"
             else:
                 tmp = f"    ({arguments[0].arg_type}){{0}},"
         else:
