@@ -108,13 +108,21 @@ namespace FileOps {
     void outputSmiFunctionGuidMap(const std::string& filename, const std::map<std::string, SmiInfo>& smiFunctionGuidMap) {
         std::string file_path = filename + "/smi-function-guid-map.json";
         nlohmann::json j;
+        unsigned total = 0, no_type = 0;
         for (const auto& pair : smiFunctionGuidMap) {
-            if(pair.second.Type == "") continue; // Skip if Guid is empty
+            total++;
+            if(pair.second.Type == "") { no_type++; continue; } // Skip if Guid is empty
             const SmiInfo& smiInfo = pair.second;
             nlohmann::json smiJson;
             smiJson["Guid"] = smiInfo.Guid;
             smiJson["Type"] = smiInfo.Type;
             j[pair.first] = smiJson;
+        }
+        // silent unless the smi pass actually ran, so a normal analysis is unchanged
+        if (SmiEnabled) {
+            llvm::outs() << "SMI handlers: " << total << " found, " << no_type
+                         << " dropped for an unresolved CommBuffer type, "
+                         << (total - no_type) << " written\n";
         }
         std::ofstream file(file_path);
         file << j.dump(4);

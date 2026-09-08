@@ -307,10 +307,30 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
                 include_deps: Dict[str, List[str]]) -> Dict[str, FunctionBlock]:
     protocol_guids = set()
     driver_guids = set()
-    for smi in smi_data.values():
+    unusable = set()
+    for smi in list(smi_data.values()):
         # Perform analysis on each SMI
         if smi.guid:
             protocol_guids.add(smi.guid)
+        # The harness declares a CommBuffer of the handler's own parameter type, so the
+        # header that defines it has to be included. Nothing else adds it: the smi path
+        # only ever collected default_includes | smi_includes, so every generated smi
+        # harness failed to compile on "use of undeclared identifier
+        # SMI_HANDLER_PROFILE_PARAMETER_HEADER" and the like.
+        base = (smi.type or '').replace('*', '').strip()
+        info = types.get(base)
+        if info and info.file and cleanup_paths([info.file]):
+            all_includes.add(info.file)
+        else:
+            # No includable declaration for the parameter type, so the harness cannot
+            # declare a CommBuffer of it. SMM_FTW_COMMUNICATE_FUNCTION_HEADER lives in
+            # FaultTolerantWriteDxe/FaultTolerantWriteSmmCommon.h, a driver-private header.
+            # Generating anyway just produces "use of undeclared identifier".
+            print(f'INFO: dropping smi handler {smi.name} -- no declaration the harness '
+                  f'can include for {base or "its parameter type"}')
+            unusable.add(smi.name)
+    for name in unusable:
+        smi_data.pop(name, None)
     return smi_data, protocol_guids, driver_guids
 
 
