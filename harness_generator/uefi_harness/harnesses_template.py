@@ -260,12 +260,37 @@ def call_function(function: str,
             output.append(f'{EFI_HANDLE_TYPE} {slot} = ({EFI_HANDLE_TYPE})ImageHandle;')
             output.extend(draw_live(EFI_HANDLE_TYPE, slot, f'{slot}_LiveChoice'))
 
+    # A size and the buffer it describes have to stay a pair. fuzzable_args bounds the
+    # size by the allocation, and then substituting either half from the live tables
+    # silently breaks that: the FVB harness clamped *NumBytes to 4096 and then replaced
+    # the whole UINTN* with a live one holding 0xF20F, against a buffer that was still
+    # 4096 bytes. That is a 62KB out of bounds write that belongs to the harness, and it
+    # cost a matrix triage to work out. Neither half is eligible.
+    pinned = set()
+    all_tracked = [entry[0] for entry in function_block.arguments.values()]
+    raw_buffer_call = takes_raw_buffer(all_tracked)
+    for arg_key, arguments in function_block.arguments.items():
+        argument = arguments[0]
+        base = remove_ref_symbols(argument.arg_type).strip().upper()
+        # Mirror the two conditions fuzzable_args clamps under. buffer_for_size only
+        # pairs by stem (BufferSize -> Buffer); FVB spells it NumBytes/Buffer, so the
+        # clamp there comes from the call simply having a raw buffer in it.
+        paired = buffer_for_size(argument.param_name, function_block.arguments)
+        if base in INTEGER_ARG_TYPES and (paired or raw_buffer_call):
+            pinned.add(arg_key)
+            if paired:
+                pinned.add(paired)
+        if (raw_buffer_call and argument.pointer_count > 0
+                and base in ('VOID', 'UINT8', 'UINTN', 'CHAR8', 'CHAR16')):
+            pinned.add(arg_key)
+
     # let a later call take what an earlier one produced
     for arg_key, arguments in function_block.arguments.items():
         argument = arguments[0]
         declared = declared_arg_type(argument)
         if (declared in live_types and 'IN' in argument.arg_dir
-                and has_declared_variable(argument)):
+                and has_declared_variable(argument)
+                and arg_key not in pinned):
             name = f'{prefix}_{arg_key}' if prefix else arg_key
             output.extend(draw_live(declared, f'{function}_{name}',
                                     f'{function}_{name}_LiveChoice'))
