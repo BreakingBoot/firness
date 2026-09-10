@@ -608,6 +608,30 @@ def size_limit_for(paired: str, all_args) -> str:
     return f'sizeof({remove_ref_symbols(paired_type)})'
 
 
+# Types that are a pointer wearing an opaque name. Filling one from the input produces a
+# wild pointer and nothing else: the firmware can NULL check it and then has to
+# dereference, so every value except NULL and a real one is a #GP with no bug behind it.
+#
+# It also stops the campaign dead under libafl. Every seed crashed for EfiBlockIo2 and
+# EfiAcpiSdt, so nothing was imported and the client stopped with "No entries in corpus"
+# -- 1 execution against thousands on Simics, which records the crash and carries on.
+#
+# The live tables still supply real ones, which is the only way these should ever be
+# non-NULL.
+OPAQUE_HANDLE_TYPES = {'EFI_EVENT'}
+
+
+def is_opaque_handle(arg_type: str) -> bool:
+    """A handle: opaque by contract, a pointer in fact.
+
+    Matched by shape rather than by a list, because edk2 keeps minting them --
+    EFI_HANDLE, EFI_HII_HANDLE, EFI_ACPI_HANDLE, and every protocol that invents its own.
+    Anything named *_HANDLE is one; EFI_EVENT is the same thing under a different name.
+    """
+    base = remove_ref_symbols(arg_type).strip().upper()
+    return base in OPAQUE_HANDLE_TYPES or base.endswith('_HANDLE')
+
+
 INTEGER_ARG_TYPES = {'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
                      'INT8', 'INT16', 'INT32', 'INT64', 'INTN'}
 
@@ -633,7 +657,11 @@ def fuzzable_args(function: str,
     for arg_type in arg_type_list:
         if arg_type.name == arg:
             if arg_type.pointer_count == 0:
-                output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *)&{function}_{arg});')
+                if is_opaque_handle(arg_type.arg_type):
+                    output.append(f'// {arg_type.arg_type} is a pointer behind an opaque '
+                                  f'name: left NULL unless a live one is drawn below')
+                else:
+                    output.append(f'ReadBytes(Input, sizeof({function}_{arg}), (VOID *)&{function}_{arg});')
                 # In a call that also takes a raw buffer, the integer arguments are the
                 # sizes and offsets into it. An unbounded one just tells the callee to walk
                 # past the end of an allocation the harness made, which faults every time
@@ -1061,6 +1089,12 @@ def generator_struct_args(function: str,
                     output.append('}')
                     if pending_count_bound:
                         output.append(pending_count_bound)
+            elif is_opaque_handle(field.type):
+                # A struct field that is a pointer behind an opaque name. Same reason as
+                # the argument case: EFI_BLOCK_IO2_TOKEN.Event filled from the input is a
+                # wild pointer, and CoreSignalEvent dereferences whatever it is given.
+                output.append(f'// {field.type} is a pointer behind an opaque name: '
+                              f'left as allocated')
             elif not nameable or not scalar:
                 # an array or an anonymous union: it has a size and an address, so it is
                 # filled where it sits
