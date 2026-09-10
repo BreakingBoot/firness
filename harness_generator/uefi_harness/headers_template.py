@@ -43,8 +43,35 @@ def harness_header(functions: List[str],
     output.append('{')
     output.append('    (VOID)Active;')
     output.append('}')
+    # The boundary between the firmware's own reports and the ones an input provoked,
+    # written straight to the 16550 the capture is taken from.
+    #
+    # The report parser used to split on the line where DXE dispatches this image. That
+    # line only reaches the same capture under Simics -- OVMF writes DEBUG to the ISA
+    # debug port, not to serial -- so under QEMU the marker never appeared and every
+    # report was filed as boot noise: 88 in one campaign, none of them counted. Doing it
+    # here rather than in AsanLib because the harness declares AsanSetFuzzingActive weak
+    # and does not link AsanLib, so the no-op above is what runs.
+    output.append('static VOID FirnessMarkFuzzStart(VOID)')
+    output.append('{')
+    output.append('    STATIC BOOLEAN Announced = FALSE;')
+    output.append('    STATIC CONST CHAR8 Marker[] = "FIRNESS: fuzzing starts\\n";')
+    output.append('    UINTN Index;')
+    output.append('')
+    output.append('    if (Announced) {')
+    output.append('        return;')
+    output.append('    }')
+    output.append('    Announced = TRUE;')
+    output.append('    for (Index = 0; Marker[Index] != 0; Index++) {')
+    output.append('        __asm__ __volatile__ ("outb %%al, %%dx"')
+    output.append('                              :: "a" (Marker[Index]), "d" ((UINT16)0x3F8));')
+    output.append('    }')
+    output.append('}')
     output.append('static inline VOID FirnessSanitizer(BOOLEAN Active)')
     output.append('{')
+    output.append('    if (Active) {')
+    output.append('        FirnessMarkFuzzStart();')
+    output.append('    }')
     output.append('    if (AsanSetFuzzingActive != NULL) {')
     output.append('        AsanSetFuzzingActive(Active);')
     output.append('    }')
