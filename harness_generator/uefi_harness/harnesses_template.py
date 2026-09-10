@@ -569,11 +569,43 @@ def buffer_for_size(size_name: str, all_args) -> str:
         if not upper.endswith(suffix) or len(upper) == len(suffix):
             continue
         stem = upper[:-len(suffix)]
+        prefixed = ''
         for other_key, other in (all_args or {}).items():
             name = (other[0].param_name or '').upper()
-            if name == stem and other[0].pointer_count > 0:
+            if other[0].pointer_count == 0:
+                continue
+            if name == stem:
                 return other_key
+            # SNP spells the pair StatisticsSize/StatisticsTable, so an exact stem match
+            # misses it and the size falls back to the blanket 4096 byte bound -- against
+            # a buffer the harness allocated as sizeof (EFI_NETWORK_STATISTICS), 176
+            # bytes. That produced two of the highest severity findings in the matrix,
+            # both of them the harness. Exact still wins; this is the fallback.
+            if not prefixed and name.startswith(stem):
+                prefixed = other_key
+        if prefixed:
+            return prefixed
     return ''
+
+
+def size_limit_for(paired: str, all_args) -> str:
+    """The bound a size argument gets: the allocation of the buffer it names.
+
+    Both the value and the pointer-to-value branch need this and only one of them had it.
+    The pointer branch used the blanket FIRNESS_BUFFER_BYTES even when the pair was known,
+    so SNP's Statistics got *StatisticsSize bounded at 4096 against a table allocated as
+    sizeof (EFI_NETWORK_STATISTICS) -- 176 bytes. That is a 4KB overflow the harness asked
+    for, and it came out of the matrix as a severity 5 heap-buffer-overflow write.
+    """
+    if not paired or not all_args or paired not in all_args:
+        return str(FIRNESS_BUFFER_BYTES)
+    paired_type = all_args[paired][0].arg_type
+    base = remove_ref_symbols(paired_type).strip().upper()
+    if is_string_pointer(paired_type):
+        return f'({FIRNESS_STRING_CHARS} * sizeof({remove_ref_symbols(paired_type)}))'
+    if base in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+        return str(FIRNESS_BUFFER_BYTES)
+    return f'sizeof({remove_ref_symbols(paired_type)})'
 
 
 INTEGER_ARG_TYPES = {'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
@@ -624,17 +656,9 @@ def fuzzable_args(function: str,
                                       f'({FIRNESS_DIMENSION_MAX} + 1);')
                     elif paired:
                         # bound it by the allocation of the buffer it names, so the size the
-                        # callee is given actually describes the memory it is handed. A
-                        # string buffer is FIRNESS_STRING_CHARS elements, a raw one a page
-                        paired_type = all_args[paired][0].arg_type
-                        paired_base = remove_ref_symbols(paired_type).strip().upper()
-                        if is_string_pointer(paired_type):
-                            limit = f'({FIRNESS_STRING_CHARS} * sizeof({remove_ref_symbols(paired_type)}))'
-                        elif paired_base in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
-                            limit = str(FIRNESS_BUFFER_BYTES)
-                        else:
-                            limit = f'sizeof({remove_ref_symbols(paired_type)})'
-                        output.append(f'{function}_{arg} = {function}_{arg} % ({limit} + 1);')
+                        # callee is given actually describes the memory it is handed
+                        output.append(f'{function}_{arg} = {function}_{arg} % '
+                                      f'({size_limit_for(paired, all_args)} + 1);')
                     elif takes_raw_buffer(arg_type_list):
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({FIRNESS_BUFFER_BYTES} + 1);')
@@ -691,7 +715,7 @@ def fuzzable_args(function: str,
                                       f'({FIRNESS_DIMENSION_MAX} + 1);')
                     elif (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
                         output.append(f'        *{function}_{arg} = *{function}_{arg} % '
-                                      f'({FIRNESS_BUFFER_BYTES} + 1);')
+                                      f'({size_limit_for(paired, all_args)} + 1);')
                     elif is_device_path(arg_type.arg_type):
                         # the fill above overwrote the End node declare_var wrote, so the
                         # path the callee walks has Length 0 again
