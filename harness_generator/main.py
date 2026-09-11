@@ -107,7 +107,48 @@ def generate_dsc(harness_folder: str, libraries: Dict[str, str], backend: int = 
     code = uefi_dsc.gen_firness_dsc(libraries, backend)
     gen_file(f'{harness_folder}/Firness.dsc', code)
 
-def generate_includes(all_includes: List[str], harness_folder: str):
+def existing_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
+    """Drop headers this tree does not have.
+
+    The include list comes from the analysis, which may have run against a different edk2
+    than the one the harness is built in -- a cached analysis, or a port to a newer tree.
+    edk2 does remove headers: Protocol/ScsiPassThru.h is gone from mainline, and one stale
+    entry fails the whole harness with "fatal error: file not found" whether or not
+    anything in the harness uses that type.
+
+    The list is a superset by construction, so a header nothing references costs nothing
+    to drop. One that is genuinely needed still fails, and fails naming the type rather
+    than the file, which is the more useful error.
+    """
+    if not edk2_dir or not os.path.isdir(edk2_dir):
+        return all_includes
+    roots = [edk2_dir]
+    sibling = os.path.join(os.path.dirname(os.path.abspath(edk2_dir)), 'edk2-platforms')
+    if os.path.isdir(sibling):
+        roots.append(sibling)
+    index = set()
+    for root in roots:
+        for base, _, files in os.walk(root):
+            if os.sep + 'Build' + os.sep in base + os.sep:
+                continue
+            for name in files:
+                if name.endswith('.h'):
+                    index.add(os.path.join(os.path.basename(base), name).replace(os.sep, '/'))
+                    index.add(name)
+    kept, dropped = [], []
+    for entry in all_includes:
+        tail = entry.strip().strip('<>"')
+        if tail in index or os.path.basename(tail) in index:
+            kept.append(entry)
+        else:
+            dropped.append(tail)
+    for tail in sorted(set(dropped)):
+        print(f'INFO: dropping include {tail} -- not in this edk2')
+    return kept
+
+
+def generate_includes(all_includes: List[str], harness_folder: str, edk2_dir: str = ""):
+    all_includes = existing_includes(all_includes, edk2_dir)
     code = uefi_header.harness_includes(all_includes)
     gen_file(f'{harness_folder}/includes.txt', all_includes)
     gen_file(f'{harness_folder}/FirnessIncludes.h', code)
@@ -236,7 +277,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     generate_code(merged_data, template, types, generators, aliases, harness_folder, enums, random)
     used_guids = referenced_guids(harness_folder)
     generate_header(merged_data, matched_macros, harness_folder, used_guids)
-    generate_includes(all_includes, harness_folder)
+    generate_includes(all_includes, harness_folder, edk2_dir)
     inf_protocols, inf_guids, local_guids = classify_guids(
         used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
     define_local_guids(harness_folder, local_guids)
@@ -313,7 +354,7 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
     used_guids = referenced_guids(harness_folder)
     generate_header(function_list, matched_macros, harness_folder, used_guids)
-    generate_includes(all_includes, harness_folder)
+    generate_includes(all_includes, harness_folder, edk2_dir)
     inf_protocols, inf_guids, local_guids = classify_guids(
         used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
     define_local_guids(harness_folder, local_guids)

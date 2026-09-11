@@ -8,13 +8,23 @@ def parse_inf_file(file_path):
     with open(file_path, 'r') as file:
         inside_library_classes = False
         for line in file:
-            # Check if we are inside the [LibraryClasses] section
-            if 'LibraryClasses' in line:
+            stripped = line.strip()
+            # A section header, not merely a line that says the words. MdeLibs.dsc.inc
+            # opens with "# Mde DSC include file for [LibraryClasses*] section", which
+            # used to flip this on at line 2; the file then ended at the first real
+            # header. That was harmless while [LibraryClasses] happened to be the first
+            # section, and stopped being harmless when mainline put [Defines] ahead of
+            # it: the whole file parsed to nothing, StackCheckLib went missing, and with
+            # it UefiApplicationEntryPoint and every library that depends on one -- so
+            # the generated harness had no entry point and the link produced an image
+            # GenFw would not convert.
+            is_header = stripped.startswith('[') and stripped.endswith(']')
+            if is_header and 'LibraryClasses' in stripped:
                 inside_library_classes = True
                 continue  # Skip the [LibraryClasses] line itself
 
             # Stop if another section starts
-            if inside_library_classes and (line.startswith('[') or line.startswith('<')):
+            if inside_library_classes and (is_header or stripped.startswith('<')):
                 break
 
             # If inside [LibraryClasses] and not an empty line, split by '|'
@@ -55,17 +65,27 @@ def parse_library_classes_section(file_path: str, root: str, lib_map: Dict[str, 
     with open(file_path, 'r') as file:
         inside_library_classes = False
         for line in file:
-            # Check if we are inside the [LibraryClasses] section
-            if 'LibraryClasses' in line:
+            stripped = line.strip()
+            # Match a section header, not any line that says the words. MdeLibs.dsc.inc
+            # opens with "# Mde DSC include file for [LibraryClasses*] section", which
+            # turned this on at line 2; the file then ended at the first real header.
+            # That was harmless while [LibraryClasses] was the first section and stopped
+            # being harmless when mainline put [Defines] ahead of it -- the file parsed to
+            # nothing, so StackCheckLib was missing, so UefiApplicationEntryPoint was
+            # dropped for depending on it, and the generated harness linked with no entry
+            # point at all: "cannot find entry symbol _ModuleEntryPoint", then GenFw
+            # asserting on the image it produced.
+            is_header = stripped.startswith('[') and stripped.endswith(']')
+            if is_header and 'LibraryClasses' in stripped:
                 inside_library_classes = True
                 continue  # Skip the [LibraryClasses] line itself
 
             # Stop if another section starts
-            if inside_library_classes and (line.startswith('[') or line.startswith('<')):
+            if inside_library_classes and (is_header or stripped.startswith('<')):
                 break
 
             # If inside [LibraryClasses] and not an empty line, split by '|'
-            if inside_library_classes and line.strip():
+            if inside_library_classes and stripped:
                 # Split the line based on '|'
                 parts = line.split('|')
                 if len(parts) > 1 and not line.strip().startswith('#'):
