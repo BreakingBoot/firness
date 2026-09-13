@@ -588,6 +588,37 @@ def buffer_for_size(size_name: str, all_args) -> str:
     return ''
 
 
+def resize_paired_buffer(function: str, paired: str, size_arg: str, all_args) -> list:
+    """Reallocate a raw buffer to the size its paired argument now declares.
+
+    Only for the blanket byte buffers. A buffer allocated as sizeof(SOME_STRUCT) is
+    already exactly its type and resizing it to a fuzzed byte count would hand the callee
+    a short struct, which is a caller contract violation rather than a test.
+    """
+    if not paired or not all_args or paired not in all_args:
+        return []
+    paired_type = all_args[paired][0].arg_type
+    base = remove_ref_symbols(paired_type).strip().upper()
+    # Byte-addressed buffers only. A struct-typed buffer is already exactly its type, and
+    # resizing it to a fuzzed byte count would hand the callee a short struct -- a caller
+    # contract violation rather than a test of the firmware.
+    if is_string_pointer(paired_type) or base not in ('VOID', 'UINT8', 'UINTN', 'CHAR8',
+                                                      'CHAR16', 'UINT16', 'UINT32',
+                                                      'UINT64', 'INT8'):
+        return []
+    buf = f'{function}_{paired}'
+    size = f'{function}_{size_arg}'
+    return [
+        f'if ({buf} != NULL) {{',
+        f'    FreePool({buf});',
+        f'}}',
+        f'{buf} = ({paired_type})AllocateZeroPool({size} > 0 ? {size} : 1);',
+        f'if ({buf} == NULL) {{',
+        f'    return EFI_OUT_OF_RESOURCES;',
+        f'}}',
+    ]
+
+
 def size_limit_for(paired: str, all_args) -> str:
     """The bound a size argument gets: the allocation of the buffer it names.
 
@@ -687,6 +718,17 @@ def fuzzable_args(function: str,
                         # callee is given actually describes the memory it is handed
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({size_limit_for(paired, all_args)} + 1);')
+                        # ...and then make the allocation exactly that size. Bounding the
+                        # size alone leaves the callee up to FIRNESS_BUFFER_BYTES of slack
+                        # inside a buffer it was told was smaller, and a write into that
+                        # slack is a real overflow that lands inside the allocation, where
+                        # the sanitizer cannot see it. Resizing puts a redzone immediately
+                        # after the length the callee was given, which is what makes a
+                        # firmware write past it detectable at all -- and it is not a
+                        # caller contract violation, because the size and the allocation
+                        # still agree.
+                        for line in resize_paired_buffer(function, paired, arg, all_args):
+                            output.append(line)
                     elif takes_raw_buffer(arg_type_list):
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({FIRNESS_BUFFER_BYTES} + 1);')
