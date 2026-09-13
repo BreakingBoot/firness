@@ -94,6 +94,85 @@ def generate_header(function_dict: Dict[str, FunctionBlock],
     gen_file(f'{harness_folder}/FirnessHarnesses.h', code)
 
 
+# Libraries the harness needs whether or not it names them: the entry point, the tables
+# the generated code dereferences, and the ones edk2 pulls in for any UEFI application.
+CORE_LIBRARIES = {
+    'UefiApplicationEntryPoint', 'UefiBootServicesTableLib', 'UefiRuntimeServicesTableLib',
+    'UefiLib', 'BaseLib', 'BaseMemoryLib', 'MemoryAllocationLib', 'DebugLib', 'PrintLib',
+    'PcdLib', 'DevicePathLib', 'UefiDriverEntryPoint', 'RegisterFilterLib',
+    'StackCheckLib', 'StackCheckFailureHookLib',
+}
+
+
+def used_libraries(libraries, harness_folder, all_includes, edk2_dir=""):
+    """Only the libraries the harness actually calls into.
+
+    The library map is every class the platform declares, and listing all of them in the
+    INF links all of them. An unused library still runs its constructor when the image
+    loads, and a constructor that expects state the harness never set up faults there:
+    PiDxeS3BootScriptLib alone accounted for 545 fuzz-phase reports on the Simics matrix,
+    all attributed to Firness.efi, in a library nothing in the harness calls. Those are
+    not firmware bugs and they crowd out the ones that are.
+
+    Membership is decided by what the generated C calls, not by what it includes. The
+    include list is a superset by construction -- that is why headers this edk2 does not
+    have are dropped from it -- so "the harness includes S3BootScriptLib.h" says nothing
+    about whether it ever calls S3BootScriptSaveIoWrite. Read each candidate's header,
+    take the function names it declares, and keep the class only if the emitted sources
+    name one of them.
+
+    A class with no header to read is kept: unable to tell is not the same as unused, and
+    the cost of keeping one is a constructor, while the cost of dropping one is a harness
+    that does not link.
+    """
+    text = ''
+    for name in ('FirnessHarnesses.c', 'FirnessMain.c', 'FirnessHelpers.c'):
+        path = os.path.join(harness_folder, name)
+        if os.path.isfile(path):
+            text += open(path, errors='ignore').read()
+    called = set(re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(', text))
+
+    roots = [edk2_dir] if edk2_dir else []
+    sibling = os.path.join(os.path.dirname(os.path.abspath(edk2_dir)), 'edk2-platforms') \
+        if edk2_dir else ''
+    if sibling and os.path.isdir(sibling):
+        roots.append(sibling)
+    headers = {}
+    for root in roots:
+        for base, _, files in os.walk(root):
+            if os.sep + 'Build' + os.sep in base + os.sep:
+                continue
+            if os.path.basename(base) != 'Library':
+                continue
+            for name in files:
+                if name.endswith('.h'):
+                    headers.setdefault(name[:-2], os.path.join(base, name))
+
+    kept, dropped = {}, []
+    for cls, path in libraries.items():
+        if cls == 'NULL' or cls in CORE_LIBRARIES or cls in called:
+            kept[cls] = path
+            continue
+        header = headers.get(cls)
+        if header is None:
+            kept[cls] = path
+            continue
+        try:
+            decl = open(header, errors='ignore').read()
+        except OSError:
+            kept[cls] = path
+            continue
+        exported = set(re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(', decl))
+        if exported & called:
+            kept[cls] = path
+        else:
+            dropped.append(cls)
+    if dropped:
+        print(f'INFO: not linking {len(dropped)} librar(ies) the harness never calls: '
+              f'{", ".join(sorted(dropped))}')
+    return kept
+
+
 def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: set = None, protocol_guids: set = None):
     code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
@@ -281,7 +360,12 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     inf_protocols, inf_guids, local_guids = classify_guids(
         used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
     define_local_guids(harness_folder, local_guids)
-    generate_inf(harness_folder, libraries, inf_guids, inf_protocols)
+    # Filter the INF only. The INF is what edk2 links -- and so whose constructors run --
+    # while the DSC is the class-to-instance map it resolves against, including for the
+    # transitive dependencies of the libraries that are kept. Trimming the DSC too left
+    # those unresolvable and the harness stopped compiling.
+    generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
+                 inf_guids, inf_protocols)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -358,7 +442,12 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     inf_protocols, inf_guids, local_guids = classify_guids(
         used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
     define_local_guids(harness_folder, local_guids)
-    generate_inf(harness_folder, libraries, inf_guids, inf_protocols)
+    # Filter the INF only. The INF is what edk2 links -- and so whose constructors run --
+    # while the DSC is the class-to-instance map it resolves against, including for the
+    # transitive dependencies of the libraries that are kept. Trimming the DSC too left
+    # those unresolvable and the harness stopped compiling.
+    generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
+                 inf_guids, inf_protocols)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
