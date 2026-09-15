@@ -173,8 +173,12 @@ def used_libraries(libraries, harness_folder, all_includes, edk2_dir=""):
     return kept
 
 
-def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: set = None, protocol_guids: set = None):
-    code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries)
+def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: set = None,
+                 protocol_guids: set = None, all_includes: List[str] = None,
+                 edk2_dir: str = ""):
+    packages = packages_for_includes(all_includes or [], edk2_dir)
+    code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries,
+                                    packages)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
 # the spellings accepted on the command line, mapped to the FIRNESS_BACKEND values that
@@ -185,6 +189,69 @@ BACKENDS = {'tsffs': 1, 'qemu': 2, 'libafl_qemu': 2, 'nyx': 3, 'none': 4}
 def generate_dsc(harness_folder: str, libraries: Dict[str, str], backend: int = 1):
     code = uefi_dsc.gen_firness_dsc(libraries, backend)
     gen_file(f'{harness_folder}/Firness.dsc', code)
+
+_HEADER_INDEX = {}
+
+
+def _header_index(edk2_dir: str):
+    """Every header in the tree, and the package each one belongs to.
+
+    Walked once per tree: both the "does this edk2 have it" check and the package list
+    the harness inf declares are answers about the same set of files.
+    """
+    key = os.path.abspath(edk2_dir)
+    if key in _HEADER_INDEX:
+        return _HEADER_INDEX[key]
+    roots = [edk2_dir]
+    sibling = os.path.join(os.path.dirname(key), 'edk2-platforms')
+    if os.path.isdir(sibling):
+        roots.append(sibling)
+    index, owner = set(), {}
+    for root in roots:
+        for base, _, files in os.walk(root):
+            if os.sep + 'Build' + os.sep in base + os.sep:
+                continue
+            rel = os.path.relpath(base, root).split(os.sep)
+            package = rel[0] if rel and rel[0] not in ('.', '..') else ''
+            for name in files:
+                if not name.endswith('.h'):
+                    continue
+                pair = os.path.join(os.path.basename(base), name).replace(os.sep, '/')
+                index.add(pair)
+                index.add(name)
+                if 'Include' in rel and package:
+                    owner.setdefault(pair, (root, package))
+                    owner.setdefault(name, (root, package))
+    _HEADER_INDEX[key] = (index, owner)
+    return index, owner
+
+
+def packages_for_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
+    """The .dec of every package whose Include/ holds a header the harness includes.
+
+    [Packages] was a fixed list of six. A header from any other package is on disk and
+    not on the include path, so the harness fails to compile with "fatal error:
+    'Guid/DebugAgentGuid.h' file not found" -- naming a header that is right there in
+    SourceLevelDebugPkg. The harness includes what the analysis saw it use, so the
+    packages it needs are the ones those headers come from.
+    """
+    if not edk2_dir or not os.path.isdir(edk2_dir):
+        return []
+    _, owner = _header_index(edk2_dir)
+    extra = []
+    for entry in all_includes:
+        tail = entry.strip().strip('<>"')
+        found = owner.get(tail) or owner.get(os.path.basename(tail))
+        if not found:
+            continue
+        root, package = found
+        dec = f'{package}/{package}.dec'
+        if dec in extra:
+            continue
+        if os.path.isfile(os.path.join(root, package, f'{package}.dec')):
+            extra.append(dec)
+    return extra
+
 
 def existing_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
     """Drop headers this tree does not have.
@@ -201,19 +268,7 @@ def existing_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
     """
     if not edk2_dir or not os.path.isdir(edk2_dir):
         return all_includes
-    roots = [edk2_dir]
-    sibling = os.path.join(os.path.dirname(os.path.abspath(edk2_dir)), 'edk2-platforms')
-    if os.path.isdir(sibling):
-        roots.append(sibling)
-    index = set()
-    for root in roots:
-        for base, _, files in os.walk(root):
-            if os.sep + 'Build' + os.sep in base + os.sep:
-                continue
-            for name in files:
-                if name.endswith('.h'):
-                    index.add(os.path.join(os.path.basename(base), name).replace(os.sep, '/'))
-                    index.add(name)
+    index, _ = _header_index(edk2_dir)
     kept, dropped = [], []
     for entry in all_includes:
         tail = entry.strip().strip('<>"')
@@ -365,7 +420,7 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     # transitive dependencies of the libraries that are kept. Trimming the DSC too left
     # those unresolvable and the harness stopped compiling.
     generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
-                 inf_guids, inf_protocols)
+                 inf_guids, inf_protocols, all_includes, edk2_dir)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -447,7 +502,7 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     # transitive dependencies of the libraries that are kept. Trimming the DSC too left
     # those unresolvable and the harness stopped compiling.
     generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
-                 inf_guids, inf_protocols)
+                 inf_guids, inf_protocols, all_includes, edk2_dir)
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)

@@ -14,7 +14,8 @@ HARNESS_PACKAGES = [
 def gen_firness_inf(uuid: str, 
                     driver_guids: List[str], 
                     protocol_guids: List[str],
-                    libraries: Dict[str, str]) -> List[str]:
+                    libraries: Dict[str, str],
+                    packages: List[str] = None) -> List[str]:
     output = []
 
     output.append("[Defines]")
@@ -46,7 +47,11 @@ def gen_firness_inf(uuid: str,
 
     output.append("")
     output.append("[Packages]")
-    for package in HARNESS_PACKAGES:
+    # The fixed six, plus whichever packages the harness's own includes come from. A
+    # header outside the six is on disk and not on the include path, and the build stops
+    # at "fatal error: 'Guid/DebugAgentGuid.h' file not found".
+    for package in HARNESS_PACKAGES + [p for p in (packages or [])
+                                       if p not in HARNESS_PACKAGES]:
         output.append(f'  {package}')
 
     output.append("")
