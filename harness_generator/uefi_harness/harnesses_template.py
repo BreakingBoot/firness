@@ -727,8 +727,15 @@ def fuzzable_args(function: str,
                         # firmware write past it detectable at all -- and it is not a
                         # caller contract violation, because the size and the allocation
                         # still agree.
-                        for line in resize_paired_buffer(function, paired, arg, all_args):
-                            output.append(line)
+                        # ...but only if the buffer has already been declared. An
+                        # OUT-only buffer is declared in the output section, which comes
+                        # after this one, so emitting the resize here produced "use of
+                        # undeclared identifier ReadBlocks_Arg_4" and no harness at all.
+                        # resize_output_buffers() below does those, after the declaration.
+                        if paired_is_declared_yet(paired, all_args):
+                            for line in resize_paired_buffer(function, paired, arg,
+                                                             all_args):
+                                output.append(line)
                     elif takes_raw_buffer(arg_type_list):
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({FIRNESS_BUFFER_BYTES} + 1);')
@@ -830,6 +837,48 @@ def fuzzable_args(function: str,
     # output.append('}')
     
     return add_indents(output, indent)
+
+def paired_is_declared_yet(paired: str, all_args) -> bool:
+    """Whether the buffer named by a size argument exists by the input section.
+
+    The input section declares the IN arguments; the output section, which runs after it,
+    declares the rest. "IN OUT" counts as IN -- it is declared with the inputs.
+    """
+    args = all_args.get(paired) if all_args else None
+    return bool(args) and 'IN' in args[0].arg_dir
+
+
+def resize_output_buffers(function_block, arg_type_list, prefix: str = '',
+                          indent: int = 1) -> list:
+    """Resize the OUT-only buffers whose size argument the harness has fuzzed.
+
+    Same purpose as the resize in the input section: put the sanitizer's redzone
+    immediately after the length the callee was told it had, so a write past that length
+    is detectable instead of landing in slack inside the allocation. These buffers are
+    only declared after the input section, so their resize has to wait until here.
+    """
+    output = []
+    all_args = function_block.arguments
+    function = function_block.function
+    integer_args = {t.name for t in arg_type_list
+                    if t.pointer_count == 0
+                    and remove_ref_symbols(t.arg_type).strip().upper()
+                    in INTEGER_ARG_TYPES}
+    for arg_key, arguments in all_args.items():
+        arg = f'{prefix}_{arg_key}' if prefix else arg_key
+        if arg not in integer_args or 'IN' not in arguments[0].arg_dir:
+            continue
+        paired = buffer_for_size(arguments[0].param_name, all_args)
+        if not paired or paired_is_declared_yet(paired, all_args):
+            continue
+        if is_dimension_name(arguments[0].param_name):
+            continue
+        output.extend(resize_paired_buffer(function, paired, arg, all_args))
+    if output:
+        output = ['/*', '    Buffers resized to the length their size argument declares',
+                  '*/'] + output
+    return add_indents(output, indent)
+
 
 def generate_inputs(function_block: FunctionBlock, 
                     types: Dict[str, TypeInfo], 
@@ -1210,6 +1259,7 @@ def function_body(function_block: FunctionBlock,
     arg_type_list = []
     output.extend(generate_inputs(function_block, types, services, protocol_variable, generators, arg_type_list, False, random, prefix))
     output.extend(generate_outputs(function_block.function, function_block.arguments, arg_type_list, False, prefix))
+    output.extend(resize_output_buffers(function_block, arg_type_list, prefix))
     output.extend(call_function(function_block.function, function_block, services, protocol_variable, arg_type_list, False, prefix, types))
 
     return add_indents(output, indent)
