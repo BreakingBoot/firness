@@ -44,14 +44,24 @@ def gen_firness_dsc(libraries: Dict[str, str], backend: int = 1) -> List[str]:
     # .dsc os.walk reaches first, which is how MemoryAllocationLib ended up on
     # BaseMemoryAllocationLibNull, whose AllocatePages() is ASSERT(FALSE); return NULL
     #
-    # The sanitizers only work on firmware that publishes gAsanInfoGuid: AsanLib's
-    # constructor reads that HOB to find the shadow region. The Simics platform build
-    # publishes it, OVMF does not, and a harness carrying the instrumentation onto
-    # firmware that does not faults during its own constructors. So instrument for tsffs
-    # and not otherwise -- under libafl-qemu the coverage and the crash detection both
-    # come from the emulator, so nothing is lost by dropping it.
+    # Instrumenting the harness itself is a tsffs-only thing: under libafl-qemu the
+    # coverage comes from the emulator, and a report raised inside the harness says
+    # something about the harness rather than the firmware.
+    #
+    # Linking AsanLib is not. AsanSetFuzzingActive is what opens the window that lets a
+    # finding in the driver under test become a solution, and the harness brackets the
+    # call under test with it. Where AsanLib is absent that call resolves to the weak
+    # no-op in FirnessHarnesses.h, the window never opens, and the sanitizer reports to
+    # the serial port and nowhere else: one run against EFI_DEVICE_PATH_UTILITIES_PROTOCOL
+    # logged 714 findings and scored 4 solutions, none of them a sanitizer report.
+    #
+    # The old reason for leaving it out -- that OVMF does not publish gAsanInfoGuid, so
+    # AsanLib's constructor has no shadow region to find -- no longer holds: the port adds
+    # AsanInitializeShadowMemory to OvmfPkg/PlatformPei. It was never fatal anyway;
+    # SetupAsanShadowMemory deactivates itself and returns when the HOB is missing.
     #
     asan = backend == 1
+    link_asan = True
     memory_lib = ("MdePkg/Library/AsanMemoryLibRepStr/AsanMemoryLibRepStr.inf" if asan
                   else "MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr.inf")
     resolved = {}
@@ -71,7 +81,7 @@ def gen_firness_dsc(libraries: Dict[str, str], backend: int = 1) -> List[str]:
 
     output.append("")
     output.append("[LibraryClasses]")
-    if asan:
+    if link_asan:
         output.append(f'  NULL|MdeModulePkg/Library/AsanLib/AsanLib.inf')
     for lib in sorted(resolved):
         output.append(f'  {lib}|{resolved[lib]}')
