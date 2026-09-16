@@ -69,12 +69,18 @@ def is_device_path(arg_type: str) -> bool:
 
 
 def end_device_path(variable: str) -> List[str]:
-    return ['if (%s != NULL) {' % variable,
-            '    %s->Type = 0x7F;' % variable,
-            '    %s->SubType = 0xFF;' % variable,
-            '    %s->Length[0] = 4;' % variable,
-            '    %s->Length[1] = 0;' % variable,
-            '}']
+    """Make whatever is in the buffer walkable.
+
+    Writing an End node over the first four bytes leaves a valid path of one node, which
+    is correct and tests nothing: the only fields a bare EFI_DEVICE_PATH_PROTOCOL has are
+    the header, so stamping them means the fuzzer has no say at all. Worse, anything that
+    writes the buffer afterwards -- the struct field pass does -- takes the End node away
+    again and the callee walks off the end.
+
+    FirnessMakeDevicePath clamps the chain into the buffer and terminates it wherever the
+    walk stops, so the fuzzer still chooses the nodes and the callee can still walk them.
+    """
+    return [f'FirnessMakeDevicePath ({variable}, {FIRNESS_BUFFER_BYTES});']
 
 
 def set_undefined_constants(arg_type: str, array_like: bool = False) -> str:
@@ -91,6 +97,11 @@ def set_undefined_constants(arg_type: str, array_like: bool = False) -> str:
         # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
         # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
         # read 4096 bytes out of it. EFI_BLOCK_IO_PROTOCOL.WriteBlocks was one of ~79.
+        # A device path is a chain of variable length nodes. sizeof() it is four bytes,
+        # which holds the End node and nothing else, so the fuzzer had nowhere to put a
+        # path and every attempt to make one ran off the allocation.
+        if is_device_path(arg_type):
+            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
         if base.strip().upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
             return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
         return "("+arg_type+")AllocateZeroPool(sizeof(" + base + "))"        
@@ -939,6 +950,17 @@ def generate_inputs(function_block: FunctionBlock,
                     and arg.variable.endswith('_STRUCT__')
                 ) or "__GENERATOR_FUNCTION__" in arg.variable:
                     output.extend(generator_struct_args(function_block.function, arg_key, arg, types, services, protocol_variable, generators, total_elements > 1))
+                    # This pass writes every field of the struct, which for a device path
+                    # is its whole header -- so whatever made it walkable before is gone.
+                    # It was the one writer that did not put it back, and the result was a
+                    # path with no End node in a buffer the callee then walked off: 16 of
+                    # 16 iterations against EFI_DEVICE_PATH_UTILITIES_PROTOCOL reported an
+                    # overread in DevicePathType, none of which was a firmware defect.
+                    if arg.pointer_count > 0 and is_device_path(arg.arg_type):
+                        pad = '        ' if total_elements > 1 else ''
+                        output.extend(
+                            pad + line for line in
+                            end_device_path(f'{function_block.function}_{arg_key}'))
                         
                 output.append("")
                 if total_elements > 1:

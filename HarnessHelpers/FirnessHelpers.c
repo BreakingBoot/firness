@@ -66,3 +66,51 @@ ReadBytes(
 
   return EFI_SUCCESS;
 }
+
+VOID
+EFIAPI
+FirnessMakeDevicePath (
+  IN OUT VOID   *Buffer,
+  IN     UINTN  Size
+  )
+{
+  UINT8  *Bytes;
+  UINTN  Offset;
+  UINTN  Length;
+
+  //
+  // Four bytes is one node header, and the shortest legal path is a single End node.
+  //
+  if ((Buffer == NULL) || (Size < 4)) {
+    return;
+  }
+
+  Bytes  = (UINT8 *)Buffer;
+  Offset = 0;
+
+  //
+  // Advance while this node's header and an End node after it both still fit.
+  //
+  while ((Offset + 4 + 4) <= Size) {
+    if (Bytes[Offset] == 0x7F) {
+      break;                                   // the fuzzer ended the path here
+    }
+
+    Length = (UINTN)Bytes[Offset + 2] | ((UINTN)Bytes[Offset + 3] << 8);
+
+    //
+    // A length below the header never advances, and one that runs past the buffer is
+    // the overread this exists to prevent. Either way the path ends here.
+    //
+    if ((Length < 4) || ((Offset + Length + 4) > Size)) {
+      break;
+    }
+
+    Offset += Length;
+  }
+
+  Bytes[Offset + 0] = 0x7F;                    // END_DEVICE_PATH_TYPE
+  Bytes[Offset + 1] = 0xFF;                    // END_ENTIRE_DEVICE_PATH_SUBTYPE
+  Bytes[Offset + 2] = 4;
+  Bytes[Offset + 3] = 0;
+}
