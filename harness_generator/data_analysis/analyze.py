@@ -151,6 +151,65 @@ guid_protocol_name = {}
 guid_header = {}
 
 GUID_DECL = re.compile(r'extern\s+EFI_GUID\s+(g\w+)\s*;')
+
+# EDK2 marks a parameter that accepts NULL with OPTIONAL, in the declaration:
+#
+#   typedef EFI_STATUS (EFIAPI *EFI_ABSOLUTE_POINTER_GET_STATE)(
+#     IN EFI_ABSOLUTE_POINTER_PROTOCOL  *This,
+#     IN OUT EFI_ABSOLUTE_POINTER_STATE *State
+#     );
+#
+# Nothing there accepts NULL, so a harness that passes one is breaking the caller's side
+# of the contract and the fault it provokes says nothing about the firmware. The analyser
+# is supposed to record this per argument and does not, so every pointer got a NULL arm:
+# EFI_ABSOLUTE_POINTER_PROTOCOL.GetState was reported faulting on "State->CurrentX = 0"
+# after the harness freed State and passed NULL, which is exactly what the declaration
+# says will happen.
+#
+# The declarations are in the headers this pass already reads, so read them here.
+FUNC_TYPEDEF = re.compile(r'\(\s*EFIAPI\s*\*\s*(\w+)\s*\)\s*\(([^;]*?)\)\s*;', re.S)
+STRUCT_MEMBER = re.compile(r'^\s*(\w+)\s+(\w+)\s*;\s*$', re.M)
+# guid -> {member function name: {parameter name: accepts NULL}}
+optional_params = {}
+
+
+def split_params(text: str):
+    """The parameters of a declaration, one string each."""
+    parts, depth, current = [], 0, []
+    for ch in text:
+        if ch in '([':
+            depth += 1
+        elif ch in ')]':
+            depth -= 1
+        if ch == ',' and depth == 0:
+            parts.append(''.join(current))
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        parts.append(''.join(current))
+    return [p.strip() for p in parts if p.strip()]
+
+
+def parse_optional(params_text: str):
+    """[(parameter name, whether the declaration lets it be NULL)], in order.
+
+    In order because that is how they are matched: the analyser records an argument as
+    Arg_0, Arg_1 and so on and leaves param_name empty, so position is the only thing the
+    two sides share.
+
+    OPTIONAL follows the name -- "IN VOID *Context OPTIONAL" -- so the name is the last
+    identifier that is not one of edk2's own markers.
+    """
+    markers = {'IN', 'OUT', 'OPTIONAL', 'CONST', 'EFIAPI', 'VOID'}
+    found = []
+    for param in split_params(params_text):
+        words = re.findall(r'[A-Za-z_]\w*', param)
+        names = [w for w in words if w not in markers]
+        if not names:
+            continue
+        found.append((names[-1], 'OPTIONAL' in words))
+    return found
 STRUCT_NAMES = re.compile(r'\}\s*([A-Za-z_]\w*)\s*;|struct\s+([A-Za-z_]\w*)\s*\{'
                           r'|typedef\s+(?:struct\s+)?([A-Za-z_]\w*)\s+([A-Za-z_]\w*)\s*;')
 
@@ -180,8 +239,15 @@ def build_guid_struct_map(edk2_dir: str):
                     guids = GUID_DECL.findall(source)
                     if not guids:
                         continue
+                    typedefs = {who: parse_optional(params)
+                                for who, params in FUNC_TYPEDEF.findall(source)}
+                    members = {member: typedefs[kind]
+                               for kind, member in STRUCT_MEMBER.findall(source)
+                               if kind in typedefs}
                     for guid in guids:
                         guid_header.setdefault(guid, os.path.join(dirpath, name))
+                        if members:
+                            optional_params.setdefault(guid, {}).update(members)
                     structs = {normalize_struct(part)
                                for match in STRUCT_NAMES.findall(source)
                                for part in match if part}
@@ -462,6 +528,67 @@ def load_functions(function_file: str) -> Dict[str, List[Tuple[str, str]]]:
                 else:
                     function_dict[current_service].append((line.strip(), ""))
     return function_dict
+
+
+ARG_INDEX = re.compile(r'^Arg_(\d+)$')
+
+
+def apply_declarations(data, harness_functions):
+    """Put what the declarations say onto the arguments.
+
+    The analyser is meant to record a parameter's name and EDK2's OPTIONAL marker and
+    records neither -- every param_name comes back empty and no argument carries
+    is_optional at all. Two things go quiet when that happens, and neither says so:
+
+    Passing NULL. Without the marker every pointer argument gets a NULL arm, and passing
+    NULL to a parameter the declaration does not mark OPTIONAL is the caller breaking the
+    contract. EFI_ABSOLUTE_POINTER_PROTOCOL.GetState was reported faulting on
+    "State->CurrentX = 0" after the harness freed State and passed NULL, which is what
+    that declaration says will happen.
+
+    Pairing a size with its buffer. buffer_for_size matches "BufferSize" to "Buffer" by
+    name, so with no names nothing pairs, and a size argument is bounded by a blanket
+    constant instead of by the allocation it describes. resize_paired_buffer then never
+    runs, and the redzone that makes an overflow visible is never put where the callee
+    was told the buffer ends.
+
+    A protocol's GUID names the header its declarations live in, and the harness input
+    gives the GUID for each function, so the two meet here. They are matched by position,
+    because with param_name empty there is nothing else to match on.
+    """
+    global OPTIONAL_INFO_AVAILABLE
+    owner = {}
+    for entries in harness_functions.values():
+        for function, guid in entries:
+            if guid:
+                owner[function] = guid
+
+    named = marked = optional = 0
+    for function, blocks in data.items():
+        params = optional_params.get(owner.get(function, ''), {}).get(function)
+        if not params:
+            continue
+        for block in blocks:
+            for key, arguments in block.arguments.items():
+                where = ARG_INDEX.match(key)
+                if not where:
+                    continue
+                index = int(where.group(1))
+                if index >= len(params):
+                    continue
+                name, accepts_null = params[index]
+                for argument in arguments:
+                    if not argument.param_name:
+                        argument.param_name = name
+                        named += 1
+                    argument.is_optional = accepts_null
+                    marked += 1
+                    optional += 1 if accepts_null else 0
+    if marked:
+        OPTIONAL_INFO_AVAILABLE = True
+        print(f'INFO: read {marked} argument(s) from their declarations -- named {named}, '
+              f'{optional} of which the callee accepts NULL for')
+    return marked
 
 
 def sort_data(input_data: Dict[str, List[FunctionBlock]],
@@ -1901,6 +2028,7 @@ def analyze_data(macro_file: str,
     include_deps = load_include_deps(include_deps_file)
     data, function_template = load_data(
         data_file, harness_functions, macros_val, random, best_guess, function_declares)
+    apply_declarations(data, harness_functions)
     types = load_types(types_file)
     aliases = load_aliases(alias_file)
     if not random:
