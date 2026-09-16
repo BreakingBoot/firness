@@ -177,8 +177,9 @@ def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: s
                  protocol_guids: set = None, all_includes: List[str] = None,
                  edk2_dir: str = ""):
     packages = packages_for_includes(all_includes or [], edk2_dir)
+    priority = preferred_packages(all_includes or [], harness_folder, edk2_dir)
     code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries,
-                                    packages)
+                                    packages, priority)
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
 # the spellings accepted on the command line, mapped to the FIRNESS_BACKEND values that
@@ -253,6 +254,79 @@ def packages_for_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
     return extra
 
 
+# Two packages can publish the same include path. Protocol/PlatformBootManager.h is the
+# only one in edk2 master, and it is enough to lose a protocol: EmbeddedPkg declares
+# PLATFORM_BOOT_MANAGER_PROTOCOL and MdeModulePkg declares EDKII_PLATFORM_BOOT_MANAGER_-
+# PROTOCOL under that name. The analysis knew which file it read the protocol out of, but
+# cleanup_paths keeps only the two trailing components, so by the time the include is
+# written down the package is gone and [Packages] order decides -- and the fixed six are
+# always emitted first, so MdeModulePkg wins and the harness fails on "unknown type name
+# 'PLATFORM_BOOT_MANAGER_PROTOCOL'".
+#
+# The generated C is the tie-break that survived: it names the protocol type and the guid,
+# and only one of the two headers declares them.
+_EXTERN_GUID = re.compile(r'\bextern\s+EFI_GUID\s+(g\w*Guid)\s*;')
+
+
+def _package_headers(edk2_dir: str):
+    """Include path -> every package that publishes a header at it."""
+    owners = {}
+    if not os.path.isdir(edk2_dir):
+        return owners
+    for package in sorted(os.listdir(edk2_dir)):
+        root = os.path.join(edk2_dir, package, 'Include')
+        if not os.path.isdir(root):
+            continue
+        for base, _dirs, files in os.walk(root):
+            for name in files:
+                if not name.endswith('.h'):
+                    continue
+                absolute = os.path.join(base, name)
+                relative = os.path.relpath(absolute, root).replace(os.sep, '/')
+                owners.setdefault(relative, []).append((package, absolute))
+    return owners
+
+
+def preferred_packages(all_includes: List[str], harness_folder: str, edk2_dir: str) -> List[str]:
+    """Packages whose .dec has to precede the rest for an ambiguous include to resolve."""
+    if not edk2_dir or not os.path.isdir(edk2_dir):
+        return []
+    owners = _package_headers(edk2_dir)
+    if not owners:
+        return []
+    text = ''
+    for name in ('FirnessHarnesses.c', 'FirnessMain.c'):
+        path = os.path.join(harness_folder, name)
+        if os.path.isfile(path):
+            text += open(path, errors='ignore').read()
+    used = set(_IDENTIFIER.findall(text))
+    priority = []
+    for entry in all_includes:
+        relative = entry.strip().strip('<>"')
+        candidates = owners.get(relative) or []
+        if len(candidates) < 2:
+            continue
+        scored = []
+        for package, absolute in candidates:
+            source = _read_header(absolute)
+            declared = (set(_TYPEDEF_NAME.findall(source))
+                        | set(_TYPEDEF_BRACE.findall(source))
+                        | set(_TYPEDEF_FUNCTION.findall(source))
+                        | set(_MACRO_NAME.findall(source))
+                        | set(_EXTERN_GUID.findall(source)))
+            scored.append((len(declared & used), package))
+        scored.sort(reverse=True)
+        # only when one of them plainly is the header the harness was written against
+        if scored[0][0] == 0 or scored[0][0] == scored[1][0]:
+            continue
+        package = scored[0][1]
+        dec = f'{package}/{package}.dec'
+        if dec not in priority and os.path.isfile(os.path.join(edk2_dir, package, f'{package}.dec')):
+            priority.append(dec)
+            print(f'INFO: {dec} first in [Packages] -- it owns the {relative} the harness names')
+    return priority
+
+
 def existing_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
     """Drop headers this tree does not have.
 
@@ -279,6 +353,168 @@ def existing_includes(all_includes: List[str], edk2_dir: str) -> List[str]:
     for tail in sorted(set(dropped)):
         print(f'INFO: dropping include {tail} -- not in this edk2')
     return kept
+
+
+# A header the harness includes is not required to be self contained. edk2 leaves the
+# prerequisite to the caller: MdeModulePkg/Include/Protocol/MediaSanitize.h names
+# EFI_BLOCK_IO_MEDIA and includes nothing, UsbEthernetProtocol.h names
+# EFI_USB_DEVICE_REQUEST and includes nothing, and OvmfPkg/Include/Protocol/XenBus.h
+# writes "typedef enum xenbus_state XenBusState" over an enum whose body is in
+# IndustryStandard/Xen/io/xenbus.h. The driver that consumes the protocol includes the
+# missing header first; the harness includes only what the analysis recorded, so the
+# build stops inside the protocol header at "unknown type name".
+#
+# Rather than keep growing include_prerequisites by hand, read the tree: index what each
+# publishable header declares, then for every header the harness includes, name the
+# declarations it uses and does not have.
+_DECL_INDEX = {}
+
+# a type name is only worth chasing when the tree agrees where it comes from. UINTN is
+# declared by six ProcessorBind.h and the arch include directory decides which; a name
+# like that is left alone rather than guessed at
+_AMBIGUOUS = object()
+
+_COMMENT = re.compile(r'/\*.*?\*/|//[^\n]*', re.S)
+_INCLUDE_DIRECTIVE = re.compile(r'^[ \t]*#[ \t]*include[ \t]*([<"])([^>"]+)[>"]', re.M)
+_IDENTIFIER = re.compile(r'[A-Za-z_]\w*')
+# "struct foo" with no body is a forward declaration and legal; one the harness declares a
+# variable of is not, so the tag's definition is chased the same way a typedef name is
+_TAG_REFERENCE = re.compile(r'\b(?:struct|union|enum)\s+([A-Za-z_]\w*)')
+_TAG_DEFINITION = re.compile(r'\b(?:struct|union|enum)\s+([A-Za-z_]\w*)\s*\{')
+_TYPEDEF_NAME = re.compile(r'\btypedef\b[^;{}]*?([A-Za-z_]\w*)\s*(?:\[[^\]]*\])?\s*;')
+# a closing brace at column zero ends a top level typedef; an indented one ends a member,
+# so "} Protocol;" inside EFI_UDP_IO's struct is not a type called Protocol
+_TYPEDEF_BRACE = re.compile(r'^\}\s*([A-Za-z_]\w*)\s*;', re.M)
+_TYPEDEF_FUNCTION = re.compile(r'\btypedef\b[^;]*?\(\s*(?:EFIAPI\s*)?\*\s*([A-Za-z_]\w*)\s*\)')
+_MACRO_NAME = re.compile(r'^[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)', re.M)
+
+
+def _read_header(path: str) -> str:
+    try:
+        with open(path, 'r', encoding='utf-8', errors='ignore') as handle:
+            return _COMMENT.sub(' ', handle.read())
+    except OSError:
+        return ''
+
+
+def _decl_index(edk2_dir: str):
+    """Where each name a package publishes is declared, keyed the way an include names it.
+
+    Only <Package>/Include counts: that is what a .dec puts on the include path, so it is
+    exactly the set of headers the harness is able to write down. A driver's private
+    Include directory declares plenty of types and none of them can be reached.
+    """
+    key = os.path.abspath(edk2_dir)
+    if key in _DECL_INDEX:
+        return _DECL_INDEX[key]
+    paths, names, tags = {}, {}, {}
+    if os.path.isdir(edk2_dir):
+        for package in sorted(os.listdir(edk2_dir)):
+            root = os.path.join(edk2_dir, package, 'Include')
+            if not os.path.isdir(root):
+                continue
+            for base, _dirs, files in os.walk(root):
+                for name in files:
+                    if not name.endswith('.h'):
+                        continue
+                    absolute = os.path.join(base, name)
+                    relative = os.path.relpath(absolute, root).replace(os.sep, '/')
+                    paths.setdefault(relative, absolute)
+        for relative, absolute in paths.items():
+            source = _read_header(absolute)
+            declared = (set(_TYPEDEF_NAME.findall(source))
+                        | set(_TYPEDEF_BRACE.findall(source))
+                        | set(_TYPEDEF_FUNCTION.findall(source))
+                        | set(_MACRO_NAME.findall(source)))
+            for name in declared:
+                names[name] = relative if names.get(name, relative) == relative else _AMBIGUOUS
+            for name in set(_TAG_DEFINITION.findall(source)):
+                tags[name] = relative if tags.get(name, relative) == relative else _AMBIGUOUS
+    _DECL_INDEX[key] = (paths, names, tags)
+    return paths, names, tags
+
+
+def _visible_headers(seeds: List[str], paths: Dict[str, str]):
+    """Every header already reachable from what the harness includes.
+
+    Deliberately generous: a header included under any spelling counts, and a name that
+    only one arch's ProcessorBind.h declares counts as present because the arch include
+    directory supplies one of them. Over-counting here only means a prerequisite is not
+    added, which is the safe direction.
+    """
+    tails = {}
+    for relative in paths:
+        tails.setdefault(relative.rsplit('/', 1)[-1], []).append(relative)
+    seen, pending = set(), list(seeds)
+    while pending:
+        relative = pending.pop()
+        if relative in seen or relative not in paths:
+            continue
+        seen.add(relative)
+        directory = relative.rsplit('/', 1)[0] if '/' in relative else ''
+        for quoted, target in _INCLUDE_DIRECTIVE.findall(_read_header(paths[relative])):
+            candidates = []
+            if quoted == '"' and directory:
+                candidates.append(f'{directory}/{target}')
+            candidates.append(target)
+            resolved = [c for c in candidates if c in paths]
+            # "#include <ProcessorBind.h>" is satisfied by the arch include directory, and
+            # every arch's copy declares the same names
+            pending.extend(resolved or tails.get(target.rsplit('/', 1)[-1], []))
+    return seen
+
+
+def resolve_missing_declarations(all_includes: List[str], edk2_dir: str,
+                                 limit: int = 12, rounds: int = 3) -> List[str]:
+    """Add the header that declares a type an included header names but does not declare."""
+    if not edk2_dir or not os.path.isdir(edk2_dir):
+        return list(all_includes)
+    paths, names, tags = _decl_index(edk2_dir)
+    if not paths:
+        return list(all_includes)
+    ordered = [entry.strip().strip('<>"') for entry in all_includes]
+    # AutoGen.h is force-included by the edk2 build and brings the base types with it
+    scan = [entry for entry in ordered if entry in paths]
+    added = []
+    for _ in range(rounds):
+        visible = _visible_headers(set(ordered) | {'Base.h', 'Uefi.h'}, paths)
+        declared, defined_tags = set(), set()
+        for relative in visible:
+            source = _read_header(paths[relative])
+            declared |= (set(_TYPEDEF_NAME.findall(source))
+                         | set(_TYPEDEF_BRACE.findall(source))
+                         | set(_TYPEDEF_FUNCTION.findall(source))
+                         | set(_MACRO_NAME.findall(source)))
+            defined_tags |= set(_TAG_DEFINITION.findall(source))
+        wanted = []
+        for relative in scan:
+            source = _read_header(paths[relative])
+            missing = set()
+            for name in set(_IDENTIFIER.findall(source)) - declared:
+                owner = names.get(name)
+                if owner is not None and owner is not _AMBIGUOUS and owner not in visible:
+                    missing.add(owner)
+            for name in set(_TAG_REFERENCE.findall(source)) - defined_tags:
+                owner = tags.get(name)
+                if owner is not None and owner is not _AMBIGUOUS and owner not in visible:
+                    missing.add(owner)
+            for owner in sorted(missing):
+                if owner not in ordered:
+                    wanted.append((relative, owner))
+        if not wanted:
+            break
+        scan = []
+        for needed_by, owner in wanted:
+            if owner in ordered or len(added) >= limit:
+                continue
+            ordered.insert(ordered.index(needed_by), owner)
+            added.append(owner)
+            scan.append(owner)
+        if not scan:
+            break
+    for owner in added:
+        print(f'INFO: including {owner} -- declares a type the harness includes but cannot see')
+    return ordered
 
 
 def generate_includes(all_includes: List[str], harness_folder: str, edk2_dir: str = ""):
@@ -409,6 +645,9 @@ def generate_harness(merged_data: Dict[str, FunctionBlock],
     function_list = list(merged_data.keys())
     generate_main(function_list, harness_folder, max_steps, precedence)
     generate_code(merged_data, template, types, generators, aliases, harness_folder, enums, random)
+    # before the list is written out or turned into packages, so the inf declares the
+    # package a pulled-in prerequisite comes from
+    all_includes = resolve_missing_declarations(all_includes, edk2_dir)
     used_guids = referenced_guids(harness_folder)
     generate_header(merged_data, matched_macros, harness_folder, used_guids)
     generate_includes(all_includes, harness_folder, edk2_dir)

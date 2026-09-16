@@ -359,17 +359,83 @@ def protocol_struct_body(source: str, protocol_name: str):
     return match.group(1) if match else None
 
 
+# The members are not always declared in the protocol's own body. EFI_CPU_IO2_PROTOCOL
+# declares no Read: it holds Mem and Io, each an EFI_CPU_IO_PROTOCOL_ACCESS that declares
+# Read and Write, and a call site writes CpuIo->Mem.Read(...) -- so the name that reaches
+# here is the leaf. Searching only the protocol's own body finds nothing for such a member
+# and the caller then concludes it is not a member of this protocol at all: no signature
+# to build a block from, which is why EFI_MM_CPU_IO_PROTOCOL, whose whole surface is
+# nested, produced no harness whatsoever. Sub-structures held by value are part of the
+# protocol's own storage, so they are searched too. A pointer member is a separate object
+# the protocol may leave NULL and is deliberately not followed.
+def protocol_member_access(source: str, protocol_name: str, member: str,
+                           depth: int = 3) -> list:
+    """[(access path, the field's typedef)] for every way the protocol reaches `member`.
+
+    The path is what the call has to be written through: "Read" for a member of the
+    protocol itself, "Mem.Read" for one the protocol reaches through a sub-structure.
+    A member held by value is part of the protocol's own storage and is searched; a
+    pointer member is a separate object the protocol may leave NULL, is not part of this
+    protocol's surface, and is deliberately not followed.
+    """
+    body = protocol_struct_body(source, protocol_name)
+    if not body:
+        return []
+    found = []
+    direct = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
+    if direct:
+        found.append((member, direct.group(1)))
+    if depth > 0:
+        for kind, name in re.findall(r'^\s*([A-Za-z_]\w*)\s+([A-Za-z_]\w*)\s*;\s*$',
+                                     body, re.M):
+            if kind == protocol_name or name == member:
+                continue
+            for path, leaf in protocol_member_access(source, kind, member, depth - 1):
+                found.append((f'{name}.{path}', leaf))
+    return found
+
+
+def protocol_member_kind(source: str, protocol_name: str, member: str, depth: int = 3):
+    """The typedef name the protocol declares `member` with, or None."""
+    found = protocol_member_access(source, protocol_name, member, depth)
+    return found[0][1] if found else None
+
+
+_header_source = {}
+
+
+def header_source(header_path: str) -> str:
+    if header_path not in _header_source:
+        try:
+            with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
+                _header_source[header_path] = handle.read()
+        except OSError:
+            _header_source[header_path] = ''
+    return _header_source[header_path]
+
+
+def nested_member_paths(header_path: str, protocol_name: str, member: str) -> list:
+    """The access paths of a member the protocol does not declare at its top level.
+
+    Empty for a member the protocol declares itself, so a block only carries this when
+    the harness would otherwise emit a member access that does not exist. The types
+    database cannot answer this on its own: a protocol with no call sites has no entry
+    in it at all, which is every member built from its header below.
+    """
+    paths = protocol_member_access(header_source(header_path), protocol_name, member)
+    if not paths or any(path == member for path, _kind in paths):
+        return []
+    return paths
+
+
 def protocol_member_return(header_path: str, protocol_name: str, member: str) -> str:
     try:
         with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
             source = handle.read()
     except OSError:
         return 'EFI_STATUS'
-    body = protocol_struct_body(source, protocol_name)
-    if not body:
-        return 'EFI_STATUS'
-    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
-    if not field:
+    kind = protocol_member_kind(source, protocol_name, member)
+    if not kind:
         return 'EFI_STATUS'
     # the return type can be a pointer -- DuplicateDevicePath is declared
     # "typedef EFI_DEVICE_PATH_PROTOCOL * (EFIAPI *EFI_DEVICE_PATH_UTILS_DUPLICATE...)"
@@ -380,7 +446,7 @@ def protocol_member_return(header_path: str, protocol_name: str, member: str) ->
     # looked like it returned EFI_STATUS and the harness assigned a pointer to Status
     typed = re.search(r'typedef\s+((?:[A-Za-z_]\w*\s+)*[A-Za-z_]\w*(?:\s*\*)*)\s*'
                       r'\(\s*EFIAPI\s*\*\s*'
-                      + re.escape(field.group(1)) + r'\s*\)', source)
+                      + re.escape(kind) + r'\s*\)', source)
     if not typed:
         return 'EFI_STATUS'
     return re.sub(r'\s*\*', ' *', typed.group(1).strip()).strip()
@@ -479,18 +545,21 @@ def protocol_member_params(header_path: str, protocol_name: str, member: str):
             source = handle.read()
     except OSError:
         return None
-    body = protocol_struct_body(source, protocol_name)
-    if not body:
+    kind = protocol_member_kind(source, protocol_name, member)
+    if not kind:
         return None
-    field = re.search(r'\b([A-Za-z_]\w*)\s+' + re.escape(member) + r'\s*;', body)
-    if not field:
-        return None
-    signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(field.group(1)) +
+    signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(kind) +
                           r'\s*\)\s*\((.*?)\)\s*;', source, re.S)
     if not signature:
         return None
     params = signature.group(1).strip()
-    if not params or params.upper() == 'VOID':
+    # "(IN VOID)" is how edk2 spells a member that takes nothing -- EmbeddedPkg's
+    # PLATFORM_VIRTUAL_KBD_REGISTER and PLATFORM_VIRTUAL_KBD_RESET are both declared that
+    # way. Testing the text against "VOID" alone missed it, so the member looked like it
+    # took one parameter of type VOID: the harness declared a variable of an incomplete
+    # type and passed "(VOID){0}" to a member whose parameter list is empty.
+    bare = PARAM_DIRECTION.sub(' ', params).strip()
+    if not bare or bare.upper() == 'VOID':
         return []
     pieces, depth, current = [], 0, ''
     for character in params:
@@ -763,6 +832,13 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
             # own typedef is the authority for what the call site can assign
             if protocol_name and header:
                 block.return_type = protocol_member_return(header, protocol_name, function)
+                # how the harness has to write the call: EFI_CPU_IO2_PROTOCOL reaches
+                # Read through Mem and Io, and the call site it was learned from said
+                # so -- "mCpuIo->Mem.Read(...)" -- but only the leaf name survives the
+                # analysis, so the path is recovered from the header here
+                paths = nested_member_paths(header, protocol_name, function)
+                if paths:
+                    block.member_paths = paths
             # remember how to reach the protocol even when no parameter carries it, so the
             # harness can still locate it for a member declared as (VOID)
             if protocol_name and matched_guid:
@@ -813,6 +889,9 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                                   protocol_member_return(header, protocol_name, name))
             block.protocol_type = f'{protocol_name} *'
             block.protocol_guid = guid
+            paths = nested_member_paths(header, protocol_name, name)
+            if paths:
+                block.member_paths = paths
             filtered_data[name].append(block)
             all_includes.add(header)
             synthesised += 1
@@ -862,6 +941,130 @@ def observed_precedence(data_file):
     return [name for name, _ in score.most_common()]
 
 
+def arg_shape(function_block) -> Tuple[str, ...]:
+    """The set of argument keys a recorded call site carries."""
+    return tuple(sorted(function_block.arguments.keys()))
+
+
+def is_complete_shape(shape: Tuple[str, ...]) -> bool:
+    """True when the keys really are Arg_0..Arg_n-1 with nothing missing."""
+    indices = []
+    for key in shape:
+        match = ARG_INDEX.match(key)
+        if match is None:
+            return False
+        indices.append(int(match.group(1)))
+    return sorted(indices) == list(range(len(indices)))
+
+
+def member_guid(function: str, harness_functions: Dict[str, List[Tuple[str, str]]]) -> str:
+    """The GUID the request file asked this member under, if it named one."""
+    for pairs in harness_functions.values():
+        for pair in pairs:
+            if pair and pair[0] == function and len(pair) > 1 and pair[1]:
+                return pair[1]
+    return ""
+
+
+def fill_shape_holes(function: str,
+                     function_blocks: List[FunctionBlock],
+                     harness_functions: Dict[str, List[Tuple[str, str]]]) -> List[FunctionBlock]:
+    """Put back an argument the analysis lost, from the protocol's own prototype.
+
+    VIRTIO_DEVICE_PROTOCOL.WriteDevice takes (This, FieldOffset, FieldSize, Value) and is
+    recorded at every one of its call sites without Arg_1 -- the analyser does not keep
+    the OFFSET_OF() the callers pass there. A template with a hole in it emits a call with
+    one argument too few, which is a compile error at best and the wrong call at worst, so
+    the missing slot is taken from the member's declaration in its own protocol header.
+    That is the same source the synthesised-member path already trusts, and
+    protocol_member_signature returns None for a variadic member, so nothing is invented
+    for a "..." the header does not describe.
+    """
+    shape = arg_shape(function_blocks[0])
+    if is_complete_shape(shape):
+        return function_blocks
+    guid = member_guid(function, harness_functions)
+    protocol_name = guid_protocol_name.get(guid)
+    header = guid_header.get(guid)
+    if not (protocol_name and header):
+        return function_blocks
+    params = protocol_member_signature(header, protocol_name, function)
+    if not params:
+        return function_blocks
+    declared = {arg_key: (arg_type, direction, declared_name)
+                for arg_key, arg_type, direction, declared_name in params}
+    # only fill a shape the prototype actually covers: a recorded argument the declaration
+    # has no slot for means this is not the member it looks like, and the record stands
+    if not set(shape) <= set(declared):
+        return function_blocks
+    missing = sorted(set(declared) - set(shape),
+                     key=lambda key: int(ARG_INDEX.match(key).group(1)))
+    if not missing:
+        return function_blocks
+    for block in function_blocks:
+        for arg_key in missing:
+            arg_type, direction, declared_name = declared[arg_key]
+            is_self = (arg_key == 'Arg_0'
+                       and normalize_struct(remove_ref_symbols(arg_type))
+                       == normalize_struct(protocol_name))
+            block.arguments[arg_key] = [Argument(direction, arg_type, "", arg_type,
+                                                 guid if is_self else "",
+                                                 "__PROTOCOL__" if is_self else "",
+                                                 param_name=declared_name)]
+        # the harness emits the call in the order this dict iterates, so a slot appended
+        # after the ones that follow it would pass the arguments in the wrong order
+        block.arguments = {key: block.arguments[key]
+                           for key in sorted(block.arguments,
+                                             key=lambda k: int(ARG_INDEX.match(k).group(1))
+                                             if ARG_INDEX.match(k) else 0)}
+    print(f'INFO: {function} was recorded without {", ".join(missing)}; taking '
+          f'{"it" if len(missing) == 1 else "them"} from {protocol_name} in {header}')
+    return function_blocks
+
+
+def keep_one_arg_shape(filtered_function_dict: Dict[str, List[FunctionBlock]],
+                       harness_functions: Dict[str, List[Tuple[str, str]]]) -> Dict[str, List[FunctionBlock]]:
+    """One argument shape per function, so the template and its call sites agree.
+
+    sort_data groups a function's call sites by argument count and keeps every group that
+    matches the request, so one function's list can hold sites of different shapes: a
+    variadic member is recorded with six arguments at one site and seven at another
+    (EFI_S3_SAVE_STATE_PROTOCOL.Write), and a site whose analysis lost an argument leaves
+    a hole (VIRTIO_DEVICE_PROTOCOL.ReadDevice came back as Arg_0, Arg_2, Arg_3, Arg_4).
+
+    Everything downstream reads one template per function and indexes it by whatever key a
+    call site carries. A foreign shape therefore either killed the whole campaign --
+    "TypeError: 'NoneType' object is not subscriptable" out of load_data, no harness, no
+    coverage -- or, when the template happened to be the larger shape, silently merged one
+    site's argument into another site's slot and passed it to the firmware.
+
+    So keep the sites that share the template's shape. The template stays the first block,
+    as before, unless its keys have a hole in them: a hole is a lost record rather than a
+    real overload, and harnessing it would drop an argument from the call.
+    """
+    for function, function_blocks in filtered_function_dict.items():
+        if not function_blocks:
+            continue
+        shapes = {arg_shape(block) for block in function_blocks}
+        if len(shapes) == 1:
+            filtered_function_dict[function] = fill_shape_holes(
+                function, function_blocks, harness_functions)
+            continue
+        chosen = arg_shape(function_blocks[0])
+        if not is_complete_shape(chosen):
+            for block in function_blocks:
+                if is_complete_shape(arg_shape(block)):
+                    chosen = arg_shape(block)
+                    break
+        kept = [block for block in function_blocks if arg_shape(block) == chosen]
+        print(f'INFO: {function} was recorded with {len(shapes)} different argument '
+              f'shapes; harnessing the {len(chosen)}-argument one, seen at {len(kept)} of '
+              f'{len(function_blocks)} call site(s)')
+        filtered_function_dict[function] = fill_shape_holes(
+            function, kept, harness_functions)
+    return filtered_function_dict
+
+
 def load_data(json_file: str,
               harness_functions: Dict[str, List[Tuple[str, str]]],
               macros: Dict[str, Macros],
@@ -900,6 +1103,8 @@ def load_data(json_file: str,
     # and if not then take the one which has a service matching the harness_functions.keys()
     # note that if RT is in the service name, then it is a runtime service and BS is a boot service
     filtered_function_dict = sort_data(function_dict, harness_functions, best_guess, function_decl)
+    # one shape per function before anything indexes the template by a call site's keys
+    filtered_function_dict = keep_one_arg_shape(filtered_function_dict, harness_functions)
 
     void_star_data_type_counter = defaultdict(Counter)
     function_template = {}
@@ -1009,6 +1214,25 @@ def load_enums(json_file: str) -> Dict[str, EnumDef]:
     return enum_dict
 
 #
+# "TPL_NOTIFY", "(TPL_NOTIFY)" and " TPL_NOTIFY " are all a single identifier; "16",
+# "TPL_NOTIFY + 1" and "sizeof (X)" are not.
+#
+def is_bare_identifier(value: str) -> bool:
+    value = (value or "").strip()
+    while value.startswith('(') and value.endswith(')'):
+        depth = 0
+        for index, character in enumerate(value):
+            if character == '(':
+                depth += 1
+            elif character == ')':
+                depth -= 1
+                # the opening paren closes before the end, so the parens are not a wrapper
+                if depth == 0 and index != len(value) - 1:
+                    return bool(re.fullmatch(r'[A-Za-z_]\w*', value))
+        value = value[1:-1].strip()
+    return bool(re.fullmatch(r'[A-Za-z_]\w*', value))
+
+#
 # Load Macros
 #
 def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
@@ -1017,8 +1241,19 @@ def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
     macros_val = defaultdict()
     macros_name = defaultdict()
     for macro in raw_data:
-        macros_val[macro["Value"]] = Macros(**macro)
         macros_name[macro["Name"]] = Macros(**macro)
+    # macros_val is the reverse map: load_data and load_generators use it to turn a value
+    # a call site was recorded passing into the name of a macro that spells it. That is
+    # worth doing for a literal, and never for a value that is already a symbolic name --
+    # an alias macro like "#define XHC_TPL TPL_NOTIFY" would otherwise claim the key
+    # "TPL_NOTIFY" and rewrite every recorded TPL_NOTIFY into XHC_TPL. Four private driver
+    # headers alias TPL_NOTIFY that way (EHC_TPL, UHCI_TPL, USB_BUS_TPL, XHC_TPL), the
+    # last one loaded wins, and the harness is left naming a constant that only
+    # MdeModulePkg/Bus/Pci/XhciDxe/Xhci.h defines.
+    for macro in raw_data:
+        if is_bare_identifier(macro["Value"]):
+            continue
+        macros_val[macro["Value"]] = Macros(**macro)
     return macros_val, macros_name
 
 #
@@ -1627,6 +1862,20 @@ def collect_all_function_arguments(input_data: Dict[str, List[FunctionBlock]],
                                 for part in re.split(r'[|&^]', arg.usage or 'x'))
                 if unknown or malformed:
                     arg.usage = ""
+                else:
+                    # a name the harness is allowed to write down still has to be declared
+                    # somewhere. the macro branch above adds the header that defines a
+                    # macro; a type named inside the expression brought nothing with it,
+                    # so "sizeof (UDF_ANCHOR_VOLUME_DESCRIPTOR_POINTER)" -- recorded on
+                    # EFI_DISK_IO_PROTOCOL.ReadDisk -- was emitted with nothing declaring
+                    # it, even though MdePkg/Include/IndustryStandard/Udf.h is a public
+                    # header the harness can include. cleanup_paths is the same test
+                    # includable_types was built with, so a type that passed it here has a
+                    # header the include pipeline will keep
+                    for token in re.findall(r'[A-Za-z_]\w*', expression):
+                        type_file = getattr(types.get(token), 'file', '')
+                        if type_file and cleanup_paths([type_file]):
+                            all_includes.add(type_file)
 
     # Step 6: Sort the arguments
     for key, function_block in pre_processed_data.items():

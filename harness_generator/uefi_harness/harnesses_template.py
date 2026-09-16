@@ -221,6 +221,44 @@ def call_function(function: str,
             if not members or function in members:
                 call_prefix = "ProtocolVariable->"
 
+    # The member may sit inside a sub-structure of the protocol -- see
+    # protocol_member_paths. Only a call that already goes through the protocol pointer is
+    # rewritten, and only when the struct says the name is not a member of the protocol
+    # itself, so nothing about a flat protocol changes.
+    callee = function
+    if call_prefix[-2:] == "->" and call_prefix[:-2] in (protocol_variable,
+                                                         "ProtocolVariable"):
+        # what the analysis recorded from the header, which is the only answer available
+        # for a protocol the types database has no entry for -- one with no call sites
+        # anywhere in the tree has none -- and the struct otherwise
+        paths = (getattr(function_block, 'member_paths', None)
+                 or getattr(services.get(lookup_function), 'member_paths', None)
+                 or protocol_member_paths(
+                     harness_protocol_type(function_block,
+                                           services.get(lookup_function)),
+                     function, types))
+        if paths and all(path != function for path, _kind in paths):
+            kinds = sorted({kind for _path, kind in paths})
+            if len(paths) > 1 and len(kinds) == 1 and IDENTIFIER.fullmatch(kinds[0]):
+                # The same member on more than one path: CpuIo2 declares Read on Mem and
+                # on Io, both EFI_CPU_IO_PROTOCOL_IO_MEM, and the analysis merged the call
+                # sites of both into this one block -- so neither path alone is the call
+                # it described, and pinning one would silently drop half the protocol.
+                # Let the input choose, the way it chooses among an argument's values.
+                callee = f'{function}_{prefix}_Member' if prefix else f'{function}_Member'
+                output.append(f'{kinds[0]} {callee} = {call_prefix}{paths[0][0]};')
+                output.append(f'UINT8 {callee}Choice = 0;')
+                output.append(f'ReadBytes(Input, sizeof({callee}Choice), '
+                              f'(VOID *)&{callee}Choice);')
+                output.append(f'switch({callee}Choice % {len(paths)}) ' + '{')
+                for index, (path, _kind) in enumerate(paths):
+                    output.append(f'    case {index}: {callee} = '
+                                  f'{call_prefix}{path}; break;')
+                output.append('}')
+                call_prefix = ""
+            else:
+                callee = paths[0][0]
+
     # Only the call under test should be able to report. Everything around it -- reading
     # the input, allocating buffers, filling structs -- is the harness's own work, and a
     # sanitizer report from there says something about the harness, not the firmware.
@@ -244,6 +282,13 @@ def call_function(function: str,
             name = f'{prefix}_{arg_key}' if prefix else arg_key
             output.append(f'VOID *{function}_{name} = '
                           f'AllocateZeroPool({FIRNESS_BUFFER_BYTES});')
+
+    # ...and now that those exist, give the ones a fuzzed size argument names the size
+    # they were told they have. This is the same resize the input and output sections do,
+    # and it has to be here because this is where these buffers are declared: emitted with
+    # the outputs it read "use of undeclared identifier Callback_Arg_4" and the protocol
+    # got no harness at all.
+    output.extend(resize_optional_buffers(function_block, arg_type_list, prefix))
 
     # a handle the callee writes needs storage that is not the image handle. it starts
     # NULL because these are iterators: GetNextRootBridge reads the slot to decide where
@@ -307,9 +352,9 @@ def call_function(function: str,
                                     f'{function}_{name}_LiveChoice'))
     output.append("FirnessSanitizer(TRUE);")
     if function_block.return_type == "EFI_STATUS":
-        output.append(f"Status = {call_prefix}{function}(")
+        output.append(f"Status = {call_prefix}{callee}(")
     else:
-        output.append(f"{call_prefix}{function}(")
+        output.append(f"{call_prefix}{callee}(")
 
     for arg_key, arguments in function_block.arguments.items():
         original_arg_key = arg_key
@@ -599,7 +644,9 @@ def buffer_for_size(size_name: str, all_args) -> str:
     return ''
 
 
-def resize_paired_buffer(function: str, paired: str, size_arg: str, all_args) -> list:
+def resize_paired_buffer(function: str, paired: str, size_arg: str, all_args,
+                         arg_type_list: List[TypeTracker] = None,
+                         prefix: str = '') -> list:
     """Reallocate a raw buffer to the size its paired argument now declares.
 
     Only for the blanket byte buffers. A buffer allocated as sizeof(SOME_STRUCT) is
@@ -619,11 +666,23 @@ def resize_paired_buffer(function: str, paired: str, size_arg: str, all_args) ->
         return []
     buf = f'{function}_{paired}'
     size = f'{function}_{size_arg}'
+    # The cast has to name the type the variable was actually declared with, which is not
+    # always the parameter's own spelling: declare_var rewrites a VOID buffer to UINTN *,
+    # because a VOID has no size to read into. Casting the reallocation to the parameter
+    # type then assigns a void ** to a UINTN * -- which is exactly what clang rejected in
+    # EfiUsb2Hc, whose IN OUT VOID *Data[] is recorded as void **. The TypeTracker carries
+    # what declare_var emitted, so take the spelling from there and fall back to the
+    # parameter only when this buffer has no tracker of its own.
+    cast_type = paired_type
+    for tracked in (arg_type_list or []):
+        if tracked.name == paired or (prefix and tracked.name == f'{prefix}_{paired}'):
+            cast_type = tracked.arg_type
+            break
     return [
         f'if ({buf} != NULL) {{',
         f'    FreePool({buf});',
         f'}}',
-        f'{buf} = ({paired_type})AllocateZeroPool({size} > 0 ? {size} : 1);',
+        f'{buf} = ({cast_type})AllocateZeroPool({size} > 0 ? {size} : 1);',
         f'if ({buf} == NULL) {{',
         f'    return EFI_OUT_OF_RESOURCES;',
         f'}}',
@@ -745,7 +804,8 @@ def fuzzable_args(function: str,
                         # resize_output_buffers() below does those, after the declaration.
                         if paired_is_declared_yet(paired, all_args):
                             for line in resize_paired_buffer(function, paired, arg,
-                                                             all_args):
+                                                             all_args, arg_type_list,
+                                                             prefix):
                                 output.append(line)
                     elif takes_raw_buffer(arg_type_list):
                         output.append(f'{function}_{arg} = {function}_{arg} % '
@@ -859,14 +919,46 @@ def paired_is_declared_yet(paired: str, all_args) -> bool:
     return bool(args) and 'IN' in args[0].arg_dir
 
 
-def resize_output_buffers(function_block, arg_type_list, prefix: str = '',
+def declared_by_output_section(arguments) -> bool:
+    """Whether generate_outputs() declares a variable for this argument.
+
+    Mirrors the condition generate_outputs() itself tests. It is not simply "not IN":
+    an OUT argument recorded as __GEN_INPUT__ with a usage is spelled straight into the
+    call and gets no variable, and an OPTIONAL pointer is declared later still, by
+    call_function(). Assuming "not declared with the inputs" meant "declared with the
+    outputs" is what emitted a resize of Callback_Arg_4 above the line that declares it.
+    """
+    argument = arguments[0] if arguments else None
+    if argument is None:
+        return False
+    return (argument.arg_dir == 'OUT'
+            and not (argument.variable == '__GEN_INPUT__' and argument.usage))
+
+
+def declared_by_call_section(arguments) -> bool:
+    """Whether call_function() declares a variable for this argument.
+
+    An argument the analysis could attribute no value to is recorded as arg_dir
+    "OPTIONAL"; call_function() gives the pointer ones a zeroed buffer of their own
+    rather than passing the NULL the analysis recorded. That declaration is the third
+    place a buffer can come from, and it runs after both sections above.
+    """
+    argument = arguments[0] if arguments else None
+    if argument is None:
+        return False
+    return (argument.arg_dir == 'OPTIONAL' and has_pointer(argument.arg_type)
+            and not is_function_pointer(argument.arg_type))
+
+
+def resize_paired_buffers(function_block, arg_type_list, declares, prefix: str = '',
                           indent: int = 1) -> list:
-    """Resize the OUT-only buffers whose size argument the harness has fuzzed.
+    """Resize the buffers `declares` says have just been declared.
 
     Same purpose as the resize in the input section: put the sanitizer's redzone
     immediately after the length the callee was told it had, so a write past that length
-    is detectable instead of landing in slack inside the allocation. These buffers are
-    only declared after the input section, so their resize has to wait until here.
+    is detectable instead of landing in slack inside the allocation. A buffer that is not
+    declared with the inputs has to wait for the section that does declare it, and
+    `declares` names that section.
     """
     output = []
     all_args = function_block.arguments
@@ -882,13 +974,30 @@ def resize_output_buffers(function_block, arg_type_list, prefix: str = '',
         paired = buffer_for_size(arguments[0].param_name, all_args)
         if not paired or paired_is_declared_yet(paired, all_args):
             continue
+        if not declares(all_args.get(paired)):
+            continue
         if is_dimension_name(arguments[0].param_name):
             continue
-        output.extend(resize_paired_buffer(function, paired, arg, all_args))
+        output.extend(resize_paired_buffer(function, paired, arg, all_args,
+                                           arg_type_list, prefix))
     if output:
         output = ['/*', '    Buffers resized to the length their size argument declares',
                   '*/'] + output
     return add_indents(output, indent)
+
+
+def resize_output_buffers(function_block, arg_type_list, prefix: str = '',
+                          indent: int = 1) -> list:
+    """Resize the OUT-only buffers whose size argument the harness has fuzzed."""
+    return resize_paired_buffers(function_block, arg_type_list,
+                                 declared_by_output_section, prefix, indent)
+
+
+def resize_optional_buffers(function_block, arg_type_list, prefix: str = '',
+                            indent: int = 0) -> list:
+    """Resize the buffers call_function() declares for the OPTIONAL pointer arguments."""
+    return resize_paired_buffers(function_block, arg_type_list,
+                                 declared_by_call_section, prefix, indent)
 
 
 def generate_inputs(function_block: FunctionBlock, 
@@ -1075,6 +1184,53 @@ def protocol_members(arg_type: str, types: Dict[str, TypeInfo]) -> set:
     fields = getattr(struct, 'fields', None)
     return {field.name for field in fields} if fields else set()
 
+
+# A protocol's members are not always at the top level of its struct.
+# EFI_CPU_IO2_PROTOCOL has no Read: it has Mem and Io, each an
+# EFI_CPU_IO_PROTOCOL_ACCESS holding Read and Write, so the member is reached as
+# ProtocolVariable->Mem.Read. Nothing upstream carries that path -- a call site writes
+# mCpuIo->Mem.Read(...) and the analysis records the callee as the leaf name "Read", and
+# the input file names it the same way -- so it has to be recovered from the struct here,
+# or the harness emits ProtocolVariable->Read and does not compile.
+def protocol_member_paths(arg_type: str, function: str,
+                          types: Dict[str, TypeInfo], depth: int = 3) -> list:
+    """[(access path, the field's declared type)] for every field named `function`.
+
+    Only members held by value are descended into. A pointer member is a separate object
+    that the protocol merely refers to and is entitled to leave NULL, so a function
+    reached through one is not a member of this protocol and calling it is a different
+    test from the one the input file asked for.
+    """
+    if not types or not arg_type:
+        return []
+    name = remove_ref_symbols(arg_type)
+    struct = types.get(name) or types.get(aliases_map.get(name, ""))
+    fields = getattr(struct, 'fields', None) or []
+    found = [(field.name, field.type) for field in fields if field.name == function]
+    if depth > 0:
+        for field in fields:
+            if has_pointer(field.type) or remove_ref_symbols(field.type) == name:
+                continue
+            for path, kind in protocol_member_paths(field.type, function, types,
+                                                    depth - 1):
+                found.append((f'{field.name}.{path}', kind))
+    return found
+
+
+def harness_protocol_type(function_block, service_block) -> str:
+    """The type the harness declared ProtocolVariable with, as a type name.
+
+    Arg_0 when a parameter carries the protocol, and the type the analysis recorded on
+    the block otherwise -- the two places gen_uefi_harnesses() reads it from, and a
+    member declared (VOID) only has the second.
+    """
+    arguments = getattr(function_block, 'arguments', None) or {}
+    first = arguments.get('Arg_0')
+    if first and first[0].variable == "__PROTOCOL__":
+        return first[0].arg_type
+    return (getattr(function_block, 'protocol_type', '')
+            or getattr(service_block, 'protocol_type', '') or '')
+
 # only a header under some package's Include directory can be pulled into the harness, so
 # only the constants declared in one can be written by name
 def is_nameable_enum(enum_def) -> bool:
@@ -1245,9 +1401,31 @@ def generator_struct_args(function: str,
                 # the argument's own depth: declare_var drops a level for a two star
                 # argument, so even an identical spelling needs its address taken here
                 declared_depth = arg.pointer_count - 1 if arg.pointer_count == 2 else arg.pointer_count
-                gen_arg[0].usage = (f'&{function}_{arg_key}'
-                                    if gen_arg[0].pointer_count > declared_depth
-                                    else f'{function}_{arg_key}')
+                if gen_arg[0].pointer_count > declared_depth:
+                    # ...and not always the argument's own spelling either. declare_var
+                    # gives a VOID * argument the type UINTN *, because a VOID has no size
+                    # to read into, so &Map_Arg_2 is a UINTN ** where the producer's OUT
+                    # parameter is VOID ** -- the error clang reported for EfiPciIo, whose
+                    # HostAddress is produced through VirtioMapAllBytesInSharedBuffer's
+                    # OUT VOID **Mapping. The object and its depth are right; only the base
+                    # type was rewritten, so restore the producer's own spelling, which is
+                    # what cast_arg already does for a parameter declared in this harness.
+                    #
+                    # Only where the depth is provably right. declare_var's rewrite is
+                    # predictable up to two stars; past that it adds a level of its own for
+                    # a VOID, and an OUT parameter one star deeper than a two star argument
+                    # receives an address one level too shallow either way. Casting in those
+                    # cases would hand the producer a pointer to the wrong thing, which is
+                    # worse than the compile error they raise today.
+                    operand = f'&{function}_{arg_key}'
+                    if (arg.pointer_count <= 2
+                            and declared_depth + 1 == gen_arg[0].pointer_count
+                            and not is_function_pointer(gen_arg[0].arg_type)
+                            and '[' not in gen_arg[0].arg_type):
+                        operand = f'({gen_arg[0].arg_type}){operand}'
+                    gen_arg[0].usage = operand
+                else:
+                    gen_arg[0].usage = f'{function}_{arg_key}'
                 break
         function_name = arg.assignment
         prefix = ""
