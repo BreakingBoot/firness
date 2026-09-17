@@ -1,3 +1,4 @@
+import re
 from typing import List, Dict
 
 def harness_includes(includes: List[str]) -> List[str]:
@@ -26,8 +27,23 @@ def harness_header(functions: List[str],
     output.append("#include \"FirnessHelpers.h\"")
     output.append("")
 
+    # FirnessIncludes.h is included directly above, so an edk2 header may already define
+    # one of these names -- and MdePkg/Include/Base.h defines TRUE and FALSE with no guard
+    # of its own, so an unconditional #define here is a redefinition rather than a shadow.
+    # It went unnoticed because the replacement text is lifted from macros.json, which was
+    # extracted from that same Base.h, so the two spellings cannot disagree; a clean build
+    # should not rest on that coincidence. #ifndef keeps the declaring header's definition
+    # wherever there is one and supplies the constant only where there is not, which is
+    # what the harness wanted in the first place.
     for name, value in matched_macros.items():
-        output.append(f"#define {name} {value}")
+        if re.fullmatch(r'[A-Za-z_]\w*', name or ''):
+            output.append(f"#ifndef {name}")
+            output.append(f"#define {name} {value}")
+            output.append(f"#endif")
+        else:
+            # a function-like macro: the name carries its parameter list, which cannot go
+            # after #ifndef
+            output.append(f"#define {name} {value}")
     output.append("")
 
     # The sanitizer is gated around the call under test so that only the firmware's own
