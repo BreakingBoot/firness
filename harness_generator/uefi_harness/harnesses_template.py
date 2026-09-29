@@ -350,6 +350,25 @@ def call_function(function: str,
             name = f'{prefix}_{arg_key}' if prefix else arg_key
             output.extend(draw_live(declared, f'{function}_{name}',
                                     f'{function}_{name}_LiveChoice'))
+    # Declare the pointer arguments untrusted for the duration of the call. They hold
+    # bytes the fuzzer chose, which is exactly the position a communication buffer or an
+    # agent-owned queue is in: the callee may read a length out of one, check it, and read
+    # it again to use it, and what the check approved is not what acts. Both reads are of
+    # ordinary in-bounds memory, so nothing else in the sanitizer can see it.
+    #
+    # Four slots, so only the first four are registered; the window closes on
+    # FirnessSanitizer(FALSE), which also forgets what was read.
+    registered = 0
+    for arg_key, arguments in function_block.arguments.items():
+        if registered >= 4:
+            break
+        argument = arguments[0]
+        if (argument.pointer_count > 0 and 'IN' in argument.arg_dir
+                and has_declared_variable(argument)
+                and not is_function_pointer(argument.arg_type)):
+            name = f'{prefix}_{arg_key}' if prefix else arg_key
+            output.append(f'FirnessUntrusted({function}_{name}, {FIRNESS_BUFFER_BYTES});')
+            registered += 1
     output.append("FirnessSanitizer(TRUE);")
     if function_block.return_type == "EFI_STATUS":
         output.append(f"Status = {call_prefix}{callee}(")

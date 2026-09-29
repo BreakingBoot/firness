@@ -59,6 +59,30 @@ def harness_header(functions: List[str],
     output.append('{')
     output.append('    (VOID)Active;')
     output.append('}')
+    # The firmware sanitizer's checks are gated separately from escalation, on purpose:
+    # opening the escalation window arms a LibAFL command that is an invalid opcode
+    # anywhere else. So a campaign has to turn the checks on itself, and until it did, a
+    # generated harness reached none of them -- SanBenchFirmware fuzzed for 17030
+    # iterations and reported nothing while the exerciser, which enables them by hand,
+    # reported four classes on one boot. Same weak-definition reasoning as above.
+    output.append('__attribute__((weak)) VOID AsanSetRegionChecks(BOOLEAN Active)')
+    output.append('{')
+    output.append('    (VOID)Active;')
+    output.append('}')
+    output.append('__attribute__((weak)) VOID AsanRegisterUntrusted(UINT64 Base, UINT64 Size)')
+    output.append('{')
+    output.append('    (VOID)Base;')
+    output.append('    (VOID)Size;')
+    output.append('}')
+    # NULL is normal here: an OPTIONAL argument the fuzzer chose to pass as NULL has no
+    # buffer to declare, and registering a zero base would make the whole first page
+    # untrusted.
+    output.append('static inline VOID FirnessUntrusted(VOID *Buffer, UINTN Size)')
+    output.append('{')
+    output.append('    if ((Buffer != NULL) && (AsanRegisterUntrusted != NULL)) {')
+    output.append('        AsanRegisterUntrusted((UINT64)(UINTN)Buffer, (UINT64)Size);')
+    output.append('    }')
+    output.append('}')
     # The boundary between the firmware's own reports and the ones an input provoked,
     # written straight to the 16550 the capture is taken from.
     #
@@ -90,6 +114,12 @@ def harness_header(functions: List[str],
     output.append('    }')
     output.append('    if (AsanSetFuzzingActive != NULL) {')
     output.append('        AsanSetFuzzingActive(Active);')
+    output.append('    }')
+    output.append('    if (AsanSetRegionChecks != NULL) {')
+    output.append('        AsanSetRegionChecks(Active);')
+    output.append('    }')
+    output.append('    if (!Active && (AsanRegisterUntrusted != NULL)) {')
+    output.append('        AsanRegisterUntrusted(0, 0);')
     output.append('    }')
     output.append('}')
     output.append("")
