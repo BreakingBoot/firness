@@ -107,6 +107,51 @@ def harness_header(functions: List[str],
     output.append('                              :: "a" (Marker[Index]), "d" ((UINT16)0x3F8));')
     output.append('    }')
     output.append('}')
+    #
+    # What the guest actually received, on the same wire, once per iteration.
+    #
+    # This exists because the alternative is invisible. A campaign whose testcase never
+    # reaches the guest buffer looks exactly like a healthy one: the length still arrives,
+    # the harness still runs, coverage still moves with the length, and the reports that
+    # come out are whatever the harness reaches with a constant input. SanBenchMemory
+    # produced 474 byte-identical heap-overflow reports that way -- same address, same IP,
+    # size 0x48 every time, because 0x48 is a constant the generator planted in one arm of
+    # the length argument -- while its corpus sat at the seed count through 69120
+    # executions. Nothing in the pipeline objected.
+    #
+    # So the harness says what it got, and scripts/input_check.py asserts the values vary.
+    # Direct outb rather than SerialOutput: this has to work in a harness that does not
+    # link AsanLib, which is the usual case.
+    #
+    output.append('static VOID FirnessReportInput(CONST UINT8 *Bytes, UINTN Length)')
+    output.append('{')
+    output.append('    STATIC CONST CHAR8 Hex[] = "0123456789abcdef";')
+    output.append('    CHAR8 Line[32];')
+    output.append('    UINTN At = 0;')
+    output.append('    UINTN Index;')
+    output.append('')
+    output.append('    Line[At++] = \'I\'; Line[At++] = \'N\'; Line[At++] = \'=\';')
+    # The length in hex, four nibbles: the buffer is 0x1000 so it always fits, and a
+    # fixed width keeps the line greppable without a printf in a UEFI application.
+    output.append('    for (Index = 4; Index > 0; Index--) {')
+    output.append('        Line[At++] = Hex[(Length >> ((Index - 1) * 4)) & 0xF];')
+    output.append('    }')
+    output.append('    Line[At++] = \':\';')
+    # Six bytes is enough to cover every selector the harness reads before it dispatches
+    # -- the step count, the target, and the first argument's choice bytes -- which is
+    # exactly the span that decides whether a member is reached at all.
+    output.append('    for (Index = 0; Index < 6; Index++) {')
+    output.append('        UINT8 Value = (Index < Length) ? Bytes[Index] : 0;')
+    output.append('        Line[At++] = Hex[(Value >> 4) & 0xF];')
+    output.append('        Line[At++] = Hex[Value & 0xF];')
+    output.append('    }')
+    output.append('    Line[At++] = \'\\n\';')
+    output.append('')
+    output.append('    for (Index = 0; Index < At; Index++) {')
+    output.append('        __asm__ __volatile__ ("outb %%al, %%dx"')
+    output.append('                              :: "a" (Line[Index]), "d" ((UINT16)0x3F8));')
+    output.append('    }')
+    output.append('}')
     output.append('static inline VOID FirnessSanitizer(BOOLEAN Active)')
     output.append('{')
     output.append('    if (Active) {')

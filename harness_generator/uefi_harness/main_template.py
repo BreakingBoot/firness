@@ -69,6 +69,10 @@ def gen_firness_main(functions: List[str], max_steps: int = MAX_SEQUENCE_STEPS,
     output.append("")
     output.append("    HARNESS_START(buffer, &InputSize);")
     output.append("")
+    # Say what arrived, every iteration, before anything interprets it. A campaign whose
+    # bytes never reach the guest is otherwise indistinguishable from a healthy one.
+    output.append("    FirnessReportInput(buffer, InputSize);")
+    output.append("")
     # from here on a sanitizer report also ends the iteration as a solution; before
     # this point the ~630 boot-time reports would kill every boot
     output.append("    if (AsanSetFuzzingActive != NULL) {")
