@@ -123,7 +123,12 @@ def harness_header(functions: List[str],
     # Direct outb rather than SerialOutput: this has to work in a harness that does not
     # link AsanLib, which is the usual case.
     #
-    output.append('static VOID FirnessReportInput(CONST UINT8 *Bytes, UINTN Length)')
+    # static INLINE, not plain static. Only FirnessMain.c calls this, so in the
+    # FirnessHarnesses.c translation unit it is an unused static function and the build
+    # runs -Werror -- which cost a whole campaign pair before it was caught.
+    # FirnessMarkFuzzStart next door gets away with plain static only because
+    # FirnessSanitizer, in this same header, calls it.
+    output.append('static inline VOID FirnessReportInput(CONST UINT8 *Bytes, UINTN Length)')
     output.append('{')
     output.append('    STATIC CONST CHAR8 Hex[] = "0123456789abcdef";')
     output.append('    CHAR8 Line[32];')
