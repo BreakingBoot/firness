@@ -367,7 +367,22 @@ def call_function(function: str,
                 and has_declared_variable(argument)
                 and not is_function_pointer(argument.arg_type)):
             name = f'{prefix}_{arg_key}' if prefix else arg_key
-            output.append(f'FirnessUntrusted({function}_{name}, {FIRNESS_BUFFER_BYTES});')
+            # The buffer's real extent, not the blanket constant. A paired size resizes
+            # the allocation -- DoubleFetch's buffer is reallocated to its SharedSize,
+            # which can be one byte -- and registering 4096 of it declares memory past
+            # the allocation untrusted, so a read belonging to whatever the allocator put
+            # next reports against this call. size_limit_for exists because the same
+            # constant was hardcoded once before and asked for a 4KB overflow.
+            paired_size = None
+            for other_key, other in function_block.arguments.items():
+                if other[0].pointer_count == 0 and \
+                        buffer_for_size(other[0].param_name,
+                                        function_block.arguments) == arg_key:
+                    paired_size = f'{function}_{prefix}_{other_key}' if prefix \
+                        else f'{function}_{other_key}'
+                    break
+            extent = paired_size if paired_size else str(FIRNESS_BUFFER_BYTES)
+            output.append(f'FirnessUntrusted({function}_{name}, {extent});')
             registered += 1
     output.append("FirnessSanitizer(TRUE);")
     if function_block.return_type == "EFI_STATUS":
