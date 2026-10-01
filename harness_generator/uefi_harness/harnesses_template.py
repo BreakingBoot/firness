@@ -755,16 +755,52 @@ def size_limit_for(paired: str, all_args) -> str:
 # non-NULL.
 OPAQUE_HANDLE_TYPES = {'EFI_EVENT'}
 
+# Typedefs that ARE a pointer, or an address, with no asterisk in the spelling. This list
+# exists because pointer_count is arg_type.count('*') on the declaration TEXT, so every one
+# of these reads as a scalar and was filled with raw input bytes and handed to firmware that
+# dereferences it.
+#
+# What that cost, measured: EdkiiPeCoffImageEmulator's harness declares
+# "EFI_PHYSICAL_ADDRESS RegisterImage_Arg_1 = {0};" and fuzzes it, so the EBC emulator was
+# handed eight random bytes as an IMAGE BASE and parsed it. The result was
+# "EbcDxe.efi +0xbb15 cpu-exception (#GP)" x8, ranked sev4 against firmware code, and triage
+# cannot filter it because the faulting module genuinely IS firmware. EFI_STRING appears at
+# 78 such sites across the shipped harnesses and BASE_LIST at 24.
+#
+# Not resolved through the generator's alias map, though it has one: the map gives
+# EFI_STRING -> 'CHAR16 *' and BASE_LIST -> 'UINTN *', but it resolves every handler typedef
+# to None, and EFI_PHYSICAL_ADDRESS really is a UINT64 so no alias check would catch it. The
+# map would close two of the four families and leave the two that matter here.
+POINTER_BY_TYPEDEF_TYPES = {
+    'EFI_STRING',             # CHAR16 *
+    'BASE_LIST',              # UINTN *
+    'EFI_PHYSICAL_ADDRESS',   # UINT64, but its contract is an address
+    'EFI_VIRTUAL_ADDRESS',    # likewise
+}
+
+# Suffixes of typedefs whose value the firmware will CALL, not merely dereference. A garbage
+# one is a jump to nowhere, which the generator's own comment already gives as the reason it
+# passes NULL for the function pointers it can see -- it just could not see these, because
+# is_function_pointer is a '"(*)" in arg_type' substring test and a typedef has no parens.
+CALLABLE_TYPEDEF_SUFFIXES = ('_HANDLER', '_ENTRY_POINT', '_NOTIFY', '_CALLBACK')
+
 
 def is_opaque_handle(arg_type: str) -> bool:
-    """A handle: opaque by contract, a pointer in fact.
+    """A handle, a typedef'd pointer, an address, or something the firmware will call.
 
     Matched by shape rather than by a list, because edk2 keeps minting them --
     EFI_HANDLE, EFI_HII_HANDLE, EFI_ACPI_HANDLE, and every protocol that invents its own.
     Anything named *_HANDLE is one; EFI_EVENT is the same thing under a different name.
+
+    The name is now narrower than what this decides, which is the single question every
+    caller actually asks: may the harness fill this scalar-looking argument from the input?
     """
     base = remove_ref_symbols(arg_type).strip().upper()
-    return base in OPAQUE_HANDLE_TYPES or base.endswith('_HANDLE')
+    if base in OPAQUE_HANDLE_TYPES or base in POINTER_BY_TYPEDEF_TYPES:
+        return True
+    if base.endswith('_HANDLE'):
+        return True
+    return base.endswith(CALLABLE_TYPEDEF_SUFFIXES)
 
 
 INTEGER_ARG_TYPES = {'UINT8', 'UINT16', 'UINT32', 'UINT64', 'UINTN',
