@@ -451,8 +451,18 @@ def harness_generator(functions: Dict[str, SmiInfo],
         # Without this the harness can never report anything: FirnessMain clears
         # mAsanFuzzingActive after HARNESS_START, and only FirnessSanitizer(TRUE) arms the
         # escalation, so a fault inside an SMI handler was logged and then ignored.
+        # The comm buffer is the one place in this project where "untrusted" is literal:
+        # the OS writes it and SMM reads it, so a handler that validates a field with one
+        # read and uses it with another is the textbook SMM double fetch. FWSAN's check has
+        # existed for a while and was inert here, because nothing registered the buffer --
+        # so it only ever fired on DXE protocol arguments, where the caller is firmware and
+        # re-reading its own buffer proves nothing.
+        output.append(f'    FirnessUntrusted(CommBuffer, CommSize);')
         output.append('    FirnessSanitizer(TRUE);')
         output.append(f'    Status   = SmmCommunication->Communicate (SmmCommunication, CommBuffer, &CommSize);')
+        # No FirnessUntrusted(0, 0) to close: FirnessSanitizer(FALSE) already calls
+        # AsanRegisterUntrusted(0, 0), and the shim skips a NULL buffer by design, so the
+        # explicit close would have been a no-op either way.
         output.append('    FirnessSanitizer(FALSE);')
         output.append(f"    return Status;")
         output.append("}")
