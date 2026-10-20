@@ -862,7 +862,7 @@ def main():
     parser.add_argument('--max-steps', dest='max_steps', type=int, default=8,
                         help='Calls chained per fuzzing iteration (default 8). Lower it for '
                              'protocols whose calls are slow enough to starve the fuzzer')
-    parser.add_argument('--backend', dest='backend', default='tsffs', choices=sorted(BACKENDS),
+    parser.add_argument('--backend', dest='backend', default='qemu', choices=sorted(BACKENDS),
                         help='Fuzzer the harness talks to (default: tsffs)')
     parser.add_argument("-sm", dest="smi", default="/ouput/tmp/smi-function-guid-map.json", 
                         help="Path to the smi file (default: /output/tmp/smi-function-guid-map.json)")

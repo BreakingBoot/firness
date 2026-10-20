@@ -93,7 +93,11 @@ def gen_firness_dsc(libraries: Dict[str, str], backend: int = 1) -> List[str]:
     # pick the fuzzer backend FirnessBackend.h compiles against. "GCC" is the tool
     # FAMILY, which is what CLANGSAN declares in tools_def, and a single "=" appends
     # so the toolchain's own CC_FLAGS survive
-    if backend and backend != 1:
+    # Every backend, including TSFFS (1). It used to be emitted only for the others,
+    # leaning on FirnessBackend.h's #ifndef fallback for TSFFS -- which was fine while that
+    # fallback WAS TSFFS and became a silent wrong-handshake the moment the default moved to
+    # QEMU. Stating it explicitly costs one line and cannot drift from the header again.
+    if backend:
         output.append("")
         output.append("[BuildOptions]")
         output.append(f'  GCC:*_*_*_CC_FLAGS = -D FIRNESS_BACKEND={backend}')
