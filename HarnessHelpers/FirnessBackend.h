@@ -76,8 +76,15 @@
 #define FIRNESS_BACKEND_NYX          3
 #define FIRNESS_BACKEND_NONE         4
 
+//
+// LIBAFL_QEMU, matching the default every generator and script now uses. The fallback has
+// to agree with them: it applies exactly when a build forgot -D FIRNESS_BACKEND, and a
+// disagreement there is silent -- the harness compiles, boots, and emits the other
+// backend's handshake, which the fuzzer watching it never sees. QEMU is the default
+// because it needs no licence, so it is the one a fresh checkout can run.
+//
 #ifndef FIRNESS_BACKEND
-#define FIRNESS_BACKEND  FIRNESS_BACKEND_TSFFS
+#define FIRNESS_BACKEND  FIRNESS_BACKEND_LIBAFL_QEMU
 #endif
 
 // ---------------------------------------------------------------------------
