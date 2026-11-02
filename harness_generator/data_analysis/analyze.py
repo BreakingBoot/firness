@@ -500,6 +500,7 @@ def protocol_member_signature(header_path: str, protocol_name: str, member: str)
 
 
 PARAM_DIRECTION = re.compile(r'\b(IN|OUT|OPTIONAL|CONST)\b')
+PARAM_OPTIONAL = re.compile(r'\bOPTIONAL\b')
 
 
 def param_name(spec: str) -> str:
@@ -2376,8 +2377,21 @@ def analyze_data(macro_file: str,
                 declared = param_name(spec)
                 if not declared:
                     continue
+                # is_optional comes out of the same spec, and only param_name was
+                # being taken from it. apply_declarations sets OPTIONAL_INFO_AVAILABLE as
+                # soon as it marks ANY protocol, and fuzzable_args then treats a False
+                # is_optional as "the declaration forbids NULL" -- so every function that
+                # reached processed_data by a route the early pass does not cover, which
+                # is most of them, silently lost its NULL arm. 22 of 112 harnesses in
+                # results/sweep-v2 offered NULL at all. Partial OPTIONAL information was
+                # worse than none, which is the outcome fuzzable_args' own comment set out
+                # to avoid. Promote only: the early pass reads the same typedef, so where
+                # it already said optional there is nothing here to disagree with.
+                optional = bool(PARAM_OPTIONAL.search(spec))
                 for argument in block.arguments[arg_name]:
                     argument.param_name = declared
+                    if optional:
+                        argument.is_optional = True
                 named_parameters += 1
     if named_parameters:
         print(f'INFO: named {named_parameters} parameter(s) from their protocol typedef!!')
