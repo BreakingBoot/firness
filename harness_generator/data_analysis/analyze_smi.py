@@ -680,7 +680,12 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
                 aliases: Dict[str, str],
                 include_deps: Dict[str, List[str]],
                 edk2_dir: str = "",
-                discovered: List[str] = ()) -> Dict[str, FunctionBlock]:
+                discovered: List[str] = (),
+                # Where the analyzer wrote its output. The coverage and cross-module
+                # sections at the end of this function read two more files from that
+                # directory; both loaders tolerate an absent file, so a caller that does
+                # not pass this still gets the rest of the analysis.
+                smi_file: str = "") -> Dict[str, FunctionBlock]:
     protocol_guids = set()
     driver_guids = set()
     unusable = {}
@@ -783,7 +788,7 @@ def analyze_smi_data(macro_file: str,
     # Analyze the SMI data
     analyzed_data, protocol_guids, driver_guids = analyze_smi(
         smi_data, macros_val, macros_name, enum_map, cast_map, types, aliases, include_deps,
-        edk2_dir, discovered)
+        edk2_dir, discovered, smi_file)
 
 
     update_includes = cleanup_paths(all_includes)
