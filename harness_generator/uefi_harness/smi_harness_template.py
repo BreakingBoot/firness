@@ -1,7 +1,9 @@
 from typing import List, Dict
 import copy
+import re
 from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef, SmiInfo
 from common.utils import add_indents, remove_ref_symbols
+from uefi_harness.harnesses_template import SCALAR_FIELD_TYPES
 
 aliases_map = {}
 enum_map = {}
@@ -320,6 +322,74 @@ def drop_one_pointer(arg_type: str) -> str:
 def has_pointer(arg_type: str) -> bool:
     return arg_type.count('*') > 0
 
+# A parameter block field filled from its own raw width is unreachable the moment the
+# firmware tests it against a constant, and SMI handlers test almost every field they
+# read. Measured on EVAL-1 run 42176147435: RWVariableHandler was dispatched 10548 times
+# over 71418 iterations and its set path -- the one that hands SmmSetVariable a pointer
+# the input places -- was never taken, because reaching it needs three raw-width scalars
+# to land in narrow sets at the same time:
+#
+#   AccessType       UINT32, and the path is behind `if (CommData->AccessType)`      1 in 2^32
+#   Attributes       UINT32, and SetVariable rejects any bit above 0x7F              1 in 2^25
+#   VariableNameSize UINTN, and it becomes a DataSize bounded by MaxVariableSize     ~never
+#
+# Each is cheap on its own under a selector and jointly hopeless without one. Zero-filling
+# does not rescue it either, and makes it worse: ReadBytes zeroes what the input cannot
+# supply, so a short input zeroes AccessType -- and the same shortness zeroes
+# VariableNameSize, which returns the handler early. The two conditions are mutually
+# exclusive in exactly the regime that reaches the first one for free.
+#
+# So: one selector byte per scalar field, offering the values a C test distinguishes --
+# zero, one, the low byte for a bitmask or a size, and all ones for an overflow check.
+# Half of the selector's range is the raw read, so nothing that worked before stops
+# working, and 0 is deliberately NOT one of the special cases: a spent input selects the
+# raw read rather than zeroing every field in the block.
+#
+# The message length already picks between a delta, a short length and a modulo this way.
+# This is the same trick applied to the parameter block the length describes.
+SCALAR_CHOICE_CASES = (
+    (4, '0'),
+    (5, '1'),
+    (6, '({cast})({ref} & 0xFF)'),
+    (7, '({cast})~0ULL'),
+)
+
+
+def scalar_field_type(field_type: str) -> str:
+    """The base integer spelling a field resolves to, or '' if it is not a scalar.
+
+    Resolution is bounded: an alias map read out of a tree can be cyclic, and the generator
+    runs before anything has had a chance to say so.
+    """
+    seen = set()
+    name = remove_ref_symbols(field_type).strip()
+    for _ in range(4):
+        if name.upper() in SCALAR_FIELD_TYPES:
+            return name.upper()
+        if name in seen:
+            break
+        seen.add(name)
+        nxt = aliases_map.get(name)
+        if not nxt:
+            break
+        name = remove_ref_symbols(nxt).strip()
+    return ''
+
+
+def scalar_choice(ref: str, field_type: str, chooser: str) -> List[str]:
+    """The lines that fill one scalar field through a selector byte."""
+    # The cast is the field's type AS WRITTEN, not the base type it resolves to: an alias
+    # that lands on a wider spelling would otherwise truncate on assignment.
+    cast = remove_ref_symbols(field_type).strip()
+    output = [f'ReadBytes(Input, sizeof({chooser}), (VOID *)&{chooser});',
+              f'switch ({chooser} & 7) ' + '{']
+    for case, value in SCALAR_CHOICE_CASES:
+        output.append(f'    case {case}: {ref} = {value.format(cast=cast, ref=ref)}; break;')
+    output.append('    default: break;  // the raw read')
+    output.append('}')
+    return output
+
+
 def generator_struct_args(arg_type: str, 
                           arg_name: str,
                           alias_map: Dict[str, str],
@@ -328,11 +398,18 @@ def generator_struct_args(arg_type: str,
     output = []
     output.append("// Generator Struct Variable Initialization")
     struct_type = remove_ref_symbols(arg_type) if len(types.get(remove_ref_symbols(arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg_type), None))
-    for field in types[struct_type].fields:
+    fields = types[struct_type].fields
+    chooser = re.sub(r'\W', '', arg_name) + 'ScalarChoice'
+    if any(not has_pointer(f.type) and scalar_field_type(f.type) for f in fields):
+        output.append(f'UINT8 {chooser} = 0;')
+    for field in fields:
+        ref = f'{arg_name}->{field.name}'
         if not has_pointer(field.type):
-            output.append(f'ReadBytes(Input, sizeof({arg_name}->{field.name}), (VOID *)&({arg_name}->{field.name}));')
+            output.append(f'ReadBytes(Input, sizeof({ref}), (VOID *)&({ref}));')
+            if scalar_field_type(field.type):
+                output += scalar_choice(ref, field.type, chooser)
         else:
-            output.append(f'ReadBytes(Input, sizeof({arg_name}->{field.name}), (VOID *)({arg_name}->{field.name}));')
+            output.append(f'ReadBytes(Input, sizeof({ref}), (VOID *)({ref}));')
     return add_indents(output, indent)
 
 
