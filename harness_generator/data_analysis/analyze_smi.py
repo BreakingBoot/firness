@@ -429,6 +429,25 @@ def lifecycle_gate(handler: str, edk2_dir: str):
     so from the outside: full budget, no findings, exactly like a handler that validates
     everything correctly. So name the flag.
 
+    Two shapes, and the difference decides whether there is anything to do about it:
+
+      * the flag is set by a protocol notify -- MmEndOfDxeCallback on
+        gEfiMmEndOfDxeProtocolGuid -- so the guarded body is reachable up to that event
+        and not after. A UEFI application is always after it; a DXE driver harness would
+        not be. Worth saying, because it names a way to reach the code.
+      * the flag is set by the same function that registers the handler, which is
+        QueryVariableInfoHandler's shape: `inDxe` is cleared at the end of
+        QueryVariableInfoEntryPoint, after SmiHandlerRegister. The gate is therefore shut
+        before any SMI can arrive, and the guarded body is dead code for every caller
+        forever. Nothing reaches it, so there is nothing to aim at.
+
+    Also report how much of the handler runs BEFORE the gate, because that part is
+    reachable whatever the flag says. SmmSpiHandler checks its size, validates the buffer
+    is outside SMRAM and makes an attacker-sized AllocateRuntimeZeroPool followed by a
+    CopyMem of that length, all before it consults mEndOfDxe -- so "a clean result means
+    nothing" was too pessimistic there, and flatly wrong for a handler whose gate is shut
+    at registration.
+
     Returns (flag, setter_description) or (None, None).
     """
     import re as _re
@@ -452,9 +471,72 @@ def lifecycle_gate(handler: str, edk2_dir: str):
         if not outside:
             continue
         where = os.path.basename(path)
-        return flag, (f'{where} sets it outside the handler (initially '
-                      f'{(initial or "unset").strip()})')
+        detail = (f'{where} sets it outside the handler (initially '
+                  f'{(initial or "unset").strip()})')
+
+        # Who shuts it, and when. The enclosing function of a write outside the handler is
+        # the answer; edk2 puts a function's name in column 0, so the nearest one above the
+        # write is its owner.
+        #
+        # The declaration's own initialiser is a write by this regex -- "BOOLEAN inDxe =
+        # TRUE;" -- and being at file scope it has no enclosing function, so taking the
+        # first write found the declaration and gave up. That is why only the one flag
+        # declared WITHOUT an initialiser was ever classified.
+        setter = ''
+        for where_at in outside:
+            if _re.search(r'BOOLEAN\s+$', whole[max(0, where_at - 24):where_at]):
+                continue
+            setter = _enclosing_function(whole, where_at)
+            if setter:
+                break
+        if setter:
+            registers = _re.search(
+                rf'\b(?:Smi|Mmi)HandlerRegister\s*\(\s*{_re.escape(handler)}\b',
+                _body_of(setter, whole) or '')
+            if registers:
+                detail += (f'. {setter} clears it after registering the handler, so the '
+                           f'gate is shut before any SMI can arrive and the guarded body '
+                           f'is unreachable from every caller, not merely from a late one')
+            else:
+                notify = _re.search(
+                    rf'RegisterProtocolNotify\s*\(\s*&?\s*(\w+)\s*,\s*{_re.escape(setter)}\b',
+                    whole)
+                if notify:
+                    detail += (f'. {setter} sets it from the {notify.group(1)} notify, so '
+                               f'the guarded body is reachable only before that event -- '
+                               f'a DXE driver could, a UEFI application cannot')
+                else:
+                    detail += f'. {setter} sets it'
+
+        # What runs before the gate is reachable no matter what the flag says.
+        gate = _re.search(rf'\bif\s*\(\s*!?\s*{_re.escape(flag)}\s*\)', body)
+        if gate:
+            before = body[:gate.start()]
+            # ';' overcounts declarations, so count only lines that call something
+            calls = len(_re.findall(r'\b[A-Z]\w+\s*\(', before))
+            if calls:
+                detail += (f'. {calls} call(s) run before the gate and are reached '
+                           f'whatever it holds')
+        return flag, detail
     return None, None
+
+
+def _enclosing_function(whole: str, offset: int):
+    """The name of the function containing this offset, by edk2 layout, or ''.
+
+    edk2 puts a definition's name in column 0 with its parameters on the lines below, so
+    the open paren ends the line. Requiring that is what separates a definition from
+    "Copyright (c) 2010 - 2018, Intel Corporation" in the file header -- which is also in
+    column 0, also followed by a paren, and was being reported as the function that sets
+    mEndOfDxe.
+    """
+    import re as _re
+    best = ''
+    for found in _re.finditer(r'^([A-Za-z_]\w*)\s*\(\s*$', whole, _re.M):
+        if found.start() > offset:
+            break
+        best = found.group(1)
+    return best
 
 
 def recover_missing_handlers(smi_data: Dict[str, SmiInfo],
@@ -512,10 +594,7 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='') 
     for name in sorted(smi_data):
         flag, where = lifecycle_gate(name, edk2_dir)
         if flag:
-            print(f'  CAVEAT: {name} is harnessed but gated on {flag} -- {where}. A UEFI '
-                  f'application runs after EndOfDxe and ReadyToBoot, so if the flag is set '
-                  f'by then this handler refuses every input and a clean result here means '
-                  f'nothing')
+            print(f'  CAVEAT: {name} is harnessed but gated on {flag} -- {where}')
     for name in names:
         if name in smi_data:
             continue
