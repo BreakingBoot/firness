@@ -348,6 +348,26 @@ def harness_generator(functions: Dict[str, SmiInfo],
 
     output.append("#include \"FirnessHarnesses.h\"")
     output.append("")
+    #
+    # Boundary lengths for the comm buffer, tried in preference to a uniform draw.
+    #
+    # What a missing lower bound looks like is a message SHORTER than the field the
+    # handler reads: RWVariableHandler allocates *CommBufferSize bytes and then reads
+    # CommData->VariableNameSize at offset 40, so anything from 0 to 40 is a heap
+    # overread and 1080 -- the size of the struct, which is where the message starts --
+    # is not. A uniform draw over 0..sizeof spends 96% of its mass on lengths that
+    # cannot show the bug, and the target selector already costs a factor of eleven.
+    #
+    # So draw from the offsets that actually divide behaviour: zero, the small powers of
+    # two and the ones either side of them, and the field offsets a parameter block of
+    # any size is likely to have. The uniform draw stays as a fourth arm so nothing in
+    # between is unreachable.
+    #
+    output.append('STATIC CONST UINTN mFirnessShortLengths[] = {')
+    output.append('  0, 1, 2, 3, 4, 7, 8, 12, 15, 16, 20, 24, 28, 31, 32,')
+    output.append('  40, 48, 56, 63, 64, 96, 127, 128, 160, 255, 256, 512')
+    output.append('};')
+    output.append("")
 
     # Iterate through functions and generate harnesses
     for function, smi_info in functions.items():
@@ -453,6 +473,11 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append('        case 2:')
         # down to and including 0: SmiManage is still reached, and a handler that only
         # checks an upper bound will allocate for 0 bytes and write its first field anyway
+        output.append('            CommHeader->MessageLength = mFirnessShortLengths['
+                      '(UINTN)MessageLengthDelta % '
+                      '(sizeof (mFirnessShortLengths) / sizeof (mFirnessShortLengths[0]))];')
+        output.append('            break;')
+        output.append('        case 3:')
         output.append(f'            CommHeader->MessageLength = (UINTN)MessageLengthDelta % '
                       f'(sizeof ({payload_type}) + 1);')
         output.append('            break;')
