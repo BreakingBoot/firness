@@ -848,11 +848,124 @@ public:
         return true;
     }
 
+    /*
+        Every call inside an SMI handler's body.
+
+        Walked DOWN from the handler, not up from each call. The parent walk
+        FindEnclosingFunction does is the natural way to ask "which function is this call
+        in", but asking it of every call expression in edk2 is hundreds of thousands of
+        walks per pass, twice over, to find the few hundred that are inside a handler.
+        A handler body is bounded and there are twenty-odd of them.
+
+        In SMI mode FunctionNames holds handler names, and nothing in the firmware calls a
+        handler by name -- the SMM core dispatches a registered pointer. So VisitCallExpr
+        above never fires for an SMI target and CallMap comes out empty. These edges are
+        the cross-module surface: what the handler does with the untrusted buffer once it
+        has it. Kept in SmiCallEdges, not CallMap, so the generator sees no change.
+
+        Only useful on the second Tool.run(): SmiFunctionSet is filled by
+        SmiFunctionAnalysis, which FCPConsumer runs ahead of this visitor per translation
+        unit, but a handler registered in one file and defined in another is only known
+        once every file has been seen. The first pass records nothing and the second
+        records everything, which is why this appends rather than replaces.
+    */
+    bool VisitFunctionDecl(FunctionDecl *Func) {
+        if (!SmiEnabled || SmiFunctionSet.empty() || Func == nullptr) {
+            return true;
+        }
+        if (!Func->hasBody() || !Func->getDeclName()) {
+            return true;
+        }
+
+        const std::string Handler = Func->getNameAsString();
+        if (SmiFunctionSet.find(Handler) == SmiFunctionSet.end()) {
+            return true;
+        }
+
+        //
+        // A handler declared in a header and defined in a .c is visited once per
+        // translation unit that sees the definition, and the second Tool.run() visits it
+        // again. Recording it twice would double every edge, so the body location is the
+        // key: one definition, one set of edges.
+        //
+        //
+        // The presumed location of the declaration start, not getLocation(): the latter
+        // points at the name token and came back with an empty filename for a definition
+        // in the main file, which collapsed every handler's dedup key onto "#name" and --
+        // with the set still a member at the time -- hid the doubling behind a second bug.
+        //
+        SourceManager &SM = Context->getSourceManager();
+        std::string Where;
+        PresumedLoc PLoc = SM.getPresumedLoc(Func->getBeginLoc());
+        if (PLoc.isValid() && PLoc.getFilename() != nullptr) {
+            Where = PLoc.getFilename();
+        }
+        if (Where.empty()) {
+            SourceLocation Loc = Func->getLocation();
+            if (Loc.isValid()) {
+                Where = SM.getFilename(SM.getSpellingLoc(Loc)).str();
+            }
+        }
+        const std::string Key = Where + "#" + Handler;
+        if (!SeenSmiHandlerBodies.insert(Key).second) {
+            return true;
+        }
+
+        SmiCallsInCurrentHandler = 0;
+        collectSmiCalls(Func->getBody(), Handler, Where);
+        return true;
+    }
+
+    /*
+        The calls in one handler body, in source order.
+    */
+    void collectSmiCalls(Stmt *S, const std::string &Handler, const std::string &Where) {
+        if (S == nullptr) {
+            return;
+        }
+        if (CallExpr *Call = dyn_cast<CallExpr>(S)) {
+            recordSmiCallEdge(Call, Handler, Where);
+        }
+        for (Stmt *Child : S->children()) {
+            collectSmiCalls(Child, Handler, Where);
+        }
+    }
+
+    void recordSmiCallEdge(CallExpr *Call, const std::string &Handler, const std::string &Where) {
+        VarDeclMap.clear();
+        CallInfo.clear();
+        HandleMatchingExpr(Call, *this->Context);
+        GenCallInfo(Call);
+        CallInfo.return_type = Call->getType().getAsString();
+        CallInfo.EnclosingFunction = Handler;
+        CallInfo.EnclosingFile = Where;
+
+        //
+        // Ordered within the handler body: the sequence is what shows a validation
+        // running before a use, or not running at all.
+        //
+        CallInfo.CallOrder = SmiCallsInCurrentHandler++;
+
+        //
+        // The includes set is not carried. It is the whole include closure of the
+        // translation unit, it is the single largest field in the existing database, and
+        // nothing downstream of this file compiles anything -- these records are read to
+        // reason about edges, not to emit C.
+        //
+        if (!CallInfo.Function.empty()) {
+            SmiCallEdges.push_back(CallInfo);
+        }
+        CallInfo.clear();
+        VarDeclMap.clear();
+    }
+
 private:
     ASTContext *Context;
     // the body currently being walked, for the call-site context above
     std::string LastEnclosing;
     unsigned CallsInCurrentFunction = 0;
+    // the call counter for the SMI handler body currently walked by VisitFunctionDecl
+    unsigned SmiCallsInCurrentHandler = 0;
     const CallExpr *CurrentCallExpr = nullptr;
     VarMap VarDeclMap;
     Call CallInfo;

@@ -108,25 +108,136 @@ namespace FileOps {
     void outputSmiFunctionGuidMap(const std::string& filename, const std::map<std::string, SmiInfo>& smiFunctionGuidMap) {
         std::string file_path = filename + "/smi-function-guid-map.json";
         nlohmann::json j;
-        unsigned total = 0, no_type = 0;
+        unsigned total = 0, no_type = 0, not_guid = 0;
+        std::map<std::string, unsigned> by_dispatch;
+
         for (const auto& pair : smiFunctionGuidMap) {
             total++;
-            if(pair.second.Type == "") { no_type++; continue; } // Skip if Guid is empty
             const SmiInfo& smiInfo = pair.second;
+            by_dispatch[smiInfo.Dispatch.empty() ? "unrecognised" : smiInfo.Dispatch]++;
+
+            //
+            // Only the GUID-dispatched handlers go in this file, because this file is what
+            // the generator turns into harnesses and a harness drives a handler by sending
+            // an EFI_SMM_COMMUNICATE_HEADER carrying its GUID. A handler on a root
+            // dispatcher has no GUID -- it is reached by a write to the software MMI port,
+            // or by an S-state transition -- and its CommBuffer is built by the dispatcher
+            // rather than copied from the caller. Emitting one here would generate a
+            // harness that fabricates an input the hardware cannot produce and reports
+            // whatever it found against the wrong cause.
+            //
+            // They are not discarded: every handler, dispatch kind included, goes to
+            // smi-handler-inventory.json below, so the count of what exists stays honest
+            // even while the count of what can be driven does not grow.
+            //
+            if (!smiInfo.Dispatch.empty() && smiInfo.Dispatch != "SmiHandlerRegister") {
+                not_guid++;
+                continue;
+            }
+            if(smiInfo.Type == "") { no_type++; continue; } // Skip if Guid is empty
             nlohmann::json smiJson;
             smiJson["Guid"] = smiInfo.Guid;
             smiJson["Type"] = smiInfo.Type;
+            smiJson["Dispatch"] = smiInfo.Dispatch;
             j[pair.first] = smiJson;
         }
+
         // silent unless the smi pass actually ran, so a normal analysis is unchanged
         if (SmiEnabled) {
-            llvm::outs() << "SMI handlers: " << total << " found, " << no_type
+            llvm::outs() << "SMI handlers: " << total << " found, " << not_guid
+                         << " not GUID-dispatched, " << no_type
                          << " dropped for an unresolved CommBuffer type, "
-                         << (total - no_type) << " written\n";
+                         << (total - not_guid - no_type) << " written\n";
+            for (const auto& pair : by_dispatch) {
+                llvm::outs() << "  " << pair.first << ": " << pair.second << "\n";
+            }
         }
+
         std::ofstream file(file_path);
         file << j.dump(4);
         file.close();
+
+        //
+        // The full inventory, including the handlers the generator cannot drive. This is
+        // the file to read when asking "how much of the SMI surface is covered" -- the
+        // guid map alone answers a narrower question and reads as the whole of it.
+        //
+        nlohmann::json inv;
+        for (const auto& pair : smiFunctionGuidMap) {
+            const SmiInfo& smiInfo = pair.second;
+            nlohmann::json entry;
+            entry["Guid"] = smiInfo.Guid;
+            entry["Type"] = smiInfo.Type;
+            entry["File"] = smiInfo.File;
+            entry["Dispatch"] = smiInfo.Dispatch;
+            entry["Harnessable"] = (smiInfo.Dispatch == "SmiHandlerRegister" ||
+                                    smiInfo.Dispatch.empty()) && smiInfo.Type != "";
+            inv[pair.first] = entry;
+        }
+        std::ofstream invFile(filename + "/smi-handler-inventory.json");
+        invFile << inv.dump(4);
+        invFile.close();
+    }
+
+    /*
+        Every call made from inside an SMI handler, written to smi-call-edges.json.
+
+        This is the inverse of outputCallMap. That one answers "where is function F
+        called from", which is what a protocol campaign needs. An SMI handler is never
+        called by name -- the SMM core dispatches a registered pointer -- so the useful
+        question is the other way round: "what does handler H call, and with what".
+
+        The record is deliberately the same shape outputCallMap writes, so a reader that
+        already parses call-database.json needs no new parser. What matters for a
+        cross-module defect is the pair (Service, Function) plus each argument's
+        assignment: an SMI handler that hands a comm-buffer-derived pointer to another
+        module's protocol has skipped whatever validation that module does on its own
+        SMI entry path. Measured on EVAL-1, that is exactly RWVariableHandler calling
+        mSmmVariable->SmmSetVariable with VarName = (CHAR16 *)CommData->Data -- issues
+        #47 and #48, found by fuzzing only after 110255 iterations and reported against
+        the callee's module, when the edge was in the source the whole time.
+
+        No judgement is made here on purpose. Deciding which edge is dangerous needs the
+        handler's validation to be read, and that belongs in analyze_smi.py where it can
+        be changed and tested without rebuilding the analyzer.
+    */
+    void outputSmiCallEdges(const std::string& filename, const std::vector<Call>& edges) {
+        std::string file_path = filename + "/smi-call-edges.json";
+        nlohmann::json jsonOutput = nlohmann::json::array();
+
+        std::set<std::string> handlers;
+        for (const auto& call : edges) {
+            nlohmann::json callObject;
+            callObject["Function"] = call.Function;
+            callObject["Service"] = call.Service;
+            callObject["EnclosingFunction"] = call.EnclosingFunction;
+            callObject["EnclosingFile"] = call.EnclosingFile;
+            callObject["CallOrder"] = call.CallOrder;
+            callObject["ReturnType"] = call.return_type;
+            handlers.insert(call.EnclosingFunction);
+
+            for (const auto& argumentPair : call.Arguments) {
+                nlohmann::json argObject;
+                const Argument& arg = argumentPair.second;
+                argObject["data_type"] = arg.data_type;
+                argObject["variable"] = arg.variable;
+                argObject["assignment"] = arg.assignment;
+                argObject["arg_dir"] = arg.arg_dir;
+                argObject["arg_type"] = arg.arg_type;
+                argObject["usage"] = arg.usage;
+                callObject["Arguments"][argumentPair.first] = argObject;
+            }
+            jsonOutput.push_back(callObject);
+        }
+
+        if (SmiEnabled) {
+            llvm::outs() << "SMI call edges: " << edges.size() << " call(s) from "
+                         << handlers.size() << " handler body(ies)\n";
+        }
+
+        std::ofstream outFile(file_path);
+        outFile << jsonOutput.dump(4);
+        outFile.close();
     }
 
     void outputIncludesDependencyGraph(const std::string& filename, const std::map<std::string, std::set<std::string>>& includes) {

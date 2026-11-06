@@ -178,12 +178,36 @@ struct SmiInfo {
     std::string Guid;
     std::string Type;
     std::string File;
+    //
+    // How this handler is reached, which decides whether a comm-buffer harness can reach
+    // it at all. One of:
+    //
+    //   "SmiHandlerRegister"  registered against a GUID and dispatched by SmiManage, so
+    //                         an SmmCommunicate with that GUID runs it and the CommBuffer
+    //                         is the caller's. This is the only kind the harness can drive.
+    //   "SwDispatch"          registered against a SwMmiInputValue on the Sw dispatch
+    //                         protocol and triggered by a write to the software MMI port.
+    //                         Its CommBuffer is an EFI_MM_SW_CONTEXT the DISPATCHER builds
+    //                         -- the CPU index and the port value -- not caller data, so
+    //                         handing it a fuzzed struct would be fabricating an input the
+    //                         hardware cannot produce.
+    //   "SxDispatch"          an S-state transition (S3 entry and the like).
+    //   "PeriodicTimer"       the periodic timer dispatcher.
+    //   "UsbDispatch", "GpiDispatch", "PowerButton", "StandbyButton", "IoTrap"
+    //                         the remaining PI root dispatchers, same story: an event the
+    //                         platform raises, not a buffer an application passes.
+    //
+    // Empty means the registration was matched but the spelling was not recognised, which
+    // is a gap in the matcher rather than a statement about the handler.
+    //
+    std::string Dispatch;
 
     SmiInfo() = default;
     void clear() {
         Guid.clear();
         Type.clear();
         File.clear();
+        Dispatch.clear();
     }
 };
 
@@ -252,5 +276,21 @@ extern std::vector<Function> GeneratorDeclMap;
 extern std::map<std::string, std::set<std::string>> CastMap;
 extern std::map<std::string, std::set<std::string>> IncludesDependencyGraph;
 extern std::map<std::string, SmiInfo> SmiFunctionGuidMap;
+//
+// Every call made from inside an SMI handler's body, in SMI mode. CallMap cannot hold
+// these: it is keyed on the callee being one of FunctionNames, and in SMI mode
+// FunctionNames holds HANDLER names -- nothing in firmware calls a handler by name, the
+// SMM core dispatches a registered pointer, so CallMap comes out empty and
+// call-database.json is written as null. The cross-module edges live here instead, kept
+// separate so nothing that already reads CallMap changes behaviour.
+//
+extern std::vector<Call> SmiCallEdges;
+//
+// Handler bodies already walked, as "file#handler". Global rather than a member of the
+// visitor because FCPConsumer is constructed per translation unit and FCP.cpp runs the
+// whole tool twice -- a per-instance set sees neither the other TUs nor the other pass, so
+// every edge was recorded once per pass and came out doubled.
+//
+extern std::set<std::string> SeenSmiHandlerBodies;
 extern std::set<std::string> SmiFunctionSet;
 extern bool SmiEnabled;

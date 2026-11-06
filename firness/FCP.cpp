@@ -37,6 +37,8 @@ std::map<std::string, std::set<std::string>> CastMap;
 std::map<std::string, std::set<std::string>> IncludesDependencyGraph;
 std::map<std::string, SmiInfo> SmiFunctionGuidMap;
 std::set<std::string> SmiFunctionSet;
+std::vector<Call> SmiCallEdges;
+std::set<std::string> SeenSmiHandlerBodies;
 bool SmiEnabled;
 
 
@@ -96,6 +98,7 @@ int main(int argc, const char **argv) {
         FileOps::outputCastMap(output_filename, CastMap);
         FileOps::outputIncludesDependencyGraph(output_filename, IncludesDependencyGraph);
         FileOps::outputSmiFunctionGuidMap(output_filename, SmiFunctionGuidMap);
+        FileOps::outputSmiCallEdges(output_filename, SmiCallEdges);
     }
     else
         FileOps::printCallMap(CallMap);

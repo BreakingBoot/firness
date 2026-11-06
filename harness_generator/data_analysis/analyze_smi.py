@@ -8,6 +8,7 @@ from typing import List, Dict, Tuple, Set
 from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes, SmiInfo
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
+from data_analysis.cross_module import report as report_cross_module
 from common.vendor_types import resolve as resolve_payload, render as render_payload
 
 smi_includes = {
@@ -123,6 +124,39 @@ def load_castings(json_file: str) -> Dict[str, List[str]]:
     except Exception as e:
         print(f'ERROR: {e}')
         return {}
+
+def load_smi_call_edges(smi_file: str) -> List[dict]:
+    """The calls each SMI handler makes, from smi-call-edges.json.
+
+    Written beside smi-function-guid-map.json by the analyzer. Absent when the tree was
+    analysed by an older build, which is not an error -- the cross-module section is simply
+    not reported.
+    """
+    path = os.path.join(os.path.dirname(smi_file), 'smi-call-edges.json')
+    try:
+        with open(path, 'r') as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):
+        return []
+    return data if isinstance(data, list) else []
+
+
+def load_smi_inventory(smi_file: str) -> Dict[str, dict]:
+    """Every registered handler and how it is dispatched, from smi-handler-inventory.json.
+
+    smi-function-guid-map.json holds only the handlers a comm-buffer harness can drive, so
+    it cannot answer "why is this one missing". The inventory can: a handler on a root
+    dispatcher has no GUID and is reached by a port write or a platform event, which is a
+    different channel rather than a gap in the generator.
+    """
+    path = os.path.join(os.path.dirname(smi_file), 'smi-handler-inventory.json')
+    try:
+        with open(path, 'r') as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
 
 def load_smi_data(smi_file: str) -> Dict[str, SmiInfo]:
     with open(smi_file, 'r') as file:
@@ -579,7 +613,8 @@ def recover_missing_handlers(smi_data: Dict[str, SmiInfo],
     return stuck
 
 
-def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='') -> None:
+def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
+                        inventory=None) -> None:
     """Say what happened to every handler the source registers.
 
     `[PASS] discover ... 22 SMI handlers` counts registrations in source, and the number of
@@ -598,8 +633,42 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='') 
     for name in names:
         if name in smi_data:
             continue
-        why = unusable.get(name) or recovered.get(name) or 'not recorded by the analyser'
+        why = unusable.get(name) or recovered.get(name)
+        if not why:
+            why = _dispatch_reason((inventory or {}).get(name) or {})
         print(f'  not harnessed: {name} -- {why}')
+
+
+DISPATCH_REASON = {
+    'SwDispatch': 'registered on the software MMI dispatch protocol, not against a GUID. It '
+                  'is raised by a write to the software MMI port and its CommBuffer is an '
+                  'EFI_MM_SW_CONTEXT the dispatcher fills in with the CPU index and the port '
+                  'value -- there is no caller buffer to fuzz, so a comm-buffer harness '
+                  'cannot drive it and a fabricated one would not be an input the hardware '
+                  'can produce',
+    'SxDispatch': 'registered on the Sx dispatch protocol, so it runs on an S-state '
+                  'transition rather than on a call',
+    'PeriodicTimer': 'registered on the periodic timer dispatch protocol, so it runs on a '
+                     'timer rather than on a call',
+    'UsbDispatch': 'registered on the USB dispatch protocol, so it runs on a USB event',
+    'GpiDispatch': 'registered on the GPI dispatch protocol, so it runs on a pin change',
+    'PowerButton': 'registered on the power button dispatch protocol',
+    'StandbyButton': 'registered on the standby button dispatch protocol',
+    'IoTrap': 'registered on the IO trap dispatch protocol, so it runs on a trapped access',
+}
+
+
+def _dispatch_reason(entry: dict) -> str:
+    """Why a registered handler is not in the harness set."""
+    kind = (entry or {}).get('Dispatch') or ''
+    if kind in DISPATCH_REASON:
+        return DISPATCH_REASON[kind]
+    if kind == 'SmiHandlerRegister' and not (entry or {}).get('Type'):
+        return ('GUID-dispatched, but the type of the structure its CommBuffer carries was '
+                'not resolved, so there are no fields to fill')
+    if not kind:
+        return 'not recorded by the analyser'
+    return f'registered as {kind}, which is not a GUID dispatch'
 
 
 def analyze_smi(smi_data: Dict[str, SmiInfo],
@@ -669,7 +738,17 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
     for name in unusable:
         smi_data.pop(name, None)
 
-    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir)
+    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir,
+                        load_smi_inventory(smi_file))
+
+    #
+    # What each handler does with the buffer, as opposed to what the buffer looks like.
+    # Reported here rather than left for the fuzzer because an interface crossing is
+    # visible in the source and a fuzzer has to guess its way to it: on EVAL-1 the two
+    # findings this section names took 110255 iterations to reach and were filed against
+    # the module that faulted rather than the one that handed it the arguments.
+    #
+    report_cross_module(load_smi_call_edges(smi_file))
     return smi_data, protocol_guids, driver_guids
 
 
