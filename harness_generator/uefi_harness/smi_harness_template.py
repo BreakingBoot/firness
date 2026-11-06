@@ -431,17 +431,36 @@ def harness_generator(functions: Dict[str, SmiInfo],
         # payload size and let the fuzzer grow the message up to the region it was given,
         # so both the size validation and the logic behind it are reachable.
         output.append(f'    CommHeader->MessageLength = sizeof ({payload_type});')
-        output.append('    UINT8 MessageLengthChoice = 0;')
+        output.append('    UINT8  MessageLengthChoice = 0;')
+        output.append('    UINT16 MessageLengthDelta = 0;')
         output.append('    ReadBytes(Input, sizeof(MessageLengthChoice), '
                       '(VOID *)&MessageLengthChoice);')
-        output.append('    if ((MessageLengthChoice & 1) != 0) {')
-        output.append('        UINTN MessageLengthRoom = Size - '
+        output.append('    ReadBytes(Input, sizeof(MessageLengthDelta), '
+                      '(VOID *)&MessageLengthDelta);')
+        output.append('    UINTN MessageLengthRoom = Size - '
                       'OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data);')
-        output.append('        CommHeader->MessageLength += '
-                      '((UINTN)MessageLengthChoice >> 1);')
-        output.append('        if (CommHeader->MessageLength > MessageLengthRoom) {')
-        output.append('            CommHeader->MessageLength = MessageLengthRoom;')
-        output.append('        }')
+        # Three outcomes, not two. Growing the message reaches the logic BEHIND a size
+        # check. Shrinking it reaches the check itself -- and a missing lower bound is the
+        # most common SMM comm-buffer defect there is, because the handler casts the buffer
+        # to its parameter block and writes fields past the end of what the caller
+        # actually sent. While this could only grow, every such handler was being tested
+        # against the one input shape it never has to defend against, and a campaign that
+        # found nothing could not distinguish "validates correctly" from "never asked".
+        output.append('    switch (MessageLengthChoice & 3) {')
+        output.append('        case 1:')
+        output.append('            CommHeader->MessageLength += (UINTN)MessageLengthDelta;')
+        output.append('            break;')
+        output.append('        case 2:')
+        # down to and including 0: SmiManage is still reached, and a handler that only
+        # checks an upper bound will allocate for 0 bytes and write its first field anyway
+        output.append(f'            CommHeader->MessageLength = (UINTN)MessageLengthDelta % '
+                      f'(sizeof ({payload_type}) + 1);')
+        output.append('            break;')
+        output.append('        default:')
+        output.append('            break;')
+        output.append('    }')
+        output.append('    if (CommHeader->MessageLength > MessageLengthRoom) {')
+        output.append('        CommHeader->MessageLength = MessageLengthRoom;')
         output.append('    }')
         output.append(f'    {smi_info.type} HandlerData = ({smi_info.type})&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];')
         

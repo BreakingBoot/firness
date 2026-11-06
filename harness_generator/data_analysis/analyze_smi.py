@@ -8,6 +8,7 @@ from typing import List, Dict, Tuple, Set
 from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes, SmiInfo
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
+from common.vendor_types import resolve as resolve_payload, render as render_payload
 
 smi_includes = {
     "Protocol/SmmCommunication.h",
@@ -15,6 +16,28 @@ smi_includes = {
 }
 
 all_includes = set()
+
+# Parameter blocks the harness has to carry itself, in dependency order. See
+# common/vendor_types.py: the headers that declare them are private to their drivers.
+vendored_order = []
+
+def load_discovered(input_file: str) -> List[str]:
+    """Handler names from the file discover_smi.py wrote, one per line.
+
+    Tolerates the `--with-source` form, which appends `  // path/to/file.c`.
+    """
+    if not input_file or not os.path.isfile(input_file):
+        return []
+    names = []
+    try:
+        for line in open(input_file, errors='ignore'):
+            name = line.split('//')[0].strip()
+            if name:
+                names.append(name)
+    except OSError:
+        return []
+    return names
+
 
 def load_include_deps(json_file: str) -> Dict[str, List[str]]:
     try:
@@ -297,6 +320,209 @@ def natural_sort_key(key):
     return (prefix, int(suffix))
 
 
+# A handler definition and the parameter list that goes with it. edk2 spells these over
+# several lines with IN/OUT/OPTIONAL decorations, so match the name followed by a
+# parenthesised list and a brace rather than trying to describe the whole signature.
+_DEFN = r'\b{name}\s*\((?P<params>[^;{{}}]*?)\)\s*{{'
+
+
+def _handler_source(name: str, edk2_dir: str):
+    """The file and body text of `name`'s definition, or (None, None).
+
+    One walk per call is acceptable: this runs only for handlers the analyser could not
+    type, which is a handful even on a large tree.
+    """
+    import re as _re
+    pattern = _re.compile(_DEFN.format(name=_re.escape(name)), _re.S)
+    for base, dirs, files in os.walk(edk2_dir or '.'):
+        dirs[:] = [d for d in dirs if d not in ('.git', 'Build', 'BaseTools')]
+        for entry in files:
+            if not entry.endswith('.c'):
+                continue
+            path = os.path.join(base, entry)
+            try:
+                text = open(path, errors='ignore').read()
+            except OSError:
+                continue
+            if name not in text:
+                continue
+            match = pattern.search(text)
+            if match:
+                return path, text[match.start():]
+    return None, None
+
+
+def payload_from_source(handler: str, edk2_dir: str, types: Dict[str, TypeInfo]):
+    """The type a handler casts its own comm buffer to.
+
+    The PI signature is (DispatchHandle, Context, CommBuffer, CommBufferSize) and a handler
+    that takes CommBuffer as VOID * casts it to its parameter block on the way in --
+    `SPI_COMM_HEADER *ReturnComms = (SPI_COMM_HEADER *)CommBuffer;`. That cast is the
+    handler's own statement of what the block is, which is better evidence than anything
+    the caller side offers: cast-map.json is keyed by type rather than by function, so it
+    cannot say which of the 1448 recorded types belongs to this buffer.
+
+    Returns a type name present in `types` with fields, or None.
+    """
+    import re as _re
+    path, body = _handler_source(handler, edk2_dir)
+    if not body:
+        return None
+    match = _re.compile(_DEFN.format(name=_re.escape(handler)), _re.S).search(body)
+    params = match.group('params') if match else ''
+    # the buffer parameter, not the size one next to it
+    names = [_re.sub(r'.*?([A-Za-z_]\w*)\s*$', r'\1', p.replace('*', ' ').strip())
+             for p in params.split(',')]
+    buffers = [n for n in names if 'commbuffer' in n.lower() and 'size' not in n.lower()]
+    if not buffers:
+        return None
+    param = buffers[0]
+    # stop at the end of this function so a later function's casts cannot leak in
+    depth, end = 0, len(body)
+    for index, char in enumerate(body):
+        if char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if depth == 0:
+                end = index
+                break
+    for cast in _re.finditer(rf'\(\s*([A-Za-z_]\w*)\s*\*\s*\)\s*\(?\s*{_re.escape(param)}\b',
+                             body[:end]):
+        candidate = cast.group(1)
+        info = types.get(candidate)
+        if info and getattr(info, 'fields', None):
+            return candidate
+    return None
+
+
+def _body_of(name: str, text: str):
+    """The balanced { ... } body of `name`'s definition inside `text`, or ''."""
+    import re as _re
+    match = _re.compile(_DEFN.format(name=_re.escape(name)), _re.S).search(text)
+    if not match:
+        return ''
+    start = text.index('{', match.start())
+    depth = 0
+    for index in range(start, len(text)):
+        if text[index] == '{':
+            depth += 1
+        elif text[index] == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:index + 1]
+    return text[start:]
+
+
+def lifecycle_gate(handler: str, edk2_dir: str):
+    """A file-scope flag the handler tests that something else in its driver sets.
+
+    Several handlers switch themselves off once boot has moved on, and a harness that runs
+    as a UEFI application runs after all of it. SmmSpiHandler returns EFI_ACCESS_DENIED
+    whenever mEndOfDxe is set, and MmEndOfDxeCallback sets it from the SMM EndOfDxe notify
+    -- the same GUID value PiSmmCore installs during DXE -- so by the time the harness is
+    loaded from the shell the handler refuses every input before it reaches any of its own
+    logic. QueryVariableInfoHandler is the same shape with the sense reversed: its body is
+    wrapped in `if (inDxe)` and its entry point clears inDxe on the way out.
+
+    Fuzzing one of those is not wrong, it is just uninformative, and a campaign cannot say
+    so from the outside: full budget, no findings, exactly like a handler that validates
+    everything correctly. So name the flag.
+
+    Returns (flag, setter_description) or (None, None).
+    """
+    import re as _re
+    path, text = _handler_source(handler, edk2_dir)
+    if not text:
+        return None, None
+    whole = open(path, errors='ignore').read()
+    body = _body_of(handler, whole)
+    if not body:
+        return None, None
+    # file-scope BOOLEANs, which is how edk2 spells this kind of latch
+    flags = dict(_re.findall(r'^\s*(?:STATIC\s+|static\s+)?BOOLEAN\s+(\w+)\s*(?:=\s*([^;]+))?;',
+                             whole, _re.M))
+    for flag, initial in flags.items():
+        # tested in the handler, as a bare condition rather than as part of an expression
+        if not _re.search(rf'\bif\s*\(\s*!?\s*{_re.escape(flag)}\s*\)', body):
+            continue
+        # and written somewhere that is not the handler
+        writes = [m.start() for m in _re.finditer(rf'\b{_re.escape(flag)}\s*=\s*[^=]', whole)]
+        outside = [w for w in writes if whole.find(body) > w or w > whole.find(body) + len(body)]
+        if not outside:
+            continue
+        where = os.path.basename(path)
+        return flag, (f'{where} sets it outside the handler (initially '
+                      f'{(initial or "unset").strip()})')
+    return None, None
+
+
+def recover_missing_handlers(smi_data: Dict[str, SmiInfo],
+                             discovered: List[str],
+                             types: Dict[str, TypeInfo],
+                             edk2_dir: str) -> Dict[str, str]:
+    """Add handlers the source registers that the analyser did not record.
+
+    Returns {name: why it still could not be used} for the ones that stay out.
+    """
+    import re as _re
+    missing = [h for h in (discovered or []) if h and h not in smi_data]
+    stuck = {}
+    for handler in missing:
+        path, body = _handler_source(handler, edk2_dir)
+        if not body:
+            stuck[handler] = 'no definition found in the tree'
+            continue
+        # The GUID a comm-buffer handler is registered under, from its own registration
+        # call. A handler registered through a dispatch protocol instead -- SwDispatch2's
+        # Register, keyed on a SwSmiInputValue rather than a GUID -- cannot be driven by
+        # SmmCommunication at all, and saying so is the useful answer.
+        text = open(path, errors='ignore').read()
+        guid = _re.search(rf'(?:Smi|Mmi)HandlerRegister\s*\(\s*{_re.escape(handler)}\s*,\s*&?\s*'
+                          r'([A-Za-z_]\w*)', text, _re.S)
+        if not guid:
+            if _re.search(rf'->\s*Register\s*\([^;]*?{_re.escape(handler)}', text, _re.S):
+                stuck[handler] = ('registered through a dispatch protocol, not a comm-buffer '
+                                  'GUID, so SmmCommunication cannot reach it')
+            else:
+                stuck[handler] = 'no GUID-keyed registration call found'
+            continue
+        payload = payload_from_source(handler, edk2_dir, types)
+        if not payload:
+            stuck[handler] = 'its comm buffer is never cast to a recorded type'
+            continue
+        smi_data[handler] = SmiInfo(handler, f'{payload} *', guid.group(1), path)
+        print(f'INFO: recovered smi handler {handler} from source -- {guid.group(1)}, '
+              f'comm buffer cast to {payload} *')
+    return stuck
+
+
+def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='') -> None:
+    """Say what happened to every handler the source registers.
+
+    `[PASS] discover ... 22 SMI handlers` counts registrations in source, and the number of
+    harnesses can be less than half that without a word being said. A run that reports
+    nothing in a tree's own drivers should be able to show whether they were clean or
+    merely absent.
+    """
+    names = sorted(set(discovered or ()) | set(smi_data) | set(unusable) | set(recovered))
+    if not names:
+        return
+    print(f'SMI coverage: {len(smi_data)} of {len(names)} registered handler(s) harnessed')
+    for name in sorted(smi_data):
+        flag, where = lifecycle_gate(name, edk2_dir)
+        if flag:
+            print(f'  CAVEAT: {name} is harnessed but gated on {flag} -- {where}. A UEFI '
+                  f'application runs after EndOfDxe and ReadyToBoot, so if the flag is set '
+                  f'by then this handler refuses every input and a clean result here means '
+                  f'nothing')
+    for name in names:
+        if name in smi_data:
+            continue
+        why = unusable.get(name) or recovered.get(name) or 'not recorded by the analyser'
+        print(f'  not harnessed: {name} -- {why}')
+
+
 def analyze_smi(smi_data: Dict[str, SmiInfo],
                 macros_val: Dict[str, Macros],
                 macros_name: Dict[str, Macros],
@@ -304,33 +530,67 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
                 cast_map: Dict[str, List[str]],
                 types: Dict[str, TypeInfo],
                 aliases: Dict[str, str],
-                include_deps: Dict[str, List[str]]) -> Dict[str, FunctionBlock]:
+                include_deps: Dict[str, List[str]],
+                edk2_dir: str = "",
+                discovered: List[str] = ()) -> Dict[str, FunctionBlock]:
     protocol_guids = set()
     driver_guids = set()
-    unusable = set()
+    unusable = {}
+    includable = lambda info: bool(info and info.file and cleanup_paths([info.file]))
+
+    # Handlers the source registers but the analyser never recorded. Resolving these from
+    # source is the difference between a target list and a guess: SmmSpiHandler and
+    # B2SmiDispatchHandle appear in DiscoveredSmi.txt and in no analysis output at all, so
+    # before this they were not even dropped -- they were absent, which reads identically
+    # to "this tree has no such handler".
+    recovered = recover_missing_handlers(smi_data, discovered, types, edk2_dir)
+
     for smi in list(smi_data.values()):
         # Perform analysis on each SMI
         if smi.guid:
             protocol_guids.add(smi.guid)
-        # The harness declares a CommBuffer of the handler's own parameter type, so the
-        # header that defines it has to be included. Nothing else adds it: the smi path
-        # only ever collected default_includes | smi_includes, so every generated smi
-        # harness failed to compile on "use of undeclared identifier
-        # SMI_HANDLER_PROFILE_PARAMETER_HEADER" and the like.
+
+        # The harness declares a CommBuffer of the handler's own parameter type. The
+        # analyser records VOID * for any handler that casts its buffer inside the body
+        # instead of taking a typed parameter, and VOID * carries no fields to fuzz and no
+        # size to send -- drop_one_pointer leaves "void", whose sizeof is 1 under clang, so
+        # the harness would send a 1-byte message and call it the payload. The handler's
+        # own cast says what the block really is, so read that.
         base = (smi.type or '').replace('*', '').strip()
+        if base in ('', 'void', 'VOID') or not types.get(base):
+            guessed = payload_from_source(smi.name, edk2_dir, types)
+            if guessed:
+                print(f'INFO: smi handler {smi.name} declares its comm buffer as '
+                      f'{smi.type or "an untyped pointer"}; it casts to {guessed} *, '
+                      f'using that')
+                smi.type = f'{guessed} *'
+                base = guessed
+
         info = types.get(base)
-        if info and info.file and cleanup_paths([info.file]):
+        if includable(info):
             all_includes.add(info.file)
-        else:
-            # No includable declaration for the parameter type, so the harness cannot
-            # declare a CommBuffer of it. SMM_FTW_COMMUNICATE_FUNCTION_HEADER lives in
-            # FaultTolerantWriteDxe/FaultTolerantWriteSmmCommon.h, a driver-private header.
-            # Generating anyway just produces "use of undeclared identifier".
-            print(f'INFO: dropping smi handler {smi.name} -- no declaration the harness '
-                  f'can include for {base or "its parameter type"}')
-            unusable.add(smi.name)
+            continue
+
+        # Not includable. Re-emit the struct instead of dropping the handler: the headers
+        # that declare comm-buffer blocks are private to their drivers by convention, so
+        # dropping on this test discards precisely the vendor-specific handlers a campaign
+        # exists to cover.
+        order, reason = resolve_payload(base, types, aliases, includable)
+        if order is None:
+            print(f'INFO: dropping smi handler {smi.name} -- {reason}')
+            unusable[smi.name] = reason
+            continue
+        for name in order:
+            if name not in vendored_order:
+                vendored_order.append(name)
+            decl = types[name].file or 'an unrecorded header'
+            print(f'INFO: smi handler {smi.name} -- carrying {name} in the harness; '
+                  f'{decl} is private to its driver')
+
     for name in unusable:
         smi_data.pop(name, None)
+
+    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir)
     return smi_data, protocol_guids, driver_guids
 
 
@@ -344,7 +604,8 @@ def analyze_smi_data(macro_file: str,
                     harness_folder: str,
                     best_guess: bool,
                     edk2_dir: str,
-                    include_deps_file: str):
+                    include_deps_file: str,
+                    input_file: str = ""):
     
 
     macros_val, macros_name = load_macros(macro_file)
@@ -356,8 +617,15 @@ def analyze_smi_data(macro_file: str,
     types = load_types(types_file)
     aliases = load_aliases(alias_file)
 
+    # The handler list discover_smi.py wrote, which is the authoritative set of what this
+    # tree registers. Without it the generator can only report on what the analyser
+    # happened to record, and cannot tell "no such handler" from "not recorded".
+    discovered = load_discovered(input_file)
+
     # Analyze the SMI data
-    analyzed_data, protocol_guids, driver_guids = analyze_smi(smi_data, macros_val, macros_name, enum_map, cast_map, types, aliases, include_deps)
+    analyzed_data, protocol_guids, driver_guids = analyze_smi(
+        smi_data, macros_val, macros_name, enum_map, cast_map, types, aliases, include_deps,
+        edk2_dir, discovered)
 
 
     update_includes = cleanup_paths(all_includes)
@@ -371,4 +639,6 @@ def analyze_smi_data(macro_file: str,
     collected_includes = handle_include_deps(collected_includes, include_deps)
     
 
-    return analyzed_data, collected_includes, libraries, types, enum_map, aliases, protocol_guids, driver_guids, {}
+    vendored = render_payload(vendored_order, types)
+
+    return analyzed_data, collected_includes, libraries, types, enum_map, aliases, protocol_guids, driver_guids, {}, vendored

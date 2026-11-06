@@ -517,9 +517,10 @@ def resolve_missing_declarations(all_includes: List[str], edk2_dir: str,
     return ordered
 
 
-def generate_includes(all_includes: List[str], harness_folder: str, edk2_dir: str = ""):
+def generate_includes(all_includes: List[str], harness_folder: str, edk2_dir: str = "",
+                     vendored: List[str] = ()):
     all_includes = existing_includes(all_includes, edk2_dir)
-    code = uefi_header.harness_includes(all_includes)
+    code = uefi_header.harness_includes(all_includes, vendored)
     gen_file(f'{harness_folder}/includes.txt', all_includes)
     gen_file(f'{harness_folder}/FirnessIncludes.h', code)
 
@@ -722,7 +723,8 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      edk2_dir: str = "",
                      max_steps: int = 8,
                      precedence=(),
-                     host: str = 'uefi'):
+                     host: str = 'uefi',
+                     vendored: List[str] = ()):
     function_list = list(smi_data.keys())
     print(harness_folder)
     if host == 'linux':
@@ -732,7 +734,7 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
     used_guids = referenced_guids(harness_folder)
     generate_header(function_list, matched_macros, harness_folder, used_guids)
-    generate_includes(all_includes, harness_folder, edk2_dir)
+    generate_includes(all_includes, harness_folder, edk2_dir, vendored)
     inf_protocols, inf_guids, local_guids = classify_guids(
         used_guids | set(protocol_guids) | set(driver_guids), edk2_dir)
     define_local_guids(harness_folder, local_guids)
@@ -889,8 +891,8 @@ def main():
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
-        smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file)
-        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host)
+        smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros, vendored  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file, args.input_file)
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host, vendored=vendored)
     else:
         processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators, precedence = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)

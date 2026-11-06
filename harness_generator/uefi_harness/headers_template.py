@@ -1,7 +1,7 @@
 import re
 from typing import List, Dict
 
-def harness_includes(includes: List[str]) -> List[str]:
+def harness_includes(includes: List[str], vendored: List[str] = ()) -> List[str]:
     output = []
     output.append("#ifndef __FIRNESS_INCLUDES__")
     output.append("#define __FIRNESS_INCLUDES__")
@@ -9,6 +9,12 @@ def harness_includes(includes: List[str]) -> List[str]:
     output.append("")
     for include in includes:
         output.append(f"#include <{include}>")
+
+    # After the angle-bracket includes, never before: a vendored parameter block is spelled
+    # in terms of EFI_STATUS, EFI_GUID and the fixed-width types, which arrive above.
+    if vendored:
+        output.append("")
+        output.extend(vendored)
 
     output.append("")
     output.append("#endif // __FIRNESS_INCLUDES__")
