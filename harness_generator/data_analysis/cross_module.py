@@ -39,6 +39,28 @@ COMM_SIZE = 'CommBufferSize'
 # struct almost every handler copies it into.
 COPY_LIKE = ('CopyMem', 'DuplicateMemory', 'CopyGuid', 'SetMem', 'AsanCopyMem', 'memcpy')
 
+# The core's own service tables. A handler reaching these is not bypassing a peer module's
+# SMI entry validation -- it IS calling the core, which validates its own arguments, so
+# these do not carry the property that makes the class interesting.
+#
+# Measured on EVAL-1 run 42310220335: of 5 crossings, 3 were gSmst->SmmAllocatePool taking
+# *CommBufferSize and gSmst->SmmFreePool taking back the buffer it had just allocated.
+# Both are what a correct handler does, and reporting them alongside the two real findings
+# put the signal at two in five.
+#
+# They are classified rather than dropped. An unvalidated size reaching an allocator, or a
+# caller-controlled name reaching gRT->SetVariable, is a real finding -- it is just a
+# different one, and a reader who wants it should not have to re-run the analysis to see
+# that it was considered.
+CORE_SERVICES = ('gSmst', 'gMmst', 'gBS', 'gRT', 'gDS', 'gST', 'gSmmst')
+
+
+def crossing_kind(service: str) -> str:
+    """'core-service' for the core's own tables, 'peer-protocol' otherwise."""
+    head = (service or '').split('->')[0].strip()
+    return 'core-service' if head in CORE_SERVICES else 'peer-protocol'
+
+
 
 def _mentions(text: str, names: Set[str]) -> bool:
     """Whether any of `names` appears in `text` as a whole identifier."""
@@ -133,6 +155,7 @@ def cross_module_edges(all_edges: List[dict]) -> List[dict]:
             if not carried:
                 continue
             findings.append({
+                'kind': crossing_kind(edge.get('Service')),
                 'handler': handler,
                 'file': edge.get('EnclosingFile') or '',
                 'service': edge.get('Service'),
@@ -146,19 +169,37 @@ def cross_module_edges(all_edges: List[dict]) -> List[dict]:
 
 
 def report(all_edges: List[dict]) -> None:
-    """One line per crossing, plus the arguments that carry caller data."""
+    """Peer-protocol crossings in full; core-service ones counted, not listed.
+
+    The split is about which finding a reader is being handed, not about hiding anything:
+    a peer-protocol crossing is the shape that skipped another module's validation, and a
+    core-service one is a handler using the core with data it was given. Both are printed
+    with enough to act on -- the second as a count and a list of names, because on EVAL-1
+    those were three correct allocator and free calls and burying two real findings under
+    them is how a report stops being read.
+    """
     findings = cross_module_edges(all_edges)
+    peer = [f for f in findings if f['kind'] == 'peer-protocol']
+    core = [f for f in findings if f['kind'] == 'core-service']
     handlers = {e.get('EnclosingFunction') for e in all_edges if e.get('EnclosingFunction')}
-    print(f'SMI cross-module: {len(findings)} interface crossing(s) carrying '
+
+    print(f'SMI cross-module: {len(peer)} peer-protocol crossing(s) carrying '
           f'caller-controlled data, from {len(handlers)} handler body(ies)')
-    for find in findings:
+    for find in peer:
         print(f"  {find['handler']} -> {find['service']}->{find['function']}  "
               f"(call {find['call_order']} in the body)")
         for carry in find['carries']:
-            why = ' [offset arithmetic on the caller\'s buffer]' if carry['offset_arithmetic'] else ''
+            why = " [offset arithmetic on the caller's buffer]" if carry['offset_arithmetic'] else ''
             shown = carry['assignment'] or carry['variable']
             print(f"      {carry['arg']} {carry['data_type']} = {shown}{why}")
         if find['ran_before']:
             print(f"      ran first in this body: {', '.join(find['ran_before'])}")
         print('      the callee validates its own SMI entry path, not this one -- read '
               'what it assumes about these arguments')
+
+    if core:
+        names = sorted({f"{f['service']}->{f['function']}" for f in core})
+        print(f'  and {len(core)} call(s) into the core services with caller-controlled '
+              f'arguments: {", ".join(names)}')
+        print('      the core checks its own arguments, so these are only a finding if the '
+              'value itself is out of range -- a size, a length or a name worth reading')
