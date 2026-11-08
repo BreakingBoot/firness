@@ -169,12 +169,29 @@ public:
         if (!S) return;
 
         if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(S)) {
+            //
+            // The walk descends into every child and the last match wins, so what the slot
+            // will ACCEPT has to be narrowed or any identifier in the expression can end up
+            // in it. The SMM core registers from a table --
+            //
+            //   SmiHandlerRegister (mSmmCoreSmiHandlers[Index].Handler, ...)
+            //
+            // -- and the subscript is the deepest DeclRefExpr, so "Index" was recorded as
+            // the name of an SMI handler and appeared as one in the inventory on EVAL-1
+            // run 42310220335. A handler slot holds a function and a GUID slot holds a
+            // variable, and requiring that costs nothing on the shapes that were already
+            // working.
+            //
             switch(arg) {
                 case SMIParam::FunctionHandle:
-                    CurrentFunction = DRE->getDecl()->getNameAsString();
+                    if (isa<FunctionDecl>(DRE->getDecl())) {
+                        CurrentFunction = DRE->getDecl()->getNameAsString();
+                    }
                     break;
                 case SMIParam::Guid:
-                    CurrentInfo.Guid = DRE->getDecl()->getNameAsString();
+                    if (isa<VarDecl>(DRE->getDecl())) {
+                        CurrentInfo.Guid = DRE->getDecl()->getNameAsString();
+                    }
                     break;
                 default:
                     break;
@@ -184,6 +201,113 @@ public:
             ParseArg(child, arg);
         }
         return;
+    }
+
+    /*
+        The array a table-driven registration reads its handlers out of, or nullptr.
+
+        Matches the shape the SMM core and several platform drivers use:
+
+            SmiHandlerRegister (mSmmCoreSmiHandlers[Index].Handler,
+                                mSmmCoreSmiHandlers[Index].HandlerType, ...)
+
+        There is no handler name in that expression -- it is a field of whichever row the
+        loop is on -- so the names live in the array's initialiser and nowhere else. With
+        ParseArg narrowed above, such a call records nothing at all, which is correct but
+        loses seven real handlers on EVAL-1: SmmDriverDispatchHandler, SmmReadyToLockHandler,
+        SmmLegacyBootHandler, SmmExitBootServicesHandler, SmmReadyToBootHandler,
+        SmmEndOfDxeHandler and SmmS3SmmInitDoneHandler. Each is registered against a GUID
+        and dispatched by SmiManage, so an SmmCommunicate carrying that GUID reaches it the
+        same way any other comm-buffer handler is reached.
+    */
+    const VarDecl *handlerTable(Expr *E) {
+        if (!E) return nullptr;
+        E = E->IgnoreParenCasts();
+        const MemberExpr *Member = dyn_cast<MemberExpr>(E);
+        if (Member == nullptr) {
+            return nullptr;
+        }
+        const Expr *Base = Member->getBase();
+        if (Base == nullptr) return nullptr;
+        Base = Base->IgnoreParenCasts();
+        const ArraySubscriptExpr *Sub = dyn_cast<ArraySubscriptExpr>(Base);
+        if (Sub == nullptr) {
+            return nullptr;
+        }
+        const Expr *Arr = Sub->getBase();
+        if (Arr == nullptr) return nullptr;
+        Arr = Arr->IgnoreParenCasts();
+        const DeclRefExpr *Ref = dyn_cast<DeclRefExpr>(Arr);
+        if (Ref == nullptr) {
+            return nullptr;
+        }
+        const VarDecl *Var = dyn_cast<VarDecl>(Ref->getDecl());
+        if (Var == nullptr || !Var->hasInit()) {
+            return nullptr;
+        }
+        return Var;
+    }
+
+    /*
+        Every (handler, GUID) pair in a table's initialiser.
+
+        Taken by shape rather than by field index: the row is read for the first element
+        that names a function and the first that takes the address of a variable, so a
+        table whose fields are declared in another order, or which carries extra fields
+        like the DispatchHandle and the BOOLEAN the SMM core's rows end with, still
+        resolves. The trailing { NULL, NULL, ... } terminator names neither and is skipped
+        by the same rule rather than by counting rows.
+    */
+    void expandHandlerTable(const VarDecl *Table, const std::string &Kind) {
+        const Expr *Init = Table->getInit();
+        if (Init == nullptr) return;
+        const InitListExpr *Rows = dyn_cast<InitListExpr>(Init->IgnoreParenCasts());
+        if (Rows == nullptr) return;
+
+        for (unsigned Row = 0; Row < Rows->getNumInits(); Row++) {
+            const Expr *RowExpr = Rows->getInit(Row);
+            if (RowExpr == nullptr) continue;
+            const InitListExpr *Fields =
+                dyn_cast<InitListExpr>(RowExpr->IgnoreParenCasts());
+            if (Fields == nullptr) continue;
+
+            std::string Handler;
+            std::string Guid;
+            for (unsigned Field = 0; Field < Fields->getNumInits(); Field++) {
+                const Expr *Value = Fields->getInit(Field);
+                if (Value == nullptr) continue;
+                Value = Value->IgnoreParenCasts();
+                if (const DeclRefExpr *Ref = dyn_cast<DeclRefExpr>(Value)) {
+                    if (Handler.empty() && isa<FunctionDecl>(Ref->getDecl())) {
+                        Handler = Ref->getDecl()->getNameAsString();
+                    }
+                    continue;
+                }
+                if (const UnaryOperator *Addr = dyn_cast<UnaryOperator>(Value)) {
+                    if (Addr->getOpcode() != UO_AddrOf) continue;
+                    const Expr *Of = Addr->getSubExpr();
+                    if (Of == nullptr) continue;
+                    if (const DeclRefExpr *Ref =
+                            dyn_cast<DeclRefExpr>(Of->IgnoreParenCasts())) {
+                        if (Guid.empty() && isa<VarDecl>(Ref->getDecl())) {
+                            Guid = Ref->getDecl()->getNameAsString();
+                        }
+                    }
+                }
+            }
+
+            if (Handler.empty()) {
+                continue;
+            }
+            if (SmiFunctionSet.find(Handler) != SmiFunctionSet.end()) {
+                continue;
+            }
+            SmiFunctionSet.insert(Handler);
+            SmiInfo Info;
+            Info.Guid = Guid;
+            Info.Dispatch = Kind;
+            SmiFunctionGuidMap[Handler] = Info;
+        }
     }
 
 
@@ -215,6 +339,20 @@ public:
                 CurrentInfo.Guid.clear();
             }
             CurrentInfo.Dispatch = Kind;
+
+            //
+            // Nothing in the argument named a function, so this is either a table-driven
+            // registration -- whose names are in the array's initialiser, not here -- or a
+            // shape not handled. Try the table before giving up; expandHandlerTable records
+            // its own entries and leaves CurrentFunction empty, so the single-handler path
+            // below still does nothing.
+            //
+            if (CurrentFunction.empty() && Shift < call->getNumArgs()) {
+                const VarDecl *Table = handlerTable(call->getArg(Shift));
+                if (Table != nullptr) {
+                    expandHandlerTable(Table, Kind);
+                }
+            }
             if(!CurrentFunction.empty() && SmiFunctionSet.find(CurrentFunction) == SmiFunctionSet.end()) {
                 SmiFunctionSet.insert(CurrentFunction);
                 SmiFunctionGuidMap[CurrentFunction] = CurrentInfo;
