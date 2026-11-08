@@ -622,7 +622,15 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
     nothing in a tree's own drivers should be able to show whether they were clean or
     merely absent.
     """
-    names = sorted(set(discovered or ()) | set(smi_data) | set(unusable) | set(recovered))
+    #
+    # The inventory is in this union, not just the discovery list. discover_smi.py greps
+    # for registration calls and found 22; the analyzer resolves a table-driven
+    # registration and found 25, the seven SMM core handlers among them. On run 42483193618
+    # those seven were in smi-handler-inventory.json and in none of the sets this report
+    # reads, so the thing that found them said nothing about them.
+    #
+    names = sorted(set(discovered or ()) | set(smi_data) | set(unusable)
+                   | set(recovered) | set(inventory or ()))
     if not names:
         return
     print(f'SMI coverage: {len(smi_data)} of {len(names)} registered handler(s) harnessed')
@@ -633,10 +641,32 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
     for name in names:
         if name in smi_data:
             continue
-        why = unusable.get(name) or recovered.get(name)
+        #
+        # A definite reason wins over a vague one. unusable/recovered carry the generator's
+        # own note -- "its comm buffer is never cast to a recorded type" -- which is true of
+        # a root handler and useless, because a root handler HAS no comm buffer to cast and
+        # no GUID to address it with. Run 42483193618 told a reader to go looking for a cast
+        # in CpuHotplugMmi that cannot exist. Where the dispatch kind settles reachability,
+        # say that instead.
+        #
+        why = _dispatch_reason((inventory or {}).get(name) or {}) if DEFINITE_DISPATCH(
+            (inventory or {}).get(name) or {}) else ''
+        if not why:
+            why = unusable.get(name) or recovered.get(name)
         if not why:
             why = _dispatch_reason((inventory or {}).get(name) or {})
         print(f'  not harnessed: {name} -- {why}')
+
+
+def DEFINITE_DISPATCH(entry) -> bool:
+    """Whether the dispatch kind alone settles why a handler cannot be driven.
+
+    True for every kind that is not a GUID-keyed comm-buffer registration: those are
+    statements about how the handler is reached, which no amount of type resolution
+    changes. False for SmiHandlerRegister, where the reason really is about the buffer.
+    """
+    kind = (entry or {}).get('Dispatch') or ''
+    return bool(kind) and kind != 'SmiHandlerRegister'
 
 
 DISPATCH_REASON = {
