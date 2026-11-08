@@ -640,6 +640,11 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
 
 
 DISPATCH_REASON = {
+    'RootHandler': 'registered with HandlerType NULL, which makes it a root handler: '
+                   'SmiManage calls it on every MMI whatever GUID the header carries, and '
+                   'its CommBuffer is ignored by contract. There is no GUID to address it '
+                   'with and no buffer it reads, so a comm-buffer harness has nothing to '
+                   'give it -- this is not the analyser failing to resolve a type',
     'SwDispatch': 'registered on the software MMI dispatch protocol, not against a GUID. It '
                   'is raised by a write to the software MMI port and its CommBuffer is an '
                   'EFI_MM_SW_CONTEXT the dispatcher fills in with the CPU index and the port '

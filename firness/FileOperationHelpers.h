@@ -145,7 +145,7 @@ namespace FileOps {
         // silent unless the smi pass actually ran, so a normal analysis is unchanged
         if (SmiEnabled) {
             llvm::outs() << "SMI handlers: " << total << " found, " << not_guid
-                         << " not GUID-dispatched, " << no_type
+                         << " not addressable by GUID, " << no_type
                          << " dropped for an unresolved CommBuffer type, "
                          << (total - not_guid - no_type) << " written\n";
             for (const auto& pair : by_dispatch) {

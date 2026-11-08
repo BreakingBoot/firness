@@ -341,6 +341,32 @@ public:
             CurrentInfo.Dispatch = Kind;
 
             //
+            // A root handler: registered with HandlerType NULL, so SmiManage calls it on
+            // EVERY MMI whatever GUID the header carries, and by contract its CommBuffer
+            // is ignored. Two in EVAL-1 -- CpuHotplugMmi ("CommBuffer Ignored, due to
+            // CpuHotplugMmi() being a root MMI handler") and SmmSwDispatcher, registered
+            // as (..., NULL, &DispatchHandle).
+            //
+            // Both were previously reported as "dropped for an unresolved CommBuffer type",
+            // which sends a reader to look for a type that does not exist. There is no GUID
+            // to address them with and no buffer they read, so there is nothing a
+            // comm-buffer harness can do with either -- a different statement from "the
+            // analyser could not work out the type".
+            //
+            if (Kind == "SmiHandlerRegister" &&
+                CurrentInfo.Guid.empty() &&
+                (Shift + 1) < call->getNumArgs())
+            {
+                const Expr *Type = call->getArg(Shift + 1);
+                if (Type != nullptr &&
+                    Type->isNullPointerConstant(*this->Context,
+                                                Expr::NPC_ValueDependentIsNotNull))
+                {
+                    CurrentInfo.Dispatch = "RootHandler";
+                }
+            }
+
+            //
             // Nothing in the argument named a function, so this is either a table-driven
             // registration -- whose names are in the array's initialiser, not here -- or a
             // shape not handled. Try the table before giving up; expandHandlerTable records
