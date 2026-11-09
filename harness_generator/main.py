@@ -175,11 +175,13 @@ def used_libraries(libraries, harness_folder, all_includes, edk2_dir=""):
 
 def generate_inf(harness_folder: str, libraries: Dict[str, str], driver_guids: set = None,
                  protocol_guids: set = None, all_includes: List[str] = None,
-                 edk2_dir: str = ""):
+                 edk2_dir: str = "", timing: str = 'application',
+                 depex_protocols=()):
     packages = packages_for_includes(all_includes or [], edk2_dir)
     priority = preferred_packages(all_includes or [], harness_folder, edk2_dir)
     code = uefi_inf.gen_firness_inf(uuid.uuid4(), driver_guids, protocol_guids, libraries,
-                                    packages, priority)
+                                    packages, priority, timing=timing,
+                                    depex_protocols=list(depex_protocols))
     gen_file(f'{harness_folder}/FirnessHarnesses.inf', code)
 
 # the spellings accepted on the command line, mapped to the FIRNESS_BACKEND values that
@@ -724,7 +726,8 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      max_steps: int = 8,
                      precedence=(),
                      host: str = 'uefi',
-                     vendored: List[str] = ()):
+                     vendored: List[str] = (),
+                     timing: str = 'application'):
     function_list = list(smi_data.keys())
     print(harness_folder)
     if host == 'linux':
@@ -742,8 +745,27 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     # while the DSC is the class-to-instance map it resolves against, including for the
     # transitive dependencies of the libraries that are kept. Trimming the DSC too left
     # those unresolvable and the harness stopped compiling.
+    #
+    # A DXE_DRIVER harness has to be dispatched AFTER whichever DXE halves publish the
+    # buffers its handlers insist on, and dispatch order between two DXE drivers is
+    # otherwise arbitrary. Those protocols are exactly smi_info.buffer_protocol, so the
+    # depex is derived from the same field that made the harness locate them in the first
+    # place -- if it dispatched first the LocateProtocol would fail, the harness would fall
+    # back to the communication region, and the handler would reject every input on the
+    # address compare.
+    #
+    # Only protocols the INF declares go in: a depex naming a GUID the INF does not
+    # declare does not build, and a module whose depex never evaluates TRUE is never
+    # dispatched at all, which looks exactly like a harness that cannot be reached.
+    #
+    depex = uefi_inf.depex_for_smi(smi_data, set(inf_protocols) | set(inf_guids))
     generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
-                 inf_guids, inf_protocols, all_includes, edk2_dir)
+                 inf_guids, inf_protocols, all_includes, edk2_dir,
+                 timing=timing, depex_protocols=depex)
+    if timing == 'dxe':
+        print(f'SMI harness timing: dxe -- a DXE_DRIVER in the firmware volume, so a '
+              f'handler that latches on EndOfDxe is still open. Depex waits on '
+              f'{len(depex) + 1} protocol(s).')
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -874,6 +896,17 @@ def main():
                              'handlers from ring 0 after ExitBootServices. SMI only -- a '
                              'protocol harness has no meaning once boot services are gone.')
 
+    parser.add_argument('--harness-timing', dest='harness_timing', default='application',
+                        choices=('application', 'dxe'),
+                        help='WHEN the SMI harness runs. "application" (default) is a '
+                             'UEFI_APPLICATION on the ESP, launched by BDS as a boot '
+                             'option -- which is after EndOfDxe, so a handler that latches '
+                             'on it is already shut. "dxe" is a DXE_DRIVER in the firmware '
+                             'volume, dispatched before BDS, which is the only way to reach '
+                             'SmmSpi, SmmFtwHandler, two paths in Tcg2Smm and 3 of '
+                             "VariableSmm's 13 commands. It costs a firmware build per "
+                             'harness, so it is opt-in. SMI only.')
+
     args = parser.parse_args()
 
     # FirnessBackend.h refuses to compile the Nyx backend on a host without Intel PT, and
@@ -892,7 +925,7 @@ def main():
     harness_folder = generate_harness_folder(args.output)
     if args.smi_enabled:
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros, vendored  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file, args.input_file)
-        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host, vendored=vendored)
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host, vendored=vendored, timing=args.harness_timing)
     else:
         processed_data, processed_generators, template, types, all_includes, libraries, matched_macros, aliases, protocol_guids, driver_guids, enums, total_generators, precedence = analyze_data(args.macro_file, args.enum_file, args.generator_file, args.input_file,
                                                     args.data_file, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.function_file, args.generators, args.edk2, args.includes_file)
