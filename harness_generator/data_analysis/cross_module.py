@@ -20,6 +20,24 @@ standard handler, and can through RWVariable. Fuzzing found it after 110255 iter
 filed it against VariableSmm.efi, the module that faulted; the edge was in the source the
 whole time.
 
+A SECOND SHAPE, which the argument-only pass above cannot see. A handler can cross into
+another module carrying nothing at all and still be doing the caller's bidding, because
+the caller chooses whether the call happens:
+
+    UnregisterCBFunctionLight   switch (CommunicationData->Function) {
+                                  case UNREGISTER_FROM_RSC:
+                                    if (CommunicationData->Disable == FALSE) break;
+                                    if (mRscProtocol != NULL)
+                                      mRscProtocol->Unregister (LightStatusCode);
+
+LightStatusCode is the handler's own function, so no argument is tainted. The caller still
+decides whether a peer module's status-code registration is torn down, and decides it again
+on the next SMI. EVAL-1 dispatched this handler and its HwAlarm twin about 93000 times
+between them for no sanitizer report, and there is none to get: nothing accesses memory out
+of bounds. The defect, if the callee has one, is a state transition -- unregister twice,
+unregister what was never registered, use what was unregistered. These are reported as
+reach 'control' and listed separately, because triaging one asks a different question.
+
 WHAT THIS DOES NOT DO. There is no path sensitivity and no knowledge of what any
 particular callee validates. A flagged edge is a place to read, not a confirmed defect: a
 handler that validates thoroughly before the call is flagged exactly like one that does
@@ -152,10 +170,31 @@ def cross_module_edges(all_edges: List[dict]) -> List[dict]:
                     'offset_arithmetic': offsetted,
                 })
             propagate(tainted, edge)
-            if not carried:
+            #
+            # Two ways a crossing can be caller-controlled, and only one of them shows up
+            # in the arguments.
+            #
+            #   reach 'data'     -- an argument carries caller bytes. RWVariable hands
+            #                       SmmSetVariable a name and a destination the caller
+            #                       chose; issues #47 and #48.
+            #
+            #   reach 'control'  -- no argument carries anything, but the call sits under a
+            #                       condition that reads caller bytes, so the caller
+            #                       chooses WHETHER it happens and can choose again next
+            #                       SMI. HwLight and HwAlarm tear down a peer module's
+            #                       status-code registration this way, passing only their
+            #                       own function pointer. 93000 dispatches across the two
+            #                       of them produced no sanitizer report, because there is
+            #                       no bad access to report -- the defect is a state
+            #                       transition, and the argument-only pass could not see it.
+            #
+            gate = (edge.get('CallerGate') or '').strip()
+            if not carried and not gate:
                 continue
             findings.append({
                 'kind': crossing_kind(edge.get('Service')),
+                'reach': 'data' if carried else 'control',
+                'gate': gate,
                 'handler': handler,
                 'file': edge.get('EnclosingFile') or '',
                 'service': edge.get('Service'),
@@ -179,8 +218,10 @@ def report(all_edges: List[dict]) -> None:
     them is how a report stops being read.
     """
     findings = cross_module_edges(all_edges)
-    peer = [f for f in findings if f['kind'] == 'peer-protocol']
-    core = [f for f in findings if f['kind'] == 'core-service']
+    peer = [f for f in findings if f['kind'] == 'peer-protocol' and f.get('reach') != 'control']
+    gated = [f for f in findings if f['kind'] == 'peer-protocol' and f.get('reach') == 'control']
+    core = [f for f in findings if f['kind'] == 'core-service' and f.get('reach') != 'control']
+    core_gated = [f for f in findings if f['kind'] == 'core-service' and f.get('reach') == 'control']
     handlers = {e.get('EnclosingFunction') for e in all_edges if e.get('EnclosingFunction')}
 
     print(f'SMI cross-module: {len(peer)} peer-protocol crossing(s) carrying '
@@ -196,6 +237,31 @@ def report(all_edges: List[dict]) -> None:
             print(f"      ran first in this body: {', '.join(find['ran_before'])}")
         print('      the callee validates its own SMI entry path, not this one -- read '
               'what it assumes about these arguments')
+
+    #
+    # Printed as its own class, not merged into the list above. A reader triaging these is
+    # asked a different question: not "what does the callee assume about this value" but
+    # "what happens if the caller does this twice, or without the call that should have
+    # come first". Merging them would put a state-transition finding under a heading that
+    # says it carries data, which is the one thing it does not do.
+    #
+    if gated:
+        print(f'  and {len(gated)} peer-protocol crossing(s) the caller can choose to '
+              f'trigger while carrying no data into them:')
+        for find in gated:
+            print(f"  {find['handler']} -> {find['service']}->{find['function']}  "
+                  f"(call {find['call_order']} in the body)")
+            print(f"      reached when: {find['gate']}")
+            if find['ran_before']:
+                print(f"      ran first in this body: {', '.join(find['ran_before'])}")
+            print('      no argument carries caller data, so no sanitizer report is '
+                  'expected -- read the callee for what repeating this does, and what it '
+                  'assumes ran first')
+
+    if core_gated:
+        names = sorted({f"{f['service']}->{f['function']}" for f in core_gated})
+        print(f'  and {len(core_gated)} call(s) into the core services the caller can '
+              f'choose to trigger: {", ".join(names)}')
 
     if core:
         names = sorted({f"{f['service']}->{f['function']}" for f in core})

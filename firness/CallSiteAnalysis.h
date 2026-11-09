@@ -912,26 +912,177 @@ public:
         }
 
         SmiCallsInCurrentHandler = 0;
-        collectSmiCalls(Func->getBody(), Handler, Where);
+        seedCallerNames(Func);
+        collectSmiCalls(Func->getBody(), Handler, Where, "");
         return true;
     }
 
     /*
-        The calls in one handler body, in source order.
+        The names in THIS handler body that hold caller-supplied bytes.
+
+        "CommBuffer" alone is not enough. The parameter is spelled whatever the driver
+        spells it -- EVAL-1's HwLight declares `CommBuffer1` and immediately rebinds it --
+        and every handler worth reading casts it into a typed local before touching a
+        field, so the condition that gates a call names the local and not the parameter:
+
+            SMM_LIGHT_FUNCTION_COMMUNICATION *CommunicationData;
+            ...
+            CommunicationData = (SMM_LIGHT_FUNCTION_COMMUNICATION *)CommBuffer;
+            switch (CommunicationData->Function) {
+
+        So: seed from the parameter list by name shape, then take assignment hops until the
+        set stops growing. Bounded by the number of assignments in one function body, and
+        the loop below cannot run away because each pass must add a name to continue.
     */
-    void collectSmiCalls(Stmt *S, const std::string &Handler, const std::string &Where) {
+    void seedCallerNames(FunctionDecl *Func) {
+        CallerNames.clear();
+        if (Func == nullptr) {
+            return;
+        }
+        CallerNames.insert("CommBuffer");
+        CallerNames.insert("CommBufferSize");
+        for (unsigned Index = 0; Index < Func->getNumParams(); Index++) {
+            const ParmVarDecl *Parm = Func->getParamDecl(Index);
+            if (Parm == nullptr) {
+                continue;
+            }
+            const std::string Name = Parm->getNameAsString();
+            if (!Name.empty() && Name.find("CommBuffer") != std::string::npos) {
+                CallerNames.insert(Name);
+            }
+        }
+        for (int Pass = 0; Pass < 8; Pass++) {
+            const size_t Before = CallerNames.size();
+            growCallerNames(Func->getBody());
+            if (CallerNames.size() == Before) {
+                break;
+            }
+        }
+    }
+
+    // One assignment hop: `X = <expr naming a caller name>` and `T X = <same>`.
+    void growCallerNames(Stmt *S) {
+        if (S == nullptr) {
+            return;
+        }
+        if (BinaryOperator *BO = dyn_cast<BinaryOperator>(S)) {
+            if (BO->getOpcode() == BO_Assign && mentionsCallerName(BO->getRHS())) {
+                if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(BO->getLHS()->IgnoreParenCasts())) {
+                    const std::string Name = DRE->getDecl()->getNameAsString();
+                    if (!Name.empty()) {
+                        CallerNames.insert(Name);
+                    }
+                }
+            }
+        }
+        if (DeclStmt *DS = dyn_cast<DeclStmt>(S)) {
+            for (Decl *D : DS->decls()) {
+                VarDecl *VD = dyn_cast<VarDecl>(D);
+                if (VD == nullptr || !VD->hasInit()) {
+                    continue;
+                }
+                if (mentionsCallerName(VD->getInit()) && !VD->getNameAsString().empty()) {
+                    CallerNames.insert(VD->getNameAsString());
+                }
+            }
+        }
+        for (Stmt *Child : S->children()) {
+            growCallerNames(Child);
+        }
+    }
+
+    bool mentionsCallerName(Stmt *S) {
+        if (S == nullptr) {
+            return false;
+        }
+        if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(S)) {
+            if (DRE->getDecl() != nullptr &&
+                CallerNames.find(DRE->getDecl()->getNameAsString()) != CallerNames.end()) {
+                return true;
+            }
+        }
+        for (Stmt *Child : S->children()) {
+            if (mentionsCallerName(Child)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::string conditionText(const Expr *Cond) {
+        if (Cond == nullptr) {
+            return "";
+        }
+        SourceManager &SM = Context->getSourceManager();
+        const LangOptions &LangOpts = Context->getLangOpts();
+        CharSourceRange Range = CharSourceRange::getTokenRange(Cond->getSourceRange());
+        std::string Text = Lexer::getSourceText(Range, SM, LangOpts).str();
+        //
+        // One line, bounded. This string is written to JSON and printed in a report, and a
+        // multi-line macro expansion in a condition would otherwise carry a whole block
+        // into it.
+        //
+        for (char &Ch : Text) {
+            if (Ch == '\n' || Ch == '\r' || Ch == '\t') {
+                Ch = ' ';
+            }
+        }
+        if (Text.size() > 160) {
+            Text = Text.substr(0, 157) + "...";
+        }
+        return Text;
+    }
+
+    /*
+        The calls in one handler body, in source order, each tagged with the enclosing
+        caller-data condition it sits under.
+
+        Descent is asymmetric on purpose: a condition's own subexpressions are NOT inside
+        the branch they guard, so calls appearing in the condition keep the gate they
+        arrived with. Only the guarded statements take the new gate.
+    */
+    void collectSmiCalls(Stmt *S, const std::string &Handler, const std::string &Where,
+                         const std::string &Gate) {
         if (S == nullptr) {
             return;
         }
         if (CallExpr *Call = dyn_cast<CallExpr>(S)) {
-            recordSmiCallEdge(Call, Handler, Where);
+            recordSmiCallEdge(Call, Handler, Where, Gate);
         }
+
+        const Expr *Cond = nullptr;
+        if (IfStmt *If = dyn_cast<IfStmt>(S)) {
+            Cond = If->getCond();
+        } else if (SwitchStmt *Sw = dyn_cast<SwitchStmt>(S)) {
+            Cond = Sw->getCond();
+        } else if (WhileStmt *While = dyn_cast<WhileStmt>(S)) {
+            Cond = While->getCond();
+        } else if (DoStmt *Do = dyn_cast<DoStmt>(S)) {
+            Cond = Do->getCond();
+        } else if (ForStmt *For = dyn_cast<ForStmt>(S)) {
+            Cond = For->getCond();
+        } else if (ConditionalOperator *Ternary = dyn_cast<ConditionalOperator>(S)) {
+            Cond = Ternary->getCond();
+        }
+
+        //
+        // Keep the OUTERMOST caller-data condition. The inner `if (mRscProtocol != NULL)`
+        // around a peer call reads no caller data, and letting it win would report the
+        // call as ungated -- which is the whole finding, inverted.
+        //
+        std::string Inner = Gate;
+        if (Cond != nullptr && Gate.empty() && mentionsCallerName(const_cast<Expr *>(Cond))) {
+            Inner = conditionText(Cond);
+        }
+
         for (Stmt *Child : S->children()) {
-            collectSmiCalls(Child, Handler, Where);
+            const bool IsTheCondition = (Cond != nullptr && Child == (Stmt *)Cond);
+            collectSmiCalls(Child, Handler, Where, IsTheCondition ? Gate : Inner);
         }
     }
 
-    void recordSmiCallEdge(CallExpr *Call, const std::string &Handler, const std::string &Where) {
+    void recordSmiCallEdge(CallExpr *Call, const std::string &Handler, const std::string &Where,
+                           const std::string &Gate) {
         VarDeclMap.clear();
         CallInfo.clear();
         HandleMatchingExpr(Call, *this->Context);
@@ -945,6 +1096,7 @@ public:
         // running before a use, or not running at all.
         //
         CallInfo.CallOrder = SmiCallsInCurrentHandler++;
+        CallInfo.CallerGate = Gate;
 
         //
         // The includes set is not carried. It is the whole include closure of the
@@ -966,6 +1118,8 @@ private:
     unsigned CallsInCurrentFunction = 0;
     // the call counter for the SMI handler body currently walked by VisitFunctionDecl
     unsigned SmiCallsInCurrentHandler = 0;
+    // names holding caller-supplied bytes in the handler body currently walked
+    std::set<std::string> CallerNames;
     const CallExpr *CurrentCallExpr = nullptr;
     VarMap VarDeclMap;
     Call CallInfo;

@@ -221,6 +221,12 @@ namespace FileOps {
             callObject["EnclosingFile"] = call.EnclosingFile;
             callObject["CallOrder"] = call.CallOrder;
             callObject["ReturnType"] = call.return_type;
+            //
+            // The enclosing caller-data condition, or "" when the call is unconditional.
+            // Written for every edge, not only the gated ones, so a consumer can tell "no
+            // gate" from "this analyzer did not look".
+            //
+            callObject["CallerGate"] = call.CallerGate;
             handlers.insert(call.EnclosingFunction);
 
             for (const auto& argumentPair : call.Arguments) {
@@ -238,8 +244,15 @@ namespace FileOps {
         }
 
         if (SmiEnabled) {
+            size_t gated = 0;
+            for (const auto& call : edges) {
+                if (!call.CallerGate.empty()) {
+                    gated++;
+                }
+            }
             llvm::outs() << "SMI call edges: " << edges.size() << " call(s) from "
-                         << handlers.size() << " handler body(ies)\n";
+                         << handlers.size() << " handler body(ies), " << gated
+                         << " of them reached only when the caller's data says so\n";
         }
 
         std::ofstream outFile(file_path);

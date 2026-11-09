@@ -118,6 +118,31 @@ struct Call {
     std::string EnclosingFile;
     unsigned CallOrder = 0;
 
+    // The source text of the enclosing condition that reads caller-supplied data, or
+    // empty when the call is made unconditionally.
+    //
+    // An SMI handler can hand a peer module caller-supplied DATA, which is what the
+    // Arguments carry and what cross_module.py's taint pass finds. It can also hand a peer
+    // module nothing at all and still be a crossing, because the caller chooses WHETHER
+    // the call happens:
+    //
+    //     switch (CommunicationData->Function) {          <-- this text
+    //       case UNREGISTER_FROM_RSC:
+    //         if (CommunicationData->Disable == FALSE) break;
+    //         if (mRscProtocol != NULL) {
+    //           Status = mRscProtocol->Unregister (LightStatusCode);
+    //
+    // LightStatusCode is the handler's own function, so no argument is tainted and the
+    // data-flow pass drops the edge. But the caller decides whether a peer module's
+    // registration is torn down, and can decide it again on the next SMI. That is a state
+    // transition under caller control -- the double-free and use-after-unregister shape --
+    // and it is invisible without this field.
+    //
+    // The OUTERMOST caller-data condition is kept, not the innermost: here the innermost is
+    // `mRscProtocol != NULL`, which reads no caller data at all, and keeping that would
+    // report the call as ungated.
+    std::string CallerGate;
+
     Call() = default;
 
     // Function to clear the Call object
@@ -127,6 +152,7 @@ struct Call {
         EnclosingFunction.clear();
         EnclosingFile.clear();
         CallOrder = 0;
+        CallerGate.clear();
         for (auto& pair : Arguments) {
             pair.second.clear();
         }
