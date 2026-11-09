@@ -163,7 +163,8 @@ def load_smi_data(smi_file: str) -> Dict[str, SmiInfo]:
         raw_data = json.load(file)
     smi_data = {}
     for smi, data in raw_data.items():
-        smi_info = SmiInfo(smi, data["Type"], data["Guid"])
+        smi_info = SmiInfo(smi, data["Type"], data["Guid"],
+                           buffer_protocol=data.get("BufferProtocol", ""))
         smi_data[smi] = smi_info
     return smi_data
 
@@ -737,6 +738,12 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
         # Perform analysis on each SMI
         if smi.guid:
             protocol_guids.add(smi.guid)
+
+        # The protocol whose buffer the handler insists on has to reach the INF too, or
+        # the harness references a symbol nothing declares and does not link. It is the
+        # same kind of entry as the handler's own GUID, so it goes in the same set.
+        if getattr(smi, 'buffer_protocol', ''):
+            protocol_guids.add(smi.buffer_protocol)
 
         # The harness declares a CommBuffer of the handler's own parameter type. The
         # analyser records VOID * for any handler that casts its buffer inside the body

@@ -202,12 +202,19 @@ struct SmiInfo {
     //
     std::string Dispatch;
 
+    //
+    // The protocol whose interface pointer this handler requires its comm buffer to be,
+    // or empty. See GuidForLocatedPointer for why this exists.
+    //
+    std::string BufferProtocol;
+
     SmiInfo() = default;
     void clear() {
         Guid.clear();
         Type.clear();
         File.clear();
         Dispatch.clear();
+        BufferProtocol.clear();
     }
 };
 
@@ -292,5 +299,24 @@ extern std::vector<Call> SmiCallEdges;
 // every edge was recorded once per pass and came out doubled.
 //
 extern std::set<std::string> SeenSmiHandlerBodies;
+
+//
+// A file-scope pointer set from LocateProtocol, keyed by its own name and carrying the
+// GUID it was located with. Built while walking the function that registers a handler.
+//
+// Some SMM handlers refuse any comm buffer that is not the one their DXE half published:
+//
+//   gBS->LocateProtocol (&gEfiLightStatusCodeCommunicationGuid, NULL, &mCommBuffer);
+//   ...
+//   if ((UINTN)CommBuffer != (UINTN)mCommBuffer + SMM_COMMUNICATE_HEADER_SIZE) return;
+//
+// That is an address identity test, so a harness that allocates out of the PI SMM
+// communication region is rejected on the third line however well formed its payload is.
+// Measured on EVAL-1 run 42490347442: UnregisterCBFunctionLight dispatched 37278 times and
+// UnregisterCBFunctionHwAlarm 56021 times, both with zero findings. Fuzzing cannot reach
+// past an equality test on an address, so the harness has to be told which protocol to
+// locate.
+//
+extern std::map<std::string, std::string> GuidForLocatedPointer;
 extern std::set<std::string> SmiFunctionSet;
 extern bool SmiEnabled;

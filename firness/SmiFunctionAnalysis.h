@@ -440,13 +440,140 @@ public:
         IN OUT VOID    *CommBuffer,
         IN OUT UINTN   *CommBufferSize
     */
+    /*
+        LocateProtocol calls in a body, as "the pointer it filled" -> "the GUID".
+
+        Collected for every function, not only the ones that register a handler: the
+        LocateProtocol and the registration are usually in the same entry point, but a
+        driver is free to split them, and the map is only read when a handler body actually
+        tests its comm buffer against one of these pointers.
+    */
+    void collectLocatedPointers(Stmt *S) {
+        if (!S) return;
+
+        if (CallExpr *Call = dyn_cast<CallExpr>(S)) {
+            std::string Callee;
+            if (const Expr *Fn = Call->getCallee()) {
+                const Expr *Bare = Fn->IgnoreParenCasts();
+                if (const MemberExpr *Mem = dyn_cast<MemberExpr>(Bare)) {
+                    Callee = Mem->getMemberNameInfo().getName().getAsString();
+                } else if (const DeclRefExpr *Ref = dyn_cast<DeclRefExpr>(Bare)) {
+                    Callee = Ref->getDecl()->getNameAsString();
+                }
+            }
+            //
+            // Both spellings, and the Mm one: gBS->LocateProtocol, gSmst->SmmLocateProtocol
+            // and gMmst->MmLocateProtocol all have the GUID first and the out pointer last.
+            //
+            if (Callee.find("LocateProtocol") != std::string::npos &&
+                Call->getNumArgs() >= 3)
+            {
+                const std::string Guid = addressedName(Call->getArg(0));
+                const std::string Into = addressedName(Call->getArg(Call->getNumArgs() - 1));
+                if (!Guid.empty() && !Into.empty()) {
+                    GuidForLocatedPointer[Into] = Guid;
+                }
+            }
+        }
+
+        for (Stmt *Child : S->children()) {
+            collectLocatedPointers(Child);
+        }
+    }
+
+    /*
+        The variable whose address an argument takes, through casts, or "".
+
+        &gEfiLightStatusCodeCommunicationGuid gives the GUID's name, and
+        (VOID **)&mCommBuffer gives mCommBuffer -- the cast is what makes the second one
+        need unwrapping rather than reading the DeclRefExpr directly.
+    */
+    std::string addressedName(const Expr *E) {
+        if (E == nullptr) return "";
+        const Expr *Bare = E->IgnoreParenCasts();
+        if (const UnaryOperator *Addr = dyn_cast<UnaryOperator>(Bare)) {
+            if (Addr->getOpcode() != UO_AddrOf) return "";
+            const Expr *Of = Addr->getSubExpr();
+            if (Of == nullptr) return "";
+            if (const DeclRefExpr *Ref = dyn_cast<DeclRefExpr>(Of->IgnoreParenCasts())) {
+                return Ref->getDecl()->getNameAsString();
+            }
+        }
+        return "";
+    }
+
+    /*
+        The pointer a handler tests its comm buffer against, if it tests one at all.
+
+        The shape is an equality or inequality where one side mentions CommBuffer and the
+        other mentions a file-scope pointer that LocateProtocol filled:
+
+            if ((UINTN)CommBuffer != (UINTN)mCommBuffer + SMM_COMMUNICATE_HEADER_SIZE)
+
+        An offset added to it does not matter -- what matters is that the test is against
+        an address the caller cannot choose, so the harness has to be handed the protocol
+        rather than left to allocate.
+    */
+    void findBufferIdentityGate(Stmt *S) {
+        if (!S) return;
+
+        if (BinaryOperator *BO = dyn_cast<BinaryOperator>(S)) {
+            if (BO->getOpcode() == BO_EQ || BO->getOpcode() == BO_NE) {
+                Expr *Lhs = BO->getLHS();
+                Expr *Rhs = BO->getRHS();
+                for (int Side = 0; Side < 2; Side++) {
+                    Expr *WithBuffer = (Side == 0) ? Lhs : Rhs;
+                    Expr *WithOther  = (Side == 0) ? Rhs : Lhs;
+                    if (!HasCommBuffer(WithBuffer) || HasCommBuffer(WithOther)) {
+                        continue;
+                    }
+                    std::string Found = namedLocatedPointer(WithOther);
+                    if (!Found.empty()) {
+                        SmiFunctionGuidMap[CurrentFunction].BufferProtocol = Found;
+                        return;
+                    }
+                }
+            }
+        }
+
+        for (Stmt *Child : S->children()) {
+            findBufferIdentityGate(Child);
+        }
+    }
+
+    /* The GUID for any located pointer mentioned in this expression, or "". */
+    std::string namedLocatedPointer(Stmt *S) {
+        if (!S) return "";
+        if (DeclRefExpr *Ref = dyn_cast<DeclRefExpr>(S)) {
+            auto Found = GuidForLocatedPointer.find(Ref->getDecl()->getNameAsString());
+            if (Found != GuidForLocatedPointer.end()) {
+                return Found->second;
+            }
+        }
+        for (Stmt *Child : S->children()) {
+            std::string Deeper = namedLocatedPointer(Child);
+            if (!Deeper.empty()) {
+                return Deeper;
+            }
+        }
+        return "";
+    }
+
     bool VisitFunctionDecl(FunctionDecl *func) {
+        //
+        // Every body, so the LocateProtocol in an entry point is recorded whether or not
+        // that entry point is itself a handler. Only useful on the second Tool.run(): a
+        // handler visited before its entry point would otherwise find the map empty.
+        //
+        collectLocatedPointers(func->getBody());
+
         if(SmiFunctionSet.find(func->getNameAsString()) != SmiFunctionSet.end()) {
             // parse the function to find the type of the structure stored in CommBuffer
             // we need to look for an assignment(i.e. a binary operator or a an expression that takes CommBuffer as INPUT usually a CopyMem or something similar)
             // step through the function body
             CurrentFunction = func->getNameAsString();
             GetSmiType(func->getBody());
+            findBufferIdentityGate(func->getBody());
             CurrentFunction.clear();
         }
         return true;

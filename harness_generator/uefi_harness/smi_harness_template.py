@@ -511,6 +511,42 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append('    }')
         output.append(f'    CommBuffer = (UINT8 *)(UINTN)Entry->PhysicalStart;')
         output.append("")
+
+        #
+        # Some handlers refuse any buffer but the one their DXE half published:
+        #
+        #   gBS->LocateProtocol (&gEfiLightStatusCodeCommunicationGuid, NULL, &mCommBuffer);
+        #   ...
+        #   if ((UINTN)CommBuffer != (UINTN)mCommBuffer + SMM_COMMUNICATE_HEADER_SIZE) return;
+        #
+        # That is an equality test on an address, so no input reaches past it and a campaign
+        # looks like a handler that validates everything correctly. Measured on EVAL-1 run
+        # 42490347442: UnregisterCBFunctionLight dispatched 37278 times and
+        # UnregisterCBFunctionHwAlarm 56021 times, both with zero findings and zero coverage
+        # past the third line of the body.
+        #
+        # So locate that protocol and send through its buffer instead. The region entry
+        # above stays as the fallback: a firmware that does not publish the protocol, or a
+        # build where the DXE half is absent, still gets a buffer and still exercises the
+        # earlier checks rather than failing to start.
+        #
+        if getattr(smi_info, 'buffer_protocol', ''):
+            protocol = smi_info.buffer_protocol
+            output.append(f'    //')
+            output.append(f'    // {smi_info.name} tests its comm buffer against the interface')
+            output.append(f'    // pointer of {protocol}, so the buffer has to be that one.')
+            output.append(f'    //')
+            output.append(f'    VOID *PublishedBuffer = NULL;')
+            output.append(f'    Status = gBS->LocateProtocol(')
+            output.append(f'                    &{protocol},')
+            output.append(f'                    NULL,')
+            output.append(f'                    (VOID **)&PublishedBuffer')
+            output.append(f'                    );')
+            output.append(f'    if (!EFI_ERROR(Status) && PublishedBuffer != NULL) {{')
+            output.append(f'        CommBuffer = (UINT8 *)PublishedBuffer;')
+            output.append(f'    }}')
+            output.append("")
+
         output.append(f'    CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];')
 
 

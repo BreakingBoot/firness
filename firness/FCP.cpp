@@ -39,6 +39,7 @@ std::map<std::string, SmiInfo> SmiFunctionGuidMap;
 std::set<std::string> SmiFunctionSet;
 std::vector<Call> SmiCallEdges;
 std::set<std::string> SeenSmiHandlerBodies;
+std::map<std::string, std::string> GuidForLocatedPointer;
 bool SmiEnabled;
 
 

@@ -139,6 +139,12 @@ namespace FileOps {
             smiJson["Guid"] = smiInfo.Guid;
             smiJson["Type"] = smiInfo.Type;
             smiJson["Dispatch"] = smiInfo.Dispatch;
+            //
+            // The protocol whose buffer this handler insists on, when it insists. The
+            // generator locates it instead of allocating out of the PI SMM communication
+            // region; without it the handler rejects every input on an address compare.
+            //
+            smiJson["BufferProtocol"] = smiInfo.BufferProtocol;
             j[pair.first] = smiJson;
         }
 
@@ -170,6 +176,7 @@ namespace FileOps {
             entry["Type"] = smiInfo.Type;
             entry["File"] = smiInfo.File;
             entry["Dispatch"] = smiInfo.Dispatch;
+            entry["BufferProtocol"] = smiInfo.BufferProtocol;
             entry["Harnessable"] = (smiInfo.Dispatch == "SmiHandlerRegister" ||
                                     smiInfo.Dispatch.empty()) && smiInfo.Type != "";
             inv[pair.first] = entry;

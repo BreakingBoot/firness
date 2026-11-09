@@ -181,11 +181,17 @@ class Argument:
         }
 
 class SmiInfo:
-    def __init__(self, name: str, type: str, guid: str, file: str = ""):
+    def __init__(self, name: str, type: str, guid: str, file: str = "",
+                 buffer_protocol: str = ""):
         self.name = name
         self.guid = guid
         self.type = type
         self.file = file
+        # The protocol whose interface pointer this handler requires its comm buffer to
+        # be, or "". Some handlers compare the buffer they were given against the one
+        # their DXE half published and return immediately if it differs, so a harness
+        # that allocates out of the PI SMM communication region never reaches their body.
+        self.buffer_protocol = buffer_protocol
 
 class EnumDef:
     def __init__(self, name: str = "", values: List[str] = [], file: str = ""):
