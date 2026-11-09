@@ -348,11 +348,45 @@ def has_pointer(arg_type: str) -> bool:
 # The message length already picks between a delta, a short length and a modulo this way.
 # This is the same trick applied to the parameter block the length describes.
 SCALAR_CHOICE_CASES = (
-    (4, '0'),
-    (5, '1'),
-    (6, '({cast})({ref} & 0xFF)'),
-    (7, '({cast})~0ULL'),
+    (8, '0'),
+    (9, '1'),
+    (10, '({cast})({ref} & 0xFF)'),
+    (11, '({cast})~0ULL'),
 )
+
+# The selector is masked to 16 and the generic cases moved up to 8..11, which leaves 12..15
+# for the constants the handler actually tests this field against. Half the range -- 0..7 --
+# is still the raw read, so the invariant the comment above relies on is unchanged.
+#
+# Why this is worth four slots. The generic values cover the shapes a C test distinguishes
+# in general; they do not cover the one thing an SMI handler does most, which is compare a
+# command field against a value its own header names:
+#
+#     switch (CommunicationData->Function) { case UNREGISTER_FROM_RSC:   // 0x3
+#
+# Reaching that arm needed the low-byte case AND a 1-in-256 landing, about 1 in 2048, and
+# the message length had to be exactly right at the same time: about 1 in 13000 per
+# dispatch. Run 42490347442 dispatched HwLight 37278 times and HwAlarm 56021 times, so the
+# arm was taken a handful of times across many boots.
+#
+# A handful is the wrong order of magnitude for what that arm leads to. It tears down a
+# peer module's status-code registration, and the defect in doing that is doing it TWICE IN
+# ONE BOOT -- which at 1 in 13000 per dispatch effectively never happened. With the
+# constant offered directly it happens in roughly a quarter of dispatches.
+# Four of the sixteen selector values -- 12..15 -- all mean "use a constant the source
+# names", and a SECOND byte picks which one. Four dedicated slots would have capped a field
+# at four constants, and that cap bites on exactly the handlers that matter most:
+# VariableSmm switches on eight command codes and SmmSpi on FUNCTION_SPIFLASH_READ and
+# FUNCTION_SPIFLASH_WRITE among others. With the index byte a field can offer as many as
+# the source names, each at 25%/N instead of 2^-32 or worse.
+#
+# The index byte is read UNCONDITIONALLY, next to the selector, never inside the arm that
+# uses it. A read inside the arm would make the input offset of every later field depend on
+# which branch this one took, and the fuzzer's whole model is that a byte of input means
+# the same thing from one execution to the next.
+MAX_FIELD_CONSTANTS = 16
+FIELD_CONSTANT_FIRST_CASE = 12
+SCALAR_CHOICE_MASK = 16
 
 
 def scalar_field_type(field_type: str) -> str:
@@ -376,15 +410,68 @@ def scalar_field_type(field_type: str) -> str:
     return ''
 
 
-def scalar_choice(ref: str, field_type: str, chooser: str) -> List[str]:
+# A constant is pasted into generated C, so it has to be a NAME or a NUMBER and nothing
+# else. The analyzer already drops anything with punctuation in it, and this is the second
+# gate on the same property, at the place where the text actually reaches a compiler: a
+# malformed constant here does not produce a weaker harness, it produces firmware that
+# does not build, and the campaign reports that as a broken port.
+_SAFE_CONSTANT = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$|^0[xX][0-9A-Fa-f]+$|^[0-9]+$')
+
+
+# Cases 8 and 9 already assign 0 and 1, so a source constant equal to one of them is not
+# worth an arm -- and for a BOOLEAN it is worse than not worth it. The fixture showed why:
+# HwLight tests `if (CommunicationData->Disable == FALSE) break;`, so FALSE was collected
+# as Disable's only constant, and the four constant selector values then all assigned the
+# one value that makes the handler bail. Dropping it leaves Disable on the generic cases,
+# where 1, the low byte and all ones are each non-zero.
+_ALREADY_OFFERED = {'0', '0x0', '0X0', '1', '0x1', '0X1', 'FALSE', 'TRUE'}
+
+
+def field_constants_for(ref: str, constants) -> List[str]:
+    """The constants to offer for one field, cleaned and capped, in a stable order."""
+    out = []
+    for text in constants or ():
+        text = str(text).strip()
+        if not text or not _SAFE_CONSTANT.match(text):
+            continue
+        if text in _ALREADY_OFFERED:
+            continue
+        if text not in out:
+            out.append(text)
+    # Sorted so two runs of the generator emit the same harness: the analyzer writes a
+    # set, and a set's iteration order is not something a build should depend on. Named
+    # constants first, because a numeral that survived the filter above is a bare literal
+    # in a comparison and a name is a command code the handler branches on -- and when the
+    # cap bites, the command code is the one worth keeping.
+    out.sort(key=lambda t: (t[:1].isdigit(), t))
+    return out[:MAX_FIELD_CONSTANTS]
+
+
+def scalar_choice(ref: str, field_type: str, chooser: str, constants=(),
+                  index_chooser: str = '') -> List[str]:
     """The lines that fill one scalar field through a selector byte."""
     # The cast is the field's type AS WRITTEN, not the base type it resolves to: an alias
     # that lands on a wider spelling would otherwise truncate on assignment.
     cast = remove_ref_symbols(field_type).strip()
-    output = [f'ReadBytes(Input, sizeof({chooser}), (VOID *)&{chooser});',
-              f'switch ({chooser} & 7) ' + '{']
+    wanted = field_constants_for(ref, constants)
+    output = [f'ReadBytes(Input, sizeof({chooser}), (VOID *)&{chooser});']
+    if wanted and index_chooser:
+        # Read whether or not this field's arm is taken, so the offsets of every later
+        # field are the same in every execution.
+        output.append(f'ReadBytes(Input, sizeof({index_chooser}), '
+                      f'(VOID *)&{index_chooser});')
+    output.append(f'switch ({chooser} & {SCALAR_CHOICE_MASK - 1}) ' + '{')
     for case, value in SCALAR_CHOICE_CASES:
         output.append(f'    case {case}: {ref} = {value.format(cast=cast, ref=ref)}; break;')
+    if wanted and index_chooser:
+        for case in range(FIELD_CONSTANT_FIRST_CASE, SCALAR_CHOICE_MASK):
+            output.append(f'    case {case}:')
+        output.append(f'        switch ({index_chooser} % {len(wanted)}) ' + '{')
+        for index, text in enumerate(wanted):
+            output.append(f'            case {index}: {ref} = ({cast}){text}; break;')
+        output.append('            default: break;')
+        output.append('        }')
+        output.append('        break;  // a constant the source tests this field against')
     output.append('    default: break;  // the raw read')
     output.append('}')
     return output
@@ -394,20 +481,30 @@ def generator_struct_args(arg_type: str,
                           arg_name: str,
                           alias_map: Dict[str, str],
                           types: Dict[str, TypeInfo],
-                          indent) -> List[str]:
+                          indent,
+                          field_constants=None) -> List[str]:
     output = []
     output.append("// Generator Struct Variable Initialization")
     struct_type = remove_ref_symbols(arg_type) if len(types.get(remove_ref_symbols(arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg_type), None))
     fields = types[struct_type].fields
     chooser = re.sub(r'\W', '', arg_name) + 'ScalarChoice'
+    index_chooser = re.sub(r'\W', '', arg_name) + 'ConstChoice'
     if any(not has_pointer(f.type) and scalar_field_type(f.type) for f in fields):
         output.append(f'UINT8 {chooser} = 0;')
+    # Declared only when some field actually has constants, so a block with none emits
+    # byte-for-byte what it emitted before.
+    if any(not has_pointer(f.type) and scalar_field_type(f.type)
+           and field_constants_for('', (field_constants or {}).get(f.name, ()))
+           for f in fields):
+        output.append(f'UINT8 {index_chooser} = 0;')
     for field in fields:
         ref = f'{arg_name}->{field.name}'
         if not has_pointer(field.type):
             output.append(f'ReadBytes(Input, sizeof({ref}), (VOID *)&({ref}));')
             if scalar_field_type(field.type):
-                output += scalar_choice(ref, field.type, chooser)
+                output += scalar_choice(ref, field.type, chooser,
+                                        (field_constants or {}).get(field.name, ()),
+                                        index_chooser)
         else:
             output.append(f'ReadBytes(Input, sizeof({ref}), (VOID *)({ref}));')
     return add_indents(output, indent)
@@ -602,7 +699,9 @@ def harness_generator(functions: Dict[str, SmiInfo],
         output.append('    }')
         output.append(f'    {smi_info.type} HandlerData = ({smi_info.type})&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];')
         
-        output.extend(generator_struct_args(smi_info.type, 'HandlerData', aliases, types, indent=True))
+        output.extend(generator_struct_args(smi_info.type, 'HandlerData', aliases, types,
+                                            indent=True,
+                                            field_constants=getattr(smi_info, 'field_constants', None)))
 
         output.append(f'    CommSize = sizeof (EFI_GUID) + sizeof (UINTN) + CommHeader->MessageLength;')
         # Without this the harness can never report anything: FirnessMain clears

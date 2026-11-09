@@ -389,6 +389,137 @@ public:
         return true;
     }
 
+    /*
+        The integer constants this handler tests each comm-buffer field against.
+
+        Two shapes, which is all SMI handlers use:
+
+            switch (CommunicationData->Function) { case UNREGISTER_FROM_RSC: ...
+            if (CommData->AccessType == READ_ACCESS) ...
+
+        Recorded as the constant's SOURCE SPELLING, not its value. UNREGISTER_FROM_RSC is a
+        #define in the driver's own header, and that header is what the harness includes --
+        so emitting the name compiles and stays correct if the value ever changes, while
+        emitting 3 would silently diverge. A literal is recorded as written for the same
+        reason.
+    */
+    void collectFieldConstants(Stmt *S) {
+        if (!S) return;
+
+        if (SwitchStmt *Sw = dyn_cast<SwitchStmt>(S)) {
+            const std::string Field = commBufferFieldName(Sw->getCond());
+            if (!Field.empty()) {
+                for (SwitchCase *Case = Sw->getSwitchCaseList(); Case != nullptr;
+                     Case = Case->getNextSwitchCase()) {
+                    CaseStmt *CS = dyn_cast<CaseStmt>(Case);
+                    if (CS == nullptr) {
+                        continue;   // the default arm names no constant
+                    }
+                    const std::string Text = constantText(CS->getLHS());
+                    if (!Text.empty()) {
+                        SmiFunctionGuidMap[CurrentFunction].FieldConstants[Field].insert(Text);
+                    }
+                }
+            }
+        }
+
+        if (BinaryOperator *BO = dyn_cast<BinaryOperator>(S)) {
+            if (BO->getOpcode() == BO_EQ || BO->getOpcode() == BO_NE) {
+                Expr *Sides[2] = { BO->getLHS(), BO->getRHS() };
+                for (int Side = 0; Side < 2; Side++) {
+                    const std::string Field = commBufferFieldName(Sides[Side]);
+                    if (Field.empty()) {
+                        continue;
+                    }
+                    const std::string Text = constantText(Sides[1 - Side]);
+                    if (!Text.empty()) {
+                        SmiFunctionGuidMap[CurrentFunction].FieldConstants[Field].insert(Text);
+                    }
+                }
+            }
+        }
+
+        for (Stmt *child : S->children()) {
+            collectFieldConstants(child);
+        }
+    }
+
+    /*
+        The field name when this expression is a member access on comm-buffer data, else "".
+
+        The base has to be comm-buffer derived or every struct field in the body matches.
+        HasCommBuffer only knows the name "CommBuffer", and the local a handler casts into
+        -- CommunicationData -- is one assignment away from it, which is exactly what
+        GetSmiType already walks for the type. So the same assignment is used here: a
+        member access whose base is either CommBuffer itself or the local GetSmiType
+        resolved the type from.
+    */
+    std::string commBufferFieldName(Expr *E) {
+        if (!E) return "";
+        Expr *Bare = E->IgnoreParenCasts();
+        MemberExpr *ME = dyn_cast<MemberExpr>(Bare);
+        if (ME == nullptr) {
+            return "";
+        }
+        if (!HasCommBuffer(ME->getBase()) && !isCommBufferLocal(ME->getBase())) {
+            return "";
+        }
+        if (ME->getMemberDecl() == nullptr) {
+            return "";
+        }
+        return ME->getMemberDecl()->getNameAsString();
+    }
+
+    // The local a handler casts its comm buffer into, found the way GetSmiType finds it.
+    bool isCommBufferLocal(Expr *E) {
+        if (!E) return false;
+        Expr *Bare = E->IgnoreParenCasts();
+        DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Bare);
+        if (DRE == nullptr || DRE->getDecl() == nullptr) {
+            return false;
+        }
+        return CommBufferLocals.find(DRE->getDecl()->getNameAsString()) != CommBufferLocals.end();
+    }
+
+    // An integer constant as written: a macro name, an enum constant or a literal.
+    std::string constantText(Expr *E) {
+        if (!E) return "";
+        Expr *Bare = E->IgnoreParenCasts();
+        if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Bare)) {
+            //
+            // An enum constant. A plain variable is NOT a constant and must not be
+            // emitted: the harness would reference a name that does not exist in its
+            // translation unit and the firmware would not compile.
+            //
+            if (isa<EnumConstantDecl>(DRE->getDecl())) {
+                return DRE->getDecl()->getNameAsString();
+            }
+            return "";
+        }
+        if (!Bare->isIntegerConstantExpr(*Context)) {
+            return "";
+        }
+        SourceManager &SM = Context->getSourceManager();
+        const LangOptions &LangOpts = Context->getLangOpts();
+        CharSourceRange Range = CharSourceRange::getTokenRange(E->getSourceRange());
+        std::string Text = Lexer::getSourceText(Range, SM, LangOpts).str();
+        //
+        // A macro use lexes back to the macro NAME, which is what is wanted -- the driver
+        // header that defines it is included by the harness. Anything with a space, a
+        // comma or a brace in it is an expression rather than a name and is dropped
+        // rather than pasted into generated C.
+        //
+        if (Text.empty() || Text.size() > 48) {
+            return "";
+        }
+        for (char Ch : Text) {
+            if (!(isalnum((unsigned char)Ch) || Ch == '_' || Ch == 'x' || Ch == 'X')) {
+                return "";
+            }
+        }
+        return Text;
+    }
+
     bool HasCommBuffer(Stmt *S) {
         if (!S) return false;
 
@@ -420,6 +551,16 @@ public:
                         // get the type of the structure
                         QualType QT = DRE2->getDecl()->getType();
                         SmiFunctionGuidMap[CurrentFunction].Type = QT.getAsString();
+                        //
+                        // And remember the NAME, so a later pass can tell
+                        // `CommunicationData->Function` from any other struct field in the
+                        // body. GetSmiType already has to find this assignment; recording
+                        // the left side costs nothing and is the only way the field
+                        // constants below can be attributed to the comm buffer.
+                        //
+                        if (DRE2->getDecl() != nullptr) {
+                            CommBufferLocals.insert(DRE2->getDecl()->getNameAsString());
+                        }
                     }
                 }
             }
@@ -574,6 +715,7 @@ public:
             CurrentFunction = func->getNameAsString();
             GetSmiType(func->getBody());
             findBufferIdentityGate(func->getBody());
+            collectFieldConstants(func->getBody());
             CurrentFunction.clear();
         }
         return true;
@@ -583,6 +725,8 @@ private:
     ASTContext *Context;
     std::string CurrentFunction;
     SmiInfo CurrentInfo;
+    // names GetSmiType resolved a comm-buffer struct type from, in any body seen so far
+    std::set<std::string> CommBufferLocals;
 };
 
 #endif 

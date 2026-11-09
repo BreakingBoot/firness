@@ -108,7 +108,7 @@ namespace FileOps {
     void outputSmiFunctionGuidMap(const std::string& filename, const std::map<std::string, SmiInfo>& smiFunctionGuidMap) {
         std::string file_path = filename + "/smi-function-guid-map.json";
         nlohmann::json j;
-        unsigned total = 0, no_type = 0, not_guid = 0;
+        unsigned total = 0, no_type = 0, not_guid = 0, gated_fields = 0;
         std::map<std::string, unsigned> by_dispatch;
 
         for (const auto& pair : smiFunctionGuidMap) {
@@ -145,6 +145,17 @@ namespace FileOps {
             // region; without it the handler rejects every input on an address compare.
             //
             smiJson["BufferProtocol"] = smiInfo.BufferProtocol;
+            //
+            // The constants this handler tests each field against, so the generator can
+            // offer them through the field's selector byte instead of waiting for a raw
+            // read to land on one. See SmiInfo::FieldConstants for the arithmetic.
+            //
+            nlohmann::json constants = nlohmann::json::object();
+            for (const auto& field : smiInfo.FieldConstants) {
+                constants[field.first] = field.second;
+            }
+            smiJson["FieldConstants"] = constants;
+            gated_fields += smiInfo.FieldConstants.size();
             j[pair.first] = smiJson;
         }
 
@@ -153,7 +164,8 @@ namespace FileOps {
             llvm::outs() << "SMI handlers: " << total << " found, " << not_guid
                          << " not addressable by GUID, " << no_type
                          << " dropped for an unresolved CommBuffer type, "
-                         << (total - not_guid - no_type) << " written\n";
+                         << (total - not_guid - no_type) << " written, " << gated_fields
+                         << " field(s) with the constants the source tests them against\n";
             for (const auto& pair : by_dispatch) {
                 llvm::outs() << "  " << pair.first << ": " << pair.second << "\n";
             }

@@ -182,7 +182,7 @@ class Argument:
 
 class SmiInfo:
     def __init__(self, name: str, type: str, guid: str, file: str = "",
-                 buffer_protocol: str = ""):
+                 buffer_protocol: str = "", field_constants=None):
         self.name = name
         self.guid = guid
         self.type = type
@@ -192,6 +192,13 @@ class SmiInfo:
         # their DXE half published and return immediately if it differs, so a harness
         # that allocates out of the PI SMM communication region never reaches their body.
         self.buffer_protocol = buffer_protocol
+        # Per comm-buffer field name, the constants the handler tests that field against,
+        # as the source spells them. The selector byte for that field offers these, so a
+        # path behind `switch (Comm->Function) { case UNREGISTER_FROM_RSC:` is reached
+        # often instead of about 1 dispatch in 13000. A default of None rather than {} is
+        # deliberate: a shared mutable default is how one handler's constants end up on
+        # another's fields.
+        self.field_constants = dict(field_constants or {})
 
 class EnumDef:
     def __init__(self, name: str = "", values: List[str] = [], file: str = ""):

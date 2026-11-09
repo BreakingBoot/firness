@@ -234,6 +234,29 @@ struct SmiInfo {
     //
     std::string BufferProtocol;
 
+    //
+    // Per comm-buffer field, the integer constants the handler tests that field against.
+    // Keyed by the field's name as the struct declares it, so the generator can match it
+    // to the field it is filling.
+    //
+    // Why the harness needs this. Each scalar field is filled from its own raw width with
+    // a selector offering 0, 1, the low byte and all ones. A field the handler switches on
+    // is then reached only when the raw read happens to land, and for HwLight's
+    //
+    //     switch (CommunicationData->Function) { case UNREGISTER_FROM_RSC:   // 0x3
+    //
+    // that is about 1 in 2048 per dispatch once the low-byte arm is counted, and the
+    // message length has to be exactly right at the same time, so about 1 in 13000. Run
+    // 42490347442 dispatched that handler 37278 times, which is a handful of executions
+    // spread over many boots.
+    //
+    // A handful is not enough for the finding that path leads to. Tearing down a peer
+    // module's registration twice needs the path taken TWICE IN ONE BOOT, and at 1 in
+    // 13000 that effectively never happens. Offering the constants the source names makes
+    // it common.
+    //
+    std::map<std::string, std::set<std::string>> FieldConstants;
+
     SmiInfo() = default;
     void clear() {
         Guid.clear();
@@ -241,6 +264,7 @@ struct SmiInfo {
         File.clear();
         Dispatch.clear();
         BufferProtocol.clear();
+        FieldConstants.clear();
     }
 };
 

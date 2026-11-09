@@ -164,7 +164,8 @@ def load_smi_data(smi_file: str) -> Dict[str, SmiInfo]:
     smi_data = {}
     for smi, data in raw_data.items():
         smi_info = SmiInfo(smi, data["Type"], data["Guid"],
-                           buffer_protocol=data.get("BufferProtocol", ""))
+                           buffer_protocol=data.get("BufferProtocol", ""),
+                           field_constants=data.get("FieldConstants", {}))
         smi_data[smi] = smi_info
     return smi_data
 
