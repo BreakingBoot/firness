@@ -152,7 +152,11 @@ namespace FileOps {
             //
             nlohmann::json constants = nlohmann::json::object();
             for (const auto& field : smiInfo.FieldConstants) {
-                constants[field.first] = field.second;
+                nlohmann::json byName = nlohmann::json::object();
+                for (const auto& one : field.second) {
+                    byName[one.first] = one.second;   // spelling -> integer value
+                }
+                constants[field.first] = byName;
             }
             smiJson["FieldConstants"] = constants;
             gated_fields += smiInfo.FieldConstants.size();

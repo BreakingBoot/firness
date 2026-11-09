@@ -415,10 +415,7 @@ public:
                     if (CS == nullptr) {
                         continue;   // the default arm names no constant
                     }
-                    const std::string Text = constantText(CS->getLHS());
-                    if (!Text.empty()) {
-                        SmiFunctionGuidMap[CurrentFunction].FieldConstants[Field].insert(Text);
-                    }
+                    recordFieldConstant(Field, CS->getLHS());
                 }
             }
         }
@@ -431,10 +428,7 @@ public:
                     if (Field.empty()) {
                         continue;
                     }
-                    const std::string Text = constantText(Sides[1 - Side]);
-                    if (!Text.empty()) {
-                        SmiFunctionGuidMap[CurrentFunction].FieldConstants[Field].insert(Text);
-                    }
+                    recordFieldConstant(Field, Sides[1 - Side]);
                 }
             }
         }
@@ -481,22 +475,58 @@ public:
         return CommBufferLocals.find(DRE->getDecl()->getNameAsString()) != CommBufferLocals.end();
     }
 
-    // An integer constant as written: a macro name, an enum constant or a literal.
+    /*
+        Record one constant for one field: its value, keyed by how the source spells it.
+
+        The value is what the harness will emit. The generator vendors private
+        comm-buffer structs into FirnessIncludes.h instead of including the driver's
+        header, so UNREGISTER_FROM_RSC does not exist in the harness translation unit --
+        verified on run 42633354713, whose FirnessIncludes.h carries
+        SMM_LIGHT_FUNCTION_COMMUNICATION and none of the three REGISTER_RSC macros from
+        the same header. Emitting the name would not weaken the harness, it would fail
+        the build and cost the campaign everything.
+    */
+    void recordFieldConstant(const std::string &Field, Expr *E) {
+        if (Field.empty() || E == nullptr || CurrentFunction.empty()) {
+            return;
+        }
+        Expr *Bare = E->IgnoreParenCasts();
+        //
+        // A plain variable is not a constant. The fixture has
+        // `CommunicationData->ReturnStatus == Status` for this case: taking Status here
+        // would record a value the comparison does not actually test against.
+        //
+        if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Bare)) {
+            if (!isa<EnumConstantDecl>(DRE->getDecl())) {
+                return;
+            }
+        }
+        Optional<llvm::APSInt> Value = Bare->getIntegerConstantExpr(*Context);
+        if (!Value.hasValue()) {
+            return;
+        }
+        llvm::SmallString<40> Digits;
+        Value->toString(Digits, 10);
+        const std::string Number(Digits.str());
+        if (Number.empty() || Number.size() > 24) {
+            return;
+        }
+        std::string Spelling = constantText(E);
+        if (Spelling.empty()) {
+            Spelling = Number;
+        }
+        SmiFunctionGuidMap[CurrentFunction].FieldConstants[Field][Spelling] = Number;
+    }
+
+    // How the source spells a constant: a macro name, an enum constant or a literal. Used
+    // for the comment beside the value, never for the value itself.
     std::string constantText(Expr *E) {
         if (!E) return "";
         Expr *Bare = E->IgnoreParenCasts();
         if (DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Bare)) {
-            //
-            // An enum constant. A plain variable is NOT a constant and must not be
-            // emitted: the harness would reference a name that does not exist in its
-            // translation unit and the firmware would not compile.
-            //
             if (isa<EnumConstantDecl>(DRE->getDecl())) {
                 return DRE->getDecl()->getNameAsString();
             }
-            return "";
-        }
-        if (!Bare->isIntegerConstantExpr(*Context)) {
             return "";
         }
         SourceManager &SM = Context->getSourceManager();

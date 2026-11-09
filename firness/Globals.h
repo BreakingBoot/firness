@@ -255,7 +255,15 @@ struct SmiInfo {
     // 13000 that effectively never happens. Offering the constants the source names makes
     // it common.
     //
-    std::map<std::string, std::set<std::string>> FieldConstants;
+    // Field name -> (the constant as the SOURCE SPELLS IT -> its integer value).
+    //
+    // Both, because each is needed for a different reason. The VALUE is what the harness
+    // emits: the generator vendors a private comm-buffer struct into FirnessIncludes.h
+    // rather than including the driver's header, so UNREGISTER_FROM_RSC is an undeclared
+    // identifier in the harness and pasting the name breaks the build. The SPELLING is
+    // emitted next to it in a comment, because `(UINTN)3` on its own tells a reader
+    // nothing about why 3.
+    std::map<std::string, std::map<std::string, std::string>> FieldConstants;
 
     SmiInfo() = default;
     void clear() {

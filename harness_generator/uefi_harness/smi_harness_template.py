@@ -410,12 +410,17 @@ def scalar_field_type(field_type: str) -> str:
     return ''
 
 
-# A constant is pasted into generated C, so it has to be a NAME or a NUMBER and nothing
-# else. The analyzer already drops anything with punctuation in it, and this is the second
-# gate on the same property, at the place where the text actually reaches a compiler: a
-# malformed constant here does not produce a weaker harness, it produces firmware that
-# does not build, and the campaign reports that as a broken port.
-_SAFE_CONSTANT = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$|^0[xX][0-9A-Fa-f]+$|^[0-9]+$')
+# What reaches the compiler is the VALUE, never the name.
+#
+# The generator vendors a private comm-buffer struct into FirnessIncludes.h rather than
+# including the driver's header -- run 42633354713's FirnessIncludes.h carries
+# SMM_LIGHT_FUNCTION_COMMUNICATION and not one of the three REGISTER_RSC macros defined
+# beside it in SmmLight.h. So `(UINTN)UNREGISTER_FROM_RSC` is an undeclared identifier in
+# the harness, and emitting it would not weaken the harness: it would fail the build and
+# cost the campaign everything. The name goes in a trailing comment, because `(UINTN)3`
+# alone tells a reader nothing about why 3.
+_SAFE_VALUE = re.compile(r'^-?(0[xX][0-9A-Fa-f]+|[0-9]+)$')
+_SAFE_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
 
 
 # Cases 8 and 9 already assign 0 and 1, so a source constant equal to one of them is not
@@ -425,25 +430,40 @@ _SAFE_CONSTANT = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$|^0[xX][0-9A-Fa-f]+$|^[0-9
 # one value that makes the handler bail. Dropping it leaves Disable on the generic cases,
 # where 1, the low byte and all ones are each non-zero.
 _ALREADY_OFFERED = {'0', '0x0', '0X0', '1', '0x1', '0X1', 'FALSE', 'TRUE'}
+# matched against the VALUE and against the NAME, so both `case 0:` and `== FALSE` drop
 
 
-def field_constants_for(ref: str, constants) -> List[str]:
-    """The constants to offer for one field, cleaned and capped, in a stable order."""
+def field_constants_for(ref: str, constants) -> List[tuple]:
+    """(value, name) pairs to offer for one field, cleaned and capped, in a stable order.
+
+    The analyzer writes {spelling: value}. A bare sequence of strings is accepted too, for
+    an older analyzer's output, and then each entry must already be a numeric literal --
+    a name with no value attached cannot be emitted safely, so it is dropped rather than
+    pasted into C and discovered at build time.
+    """
     out = []
-    for text in constants or ():
-        text = str(text).strip()
-        if not text or not _SAFE_CONSTANT.match(text):
+    if isinstance(constants, dict):
+        items = list(constants.items())
+    else:
+        items = [(text, text) for text in (constants or ())]
+    for name, value in items:
+        name = str(name).strip()
+        value = str(value).strip()
+        if not _SAFE_VALUE.match(value):
             continue
-        if text in _ALREADY_OFFERED:
+        if value in _ALREADY_OFFERED or name in _ALREADY_OFFERED:
             continue
-        if text not in out:
-            out.append(text)
+        if not _SAFE_NAME.match(name) and not _SAFE_VALUE.match(name):
+            name = value
+        if any(value == v for v, _ in out):
+            continue
+        out.append((value, name))
     # Sorted so two runs of the generator emit the same harness: the analyzer writes a
-    # set, and a set's iteration order is not something a build should depend on. Named
-    # constants first, because a numeral that survived the filter above is a bare literal
-    # in a comparison and a name is a command code the handler branches on -- and when the
-    # cap bites, the command code is the one worth keeping.
-    out.sort(key=lambda t: (t[:1].isdigit(), t))
+    # map, and its iteration order is not something a build should depend on. Named
+    # constants first, because a bare literal in a comparison is less likely to be the
+    # command code than a name is -- and when the cap bites, the command code is the one
+    # worth keeping.
+    out.sort(key=lambda pair: (pair[1] == pair[0], pair[1]))
     return out[:MAX_FIELD_CONSTANTS]
 
 
@@ -455,7 +475,7 @@ def scalar_choice(ref: str, field_type: str, chooser: str, constants=(),
     cast = remove_ref_symbols(field_type).strip()
     wanted = field_constants_for(ref, constants)
     output = [f'ReadBytes(Input, sizeof({chooser}), (VOID *)&{chooser});']
-    if wanted and index_chooser:
+    if len(wanted) > 1 and index_chooser:
         # Read whether or not this field's arm is taken, so the offsets of every later
         # field are the same in every execution.
         output.append(f'ReadBytes(Input, sizeof({index_chooser}), '
@@ -466,11 +486,19 @@ def scalar_choice(ref: str, field_type: str, chooser: str, constants=(),
     if wanted and index_chooser:
         for case in range(FIELD_CONSTANT_FIRST_CASE, SCALAR_CHOICE_MASK):
             output.append(f'    case {case}:')
-        output.append(f'        switch ({index_chooser} % {len(wanted)}) ' + '{')
-        for index, text in enumerate(wanted):
-            output.append(f'            case {index}: {ref} = ({cast}){text}; break;')
-        output.append('            default: break;')
-        output.append('        }')
+        if len(wanted) == 1:
+            # No index needed, and `% 1` is a constant zero that reads as a mistake.
+            value, name = wanted[0]
+            note = '' if name == value else f'  // {name}'
+            output.append(f'        {ref} = ({cast}){value};{note}')
+        else:
+            output.append(f'        switch ({index_chooser} % {len(wanted)}) ' + '{')
+            for index, (value, name) in enumerate(wanted):
+                note = '' if name == value else f'  // {name}'
+                output.append(f'            case {index}: {ref} = ({cast}){value}; '
+                              f'break;{note}')
+            output.append('            default: break;')
+            output.append('        }')
         output.append('        break;  // a constant the source tests this field against')
     output.append('    default: break;  // the raw read')
     output.append('}')
@@ -494,7 +522,7 @@ def generator_struct_args(arg_type: str,
     # Declared only when some field actually has constants, so a block with none emits
     # byte-for-byte what it emitted before.
     if any(not has_pointer(f.type) and scalar_field_type(f.type)
-           and field_constants_for('', (field_constants or {}).get(f.name, ()))
+           and len(field_constants_for('', (field_constants or {}).get(f.name, ()))) > 1
            for f in fields):
         output.append(f'UINT8 {index_chooser} = 0;')
     for field in fields:
