@@ -735,6 +735,19 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                                          BACKENDS_BY_ID.get(backend, 'tsffs'))
     generate_main(function_list, harness_folder)
     generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
+    # The SMI path is a second generator, and this step was only in the first one. An edk2
+    # header is not required to be self contained -- the driver that consumes it includes
+    # the prerequisite first -- and an SMI harness includes the GUID header of every comm
+    # buffer it fills, which is exactly the kind that leaves the types to its caller.
+    # MdeModulePkg/Include/Guid/VarCheckPolicyMmi.h names VARIABLE_POLICY_ENTRY and
+    # VARIABLE_LOCK_ON_VAR_STATE_POLICY from Protocol/VariablePolicy.h and includes
+    # nothing, so on edk2-stable202608 the harness stopped at "unknown type name" and the
+    # campaign reported no log.json (run 42730654576). The fork's copy of that header has
+    # neither field, which is why no eval1 campaign ever showed it.
+    #
+    # Before the includes and the INF are written, so the INF also declares the package a
+    # pulled-in prerequisite comes from -- the same reason generate_harness does it here.
+    all_includes = resolve_missing_declarations(all_includes, edk2_dir)
     used_guids = referenced_guids(harness_folder)
     generate_header(function_list, matched_macros, harness_folder, used_guids)
     generate_includes(all_includes, harness_folder, edk2_dir, vendored)
