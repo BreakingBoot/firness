@@ -411,7 +411,20 @@ SCALAR_CHOICE_MASK = 16
 # message length. A variable-length ReadBytes would make the input offset of every later
 # harness depend on this one's length, and FirnessMain runs up to eight harnesses per
 # input -- the same reason the constant index byte is read outside the arm that uses it.
-PAYLOAD_FILL_BYTES = 128
+#
+# 64 and not more, because the fill competes with the rest of the sequence for one input.
+# Measured on run 42933720452, which used 128: the heavy handlers reached 216 bytes a call
+# (RWVariable) and 173 (SmmVariable, FTW), so eight steps wanted up to 1728 bytes against a
+# 1024-byte seed. The input ran out mid-sequence, ReadBytes zero-filled the rest, and a
+# zeroed MessageLengthChoice leaves MessageLength at sizeof(the block) -- which is why
+# "SMM communication buffer payload size invalid" rose 2.9x while dispatches rose 2.1x, and
+# why the cpu-exception in VariableSmm's cache-context arm stopped being reached at all.
+#
+# 64 loses nothing: it still covers every payload struct in play (SMM_SPI_READ_DATA is 24,
+# the runtime variable cache context about 40), and it equals PAYLOAD_PLANT_WINDOW, so the
+# bytes it drops were ones no plant could have reached anyway. Anything past the fill is
+# zeroed, so a longer payload stays deterministic.
+PAYLOAD_FILL_BYTES = 64
 
 # Array bases whose trailing member is a payload region rather than a real field.
 PAYLOAD_TAIL_BASES = {'UINT8', 'INT8', 'CHAR8', 'VOID'}
