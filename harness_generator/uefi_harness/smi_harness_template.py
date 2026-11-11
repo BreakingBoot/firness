@@ -3,6 +3,7 @@ import copy
 import re
 from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef, SmiInfo
 from common.utils import add_indents, remove_ref_symbols
+from common.vendor_types import split_array
 from uefi_harness.harnesses_template import SCALAR_FIELD_TYPES
 
 aliases_map = {}
@@ -389,6 +390,217 @@ FIELD_CONSTANT_FIRST_CASE = 12
 SCALAR_CHOICE_MASK = 16
 
 
+# The trailing member of a comm-buffer struct is the PAYLOAD, not a one-byte field.
+#
+# Every edk2 SMM comm buffer is a small header followed by `UINT8 Data[1]`, and the
+# command's arguments live in that tail: SPI_COMM_HEADER.Data carries a 24-byte
+# SMM_SPI_READ_DATA, SMM_VARIABLE_COMMUNICATE_HEADER.Data carries whichever of a dozen
+# payload structs the Function field selected. The field loop treated Data as an ordinary
+# field and emitted
+#
+#     ReadBytes(Input, sizeof(HandlerData->Data), (VOID *)&(HandlerData->Data));
+#
+# which for a `Data[1]` tail reads EXACTLY ONE BYTE. Measured on EVAL-1 run 42703964006:
+# SmmSpiHandler was dispatched 7253 times and "buffer location invalid" -- its third guard
+# -- was printed zero times, because the SMM_SPI_READ_DATA behind the header was one input
+# byte followed by whatever the previous iteration had left in the shared communication
+# region. The command-code selector picks the right arm; this is where that arm then reads
+# its arguments from, so without it the arm is reached and immediately refused.
+#
+# The input read is a FIXED size into a local and only the COPY out of it is bounded by the
+# message length. A variable-length ReadBytes would make the input offset of every later
+# harness depend on this one's length, and FirnessMain runs up to eight harnesses per
+# input -- the same reason the constant index byte is read outside the arm that uses it.
+PAYLOAD_FILL_BYTES = 128
+
+# Array bases whose trailing member is a payload region rather than a real field.
+PAYLOAD_TAIL_BASES = {'UINT8', 'INT8', 'CHAR8', 'VOID'}
+
+# A pointer field inside the payload is the one thing raw bytes cannot supply.
+#
+# SmmSpi's third guard is
+#
+#     if ((SmmSpiReadDataOut->Buffer) != (UINT8 *)(SmmSpiReadDataOut + 1))
+#
+# and SmmSpiReadDataOut points into the CALLER's own buffer. Passing it means writing the
+# 64-bit value `payload + sizeof (SMM_SPI_READ_DATA)` into a field of the buffer the
+# harness just built -- an absolute address that depends on where the communication region
+# landed this boot. The harness KNOWS that address and can compute it; no raw byte, generic
+# selector value or source constant can guess it. "The output buffer sits immediately after
+# its header" is a convention across edk2 SMM handlers, not a quirk of this one.
+#
+# The plants are UNTYPED on purpose. Knowing which offset holds a pointer would need the
+# payload struct, and the generator does not have it: vendor_types re-emits the outer comm
+# header only, so SMM_SPI_READ_DATA is not a name this harness can spell. An aligned slot
+# plus a candidate address covers it without the type -- for SmmSpi READ the pointer sits
+# at payload offset 16 and must hold payload+24, which is one (slot, value) pair out of a
+# few dozen instead of one value out of 2^64.
+#
+# Scalars are planted beside them because the guard above that one is
+#
+#     if ((Out->Buffer + Out->ByteCount) > (ReturnComms->Data + DataSize))
+#
+# so reaching SpiFlashRead needs a small ByteCount AND the exact pointer at the same time.
+# Raw bytes give a 32-bit count, which clears that guard about once in 2^29.
+#
+# A plant OVERWRITES bytes the fill already wrote, and kind 0 plants nothing, so the raw
+# payload survives in a quarter of draws per plant. That matters: a wild pointer from the
+# raw fill is what reaches the #GP in VariableSmm's cache-context arm, and planting a valid
+# address everywhere would have traded that finding for the guarded one.
+# Plants go in the FIRST bytes of the payload, not anywhere in it.
+#
+# The slot was an index over room/sizeof, and the message length chooser can add a 16-bit
+# delta, so a 4072-byte message gave 509 pointer slots and the odds of landing on the one
+# that holds a pointer went with it. An SMM payload struct is tens of bytes and its pointer
+# fields are in its first few slots, so cap the plants at the first 64 and let the raw
+# fill, which is uncapped, cover anything past that.
+#
+# Modelled over 200000 dispatches of the SmmSpi READ guard chain, four plants reached
+# SpiFlashRead 17 times uncapped and 66 times capped.
+PAYLOAD_PLANTS = 8
+PAYLOAD_PLANT_WINDOW = 64
+PAYLOAD_POINTER_OFFSETS = (0, 8, 16, 24, 32, 40)
+PAYLOAD_SCALAR_VALUES = ('0', '1', '2', '4', '8', '16', '0xFF', '0xFFFFFFFF')
+
+
+def payload_tail(field_type: str) -> bool:
+    """True when a field's type is an array of bytes, so a trailing one is the payload."""
+    base, dims = split_array(field_type or '')
+    if not dims:
+        return False
+    return remove_ref_symbols(base).strip().upper() in PAYLOAD_TAIL_BASES
+
+
+def payload_region(arg_name: str, field_name: str) -> List[str]:
+    """Fill a comm-buffer struct's trailing array, then plant buffer-relative values in it.
+
+    Emitted in place of the one-byte read the field loop would otherwise produce for a
+    `UINT8 Data[1]` tail. Every read of the input is a fixed size, so a byte of input keeps
+    meaning the same thing; the only length that varies is the copy into the buffer.
+    """
+    data = '%s->%s' % (arg_name, field_name)
+    base = '(UINT8 *)(%s)' % data
+    at, room, fill = ('%sPayloadAt' % arg_name, '%sPayloadRoom' % arg_name,
+                      '%sPayloadFill' % arg_name)
+    kind, slot, which = ('%sPlantKind' % arg_name, '%sPlantSlot' % arg_name,
+                         '%sPlantWhich' % arg_name)
+    step, slots, where = ('%sPlant' % arg_name, '%sPlantSlots' % arg_name,
+                          '%sPlantAt' % arg_name)
+    ptr, val = '%sPlantPointer' % arg_name, '%sPlantValue' % arg_name
+
+    out = ['// %s is the payload region, not a one-byte field -- see PAYLOAD_FILL_BYTES'
+           % field_name]
+    out.append('UINTN %s = (UINTN)(%s - (UINT8 *)%s);' % (at, base, arg_name))
+    out.append('UINTN %s = 0;' % room)
+    out.append('UINT8 %s[%d];' % (fill, PAYLOAD_FILL_BYTES))
+    out.append('UINT8 %s[%d];' % (kind, PAYLOAD_PLANTS))
+    out.append('UINT8 %s[%d];' % (slot, PAYLOAD_PLANTS))
+    out.append('UINT8 %s[%d];' % (which, PAYLOAD_PLANTS))
+    out.append('UINTN %s = 0;' % step)
+    out.append('UINTN %s = 0;' % slots)
+    out.append('UINTN %s = 0;' % where)
+    out.append('VOID *%s = NULL;' % ptr)
+    out.append('UINT32 %s = 0;' % val)
+    # Fixed-size reads, all of them, and before anything that depends on the length.
+    out.append('ReadBytes(Input, sizeof(%s), (VOID *)%s);' % (fill, fill))
+    out.append('ReadBytes(Input, sizeof(%s), (VOID *)%s);' % (kind, kind))
+    out.append('ReadBytes(Input, sizeof(%s), (VOID *)%s);' % (slot, slot))
+    out.append('ReadBytes(Input, sizeof(%s), (VOID *)%s);' % (which, which))
+    # The handler computes its own DataSize the same way: *CommBufferSize - the offset of
+    # the tail. Deriving the offset from the pointers needs no type name, so it cannot go
+    # stale against a struct the analyser respelled.
+    out.append('if (CommHeader->MessageLength > %s) {' % at)
+    out.append('    %s = CommHeader->MessageLength - %s;' % (room, at))
+    out.append('}')
+    out.append('CopyMem (%s, %s, MIN (%s, sizeof (%s)));' % (base, fill, room, fill))
+    # Past the fill the region still holds what the last iteration left there, and the comm
+    # region is shared by every iteration of the boot. Zero it, so one input is one
+    # behaviour and the coverage feedback is not reading its own history.
+    out.append('if (%s > sizeof (%s)) {' % (room, fill))
+    out.append('    SetMem (%s + sizeof (%s), %s - sizeof (%s), 0);'
+               % (base, fill, room, fill))
+    out.append('}')
+    out.append('for (%s = 0; %s < %d; %s++) {' % (step, step, PAYLOAD_PLANTS, step))
+    out.append('    switch (%s[%s] & 3) {' % (kind, step))
+    # Kind 1 is the one that matters, and it ties the slot to the value instead of drawing
+    # them apart. The edk2 idiom is "the buffer sits immediately after the header that
+    # describes it", so a pointer field that ends its struct holds the address just past
+    # ITSELF -- for SmmSpi READ the field is at payload offset 16 and the guard wants
+    # payload+24, which is offset + sizeof (VOID *). Drawing a slot and a value
+    # independently spent 1/8 on the slot and another 1/8 on the value; this spends the
+    # 1/8 once.
+    #
+    # Modelled over 200000 dispatches of that chain, all with the payload fill and the
+    # capped window, and counting only dispatches that passed all three guards:
+    #
+    #     4 plants, table pointers only      66
+    #     8 plants, table pointers only     259
+    #     8 plants, abutting kind          1168
+    #
+    # against 0 for the one-byte payload the generator emitted before. The handler is
+    # dispatched about 7250 times in a campaign of the size EVAL-1 run 42703964006 ran, so
+    # the last line is roughly forty reaches per campaign and the first is two.
+    out.append('        case 1:')
+    out.append('            %s = MIN (%s / sizeof (VOID *), %d);'
+               % (slots, room, PAYLOAD_PLANT_WINDOW // 8))
+    out.append('            if (%s == 0) {' % slots)
+    out.append('                break;')
+    out.append('            }')
+    # The slot is an index into aligned slots, never a byte offset, so slot + sizeof is
+    # inside the region however short the message is.
+    out.append('            %s = ((UINTN)%s[%s] %% %s) * sizeof (VOID *);'
+               % (where, slot, step, slots))
+    out.append('            %s = (VOID *)(%s + %s + sizeof (VOID *));' % (ptr, base, where))
+    out.append('            CopyMem (%s + %s, &%s, sizeof (%s));' % (base, where, ptr, ptr))
+    out.append('            break;')
+    # Kind 2 is the general case: a buffer-relative address that is NOT the abutting one.
+    # A handler can want the payload base, the comm buffer, or the address after a struct
+    # whose last field is not the pointer, and none of those is kind 1.
+    out.append('        case 2:')
+    out.append('            %s = MIN (%s / sizeof (VOID *), %d);'
+               % (slots, room, PAYLOAD_PLANT_WINDOW // 8))
+    out.append('            if (%s == 0) {' % slots)
+    out.append('                break;')
+    out.append('            }')
+    out.append('            %s = ((UINTN)%s[%s] %% %s) * sizeof (VOID *);'
+               % (where, slot, step, slots))
+    out.append('            switch (%s[%s] %% %d) {'
+               % (which, step, len(PAYLOAD_POINTER_OFFSETS) + 2))
+    for index, offset in enumerate(PAYLOAD_POINTER_OFFSETS):
+        out.append('                case %d: %s = (VOID *)(%s + %d); break;'
+                   % (index, ptr, base, offset))
+    out.append('                case %d: %s = (VOID *)CommBuffer; break;'
+               % (len(PAYLOAD_POINTER_OFFSETS), ptr))
+    out.append('                default: %s = (VOID *)%s; break;' % (ptr, arg_name))
+    out.append('            }')
+    out.append('            CopyMem (%s + %s, &%s, sizeof (%s));' % (base, where, ptr, ptr))
+    out.append('            break;')
+    # Kind 3 is a size or a count. It has to be plantable at the same time as the pointer,
+    # because the guard BELOW the location check bounds Buffer + ByteCount against the end
+    # of the message, and a raw 32-bit count clears that about once in 2^29.
+    out.append('        case 3:')
+    out.append('            %s = MIN (%s / sizeof (UINT32), %d);'
+               % (slots, room, PAYLOAD_PLANT_WINDOW // 4))
+    out.append('            if (%s == 0) {' % slots)
+    out.append('                break;')
+    out.append('            }')
+    out.append('            %s = ((UINTN)%s[%s] %% %s) * sizeof (UINT32);'
+               % (where, slot, step, slots))
+    out.append('            switch (%s[%s] %% %d) {'
+               % (which, step, len(PAYLOAD_SCALAR_VALUES)))
+    for index, value in enumerate(PAYLOAD_SCALAR_VALUES):
+        out.append('                case %d: %s = (UINT32)%s; break;' % (index, val, value))
+    out.append('                default: %s = 0; break;' % val)
+    out.append('            }')
+    out.append('            CopyMem (%s + %s, &%s, sizeof (%s));' % (base, where, val, val))
+    out.append('            break;')
+    out.append('        default:')
+    out.append('            break;  // a spent input plants nothing')
+    out.append('    }')
+    out.append('}')
+    return out
+
+
 def scalar_field_type(field_type: str) -> str:
     """The base integer spelling a field resolves to, or '' if it is not a scalar.
 
@@ -525,9 +737,14 @@ def generator_struct_args(arg_type: str,
            and len(field_constants_for('', (field_constants or {}).get(f.name, ()))) > 1
            for f in fields):
         output.append(f'UINT8 {index_chooser} = 0;')
-    for field in fields:
+    for position, field in enumerate(fields):
         ref = f'{arg_name}->{field.name}'
-        if not has_pointer(field.type):
+        # Only the LAST field can be the payload. A fixed array in the middle of a block is
+        # a real field -- a name, a GUID's bytes -- and filling it as a payload would write
+        # over every field after it.
+        if position == len(fields) - 1 and payload_tail(field.type):
+            output += payload_region(arg_name, field.name)
+        elif not has_pointer(field.type):
             output.append(f'ReadBytes(Input, sizeof({ref}), (VOID *)&({ref}));')
             if scalar_field_type(field.type):
                 output += scalar_choice(ref, field.type, chooser,
