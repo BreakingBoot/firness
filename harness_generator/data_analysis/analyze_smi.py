@@ -437,13 +437,57 @@ def payload_from_source(handler: str, edk2_dir: str, types: Dict[str, TypeInfo])
             if depth == 0:
                 end = index
                 break
-    for cast in _re.finditer(rf'\(\s*([A-Za-z_]\w*)\s*\*\s*\)\s*\(?\s*{_re.escape(param)}\b',
-                             body[:end]):
-        candidate = cast.group(1)
+    for candidate in _payload_casts(handler, edk2_dir):
         info = types.get(candidate)
         if info and getattr(info, 'fields', None):
             return candidate
     return None
+
+
+def _payload_casts(handler: str, edk2_dir: str):
+    """Every type name the handler casts its own comm buffer to, recorded or not.
+
+    payload_from_source answers only with a type it can build fields for, which is right
+    for generating a harness and wrong for explaining a handler it cannot generate. The two
+    outcomes look identical from there and are not the same thing:
+
+        no cast at all                 -- a root handler, which has no comm buffer
+        a cast to a type nobody parsed -- a driver absent from the platform DSC, so the
+                                          header declaring its payload reached no
+                                          translation unit
+
+    TpmNvsCommunciate was reported as "its comm buffer is never cast to a recorded type"
+    while the cast sits plainly in Tcg2Smm.c -- the type is simply unknown here, because
+    Tcg2Smm is in no OvmfPkg DSC. The reason sent a reader looking for something that was
+    already there.
+    """
+    import re as _re
+    path, body = _handler_source(handler, edk2_dir)
+    if not body:
+        return []
+    match = _re.compile(_DEFN.format(name=_re.escape(handler)), _re.S).search(body)
+    params = match.group('params') if match else ''
+    names = [_re.sub(r'.*?([A-Za-z_]\w*)\s*$', r'\1', q.replace('*', ' ').strip())
+             for q in params.split(',')]
+    buffers = [n for n in names if 'commbuffer' in n.lower() and 'size' not in n.lower()]
+    if not buffers:
+        return []
+    param = buffers[0]
+    depth, end = 0, len(body)
+    for index, char in enumerate(body):
+        if char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if depth == 0:
+                end = index
+                break
+    out = []
+    for cast in _re.finditer(rf'\(\s*([A-Za-z_]\w*)\s*\*\s*\)\s*\(?\s*{_re.escape(param)}\b',
+                             body[:end]):
+        if cast.group(1) not in out:
+            out.append(cast.group(1))
+    return out
 
 
 def _body_of(name: str, text: str):
@@ -621,7 +665,14 @@ def recover_missing_handlers(smi_data: Dict[str, SmiInfo],
             continue
         payload = payload_from_source(handler, edk2_dir, types)
         if not payload:
-            stuck[handler] = 'its comm buffer is never cast to a recorded type'
+            casts = _payload_casts(handler, edk2_dir)
+            if casts:
+                stuck[handler] = (
+                    f'it casts its comm buffer to {casts[0]}, which no module in this '
+                    f'build declares -- the analyser records only types it parsed, so a '
+                    f'driver absent from the platform DSC takes its payload type with it')
+            else:
+                stuck[handler] = 'its comm buffer is never cast to any type'
             continue
         smi_data[handler] = SmiInfo(handler, f'{payload} *', guid.group(1), path)
         print(f'INFO: recovered smi handler {handler} from source -- {guid.group(1)}, '
