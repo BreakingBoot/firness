@@ -359,7 +359,21 @@ def natural_sort_key(key):
 # A handler definition and the parameter list that goes with it. edk2 spells these over
 # several lines with IN/OUT/OPTIONAL decorations, so match the name followed by a
 # parenthesised list and a brace rather than trying to describe the whole signature.
-_DEFN = r'\b{name}\s*\((?P<params>[^;{{}}]*?)\)\s*{{'
+#
+# The parameter group may not cross a comment terminator. Under re.S, `[^;{}]*?` runs
+# across newlines, so a DOC COMMENT satisfied the whole pattern: measured on edk2 master,
+# FpdtSmiHandler matched in THREE files, and the two that came first in the walk were both
+# comments -- "FpdtSmiHandler() will receive untrusted input and do basic validation." --
+# whose `(` paired with a `)` far below, past the `**/` and inside real code. So
+# _handler_source returned a header comment as the definition, the GUID search that
+# follows found nothing in it, and the handler was reported as "no GUID-keyed registration
+# call found" although its registration sits beside its real definition.
+#
+# A real parameter list never contains `*/`, so forbidding that is enough and costs
+# nothing. Anchoring at the start of a line was the other candidate and is WRONG: edk2
+# usually puts the name in column 0, but `EFI_STATUS EFIAPI Name (` on one line is just as
+# valid and appears in real drivers, so the anchor dropped definitions it should keep.
+_DEFN = r'\b{name}\s*\((?P<params>(?:(?!\*/)[^;{{}}])*?)\)\s*{{'
 
 
 def _handler_source(name: str, edk2_dir: str):
