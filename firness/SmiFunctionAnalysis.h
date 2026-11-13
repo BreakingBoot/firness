@@ -570,6 +570,45 @@ public:
     void GetSmiType(Stmt* S) {
         if(!S) return;
 
+        //
+        // `SPI_COMM_HEADER *Header = (SPI_COMM_HEADER *)CommBuffer;` -- the cast made in
+        // the declaration rather than in a later assignment. This is the commoner edk2
+        // spelling of the two: OvmfPkg/Spi/SmmSpi.c writes it this way and
+        // MdeModulePkg/Universal/Variable/RuntimeDxe/VariableSmm.c the other, and a
+        // handler whose payload type is never resolved is dropped from
+        // smi-function-guid-map.json, so reading only the assignment costs the generator
+        // every handler that declares and casts in one statement.
+        //
+        // Only a pointer declaration counts. `UINTN Size = ((HEADER *)CommBuffer)->Size;`
+        // also mentions CommBuffer in its initialiser, and recording UINTN as the shape
+        // of the comm buffer would be worse than recording nothing.
+        //
+        // The type is taken only when none is recorded yet, while the assignment arm
+        // below keeps overwriting. A handler that casts through a scratch `UINT8 *` first
+        // and names the real header later is then still described by the header, which is
+        // the behaviour every handler in the guid map already has.
+        //
+        if (DeclStmt *DS = dyn_cast<DeclStmt>(S)) {
+            for (Decl *D : DS->decls()) {
+                VarDecl *VD = dyn_cast<VarDecl>(D);
+                if (VD == nullptr || !VD->hasInit() || !VD->getType()->isPointerType()) {
+                    continue;
+                }
+                if (!HasCommBuffer(VD->getInit())) {
+                    continue;
+                }
+                if (SmiFunctionGuidMap[CurrentFunction].Type.empty()) {
+                    SmiFunctionGuidMap[CurrentFunction].Type = VD->getType().getAsString();
+                }
+                //
+                // The name goes in whichever arm found it: the field pass tells
+                // `Header->Function` from any other struct member in the body by this
+                // set, and a declared local is as much the comm buffer as an assigned one.
+                //
+                CommBufferLocals.insert(VD->getNameAsString());
+            }
+        }
+
         if (BinaryOperator *BO = dyn_cast<BinaryOperator>(S)) {
             // if(CurrentFunction == "SmmLockBoxHandler")
             //     BO->dump();

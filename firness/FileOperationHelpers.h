@@ -193,8 +193,18 @@ namespace FileOps {
             entry["File"] = smiInfo.File;
             entry["Dispatch"] = smiInfo.Dispatch;
             entry["BufferProtocol"] = smiInfo.BufferProtocol;
-            entry["Harnessable"] = (smiInfo.Dispatch == "SmiHandlerRegister" ||
-                                    smiInfo.Dispatch.empty()) && smiInfo.Type != "";
+            //
+            // What this analysis can say on its own: the handler is reached by GUID and
+            // its comm buffer has a type to fill. It is not the coverage answer, and
+            // naming it as one makes the file disagree with the harnesses built from it.
+            // The generator runs after this and both adds handlers -- re-deriving a GUID
+            // and a payload type from the source for ones recorded without a type -- and
+            // drops others whose payload it cannot carry into the harness, so the set it
+            // ends up driving is known only there. harness_generator writes the coverage
+            // field back into this file once that set is final.
+            //
+            entry["AnalyzerTyped"] = (smiInfo.Dispatch == "SmiHandlerRegister" ||
+                                      smiInfo.Dispatch.empty()) && smiInfo.Type != "";
             inv[pair.first] = entry;
         }
         std::ofstream invFile(filename + "/smi-handler-inventory.json");

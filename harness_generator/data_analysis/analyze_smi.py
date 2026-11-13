@@ -708,21 +708,32 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
     for name in names:
         if name in smi_data:
             continue
-        #
-        # A definite reason wins over a vague one. unusable/recovered carry the generator's
-        # own note -- "its comm buffer is never cast to a recorded type" -- which is true of
-        # a root handler and useless, because a root handler HAS no comm buffer to cast and
-        # no GUID to address it with. Run 42483193618 told a reader to go looking for a cast
-        # in CpuHotplugMmi that cannot exist. Where the dispatch kind settles reachability,
-        # say that instead.
-        #
-        why = _dispatch_reason((inventory or {}).get(name) or {}) if DEFINITE_DISPATCH(
-            (inventory or {}).get(name) or {}) else ''
-        if not why:
-            why = unusable.get(name) or recovered.get(name)
-        if not why:
-            why = _dispatch_reason((inventory or {}).get(name) or {})
-        print(f'  not harnessed: {name} -- {why}')
+        print(f'  not harnessed: {name} -- '
+              f'{not_harnessed_reason(name, unusable, recovered, inventory)}')
+
+
+def not_harnessed_reason(name: str, unusable: dict, recovered: dict,
+                         inventory: dict) -> str:
+    """Why this handler is not in the harness set, in one sentence a reader can act on.
+
+    A definite reason wins over a vague one. unusable/recovered carry the generator's own
+    note -- "its comm buffer is never cast to a recorded type" -- which is true of a root
+    handler and useless, because a root handler HAS no comm buffer to cast and no GUID to
+    address it with. Run 42483193618 told a reader to go looking for a cast in
+    CpuHotplugMmi that cannot exist. Where the dispatch kind settles reachability, say
+    that instead.
+
+    The coverage report prints this and the inventory stores it, from here rather than
+    from two spellings of the same precedence: a file that explains a handler differently
+    from the run that wrote it is a second answer to argue with.
+    """
+    entry = (inventory or {}).get(name) or {}
+    why = _dispatch_reason(entry) if DEFINITE_DISPATCH(entry) else ''
+    if not why:
+        why = unusable.get(name) or recovered.get(name)
+    if not why:
+        why = _dispatch_reason(entry)
+    return why
 
 
 def DEFINITE_DISPATCH(entry) -> bool:
@@ -771,6 +782,72 @@ def _dispatch_reason(entry: dict) -> str:
     if not kind:
         return 'not recorded by the analyser'
     return f'registered as {kind}, which is not a GUID dispatch'
+
+
+def smi_inventory(smi_data: Dict[str, SmiInfo], discovered, recovered: dict,
+                  unusable: dict, inventory: dict) -> Dict[str, dict]:
+    """Every handler this tree registers and what this run did with it.
+
+    The analyzer writes smi-handler-inventory.json before this module runs, so the field
+    it puts there -- AnalyzerTyped -- is what the C++ could tell on its own: dispatched by
+    GUID, with a payload type it parsed. The harness set is decided here and is a
+    different set in both directions. recover_missing_handlers re-derives a GUID and a
+    payload type from the source for handlers the analyzer recorded without one, and the
+    unusable loop drops handlers whose payload cannot be carried into the harness. On
+    EVAL-1 run 43452927684 SmmSpiHandler is AnalyzerTyped false and is harnessed:
+    FuzzSmmSpiHandler was built from it, dispatched 5183 times and produced two of the
+    run's findings, while the file this project quotes as its coverage statement said the
+    handler could not be driven.
+
+    The names are the union the coverage report walks, not the analyzer's own keys. The
+    analyzer records what it parsed and discover_smi.py greps the tree, and neither is a
+    superset of the other -- the file held 25 names on that run against the report's 32.
+    """
+    entries = {}
+    for name in sorted(set(discovered or ()) | set(smi_data) | set(unusable)
+                       | set(recovered) | set(inventory or ())):
+        entry = dict((inventory or {}).get(name) or {})
+        for field in ('Guid', 'Type', 'File', 'Dispatch', 'BufferProtocol'):
+            entry.setdefault(field, '')
+        entry.setdefault('AnalyzerTyped', False)
+        #
+        # What the generator holds wins over what the analyzer recorded, for every field
+        # it resolves itself. A recovered handler has a GUID, a payload type and a
+        # path that exist nowhere in the analyzer's output, and a handler the analyzer
+        # typed as `void *` is harnessed against the struct its body casts to, so the
+        # analyzer's answer describes the harness less well than the generator's. An empty
+        # value is not an answer and never overwrites one.
+        #
+        info = smi_data.get(name)
+        if info is not None:
+            for field, value in (('Guid', info.guid), ('Type', info.type),
+                                 ('File', info.file),
+                                 ('BufferProtocol', getattr(info, 'buffer_protocol', ''))):
+                if value:
+                    entry[field] = value
+        entry['Harnessable'] = name in smi_data
+        entry['Reason'] = '' if name in smi_data else not_harnessed_reason(
+            name, unusable, recovered, inventory)
+        entries[name] = entry
+    return entries
+
+
+def write_smi_inventory(smi_file: str, entries: Dict[str, dict]) -> None:
+    """Put the coverage statement back where the analyzer left its own.
+
+    Beside smi-function-guid-map.json, under the name the analyzer already uses, because
+    a second file would leave the first one being read. Written with sorted keys and four
+    spaces, which is what nlohmann::json::dump(4) produces, so the two writers do not make
+    a diff out of the formatting.
+    """
+    if not smi_file:
+        return
+    path = os.path.join(os.path.dirname(smi_file), 'smi-handler-inventory.json')
+    try:
+        with open(path, 'w') as handle:
+            json.dump(entries, handle, indent=4, sort_keys=True)
+    except OSError as exc:
+        print(f'INFO: leaving {path} as the analyzer wrote it -- {exc}')
 
 
 def analyze_smi(smi_data: Dict[str, SmiInfo],
@@ -851,8 +928,18 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
     for name in unusable:
         smi_data.pop(name, None)
 
-    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir,
-                        load_smi_inventory(smi_file))
+    #
+    # smi_data is final here -- everything source could recover is in it and everything
+    # whose payload could not be carried is out -- so this is the first point at which the
+    # inventory can be made a statement about the harnesses rather than a prediction of
+    # them. The analyzer's file is read before it is rewritten, because the dispatch kind
+    # it recorded is the reason most of the handlers that stay out stay out.
+    #
+    inventory = load_smi_inventory(smi_file)
+    write_smi_inventory(smi_file, smi_inventory(smi_data, discovered, recovered,
+                                                unusable, inventory))
+
+    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir, inventory)
 
     #
     # What each handler does with the buffer, as opposed to what the buffer looks like.
