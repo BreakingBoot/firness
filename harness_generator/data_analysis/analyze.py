@@ -7,7 +7,7 @@ import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
 from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes
-from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
+from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block, edk2_typedef_for
 from common.generate_library_map import generate_libmap
 
 current_args_dict = defaultdict(list)
@@ -1116,13 +1116,30 @@ def load_data(json_file: str,
             function_template[function] = function_blocks[0]        
         for function_block in function_blocks:
             for arg_key, argument in function_block.arguments.items():
-                if remove_ref_symbols(function_template[function].arguments.get(arg_key)[0].arg_type) in type_defs.values():
-                    for name, type_def in type_defs.items():
-                        if type_def == remove_ref_symbols(function_template[function].arguments.get(arg_key)[0].arg_type):
-                            function_template[function].arguments.get(
-                                arg_key)[0].arg_type = name
-                    # function_template[function].arguments.get(
-                    #     arg_key)[0].arg_type = argument[0].arg_type
+                # Put the EDK2 name back on a type the call site recorded in raw C, and
+                # keep the declarator while doing it. Writing the name on its own turned
+                # "unsigned short *" into UINT16, and pointer_count is counted off the
+                # type TEXT, so the argument stopped being a pointer: EdkiiVariableLock's
+                # RequestToLock declared a UINT16 for its CHAR16 *VariableName, filled it
+                # with input bytes and passed it by value, which clang refuses --
+                # "incompatible integer to pointer conversion" -- and no harness was built
+                # for that protocol at all.
+                template_argument = function_template[function].arguments.get(arg_key)[0]
+                declaration = function_decl.get(function)
+                declared_arguments = getattr(declaration, 'arguments', None) or {}
+                declared_type = (declared_arguments.get(arg_key) or [None])[0]
+                # Which EDK2 name is a choice, not a lookup: UINT16 and CHAR16 are both
+                # "unsigned short". Picking the wrong one compiles -- they are the same
+                # type -- and the harness then allocates sizeof(UINT16) for a string the
+                # callee walks to its terminator, which is the harness fault that cost
+                # EdkiiVarCheck 914 false solutions.
+                edk2_name = edk2_typedef_for(
+                    template_argument.arg_type,
+                    declared_type.arg_type if declared_type is not None else "",
+                    template_argument.data_type)
+                if edk2_name:
+                    template_argument.arg_type = template_argument.arg_type.replace(
+                        remove_ref_symbols(template_argument.arg_type), edk2_name)
                 if argument[0].variable == "__FUNCTION_PTR__":
                     for function_block2 in function_blocks:
                         function_block2.arguments.get(arg_key)[0].variable = "__FUNCTION_PTR__"

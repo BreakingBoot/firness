@@ -83,33 +83,48 @@ def end_device_path(variable: str) -> List[str]:
     return [f'FirnessMakeDevicePath ({variable}, {FIRNESS_BUFFER_BYTES});']
 
 
+def allocation_bytes(arg_type: str, array_like: bool = False) -> str:
+    """How many bytes the harness gives a pointer argument, as the C it emits.
+
+    This is the one statement of how big these buffers are. It was two: the allocation
+    below and the extent the call declares untrusted, which was the constant 4096 whatever
+    had been allocated -- so an EFI_GUID * allocated sizeof(EFI_GUID) was handed to the
+    firmware sanitizer as 4096 caller-controlled bytes, and the 4080 after it belong to
+    other allocations, their pool headers and the free list. A read of any of them is then
+    a double fetch reported against this call.
+    """
+    base = remove_ref_symbols(arg_type)
+    if is_string_pointer(arg_type):
+        # room for a string, not for one character
+        return f'{FIRNESS_STRING_CHARS} * sizeof({base})'
+    if array_like:
+        # the call carries dimensions, so the callee walks this pointer as an array.
+        # Over-allocating can never produce a false overflow; under-allocating always can
+        return str(FIRNESS_BUFFER_BYTES)
+    # A raw buffer gets a page whichever direction it is. declare_var only page-sized
+    # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
+    # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
+    # read 4096 bytes out of it. EFI_BLOCK_IO_PROTOCOL.WriteBlocks was one of ~79.
+    # A device path is a chain of variable length nodes. sizeof() it is four bytes,
+    # which holds the End node and nothing else, so the fuzzer had nowhere to put a
+    # path and every attempt to make one ran off the allocation. That is also why the
+    # extent cannot be taken from size_limit_for, which has no device path branch: it
+    # would answer four bytes and unmark the part of the path the fuzzer wrote.
+    if is_device_path(arg_type):
+        return str(FIRNESS_BUFFER_BYTES)
+    if base.strip().upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+        return str(FIRNESS_BUFFER_BYTES)
+    return f'sizeof({base})'
+
+
 def set_undefined_constants(arg_type: str, array_like: bool = False) -> str:
     if has_pointer(arg_type):
-        base = remove_ref_symbols(arg_type)
-        if is_string_pointer(arg_type):
-            # room for a string, not for one character
-            return f'({arg_type})AllocateZeroPool({FIRNESS_STRING_CHARS} * sizeof({base}))'
-        if array_like:
-            # the call carries dimensions, so the callee walks this pointer as an array.
-            # Over-allocating can never produce a false overflow; under-allocating always can
-            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
-        # A raw buffer gets a page whichever direction it is. declare_var only page-sized
-        # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
-        # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
-        # read 4096 bytes out of it. EFI_BLOCK_IO_PROTOCOL.WriteBlocks was one of ~79.
-        # A device path is a chain of variable length nodes. sizeof() it is four bytes,
-        # which holds the End node and nothing else, so the fuzzer had nowhere to put a
-        # path and every attempt to make one ran off the allocation.
-        if is_device_path(arg_type):
-            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
-        if base.strip().upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
-            return f'({arg_type})AllocateZeroPool({FIRNESS_BUFFER_BYTES})'
-        return "("+arg_type+")AllocateZeroPool(sizeof(" + base + "))"        
+        return f'({arg_type})AllocateZeroPool({allocation_bytes(arg_type, array_like)})'
     elif "bool" in arg_type.lower():
         return "FALSE"
     else:
         return "0"
-        
+
 
 def generate_outputs(function: str,
                      all_args: Dict[str, List[Argument]],
@@ -359,6 +374,9 @@ def call_function(function: str,
     # Four slots, so only the first four are registered; the window closes on
     # FirnessSanitizer(FALSE), which also forgets what was read.
     registered = 0
+    # the same thing declare_var is told, so the extent below is the allocation that
+    # declaration made and not a second opinion about it
+    array_like = has_dimension_arg(function_block.arguments)
     for arg_key, arguments in function_block.arguments.items():
         if registered >= 4:
             break
@@ -381,7 +399,21 @@ def call_function(function: str,
                     paired_size = f'{function}_{prefix}_{other_key}' if prefix \
                         else f'{function}_{other_key}'
                     break
-            extent = paired_size if paired_size else str(FIRNESS_BUFFER_BYTES)
+            # With no size argument to take it from, the extent is what was allocated for
+            # this argument, which allocation_bytes states once for both decisions. The
+            # constant was right only for the buffers that happen to get a page: an
+            # EFI_GUID * is sixteen bytes and was registered as 4096, and the 4080 after
+            # it are other allocations and pool headers -- a read of one of those was a
+            # double fetch reported against this call. The type is the one declare_var
+            # emitted, not the parameter's: a VOID * is declared UINTN *, and the
+            # allocation follows the declaration.
+            declared_type = argument.arg_type
+            for tracked in (arg_type_list or []):
+                if tracked.name == arg_key or (prefix and tracked.name == f'{prefix}_{arg_key}'):
+                    declared_type = tracked.arg_type
+                    break
+            extent = (paired_size if paired_size
+                      else allocation_bytes(declared_type, array_like))
             output.append(f'FirnessUntrusted({function}_{name}, {extent});')
             registered += 1
     output.append("FirnessSanitizer(TRUE);")

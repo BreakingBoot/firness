@@ -3,7 +3,7 @@ import os
 import json
 from itertools import permutations
 from typing import List, Dict, Set
-from common.types import FunctionBlock, FieldInfo, Macros, TypeInfo, scalable_params
+from common.types import FunctionBlock, FieldInfo, Macros, TypeInfo, scalable_params, type_defs
 
 def is_whitespace(s: str) -> bool:
     if s is None:
@@ -12,6 +12,55 @@ def is_whitespace(s: str) -> bool:
 
 def remove_ref_symbols(type_str: str) -> str:
     return re.sub(r" *\*| *&", "", type_str)
+
+
+# The call site records a type in whatever spelling the expression had, so a wide string
+# literal reaches the analysis as "unsigned short *" rather than "CHAR16 *". type_defs maps
+# the EDK2 name to that raw spelling and reading it backwards recovers the name -- but two
+# of its entries share a spelling, "unsigned short" for both UINT16 and CHAR16 and
+# "unsigned char" for both BOOLEAN and UINT8, so the reverse of it is a choice and not a
+# lookup. These are the names that win when nothing better is known; they are the ones a
+# plain loop over type_defs settles on today, so a lookup with nothing to disambiguate it
+# keeps answering what it answered before.
+AMBIGUOUS_TYPEDEF_PREFERENCE = ('UINT16', 'BOOLEAN')
+
+# What the analyser records in data_type when the pointee really is a character, which is
+# the one thing that separates CHAR16 from UINT16 at a call site with no declaration.
+CHARACTER_DATA_TYPES = {
+    'wchar_t': 'CHAR16',
+    'char': 'CHAR8',
+}
+
+
+def edk2_typedef_for(raw_type: str, declared_type: str = "", data_type: str = "") -> str:
+    """The EDK2 name for a type the analyser recorded in raw C, or "" for anything else.
+
+    declared_type is the parameter's own spelling from its declaration and settles it
+    outright, because that is the name the callee was written with. Without one, a
+    recorded data_type of "wchar_t *" says the pointee is a character and chooses CHAR16
+    over UINT16. The answer is the same whatever order type_defs is built in: the
+    candidates are sorted and the tie is broken by name, not by iteration.
+
+    Only the name is returned. The declarator belongs to the caller, because dropping it
+    is what turned "unsigned short *" into UINT16 and fuzzed a CHAR16 * by value.
+    """
+    base = remove_ref_symbols(raw_type or '').replace('const ', '').strip()
+    candidates = sorted(name for name, spelling in type_defs.items() if spelling == base)
+    if not candidates:
+        return ""
+    if len(candidates) == 1:
+        return candidates[0]
+    declared = remove_ref_symbols(declared_type or '').replace('const ', '').strip()
+    if declared in candidates:
+        return declared
+    character = CHARACTER_DATA_TYPES.get(
+        remove_ref_symbols(data_type or '').replace('const ', '').strip())
+    if character in candidates:
+        return character
+    for preferred in AMBIGUOUS_TYPEDEF_PREFERENCE:
+        if preferred in candidates:
+            return preferred
+    return candidates[0]
 
 def remove_prefix(type: str) -> str:
     return remove_ref_symbols(remove_casts(type))
