@@ -263,6 +263,30 @@ class TypeInfo:
         self.fields = fields
         self.file = file
 
+
+class TypeMap(dict):
+    """type name -> TypeInfo, where a name nobody recorded reads as an empty TypeInfo.
+
+    load_types built a defaultdict(list), which is wrong in two ways at once and both of
+    them bit. `types[name]` for a name the analyser never recorded answered with a LIST --
+    a different type from every value the map actually holds -- so `types[name].fields`
+    raised AttributeError instead of reading as "no fields". And because a defaultdict
+    mutates on read, the same lookup INSERTED that junk entry, so the map afterwards
+    claims to know a type it has never seen and `name in types` is true for it.
+
+    One SMI handler whose comm buffer is declared VOID * was enough: the generator
+    subscripted this map with None, got a list, and died on `.fields` -- losing not that
+    one handler but every harness in the run.
+
+    A miss here answers with an empty TypeInfo, which is the right type and reads as "no
+    fields" everywhere, and stores nothing, so the map keeps saying exactly which types
+    the analyser recorded and no more.
+    """
+
+    def __missing__(self, key):
+        return TypeInfo(key if isinstance(key, str) else "", [], "")
+
+
 class TypeTracker:
     def __init__(self, arg_type: str, variable: str, pointer_count: int, fuzzable: bool = False):
         self.arg_type = arg_type

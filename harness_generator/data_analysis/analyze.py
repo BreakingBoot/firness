@@ -6,7 +6,7 @@ from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
-from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes
+from common.types import FunctionBlock, FieldInfo, TypeInfo, TypeMap, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block, edk2_typedef_for
 from common.generate_library_map import generate_libmap
 
@@ -1278,9 +1278,12 @@ def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
 # Load in the type structures
 #
 def load_types(json_file: str) -> Dict[str, TypeInfo]:
+    # TypeMap, not defaultdict(list): see common/types.py. The SMI side of this same
+    # construction cost a whole run -- `types[unknown]` answered with a list, `.fields`
+    # raised on it, and the lookup left the junk key behind in the map.
     with open(json_file, 'r') as file:
         data = json.load(file)
-    type_data_list = defaultdict(list)
+    type_data_list = TypeMap()
     for type_data_dict in data:
         fields_list = []
         for field_dict in type_data_dict['Fields']:

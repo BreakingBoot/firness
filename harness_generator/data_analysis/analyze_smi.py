@@ -1,15 +1,17 @@
 import json
 import os
+import re
 import copy
 from fuzzywuzzy import fuzz
 import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
-from common.types import FunctionBlock, FieldInfo, TypeInfo, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes, SmiInfo
+from common.types import FunctionBlock, FieldInfo, TypeInfo, TypeMap, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes, SmiInfo
 from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block
 from common.generate_library_map import generate_libmap
 from data_analysis.cross_module import report as report_cross_module
-from common.vendor_types import resolve as resolve_payload, render as render_payload
+from common.vendor_types import (resolve as resolve_payload, render as render_payload,
+                                 payload_layout, NO_PAYLOAD)
 
 smi_includes = {
     "Protocol/SmmCommunication.h",
@@ -129,9 +131,12 @@ def load_macros(json_file: str) -> Tuple[Dict[str, Macros], Dict[str, Macros]]:
 # Load in the type structures
 #
 def load_types(json_file: str) -> Dict[str, TypeInfo]:
+    # TypeMap, not defaultdict(list): see common/types.py. A map of TypeInfo whose
+    # missing-key value is a list of a different type answers `types[unknown].fields` with
+    # an AttributeError and leaves the junk key behind it.
     with open(json_file, 'r') as file:
         data = json.load(file)
-    type_data_list = defaultdict(list)
+    type_data_list = TypeMap()
     for type_data_dict in data:
         fields_list = []
         for field_dict in type_data_dict['Fields']:
@@ -450,34 +455,46 @@ def payload_from_source(handler: str, edk2_dir: str, types: Dict[str, TypeInfo])
 
     Returns a type name present in `types` with fields, or None.
     """
-    import re as _re
-    path, body = _handler_source(handler, edk2_dir)
-    if not body:
-        return None
-    match = _re.compile(_DEFN.format(name=_re.escape(handler)), _re.S).search(body)
-    params = match.group('params') if match else ''
-    # the buffer parameter, not the size one next to it
-    names = [_re.sub(r'.*?([A-Za-z_]\w*)\s*$', r'\1', p.replace('*', ' ').strip())
-             for p in params.split(',')]
-    buffers = [n for n in names if 'commbuffer' in n.lower() and 'size' not in n.lower()]
-    if not buffers:
-        return None
-    param = buffers[0]
-    # stop at the end of this function so a later function's casts cannot leak in
-    depth, end = 0, len(body)
-    for index, char in enumerate(body):
-        if char == '{':
-            depth += 1
-        elif char == '}':
-            depth -= 1
-            if depth == 0:
-                end = index
-                break
+    # Every cast in the body, in source order, then the first one the analyser can build
+    # fields for. The candidate list used to be worked out twice from two copies of the
+    # same code; one copy is enough, and it halves the tree walk as well.
     for candidate in _payload_casts(handler, edk2_dir):
         info = types.get(candidate)
         if info and getattr(info, 'fields', None):
             return candidate
     return None
+
+
+def _no_payload_reason(smi, base: str, types: Dict[str, TypeInfo], edk2_dir: str) -> str:
+    """Why there is no block for the harness to lay out -- where resolve_payload cannot say.
+
+    resolve_payload names the exact type it could not reach, and that is the best answer
+    there is whenever the handler HAS a type name. Two cases reach the drop with no such
+    name to offer, and a reader who gets the generic sentence for either one goes looking
+    for the wrong thing:
+
+        a VOID * comm buffer  -- the block is named only by a cast inside the body, so the
+                                 reason has to say whether that cast exists, and to what
+        a recorded empty type -- the name resolves and the header may even be includable;
+                                 what is missing is fields
+
+    Returns '' when neither applies, so the caller keeps resolve_payload's own wording.
+    """
+    declared = (getattr(smi, 'type', '') or '').strip() or 'untyped'
+    if base in NO_PAYLOAD:
+        casts = _payload_casts(smi.name, edk2_dir) if edk2_dir else []
+        if casts:
+            return (f'its comm buffer is {declared} and it casts that to {casts[0]}, which '
+                    f'no module in this build declares -- the analyser records only types '
+                    f'it parsed, so a driver absent from the platform DSC takes its '
+                    f'payload type with it')
+        return (f'its comm buffer is {declared} and nothing in its body casts that to a '
+                f'named block, so there are no fields to fill and no size to send')
+    info = types.get(base)
+    if info is not None and not getattr(info, 'fields', None):
+        return (f'its comm buffer is {declared} and the analyser recorded {base} with no '
+                f'fields, so there is nothing for the harness to fill')
+    return ''
 
 
 def _payload_casts(handler: str, edk2_dir: str):
@@ -501,16 +518,45 @@ def _payload_casts(handler: str, edk2_dir: str):
     path, body = _handler_source(handler, edk2_dir)
     if not body:
         return []
-    match = _re.compile(_DEFN.format(name=_re.escape(handler)), _re.S).search(body)
-    params = match.group('params') if match else ''
-    names = [_re.sub(r'.*?([A-Za-z_]\w*)\s*$', r'\1', q.replace('*', ' ').strip())
-             for q in params.split(',')]
-    buffers = [n for n in names if 'commbuffer' in n.lower() and 'size' not in n.lower()]
-    if not buffers:
+    text = _buffer_body(body)
+    names = _buffer_names(text)
+    if not names:
         return []
-    param = buffers[0]
-    depth, end = 0, len(body)
-    for index, char in enumerate(body):
+    out = []
+    alternation = '|'.join(_re.escape(name) for name in names)
+    for cast in _re.finditer(
+            rf'\(\s*([A-Za-z_]\w*)\s*\*\s*\)\s*\(?\s*(?:{alternation})\b', text):
+        # A cast to void names no block. RWVariableHandler really does contain
+        # `DuplicateMemory ((void *) CommBuffer, ...)` beside the cast that names its
+        # payload, and this function's answer is quoted straight into the reason a dropped
+        # handler carries -- "it casts its comm buffer to void" sends a reader looking for
+        # a struct called void.
+        if cast.group(1) in NO_PAYLOAD or cast.group(1) in out:
+            continue
+        out.append(cast.group(1))
+    return out
+
+
+# The comment forms C has. Stripped before anything reads a handler body, because prose
+# is not code and this pass has been fooled by prose before: _DEFN had to be taught not to
+# cross a `*/` after a doc comment matched as a handler definition in two files on edk2
+# master. A commented-out cast reads exactly like a live one to a regex, and the answer
+# here is quoted straight into the reason a dropped handler carries -- so a reader would
+# be sent looking for a cast that the author had already deleted. A brace in a comment
+# would also run the end of the function past where it is, which is why the stripping
+# happens before the balance is counted and not after.
+_COMMENT = re.compile(r'/\*.*?\*/|//[^\n]*', re.S)
+
+
+def _buffer_body(body: str) -> str:
+    """A handler's own text, comments blanked and nothing of the function after it.
+
+    The brace balance is counted AFTER the comments go, so a brace inside one cannot run
+    the end of the function past where it is.
+    """
+    text = _COMMENT.sub(' ', body)
+    depth, end = 0, len(text)
+    for index, char in enumerate(text):
         if char == '{':
             depth += 1
         elif char == '}':
@@ -518,12 +564,37 @@ def _payload_casts(handler: str, edk2_dir: str):
             if depth == 0:
                 end = index
                 break
-    out = []
-    for cast in _re.finditer(rf'\(\s*([A-Za-z_]\w*)\s*\*\s*\)\s*\(?\s*{_re.escape(param)}\b',
-                             body[:end]):
-        if cast.group(1) not in out:
-            out.append(cast.group(1))
-    return out
+    return text[:end]
+
+
+# Any identifier at all; the filter below is what makes it a buffer.
+_IDENTIFIER = re.compile(r'\b[A-Za-z_]\w*\b')
+
+
+def _buffer_names(text: str) -> List[str]:
+    """Every name this handler has for its comm buffer, in the order they appear.
+
+    Reading the parameter list alone was not enough, and failed in two ways on the same
+    function. `params.split(',')` splits inside a parenthesised annotation, so a Checked-C
+    parameter -- `IN OUT VOID *CommBuffer1 : itype(_Array_ptr<VOID>) bounds(KERN_HIGH,
+    KERN_LOW)` -- came back as the fragments `... bounds(KERN_HIGH` and `KERN_LOW)`, and
+    the buffer parameter was simply not among the names. And where a tree renames the
+    parameter and re-declares it -- `_Array_ptr<VOID> CommBuffer = _Dynamic_bounds_cast<
+    _Array_ptr<VOID>>(CommBuffer1, ...)` -- the casts in the body are applied to the LOCAL,
+    so matching only the parameter's spelling finds none of them.
+
+    So take every name the handler uses, not the one the signature declares. A handler's
+    buffer is what it calls CommBuffer, whatever suffix an annotator left on the
+    parameter; `...Size` is the length beside it and never the block. Measured over the 60
+    handlers three trees register, this changes 9 of them and every change is from "no
+    cast found" to a cast that is really there -- it recovers, it does not re-answer.
+    """
+    names = []
+    for word in _IDENTIFIER.findall(text):
+        lowered = word.lower()
+        if 'commbuffer' in lowered and 'size' not in lowered and word not in names:
+            names.append(word)
+    return names
 
 
 def _body_of(name: str, text: str):
@@ -1198,18 +1269,41 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
                 base = guessed
 
         info = types.get(base)
-        if includable(info):
-            all_includes.add(info.file)
+        carried = includable(info)
+
+        # Where the declaration is not includable, re-emit the struct instead of dropping
+        # the handler: the headers that declare comm-buffer blocks are private to their
+        # drivers by convention, so dropping on that test discards precisely the
+        # vendor-specific handlers a campaign exists to cover. Asked before either branch
+        # acts, so that a handler leaving on the next test leaves no include and no
+        # vendored struct behind it.
+        order, reason = ([], '') if carried else resolve_payload(base, types, aliases,
+                                                                 includable)
+
+        #
+        # The question the HARNESS asks, asked here, once, for both branches above. A
+        # declaration the harness can reach is not the same thing as a block it can lay
+        # out: an includable type the analyser recorded with no fields passes every test
+        # above and still leaves the template with nothing to fill. The template used to
+        # find that out by subscripting the type map, which raised, and a raise here is
+        # not one lost handler -- it is the whole run. On run 43452927684's inputs
+        # RWVariableHandler alone took the other nine harnesses down with it.
+        #
+        # Deciding it here means a handler that cannot be laid out leaves by the same door
+        # as every other dropped handler: named, with a reason, into `unusable` -- which
+        # is what the run log prints and what smi-handler-inventory.json records as the
+        # Reason beside Harnessable false. Nothing is skipped quietly.
+        #
+        _, fields = payload_layout(smi.type, types, aliases)
+        if order is None or not fields:
+            why = (_no_payload_reason(smi, base, types, edk2_dir) or reason
+                   or 'the harness could not lay out a block for its comm buffer')
+            print(f'INFO: dropping smi handler {smi.name} -- {why}')
+            unusable[smi.name] = why
             continue
 
-        # Not includable. Re-emit the struct instead of dropping the handler: the headers
-        # that declare comm-buffer blocks are private to their drivers by convention, so
-        # dropping on this test discards precisely the vendor-specific handlers a campaign
-        # exists to cover.
-        order, reason = resolve_payload(base, types, aliases, includable)
-        if order is None:
-            print(f'INFO: dropping smi handler {smi.name} -- {reason}')
-            unusable[smi.name] = reason
+        if carried:
+            all_includes.add(info.file)
             continue
         for name in order:
             if name not in vendored_order:

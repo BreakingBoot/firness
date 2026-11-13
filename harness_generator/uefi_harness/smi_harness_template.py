@@ -3,7 +3,7 @@ import copy
 import re
 from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef, SmiInfo
 from common.utils import add_indents, remove_ref_symbols
-from common.vendor_types import split_array
+from common.vendor_types import split_array, payload_layout
 from uefi_harness.harnesses_template import SCALAR_FIELD_TYPES
 
 aliases_map = {}
@@ -738,8 +738,13 @@ def generator_struct_args(arg_type: str,
                           field_constants=None) -> List[str]:
     output = []
     output.append("// Generator Struct Variable Initialization")
-    struct_type = remove_ref_symbols(arg_type) if len(types.get(remove_ref_symbols(arg_type), TypeInfo()).fields) > 0 else (aliases_map.get(remove_ref_symbols(arg_type), None))
-    fields = types[struct_type].fields
+    # Never a bare subscript here. The type map answers a miss with an empty TypeInfo now,
+    # but the reason this line is a call and not two expressions is that the ANALYSIS asks
+    # the same question first and drops a handler it cannot answer for -- so the two can
+    # never disagree about what the harness is able to lay out. When they did, a handler
+    # whose comm buffer is VOID * reached this function and the AttributeError it raised
+    # cost the run every other handler's harness as well as its own.
+    struct_type, fields = payload_layout(arg_type, types, aliases_map)
     chooser = re.sub(r'\W', '', arg_name) + 'ScalarChoice'
     index_chooser = re.sub(r'\W', '', arg_name) + 'ConstChoice'
     if any(not has_pointer(f.type) and scalar_field_type(f.type) for f in fields):

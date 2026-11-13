@@ -27,6 +27,14 @@ generating would really produce a harness that cannot compile, not to guess.
 import re
 from typing import Dict, List, Optional, Tuple
 
+from common.utils import remove_ref_symbols
+
+# A comm buffer with no block behind it. `void` has to stay in BASE_TYPES because a FIELD
+# may perfectly well be a VOID *, but as the ROOT of a payload it is not a parameter block
+# at all: no fields to fuzz, and -- one pointer removed leaves "void", whose sizeof is 1
+# under clang -- no size to send either.
+NO_PAYLOAD = {'', 'void', 'VOID'}
+
 # Spelled by the compiler or by MdePkg/Include/Base.h, which every harness already has
 # through default_includes. Listing them beats asking types.json, which has no entry for a
 # builtin and would send every one of them down the "unresolvable" path.
@@ -74,6 +82,21 @@ def resolve(root: str,
     which is the generator's existing test; it is injected so this module does not depend
     on how include paths are filtered.
     """
+    #
+    # The root is tested before the walk, because the walk would say yes. `void` is in
+    # BASE_TYPES for the sake of a VOID * field, and walk() answers '' for a base type --
+    # so resolve('void') used to return ([], ''), which reads as "nothing to do, the real
+    # declaration is includable" and kept a handler that has no block to declare. The
+    # caller then handed `void` to the harness template, which looked for its fields,
+    # found none, looked up its typedef, found none either, and subscripted the type map
+    # with None. That killed the whole generation: on EVAL-1 run 43452927684's inputs it
+    # is one handler of ten, and the other nine harnesses went with it.
+    #
+    if remove_ref_symbols(root or '').strip() in NO_PAYLOAD:
+        return None, ('its comm buffer carries no type of its own -- a VOID * block has '
+                      'no fields to fill and no size to send, so the handler can only be '
+                      'driven once something names the struct it really points at')
+
     order: List[str] = []
     seen = set()
 
@@ -114,6 +137,30 @@ def resolve(root: str,
     if problem:
         return None, problem
     return order, ''
+
+
+def payload_layout(arg_type: str,
+                   types: Dict[str, object],
+                   aliases: Dict[str, str]) -> Tuple[str, List[object]]:
+    """The struct a harness will lay a comm buffer out as, and the fields it will fill.
+
+    One answer for two readers. The analysis decides whether a handler can be harnessed
+    and the SMI template emits the field fills, and each used to work the struct out for
+    itself from its own copy of the same two lines. That is how a handler the analysis
+    kept reached a template that could not lay it out -- and the template's copy ended in
+    a bare subscript of the type map, so finding out cost the entire run rather than the
+    one handler.
+
+    Returns ('', []) when there is no block to lay out. What that means is the caller's to
+    say: for the analysis it is a handler to drop by name with a reason; for the template
+    it is a block already vouched for, so it should never happen.
+    """
+    base = remove_ref_symbols(arg_type or '').strip()
+    # One level of typedef, which is what the template has always followed: the recorded
+    # fields hang off whichever of the two names the analyser attached them to.
+    name = base if getattr(types.get(base), 'fields', None) else (aliases or {}).get(base) or ''
+    info = types.get(name) if name else None
+    return name, list(getattr(info, 'fields', None) or [])
 
 
 def render(order: List[str], types: Dict[str, object]) -> List[str]:
