@@ -25,19 +25,55 @@ vendored_order = []
 def load_discovered(input_file: str) -> List[str]:
     """Handler names from the file discover_smi.py wrote, one per line.
 
-    Tolerates the `--with-source` form, which appends `  // path/to/file.c`.
+    Tolerates the `--with-source` form, which appends `  // path/to/file.c`, and the
+    software SMI form, which puts the registered command byte between the two --
+    `B2SmiDispatchHandle  0xB4  // OvmfPkg/.../B2SmiDispatch.c:238`. A handler name never
+    contains a space, so the first field is the name in every form of the file.
     """
     if not input_file or not os.path.isfile(input_file):
         return []
     names = []
     try:
         for line in open(input_file, errors='ignore'):
-            name = line.split('//')[0].strip()
-            if name:
-                names.append(name)
+            fields = line.split('//')[0].split()
+            if fields:
+                names.append(fields[0])
     except OSError:
         return []
     return names
+
+
+def load_sw_discovered(input_file: str) -> Dict[str, dict]:
+    """The software SMI request file: handler -> the command byte it is registered for.
+
+    The command byte is the address of a software SMI handler the way a GUID is the
+    address of a comm-buffer one, so a line without one names a handler this channel
+    cannot reach and is not a target. Those lines are skipped rather than defaulted: a
+    default here would be a command byte nothing registered, which reaches no handler and
+    -- on the shared port 0xB2 -- can reach the platform's own.
+    """
+    found = {}
+    if not input_file or not os.path.isfile(input_file):
+        return found
+    try:
+        for line in open(input_file, errors='ignore'):
+            body, _, note = line.partition('//')
+            fields = body.split()
+            if len(fields) < 2:
+                continue
+            try:
+                value = int(fields[1], 0)
+            except ValueError:
+                continue
+            note = note.strip()
+            spelling = ''
+            if note.endswith(')') and '(' in note:
+                spelling = note[note.rindex('(') + 1:-1].strip()
+                note = note[:note.rindex('(')].strip()
+            found[fields[0]] = {'value': value, 'file': note, 'spelling': spelling}
+    except OSError:
+        return {}
+    return found
 
 
 def load_include_deps(json_file: str) -> Dict[str, List[str]]:
@@ -680,8 +716,160 @@ def recover_missing_handlers(smi_data: Dict[str, SmiInfo],
     return stuck
 
 
+#
+# Software SMI discovery, from the registration shape every tree writes:
+#
+#     mSwContext.SwSmiInputValue = B2SWSMI;
+#     mSwDispatch->Register (mSwDispatch, B2SmiDispatchHandle, &mSwContext, &mSwHandle);
+#
+# The FIELD is the discriminator, not the name of the dispatcher variable. SwSmiInputValue
+# is declared by EFI_SMM_SW_REGISTER_CONTEXT and EFI_MM_SW_REGISTER_CONTEXT and by nothing
+# else, so a Register call whose context carries it IS a software dispatch registration
+# however the tree spells the protocol -- SmmSwDispatch2, mSwDispatch,
+# EFI_MM_SW_DISPATCH_PROTOCOL. The analyzer's C++ matches on the spelling and so has to
+# know all three; this does not.
+#
+_SW_REGISTER = r'->\s*Register\s*\(\s*[A-Za-z_]\w*\s*,\s*&?\s*([A-Za-z_]\w*)\s*,\s*&?\s*([A-Za-z_]\w*)'
+_SW_VALUE = r'\b(\w+)\s*(?:\.|->)\s*SwSmiInputValue\s*=\s*([^;]+);'
+_SW_CAST = r'^\s*\(\s*(?:CONST\s+)?[A-Za-z_]\w*\s*\**\s*\)\s*'
+_SW_DEFINE = r'^[ \t]*#[ \t]*define[ \t]+{name}[ \t]+(.+?)[ \t]*(?:/\*|//|$)'
+
+# The dispatcher refuses 0 and anything above MAXIMUM_SWI_VALUE, and the handlers
+# themselves read a command port of 0 as "not a software SMI" and return at once.
+SW_VALUE_MIN = 1
+SW_VALUE_MAX = 0xFF
+
+
+def _sw_unwrap(expr: str) -> str:
+    """An initialiser with its casts and wrapping parentheses taken off."""
+    import re as _re
+    expr = (expr or '').strip()
+    while True:
+        stripped = _re.sub(_SW_CAST, '', expr).strip()
+        if stripped.startswith('(') and stripped.endswith(')'):
+            stripped = stripped[1:-1].strip()
+        if stripped == expr:
+            return expr
+        expr = stripped
+
+
+def _sw_define_index(edk2_dir: str) -> Dict[str, str]:
+    """Every object-like #define in the tree, for a constant a driver does not define itself.
+
+    Built once and only when a file-local lookup has already failed. The same two-stage
+    resolution as scripts/discover_smi.py, deliberately: these two passes are the same
+    discovery written twice in two repositories, and one of them resolving a constant the
+    other cannot is drift that shows up as a target silently missing.
+    """
+    import re as _re
+    index = {}
+    pattern = _re.compile(_SW_DEFINE.format(name=r'([A-Za-z_]\w*)'), _re.M)
+    for base, dirs, files in os.walk(edk2_dir or '.'):
+        dirs[:] = [d for d in dirs if d not in ('.git', 'Build', 'BaseTools')]
+        for entry in files:
+            if not (entry.endswith('.h') or entry.endswith('.c')):
+                continue
+            try:
+                text = open(os.path.join(base, entry), errors='ignore').read()
+            except OSError:
+                continue
+            for found in pattern.finditer(text):
+                index.setdefault(found.group(1), found.group(2).strip())
+    return index
+
+
+def _sw_constant(expr: str, text: str, index=None):
+    """The integer an initialiser denotes, or None if this pass cannot say.
+
+    None is the answer for `(UINTN)-1`, which is not a value: it asks the dispatcher to
+    allocate the next free command byte at registration time, and which byte that is
+    depends on how many drivers registered before it on that boot. Every software SMI
+    registration in edk2 proper is written that way. Guessing one would put a command byte
+    in the harness that addresses whichever handler happened to land in that slot -- a
+    different handler after the next build -- so it is left out and counted.
+    """
+    import re as _re
+    expr = _sw_unwrap(expr)
+    try:
+        return int(expr, 0)
+    except ValueError:
+        pass
+    if not _re.fullmatch(r'[A-Za-z_]\w*', expr):
+        return None
+    seen = set()
+    while expr not in seen:
+        seen.add(expr)
+        found = _re.search(_SW_DEFINE.format(name=_re.escape(expr)), text, _re.M)
+        value = found.group(1) if found else (index or {}).get(expr)
+        if value is None:
+            return None
+        value = _sw_unwrap(value)
+        try:
+            return int(value, 0)
+        except ValueError:
+            if not _re.fullmatch(r'[A-Za-z_]\w*', value):
+                return None
+            expr = value
+    return None
+
+
+def sw_smi_commands(edk2_dir: str) -> Tuple[Dict[str, dict], Dict[str, str]]:
+    """Every software SMI registration in the tree: the ones with an address and the rest.
+
+    Returns ({handler: {value, file, spelling}}, {handler: why it has no address}). The
+    second half is why this exists at all beside discover_smi.py: a handler whose command
+    byte the dispatcher picks at run time IS reachable on this channel, and reporting it as
+    though no channel reached it is the same mistake the comm-buffer reason was making.
+    """
+    import re as _re
+    register = _re.compile(_SW_REGISTER)
+    assign = _re.compile(_SW_VALUE)
+    found, stuck = {}, {}
+    index = None
+    for base, dirs, files in os.walk(edk2_dir or '.'):
+        dirs[:] = [d for d in dirs if d not in ('.git', 'Build', 'BaseTools')]
+        for entry in files:
+            if not entry.endswith('.c'):
+                continue
+            path = os.path.join(base, entry)
+            try:
+                text = open(path, errors='ignore').read()
+            except OSError:
+                continue
+            if 'SwSmiInputValue' not in text or '->Register' not in text:
+                continue
+            assigned = list(assign.finditer(text))
+            if not assigned:
+                continue
+            for call in register.finditer(text):
+                handler, context = call.group(1), call.group(2)
+                # The assignment that reaches the call is the last one before it on that
+                # context variable. Tcg2Smm registers twice off one SwContext, so taking
+                # the first would give both handlers the first value.
+                before = [m for m in assigned
+                          if m.group(1) == context and m.start() < call.start()]
+                if not before:
+                    continue
+                source = before[-1]
+                spelling = _sw_unwrap(source.group(2))
+                value = _sw_constant(source.group(2), text)
+                if value is None:
+                    if index is None:
+                        index = _sw_define_index(edk2_dir)
+                    value = _sw_constant(source.group(2), text, index)
+                if value is None or not SW_VALUE_MIN <= value <= SW_VALUE_MAX:
+                    stuck.setdefault(handler, spelling)
+                    continue
+                line = text.count('\n', 0, source.start()) + 1
+                found.setdefault(handler, {'value': value, 'file': f'{path}:{line}',
+                                           'spelling': spelling})
+    for handler in found:
+        stuck.pop(handler, None)
+    return found, stuck
+
+
 def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
-                        inventory=None) -> None:
+                        inventory=None, sw_commands=None, channel='') -> None:
     """Say what happened to every handler the source registers.
 
     `[PASS] discover ... 22 SMI handlers` counts registrations in source, and the number of
@@ -700,7 +888,11 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
                    | set(recovered) | set(inventory or ()))
     if not names:
         return
-    print(f'SMI coverage: {len(smi_data)} of {len(names)} registered handler(s) harnessed')
+    # Not `where`: the lifecycle loop below binds that name from lifecycle_gate, and one
+    # of the two would be reading the other's value the moment either line moves.
+    on_channel = f' on {channel}' if channel else ''
+    print(f'SMI coverage: {len(smi_data)} of {len(names)} registered handler(s) '
+          f'harnessed{on_channel}')
     for name in sorted(smi_data):
         flag, where = lifecycle_gate(name, edk2_dir)
         if flag:
@@ -709,11 +901,11 @@ def report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir='',
         if name in smi_data:
             continue
         print(f'  not harnessed: {name} -- '
-              f'{not_harnessed_reason(name, unusable, recovered, inventory)}')
+              f'{not_harnessed_reason(name, unusable, recovered, inventory, sw_commands, channel)}')
 
 
 def not_harnessed_reason(name: str, unusable: dict, recovered: dict,
-                         inventory: dict) -> str:
+                         inventory: dict, sw_commands=None, channel: str = '') -> str:
     """Why this handler is not in the harness set, in one sentence a reader can act on.
 
     A definite reason wins over a vague one. unusable/recovered carry the generator's own
@@ -728,12 +920,72 @@ def not_harnessed_reason(name: str, unusable: dict, recovered: dict,
     from the run that wrote it is a second answer to argue with.
     """
     entry = (inventory or {}).get(name) or {}
+    # The channel that DOES reach a handler beats every statement about the one that does
+    # not. A software SMI handler whose command byte is known is driven by the
+    # DiscoveredSwSmi target, and reporting it as "there is no caller buffer to fuzz" --
+    # true, and the whole of what this file used to say -- reads as a handler nothing can
+    # reach. That reading is what left B2SmiDispatch the only challenge-added driver with
+    # no coverage.
+    reached = _sw_smi_reason(name, sw_commands)
+    if reached:
+        return reached
+    # Two campaigns now write this file, one per channel, and each leaves the other's
+    # handlers out. Saying "registered as SmiHandlerRegister, which is not a GUID
+    # dispatch" about a handler the comm-buffer campaign harnesses is both false and the
+    # kind of false a reader cannot catch, so a run that knows which channel it drives
+    # says that instead.
+    if channel:
+        theirs = _channel_of(name, entry, sw_commands)
+        if theirs == DISPATCH_CHANNEL['RootHandler']:
+            # Not "this campaign cannot reach it": a root handler runs on every MMI,
+            # including the ones this campaign raises, so it is being exercised. What it
+            # has not got is an address, so no target can be named after it and nothing
+            # steers the input towards its body.
+            return ('a root handler: it runs on every MMI this campaign raises, so it is '
+                    'exercised whatever the target, but it has no address of its own and '
+                    'no buffer it reads, so there is nothing for a target to aim at')
+        if theirs and theirs != channel:
+            return (f'its channel is {theirs}; this campaign drives {channel}')
     why = _dispatch_reason(entry) if DEFINITE_DISPATCH(entry) else ''
     if not why:
         why = unusable.get(name) or recovered.get(name)
     if not why:
         why = _dispatch_reason(entry)
     return why
+
+
+def _channel_of(name: str, entry: dict, sw_commands) -> str:
+    """What raises this handler, whatever any one campaign can do about it."""
+    found, stuck = (sw_commands or ({}, {}))
+    if name in (found or {}) or name in (stuck or {}):
+        return DISPATCH_CHANNEL['SwDispatch']
+    return DISPATCH_CHANNEL.get((entry or {}).get('Dispatch') or '', '')
+
+
+def _sw_smi_reason(name: str, sw_commands) -> str:
+    """Why a comm-buffer run leaves a software SMI handler alone, naming what does reach it.
+
+    sw_commands is the pair sw_smi_commands() returns: the handlers with a statically
+    resolvable command byte, and the ones whose byte the dispatcher picks at registration
+    time. Both are reachable on the port channel and only the first is addressable, which
+    is a different sentence from either "unharnessable" or "harnessed".
+    """
+    found, stuck = (sw_commands or ({}, {}))
+    if name in (found or {}):
+        info = found[name]
+        where = info.get('file') or 'its registration'
+        return (f'reached by the software SMI port channel, not by a comm buffer: it is '
+                f'registered for command byte 0x{int(info["value"]):02X} at {where}, '
+                f'which the DiscoveredSwSmi target writes to port '
+                f'0x{SW_COMMAND_PORT:02X}. This target fills comm buffers and cannot '
+                f'raise it')
+    if name in (stuck or {}):
+        return (f'reached by the software SMI port channel, not by a comm buffer, but its '
+                f'registration asks the dispatcher for the next free command byte '
+                f'({stuck[name]}) instead of naming one, so no static pass can say which '
+                f'byte addresses it and the DiscoveredSwSmi target leaves it out rather '
+                f'than guessing')
+    return ''
 
 
 def DEFINITE_DISPATCH(entry) -> bool:
@@ -758,7 +1010,8 @@ DISPATCH_REASON = {
                   'EFI_MM_SW_CONTEXT the dispatcher fills in with the CPU index and the port '
                   'value -- there is no caller buffer to fuzz, so a comm-buffer harness '
                   'cannot drive it and a fabricated one would not be an input the hardware '
-                  'can produce',
+                  'can produce. The port write does drive it: that is the DiscoveredSwSmi '
+                  'target, which needs the command byte this handler registered for',
     'SxDispatch': 'registered on the Sx dispatch protocol, so it runs on an S-state '
                   'transition rather than on a call',
     'PeriodicTimer': 'registered on the periodic timer dispatch protocol, so it runs on a '
@@ -768,6 +1021,28 @@ DISPATCH_REASON = {
     'PowerButton': 'registered on the power button dispatch protocol',
     'StandbyButton': 'registered on the standby button dispatch protocol',
     'IoTrap': 'registered on the IO trap dispatch protocol, so it runs on a trapped access',
+}
+
+
+# The software SMI pair, named here because three places quote it: the reason strings
+# above, the inventory's Channel field, and the generated harness.
+SW_COMMAND_PORT = 0xB2
+SW_DATA_PORT = 0xB3
+
+# What RAISES each kind of handler, as opposed to why one target cannot. A record that
+# says only "not harnessable" is a dead end for a reader; a record that names the channel
+# says which campaign to go and look at. Every dispatch kind the analyzer records has one.
+DISPATCH_CHANNEL = {
+    'SmiHandlerRegister': 'the comm buffer, addressed by GUID',
+    'RootHandler': 'every MMI, whatever raised it',
+    'SwDispatch': f'the software SMI port 0x{SW_COMMAND_PORT:02X}',
+    'SxDispatch': 'an S-state transition',
+    'PeriodicTimer': 'the periodic timer',
+    'UsbDispatch': 'a USB event',
+    'GpiDispatch': 'a GPI pin change',
+    'PowerButton': 'the power button',
+    'StandbyButton': 'the standby button',
+    'IoTrap': 'a trapped IO access',
 }
 
 
@@ -785,7 +1060,8 @@ def _dispatch_reason(entry: dict) -> str:
 
 
 def smi_inventory(smi_data: Dict[str, SmiInfo], discovered, recovered: dict,
-                  unusable: dict, inventory: dict) -> Dict[str, dict]:
+                  unusable: dict, inventory: dict, sw_commands=None,
+                  channel: str = '') -> Dict[str, dict]:
     """Every handler this tree registers and what this run did with it.
 
     The analyzer writes smi-handler-inventory.json before this module runs, so the field
@@ -811,6 +1087,18 @@ def smi_inventory(smi_data: Dict[str, SmiInfo], discovered, recovered: dict,
             entry.setdefault(field, '')
         entry.setdefault('AnalyzerTyped', False)
         #
+        # Which channel reaches this handler, and -- where that channel has one -- the
+        # address on it. Harnessable says what THIS run did; Channel says what any run
+        # could do, which is the question a reader of a false Harnessable is actually
+        # asking. Before this they got "cannot be driven" for a handler two bytes of IO
+        # reach, and B2SmiDispatch was the only challenge-added driver with no coverage
+        # because of it.
+        #
+        found = (sw_commands or ({}, {}))[0]
+        entry['Channel'] = _channel_of(name, entry, sw_commands)
+        entry['SwSmiInputValue'] = (
+            f'0x{int(found[name]["value"]):02X}' if name in (found or {}) else '')
+        #
         # What the generator holds wins over what the analyzer recorded, for every field
         # it resolves itself. A recovered handler has a GUID, a payload type and a
         # path that exist nowhere in the analyzer's output, and a handler the analyzer
@@ -820,14 +1108,19 @@ def smi_inventory(smi_data: Dict[str, SmiInfo], discovered, recovered: dict,
         #
         info = smi_data.get(name)
         if info is not None:
+            command = getattr(info, 'sw_smi_value', None)
             for field, value in (('Guid', info.guid), ('Type', info.type),
                                  ('File', info.file),
-                                 ('BufferProtocol', getattr(info, 'buffer_protocol', ''))):
+                                 ('BufferProtocol', getattr(info, 'buffer_protocol', '')),
+                                 ('SwSmiInputValue',
+                                  f'0x{int(command):02X}' if command is not None else '')):
                 if value:
                     entry[field] = value
+            if command is not None:
+                entry['Channel'] = DISPATCH_CHANNEL['SwDispatch']
         entry['Harnessable'] = name in smi_data
         entry['Reason'] = '' if name in smi_data else not_harnessed_reason(
-            name, unusable, recovered, inventory)
+            name, unusable, recovered, inventory, sw_commands, channel)
         entries[name] = entry
     return entries
 
@@ -936,10 +1229,18 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
     # it recorded is the reason most of the handlers that stay out stay out.
     #
     inventory = load_smi_inventory(smi_file)
+    # What the OTHER channel reaches. A comm-buffer run cannot drive a software SMI
+    # handler and should not pretend to, but it is the run that writes the file this
+    # project quotes as its coverage statement -- so it is the run that has to stop
+    # calling those handlers undrivable. The scan is one walk of the tree and only reads
+    # files that mention SwSmiInputValue.
+    sw_commands = sw_smi_commands(edk2_dir)
     write_smi_inventory(smi_file, smi_inventory(smi_data, discovered, recovered,
-                                                unusable, inventory))
+                                                unusable, inventory, sw_commands,
+                                                DISPATCH_CHANNEL['SmiHandlerRegister']))
 
-    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir, inventory)
+    report_smi_coverage(smi_data, discovered, recovered, unusable, edk2_dir, inventory,
+                        sw_commands, DISPATCH_CHANNEL['SmiHandlerRegister'])
 
     #
     # What each handler does with the buffer, as opposed to what the buffer looks like.
@@ -950,6 +1251,73 @@ def analyze_smi(smi_data: Dict[str, SmiInfo],
     #
     report_cross_module(load_smi_call_edges(smi_file))
     return smi_data, protocol_guids, driver_guids
+
+
+def analyze_sw_smi(discovered_values: Dict[str, dict],
+                   edk2_dir: str = "",
+                   discovered: List[str] = (),
+                   smi_file: str = "") -> Dict[str, SmiInfo]:
+    """The target set for the software SMI channel: handler -> its command byte.
+
+    Nothing of the comm-buffer analysis applies here and none of it is run. There is no
+    GUID to resolve, no payload type to parse, no private header to vendor and no buffer
+    protocol to wait on, because the channel hands the handler no buffer at all -- the two
+    bytes the harness writes to the ports are the whole of the input. What a target needs
+    is an address, and on this channel the address is the SwSmiInputValue.
+
+    The request file is the authority, because it is what discover_smi.py wrote for the
+    tree this campaign will build. The source scan runs anyway: it is how a handler the
+    request file has no line for still gets into the inventory with its channel named, and
+    it is the second opinion on every value the request file does carry. A disagreement is
+    said out loud rather than silently resolved -- the two passes are separate code in
+    separate repositories, and that is exactly the kind of drift a campaign cannot see.
+    """
+    found, stuck = sw_smi_commands(edk2_dir)
+    smi_data = {}
+    # `found` is in the union, not only the request file: this pass and discover_smi.py
+    # are the same discovery written twice, in two repositories, and a handler the tree
+    # registers with a resolvable command byte is a target whichever of them saw it. The
+    # alternative is a target set that silently shrinks when one of the two drifts.
+    for name in sorted(set(discovered_values or {}) | set(discovered or ()) | set(found)):
+        asked = (discovered_values or {}).get(name)
+        seen = found.get(name)
+        if asked and seen and int(asked['value']) != int(seen['value']):
+            print(f'INFO: sw smi handler {name} -- the request file says '
+                  f'0x{int(asked["value"]):02X} and the tree says '
+                  f'0x{int(seen["value"]):02X} at {seen["file"]}; using the tree')
+            asked = None
+        info = seen or asked
+        if not info:
+            if name in stuck:
+                print(f'INFO: sw smi handler {name} is registered for {stuck[name]}, a '
+                      f'value the dispatcher picks at registration time -- no command '
+                      f'byte addresses it statically, so it is not a target')
+            else:
+                print(f'INFO: sw smi handler {name} has no registered command byte in '
+                      f'this tree -- not a target')
+            continue
+        smi_data[name] = SmiInfo(name, '', '', info.get('file', ''),
+                                 sw_smi_value=int(info['value']),
+                                 sw_smi_spelling=info.get('spelling', ''))
+        print(f'INFO: sw smi handler {name} -- command byte '
+              f'0x{int(info["value"]):02X} from {info.get("file") or "the request file"}')
+
+    #
+    # `stuck` goes into the name set, not only into the narration. A handler whose command
+    # byte the dispatcher picks at run time IS reached by this channel and is left out of
+    # the target list for a reason that is about the registration, not about the handler
+    # -- and a handler missing from the inventory altogether reads as a tree that has no
+    # such handler. It was absent before: the request file has no line for it, by
+    # construction, because the line would need a value.
+    #
+    accounted = sorted(set(discovered or ()) | set(stuck))
+    inventory = load_smi_inventory(smi_file)
+    write_smi_inventory(smi_file, smi_inventory(smi_data, accounted, {}, {}, inventory,
+                                                (found, stuck),
+                                                DISPATCH_CHANNEL['SwDispatch']))
+    report_smi_coverage(smi_data, accounted, {}, {}, edk2_dir, inventory, (found, stuck),
+                        DISPATCH_CHANNEL['SwDispatch'])
+    return smi_data
 
 
 def analyze_smi_data(macro_file: str,
@@ -1000,3 +1368,49 @@ def analyze_smi_data(macro_file: str,
     vendored = render_payload(vendored_order, types)
 
     return analyzed_data, collected_includes, libraries, types, enum_map, aliases, protocol_guids, driver_guids, {}, vendored
+
+def analyze_sw_smi_data(smi_file: str,
+                        types_file: str,
+                        alias_file: str,
+                        enum_file: str,
+                        edk2_dir: str,
+                        include_deps_file: str,
+                        input_file: str = ""):
+    """The software SMI target set, shaped like analyze_smi_data's return.
+
+    Returns the same ten things the comm-buffer analysis does, because main.py's emitter
+    consumes them positionally and the only thing that differs between the two channels is
+    what goes in the harness body. Most of them are empty here and that is not a gap: this
+    channel has no payload type to parse, no macro to match and no private header to
+    vendor, because it carries no payload at all.
+    """
+    libmap = load_libmap(edk2_dir, os.path.join('/'.join(smi_file.split("/")[:-1]),
+                                                'libmap.json'))
+    include_deps = load_include_deps(include_deps_file)
+    types = load_types(types_file)
+    aliases = load_aliases(alias_file)
+    enum_map = load_enums(enum_file)
+
+    smi_data = analyze_sw_smi(load_sw_discovered(input_file), edk2_dir,
+                              load_discovered(input_file), smi_file)
+
+    #
+    # The harness itself locates nothing, so referenced_guids finds no protocol in it and
+    # the INF would declare none. A DXE_DRIVER harness's depex floor is
+    # gEfiSmmCommunicationProtocolGuid and a depex naming a GUID its INF does not declare
+    # DOES NOT BUILD, so the declaration has to come from here.
+    #
+    # It is also the right floor for this channel and not only a build requirement:
+    # PiSmmIpl publishes that protocol once the SMM core is up, and a port write before
+    # the SMM core exists reaches nothing at all.
+    #
+    protocol_guids = {'gEfiSmmCommunicationProtocolGuid'}
+
+    collected_includes = sorted(default_includes | smi_includes)
+    collected_includes = update_inc(collected_includes, libmap)
+    libraries = update_libs(
+        sorted(collect_libraries(collected_includes) | default_libraries), libmap)
+    collected_includes = handle_include_deps(collected_includes, include_deps)
+
+    return (smi_data, collected_includes, libraries, types, enum_map, aliases,
+            protocol_guids, set(), {}, [])

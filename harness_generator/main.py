@@ -10,7 +10,7 @@ from common.utils import clean_harnesses, gen_file, compile
 from data_analysis.analyze import analyze_data
 from linux_harness import guid_values as linux_guid_values
 from linux_harness import smi_driver_template as linux_smi_driver
-from data_analysis.analyze_smi import analyze_smi_data
+from data_analysis.analyze_smi import analyze_smi_data, analyze_sw_smi_data
 import path_trace.header_template as tracer_header
 import path_trace.harnesses_template as tracer_harnesses
 import path_trace.main_template as tracer_main
@@ -20,6 +20,7 @@ import uefi_harness.inf_template as uefi_inf
 import uefi_harness.dsc_template as uefi_dsc
 import uefi_harness.headers_template as uefi_header
 import uefi_harness.smi_harness_template as uefi_smi_harness
+import uefi_harness.sw_smi_harness_template as uefi_sw_smi_harness
 
 def generate_main_std(function_dict: Dict[str, FunctionBlock], harness_folder):
     code = tracer_main.gen_firness_main(function_dict)
@@ -81,8 +82,15 @@ def generate_smi_code(function_dict: Dict[str, SmiInfo],
                   aliases: Dict[str, str],
                   harness_folder,
                   enums: Dict[str, List[str]],
-                  random: bool = False):
-    code = uefi_smi_harness.harness_generator(
+                  random: bool = False,
+                  sw_smi: bool = False):
+    # Two channels, two bodies, one emitter. The templates take the same arguments and
+    # produce the same FirnessHarnesses.c shape -- one Fuzz<Handler> per target, declared
+    # by the same header and dispatched by the same FirnessMain selector -- so everything
+    # downstream of this line is shared and neither channel can grow its own copy of the
+    # include resolution, the library pruning or the INF.
+    template = uefi_sw_smi_harness if sw_smi else uefi_smi_harness
+    code = template.harness_generator(
         function_dict, types_dict, aliases, enums, random)
     gen_file(f'{harness_folder}/FirnessHarnesses.c', code)
 
@@ -727,14 +735,15 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
                      precedence=(),
                      host: str = 'uefi',
                      vendored: List[str] = (),
-                     timing: str = 'application'):
+                     timing: str = 'application',
+                     sw_smi: bool = False):
     function_list = list(smi_data.keys())
     print(harness_folder)
     if host == 'linux':
         return generate_smi_linux_driver(smi_data, harness_folder, edk2_dir,
                                          BACKENDS_BY_ID.get(backend, 'tsffs'))
     generate_main(function_list, harness_folder)
-    generate_smi_code(smi_data, types, aliases, harness_folder, enums, random)
+    generate_smi_code(smi_data, types, aliases, harness_folder, enums, random, sw_smi)
     # The SMI path is a second generator, and this step was only in the first one. An edk2
     # header is not required to be self contained -- the driver that consumes it includes
     # the prerequisite first -- and an SMI harness includes the GUID header of every comm
@@ -772,13 +781,27 @@ def generate_smi_harness(smi_data: Dict[str, SmiInfo],
     # dispatched at all, which looks exactly like a harness that cannot be reached.
     #
     depex = uefi_inf.depex_for_smi(smi_data, set(inf_protocols) | set(inf_guids))
-    generate_inf(harness_folder, used_libraries(libraries, harness_folder, all_includes, edk2_dir),
+    libraries_in_inf = used_libraries(libraries, harness_folder, all_includes, edk2_dir)
+    generate_inf(harness_folder, libraries_in_inf,
                  inf_guids, inf_protocols, all_includes, edk2_dir,
                  timing=timing, depex_protocols=depex)
     if timing == 'dxe':
         print(f'SMI harness timing: dxe -- a DXE_DRIVER in the firmware volume, so a '
               f'handler that latches on EndOfDxe is still open. Depex waits on '
               f'{len(depex) + 1} protocol(s).')
+    if sw_smi:
+        #
+        # Said out loud because it is the one claim about this harness a reader cannot
+        # check by looking at the C: IoWrite8 comes from IoLib, and used_libraries drops
+        # every class the emitted sources never call. Adding the call is what keeps it,
+        # and if the call ever moves behind a macro the INF loses the class and the
+        # harness stops linking with an unresolved IoWrite8.
+        #
+        linked = 'IoLib' in libraries_in_inf
+        print(f'software SMI harness: {len(smi_data)} handler(s), command bytes '
+              + ', '.join(f'0x{int(getattr(i, "sw_smi_value", 0) or 0):02X}'
+                          for _, i in sorted(smi_data.items()))
+              + f'; IoLib {"linked" if linked else "MISSING from the INF -- IoWrite8 will not resolve"}')
     generate_dsc(harness_folder, libraries, backend)
     # generate_harness_debugger(merged_data, template,
                             #   types, all_includes, generators, aliases, harness_folder)
@@ -896,6 +919,15 @@ def main():
     parser.add_argument('-b', '--best-guess', dest='best_guess', action='store_true',
                         help='Choose the function match with the highest frequency even if it might not be the right one (default: False)')
     parser.add_argument("--smi", dest="smi_enabled", action="store_true", help="Enable SMI generation")
+    parser.add_argument('--sw-smi', dest='sw_smi', action='store_true',
+                        help='Generate the SOFTWARE SMI harness instead of the comm-buffer '
+                             'one. Needs --smi, which is what carries the SMM build and the '
+                             'dxe timing; this flag only decides what the harness body does '
+                             'with the input. The comm-buffer harness fills a buffer and '
+                             'calls SmmCommunication; this one writes a data byte and a '
+                             'registered command byte to the software SMI ports, which is '
+                             'the channel the handlers on the software dispatch protocol '
+                             'are raised by and the only one an OS-level attacker needs.')
     parser.add_argument('--max-steps', dest='max_steps', type=int, default=8,
                         help='Calls chained per fuzzing iteration (default 8). Lower it for '
                              'protocols whose calls are slow enough to starve the fuzzer')
@@ -929,6 +961,20 @@ def main():
               'build with an #error because Intel PT is unavailable here. The harness will '
               'generate but will not compile; use --backend qemu (libafl-qemu) instead.')
 
+    if args.sw_smi and not args.smi_enabled:
+        print('Error: --sw-smi needs --smi. The software SMI harness is the SMI harness '
+              'with a different body: --smi is what selects the SMI analysis, the SMM '
+              'build defines and the dxe timing, and without it the generator would fall '
+              'through to the protocol path and read the request file as a protocol list.')
+        return 1
+
+    if args.sw_smi and args.host == 'linux':
+        print('Error: --sw-smi has no Linux form yet. The kernel module raises a software '
+              'SMI with a fixed command byte already (trigger_b2smi in smi_helpers.h); '
+              'what it does not do is take the byte from the fuzzer, and wiring that is a '
+              'separate piece of work from this one.')
+        return 1
+
     if args.host == 'linux' and not args.smi_enabled:
         print('Error: --host linux is only for SMI handlers (--smi). A protocol harness '
               'calls boot services, which are gone by the time a kernel module runs.')
@@ -936,7 +982,24 @@ def main():
 
     clean_harnesses(args.clean, args.output)
     harness_folder = generate_harness_folder(args.output)
-    if args.smi_enabled:
+    if args.sw_smi:
+        smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros, vendored = analyze_sw_smi_data(
+            args.smi, args.types_file, args.alias_file, args.enum_file, args.edk2,
+            args.includes_file, args.input_file)
+        if not smi_data:
+            print('Error: no software SMI handler in this tree has a command byte this '
+                  'pass can resolve, so there is nothing to aim at. A harness with an '
+                  'empty command set would either write nothing or write a byte nothing '
+                  'registered, and on port 0xB2 the second one can reach the platform\'s '
+                  'own handlers. Run scripts/discover_smi.py --sw-output against the tree '
+                  'to see what it found and what it had to leave out.')
+            return 1
+        generate_smi_harness(smi_data, types, enums, includes, libraries, aliases,
+                             matched_macros, protocol_guids, driver_guids, harness_folder,
+                             args.output, args.random, BACKENDS[args.backend], args.edk2,
+                             args.max_steps, host=args.host, vendored=vendored,
+                             timing=args.harness_timing, sw_smi=True)
+    elif args.smi_enabled:
         smi_data, includes, libraries, types, enums, aliases, protocol_guids, driver_guids, matched_macros, vendored  = analyze_smi_data(args.macro_file, args.enum_file, args.smi, args.types_file, args.alias_file, args.cast_file, args.random, harness_folder, args.best_guess, args.edk2, args.includes_file, args.input_file)
         generate_smi_harness(smi_data, types, enums, includes, libraries, aliases, matched_macros, protocol_guids, driver_guids, harness_folder, args.output, args.random, BACKENDS[args.backend], args.edk2, args.max_steps, host=args.host, vendored=vendored, timing=args.harness_timing)
     else:

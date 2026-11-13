@@ -182,11 +182,20 @@ class Argument:
 
 class SmiInfo:
     def __init__(self, name: str, type: str, guid: str, file: str = "",
-                 buffer_protocol: str = "", field_constants=None):
+                 buffer_protocol: str = "", field_constants=None,
+                 sw_smi_value=None, sw_smi_spelling: str = ""):
         self.name = name
         self.guid = guid
         self.type = type
         self.file = file
+        # The command byte this handler is registered for on the software SMI port, or
+        # None. A software dispatch registration has no GUID and no caller buffer -- the
+        # SwSmiInputValue IS its address -- so this is the whole of what a harness needs
+        # to reach it, and its absence is what makes a handler unreachable through that
+        # channel rather than merely unharnessed. sw_smi_spelling is how the tree writes
+        # the constant (B2SWSMI), kept so the generated C can cite it.
+        self.sw_smi_value = sw_smi_value
+        self.sw_smi_spelling = sw_smi_spelling
         # The protocol whose interface pointer this handler requires its comm buffer to
         # be, or "". Some handlers compare the buffer they were given against the one
         # their DXE half published and return immediately if it differs, so a harness
