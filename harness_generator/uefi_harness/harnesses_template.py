@@ -2,7 +2,7 @@ from typing import List, Dict
 import copy
 import re
 from common.types import FunctionBlock, Argument, TypeTracker, FieldInfo, TypeInfo, EnumDef
-from common.utils import add_indents, remove_ref_symbols
+from common.utils import add_indents, remove_ref_symbols, is_address_name
 
 aliases_map = {}
 enum_map = {}
@@ -900,8 +900,16 @@ def size_limit_for(paired: str, all_args) -> str:
 # Width, Address, Count and Buffer != NULL and cannot check the capacity, because the PI
 # spec makes that the caller's duty -- the firmware is correct and the harness overran its
 # own allocation. On the 138-target sweep 43454245046 that was 12 reports of a severity 5
-# heap-buffer-overflow WRITE at CpuIo2Dxe.c:254-256, 6 of a read at 335-337, 3 more at 548,
-# and a #DE: the top of the severity table, all of it the harness.
+# heap-buffer-overflow WRITE at CpuIo2Dxe.c:254-256, 6 of a read at 335-337 and 3 more at
+# 548: the top of the severity table, all of it the harness.
+#
+# What this does NOT account for is the #DE an earlier version of this comment claimed.
+# EfiCpuIo2's crashes.csv holds no divide error at all -- nor does any other campaign's in
+# that sweep -- and the one "!!!! X64 Exception Type - 00(#DE - Divide Error)" in its
+# fuzz.txt is at CpuIo2Dxe.dll+0x5296, once in 224 iterations, while every site above is
+# between +0x32D and +0xA17. It never reached triage, a division by zero is not an
+# overflow, and nothing about counting a buffer in elements rather than bytes makes a
+# divisor non-zero. It is still open.
 #
 # Decided by name because the declaration is the only thing that says which unit the callee
 # will use. A BYTES/SIZE/LENGTH name is a byte count and keeps the byte bound; nothing is
@@ -1037,6 +1045,14 @@ def io_width_arg(all_args, before: str = '') -> str:
         # dimension is bounded as a dimension. the width that names a stride is an enum
         # typedef, and the generator records it as one
         if base in INTEGER_ARG_TYPES or not base.endswith(IO_WIDTH_TYPE_SUFFIX):
+            continue
+        # ...and one the harness actually declares a variable for. An argument the
+        # analysis collected nothing for is recorded OPTIONAL and spelled straight into
+        # the call as (EFI_PCI_IO_PROTOCOL_WIDTH){0}, so naming it in the bound emitted
+        # "'Read_Arg_1' undeclared" and EfiPciIo, EfiPciRootBridgeIo and EfiMmCpuIo
+        # produced no harness at all. The conservative stride is the right answer when
+        # the width is not a value the harness can read.
+        if not has_declared_variable(argument):
             continue
         if before and key in keys and keys.index(key) > keys.index(before):
             continue
@@ -1333,7 +1349,11 @@ def pointer_size_clamp(target: str,
     elif names_a_size(own_name) and (paired or takes_raw_buffer(arg_type_list)):
         # names_a_size is what keeps this arm off the raw buffer itself. The buffer is a
         # VOID * declared UINTN *, so without it "the call takes a raw buffer" clamped
-        # the first UINTN of the buffer's own contents -- see names_a_size.
+        # the first UINTN of the buffer's own contents -- see names_a_size. It is also
+        # what keeps it off a BUS ADDRESS handed over by pointer: unlike the by-value
+        # reader this one has no arm that bounds an integer merely because the call also
+        # carries a buffer, so an address needs no is_address_name arm of its own here.
+        # Widening this to "paired or takes_raw_buffer" would need one.
         output.append(f'{target} = {target} % ({size_limit_for(paired, all_args)} + 1);')
     return output
 
@@ -1379,6 +1399,14 @@ def fuzzable_args(function: str,
                         # dimension_span -- because this cap cannot state it
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({FIRNESS_DIMENSION_MAX} + 1);')
+                    elif is_address_name(own_name):
+                        # A bus address is not an offset into the buffer this call also
+                        # carries, and bounding it by that buffer put every EfiCpuIo2
+                        # access into the legacy I/O page -- see ADDRESS_NAME_SUFFIXES.
+                        # Said in the emitted C, because "no bound" is otherwise
+                        # indistinguishable from an arm that was never reached.
+                        output.append(f'// {own_name} is a bus address, not an offset '
+                                      f'into this call\'s buffer: left unbounded')
                     elif (element != '1'
                             and (counted or takes_raw_buffer(arg_type_list))):
                         # An element count is bounded in ELEMENTS: the bytes the harness
@@ -2365,10 +2393,16 @@ def harness_generator(services: Dict[str, FunctionBlock],
             template_block = services.get(function)
             declared_type = getattr(template_block, 'protocol_type', None)
             declared_guid = getattr(template_block, 'protocol_guid', None)
-            if first is not None:
+            # The GUID is stamped onto Arg_0 by name, matching the request file, so a
+            # member harnessed under a DERIVED name -- PciRead for the second signature of
+            # EFI_PCI_IO_PROTOCOL.Pci.Read -- was never given one and the harness emitted
+            # "LocateProtocol(&, NULL, ...)". The block records the guid for exactly this
+            # case; prefer the argument's own and fall back to it.
+            located_guid = (first[0].usage if first is not None else '') or declared_guid
+            if first is not None and located_guid:
                 protocol_variable = "ProtocolVariable"
                 output.append(f"    {first[0].arg_type} {protocol_variable} = NULL;")
-                output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{first[0].usage}, NULL, (VOID *)&{protocol_variable});')
+                output.append(f'    Status = SystemTable->BootServices->LocateProtocol(&{located_guid}, NULL, (VOID *)&{protocol_variable});')
                 output.append('    if (EFI_ERROR(Status)) {')
                 output.append('        return Status;')
                 output.append('    }')

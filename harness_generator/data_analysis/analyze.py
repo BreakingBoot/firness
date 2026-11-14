@@ -7,7 +7,7 @@ import math
 from collections import defaultdict, Counter
 from typing import List, Dict, Tuple, Set
 from common.types import FunctionBlock, FieldInfo, TypeInfo, TypeMap, EnumDef, Function, Argument, Macros, scalable_params, services_map, type_defs, known_contant_variables, ignore_constant_keywords, default_includes, default_libraries, include_prerequisites, unusable_includes
-from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block, edk2_typedef_for
+from common.utils import remove_ref_symbols, write_data, get_union, is_whitespace, contains_void_star, contains_usage, get_stripped_usage, is_fuzzable, get_intersect, print_function_block, edk2_typedef_for, is_address_name
 from common.generate_library_map import generate_libmap
 
 current_args_dict = defaultdict(list)
@@ -74,25 +74,102 @@ def load_include_deps(json_file: str) -> Dict[str, List[str]]:
         print(f'ERROR: {e}')
         return {}
 
-# Doesn't take into account if multiple function definitions are found with the same
-# name but different number of params
-def load_function_declares(json_file: str) -> Dict[str, Tuple[str, str]]:
+# A declaration is remembered under the protocol it belongs to as well as its own name.
+#
+# A UEFI protocol member's name is not unique and is not meant to be: Read, Write, Reset,
+# Configure, GetModeData and Poll are each declared by a dozen or more protocols. Keyed by
+# the bare name, one entry survives per name and it is whichever file the analyser read
+# last -- and that file belongs to whichever driver happened to be analysed, not to the
+# protocol being harnessed. EfiCpuIo2's own functions.json records nothing but
+# EFI_FILE_PROTOCOL's three-parameter Read and Write out of
+# OvmfPkg/VirtioFsDxe/VirtioFsDxe.h, so the declaration the generator consulted for
+# EFI_CPU_IO2_PROTOCOL.Read described (This, UINTN *BufferSize, void *Buffer) while the
+# member takes (This, Width, UINT64 Address, Count, Buffer).
+#
+# Measured over the 142 cached campaigns of runs 43454245046 and 43452927684: of 635
+# requested (protocol, member) pairs, 122 were answered by a declaration whose own first
+# parameter names a DIFFERENT protocol, carrying 364 (protocol, argument) positions of
+# declared types and parameter names. None of the 122 is an alias declared in the
+# requested GUID's own header, so refusing them loses no real declaration.
+#
+# The protocol comes from the declaration's own first parameter. A protocol member is
+# declared with the protocol as its `This`, arg0_struct() already strips that to a bare
+# struct tag, and harness_match() already decides what belongs to a requested GUID by
+# comparing that tag against the structs declared in the header that declares the GUID --
+# which this file twice calls the authoritative source, because the GUID's own name is
+# camel case and cannot say where an acronym ends. So the key is that same tag, normalized
+# the same way, and nothing new has to be trusted for it.
+#
+# A free function's first parameter names no protocol, which is why the lookups below go
+# through declarations_named()/declaration_for() rather than subscripting this map: a name
+# with one declaration still answers, and a name with several conflicting ones answers
+# nothing rather than answering with another function's parameter list.
+def declaration_key(function) -> Tuple[str, str]:
+    """(the protocol struct this declaration's first parameter names, the member name)."""
+    return (normalize_struct(arg0_struct(function)), function.function)
+
+
+def declaration_shape(function):
+    """What a declaration says about its parameters, for telling two of them apart."""
+    return tuple(sorted((key, (args[0].arg_type if args else ''),
+                         (args[0].param_name if args else ''))
+                        for key, args in (getattr(function, 'arguments', None) or {}).items()))
+
+
+def declarations_named(function_decl, function: str) -> List[Function]:
+    """Every declaration of `function`, whichever protocol declared it."""
+    return [value for (_struct, name), value in (function_decl or {}).items()
+            if name == function]
+
+
+def declaration_for(function_decl, function: str, protocol_name: str = ""):
+    """The declaration of `function` that belongs to `protocol_name`, or None.
+
+    None, not a guess. Taking a same-named declaration from another protocol is the defect
+    this is here to close, and an absent declaration is already a case every caller
+    handles -- the member is then built from the protocol's own typedef, which is the
+    authority anyway.
+    """
+    candidates = declarations_named(function_decl, function)
+    if not candidates:
+        return None
+    if protocol_name:
+        want = normalize_struct(protocol_name)
+        mine = [c for c in candidates if normalize_struct(arg0_struct(c)) == want]
+        if mine:
+            return mine[0]
+        # a declaration whose This is some OTHER protocol is not this member's, whatever
+        # else it agrees with
+        if any(normalize_struct(arg0_struct(c)).endswith('PROTOCOL') for c in candidates):
+            return None
+    if len(candidates) == 1:
+        return candidates[0]
+    # several declarations of a free function in different headers are routinely the same
+    # declaration twice; only a disagreement about the parameters is a reason to refuse
+    return candidates[0] if len({declaration_shape(c) for c in candidates}) == 1 else None
+
+
+def load_function_declares(json_file: str) -> Dict[Tuple[str, str], Function]:
     try:
         with open(json_file, 'r') as file:
             # a bare "null" is written when nothing was recorded
             raw_data = json.load(file) or []
 
-        function_dict = defaultdict(list)
+        function_dict = {}
         for raw_function in raw_data:
             # per entry, not around the loop, for the same reason as the generator loader
             try:
                 arguments = {
-                    arg_key: [Argument(**note_optional_info(raw_argument))] 
+                    arg_key: [Argument(**note_optional_info(raw_argument))]
                     for arg_key, raw_argument in (raw_function.get('Parameters') or {}).items()
                 }
                 function = Function(raw_function.get('Function'), arguments, raw_function.get('ReturnType'),
-                                    raw_function.get('Service'), raw_function.get('Includes'))
-                function_dict[function.function] = function
+                                    raw_function.get('Service'), raw_function.get('Includes'),
+                                    raw_function.get('File') or "")
+                # setdefault, not assignment: the same declaration is recorded once per
+                # file that includes it -- EfiCpuIo2's functions.json holds Read twice --
+                # and the first of a set of identical entries is as good as the last
+                function_dict.setdefault(declaration_key(function), function)
             except Exception as e:
                 print(f'ERROR: {e}')
 
@@ -346,6 +423,50 @@ def protocol_member_arity(header_path: str, protocol_name: str, member: str):
 
 
 
+ANON_TYPEDEF_STRUCT = re.compile(r'typedef\s+struct\s*\{')
+
+
+def anon_struct_body(source: str, struct_name: str):
+    """The body of `typedef struct { ... } <struct_name>;`, matched brace for brace.
+
+    Not a regular expression, because the pattern that was here --
+    `typedef\\s+struct\\s*\\{(.*?)\\n\\}\\s*\\w*?NAME\\s*;` -- is anchored at its END. A
+    non-greedy body is still leftmost-first, so when one header declares two anonymous
+    typedef structs the opening brace is taken from the FIRST of them and the body runs
+    from there all the way to the closing brace of the one that was asked for.
+
+    MdePkg/Include/Protocol/PciIo.h is the measured case. It declares
+    EFI_PCI_IO_PROTOCOL_ACCESS at line 189 and EFI_PCI_IO_PROTOCOL_CONFIG_ACCESS at 228,
+    both anonymous. Asked for the second, the old pattern answered with a blob that starts
+    inside the first, and the first field named `Read` in it is the ACCESS one -- so
+    EFI_PCI_IO_PROTOCOL.Pci.Read was typed EFI_PCI_IO_PROTOCOL_IO_MEM instead of
+    EFI_PCI_IO_PROTOCOL_CONFIG. Those two really do differ: CONFIG takes
+    (This, Width, UINT32 Offset, Count, Buffer) and IO_MEM takes
+    (This, Width, BarIndex, UINT64 Offset, Count, Buffer), six parameters against five.
+    The merged answer made all three paths look like one type, so the harness assigned
+    Pci.Read to a variable of the wrong function-pointer type and called it with one
+    argument too many.
+
+    Each candidate opening is scanned to its own matching close, so a nested brace inside
+    a body cannot end it and an earlier struct cannot lend its opening to a later name.
+    """
+    tail = re.compile(r'\}\s*\w*?' + re.escape(struct_name) + r'\s*;')
+    for opening in ANON_TYPEDEF_STRUCT.finditer(source):
+        at, depth = opening.end(), 1
+        while at < len(source) and depth:
+            if source[at] == '{':
+                depth += 1
+            elif source[at] == '}':
+                depth -= 1
+            at += 1
+        if depth:
+            continue
+        # at now sits one past the matching '}', which is where the name has to follow
+        if tail.match(source, at - 1):
+            return source[opening.end():at - 1]
+    return None
+
+
 # edk2 tags a protocol struct as _EFI_X_PROTOCOL, tdEFI_X_PROTOCOL or just EFI_X_PROTOCOL,
 # and sometimes leaves it anonymous with the name only on the closing brace
 def protocol_struct_body(source: str, protocol_name: str):
@@ -354,9 +475,7 @@ def protocol_struct_body(source: str, protocol_name: str):
     if match:
         return match.group(1)
     # the closing name carries the same optional tag prefix as the opening one
-    match = re.search(r'typedef\s+struct\s*\{(.*?)\n\}\s*\w*?' + re.escape(protocol_name) + r'\s*;',
-                      source, re.S)
-    return match.group(1) if match else None
+    return anon_struct_body(source, protocol_name)
 
 
 # The members are not always declared in the protocol's own body. EFI_CPU_IO2_PROTOCOL
@@ -428,13 +547,14 @@ def nested_member_paths(header_path: str, protocol_name: str, member: str) -> li
     return paths
 
 
-def protocol_member_return(header_path: str, protocol_name: str, member: str) -> str:
+def protocol_member_return(header_path: str, protocol_name: str, member: str,
+                           kind: str = "") -> str:
     try:
         with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
             source = handle.read()
     except OSError:
         return 'EFI_STATUS'
-    kind = protocol_member_kind(source, protocol_name, member)
+    kind = kind or protocol_member_kind(source, protocol_name, member)
     if not kind:
         return 'EFI_STATUS'
     # the return type can be a pointer -- DuplicateDevicePath is declared
@@ -452,8 +572,9 @@ def protocol_member_return(header_path: str, protocol_name: str, member: str) ->
     return re.sub(r'\s*\*', ' *', typed.group(1).strip()).strip()
 
 
-def protocol_member_signature(header_path: str, protocol_name: str, member: str):
-    raw = protocol_member_params(header_path, protocol_name, member)
+def protocol_member_signature(header_path: str, protocol_name: str, member: str,
+                              kind: str = ""):
+    raw = protocol_member_params(header_path, protocol_name, member, kind)
     if raw is None:
         return None
     parsed = []
@@ -540,13 +661,18 @@ def param_type(spec: str) -> str:
     return re.sub(r'\s*\*', ' *', text).strip()
 
 
-def protocol_member_params(header_path: str, protocol_name: str, member: str):
+def protocol_member_params(header_path: str, protocol_name: str, member: str,
+                           kind: str = ""):
     try:
         with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
             source = handle.read()
     except OSError:
         return None
-    kind = protocol_member_kind(source, protocol_name, member)
+    # A member reachable by more than one path is not always reachable by more than one
+    # SIGNATURE. EFI_PCI_IO_PROTOCOL reaches Read through Mem and Io as
+    # EFI_PCI_IO_PROTOCOL_IO_MEM and through Pci as EFI_PCI_IO_PROTOCOL_CONFIG, which
+    # takes one parameter fewer, so the caller has to be able to say which one it means.
+    kind = kind or protocol_member_kind(source, protocol_name, member)
     if not kind:
         return None
     signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(kind) +
@@ -664,7 +790,7 @@ def apply_declarations(data, harness_functions):
 def sort_data(input_data: Dict[str, List[FunctionBlock]],
               harness_functions: Dict[str, List[Tuple[str, str]]],
               best_guess: bool,
-              function_decl: Dict[str, Tuple[str, str]]) -> Dict[str, List[FunctionBlock]]:
+              function_decl: Dict[Tuple[str, str], Function]) -> Dict[str, List[FunctionBlock]]:
     
     filtered_data = defaultdict(list)
 
@@ -748,7 +874,14 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
                     filtered_data.setdefault(function, []).extend(function_blocks)
                 
     # loop through the filtered data and add the function_decl function if it is not already in the filtered_data
-    for function, candidates in function_decl.items():
+    # Grouped by name, because the match below is made per candidate: the map is keyed by
+    # (protocol, member) so that same-named members of different protocols no longer
+    # displace one another, and the "every declaration sharing this name is tried" loop
+    # further down is now given every one of them rather than whichever survived.
+    declares_by_name = defaultdict(list)
+    for (_struct, declared_name), declaration in function_decl.items():
+        declares_by_name[declared_name].append(declaration)
+    for function, candidates in declares_by_name.items():
         if function not in filtered_data.keys():
             # only a declaration the user actually asked for may become a target. this
             # used to append unconditionally, so when the analysis found no call sites
@@ -873,29 +1006,67 @@ def sort_data(input_data: Dict[str, List[FunctionBlock]],
             trimmed = cleanup_paths([header])
             if not trimmed or trimmed[0] in unusable_includes:
                 continue
-            params = protocol_member_signature(header, protocol_name, name)
-            # an empty list is a member declared (VOID) and still worth harnessing
-            if params is None:
-                continue
-            arguments = {}
-            for arg_key, arg_type, direction, declared_name in params:
-                is_self = (arg_key == 'Arg_0'
-                           and normalize_struct(remove_ref_symbols(arg_type))
-                           == normalize_struct(protocol_name))
-                arguments[arg_key] = [Argument(direction, arg_type, "", arg_type,
-                                               guid if is_self else "",
-                                               "__PROTOCOL__" if is_self else "",
-                                               param_name=declared_name)]
-            block = FunctionBlock(arguments, name, service, [header],
-                                  protocol_member_return(header, protocol_name, name))
-            block.protocol_type = f'{protocol_name} *'
-            block.protocol_guid = guid
-            paths = nested_member_paths(header, protocol_name, name)
-            if paths:
-                block.member_paths = paths
-            filtered_data[name].append(block)
-            all_includes.add(header)
-            synthesised += 1
+            # One harness per SIGNATURE, not per path. Paths that share a function-pointer
+            # typedef share an argument list, and the harness lets the input choose among
+            # them in a member switch -- that is EFI_CPU_IO2_PROTOCOL's Mem.Read and
+            # Io.Read. Paths whose typedefs differ cannot: EFI_PCI_IO_PROTOCOL.Pci.Read is
+            # EFI_PCI_IO_PROTOCOL_CONFIG with a UINT32 Offset and five parameters while
+            # Mem.Read and Io.Read are EFI_PCI_IO_PROTOCOL_IO_MEM with a BarIndex, a
+            # UINT64 Offset and six. One switch over the three would call a five-parameter
+            # function through a six-parameter pointer, and a cast would only hide that, so
+            # the second signature gets its own block -- named after the sub-structure that
+            # reaches it, because the harness function is named after the block. Without
+            # this the template's one-kind guard keeps the first signature and the other
+            # access path is simply never fuzzed.
+            all_paths = protocol_member_access(header_source(header),
+                                               protocol_name, name) or []
+            by_kind = {}
+            for path, kind in all_paths:
+                by_kind.setdefault(kind, []).append((path, kind))
+            # a member the protocol declares at its top level is reached by its own name,
+            # and a sub-structure that happens to declare the same name is a different
+            # member of a different struct -- the same rule nested_member_paths states
+            if any(path == name for path, _kind in all_paths):
+                by_kind = {kind: [(name, kind)]
+                           for path, kind in all_paths if path == name}
+            for index, (kind, kind_paths) in enumerate(by_kind.items()):
+                harness_name = name
+                if index:
+                    lead = kind_paths[0][0].split('.')[0]
+                    harness_name = f'{lead}{name}'
+                    if harness_name in filtered_data:
+                        continue
+                params = protocol_member_signature(header, protocol_name, name, kind)
+                # an empty list is a member declared (VOID) and still worth harnessing
+                if params is None:
+                    continue
+                arguments = {}
+                for arg_key, arg_type, direction, declared_name in params:
+                    is_self = (arg_key == 'Arg_0'
+                               and normalize_struct(remove_ref_symbols(arg_type))
+                               == normalize_struct(protocol_name))
+                    arguments[arg_key] = [Argument(direction, arg_type, "", arg_type,
+                                                   guid if is_self else "",
+                                                   "__PROTOCOL__" if is_self else "",
+                                                   param_name=declared_name)]
+                block = FunctionBlock(arguments, harness_name, service, [header],
+                                      protocol_member_return(header, protocol_name,
+                                                             name, kind))
+                block.protocol_type = f'{protocol_name} *'
+                block.protocol_guid = guid
+                paths = [entry for entry in kind_paths if entry[0] != name]
+                if paths:
+                    block.member_paths = paths
+                filtered_data[harness_name].append(block)
+                # here, not once per requested member: the header is only needed by the
+                # harness when a block was actually built from it, and adding it for a
+                # member that was skipped put headers into every campaign's include list,
+                # inf and dsc
+                all_includes.add(header)
+                synthesised += 1
+                if index:
+                    print(f'INFO: {protocol_name}.{kind_paths[0][0]} is {kind}, not '
+                          f'{list(by_kind)[0]}; harnessed separately as {harness_name}!!')
     if synthesised:
         print(f'INFO: {synthesised} protocol member(s) built from their header!!')
 
@@ -1071,7 +1242,7 @@ def load_data(json_file: str,
               macros: Dict[str, Macros],
               random: bool,
               best_guess: bool,
-              function_decl: Dict[str, Tuple[str, str]]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
+              function_decl: Dict[Tuple[str, str], Function]) -> Tuple[Dict[str, List[FunctionBlock]], Dict[str, FunctionBlock]]:
 
     with open(json_file, 'r') as file:
         # firness writes a bare "null" when it recorded no call sites, and the declaration
@@ -1125,7 +1296,15 @@ def load_data(json_file: str,
                 # "incompatible integer to pointer conversion" -- and no harness was built
                 # for that protocol at all.
                 template_argument = function_template[function].arguments.get(arg_key)[0]
-                declaration = function_decl.get(function)
+                # The declaration of THIS protocol's member. Asked for by the bare name,
+                # the answer was whichever same-named declaration the analyser read last:
+                # EfiCpuIo2's Read resolved to EFI_FILE_PROTOCOL's, and a declared type
+                # settles edk2_typedef_for's choice between two names for one raw C
+                # spelling outright, so a UINT16/CHAR16 call was decided by a parameter
+                # belonging to another protocol's member.
+                declaration = declaration_for(
+                    function_decl, function,
+                    guid_protocol_name.get(member_guid(function, harness_functions), ''))
                 declared_arguments = getattr(declaration, 'arguments', None) or {}
                 declared_type = (declared_arguments.get(arg_key) or [None])[0]
                 # Which EDK2 name is a choice, not a lookup: UINT16 and CHAR16 are both
@@ -1435,6 +1614,22 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                             # save the file that the protocol is defined in
                             all_includes.add(types.get(remove_ref_symbols(argument[0].arg_type), TypeInfo()).file)
                             usage_seen[function][arg_key].append(argument[0].usage)
+                    # A constant recorded for a BUS ADDRESS is a hardware address out of
+                    # the driver that was analysed, and the harness has no such device.
+                    # It is also where a bus sweep begins: EFI_CPU_IO2_PROTOCOL.Read's
+                    # Address came back __CONSTANT_UNKNOWN__ with an arm that assigns 0,
+                    # and the accessor walks Address upward by one stride per Count -- so
+                    # with Count bounded by the buffer, that arm alone drives ports
+                    # 0x0000-0x1000 through Io.Write whatever bound Address itself has.
+                    # EFI_MM_CPU_IO_PROTOCOL's recorded constants are the ICH9 CPU hotplug
+                    # registers by name, which is the same thing said out loud. Only a
+                    # scalar: an address passed by POINTER is a structure the callee fills
+                    # (EFI_MAC_ADDRESS *SrcAddr), and nothing here is about those.
+                    elif (is_address_name(argument[0].param_name)
+                            and argument[0].pointer_count == 0
+                            and "__CONSTANT" in argument[0].variable
+                            and "__CONSTANT_" != argument[0].variable):
+                        continue
                     # add all contant values, but only one if its a sizeof(UINTN)
                     elif ("__CONSTANT" in argument[0].variable and "__CONSTANT_" != argument[0].variable) and argument[0].usage not in usage_seen[function][arg_key]:
                         if "__CONSTANT_SIZEOF__" in argument[0].variable:
@@ -2394,10 +2589,14 @@ def analyze_data(macro_file: str,
     # the tree, so a harness that calls it fails with an implicit declaration. Protocol
     # members are reached through the protocol pointer and are declared by the protocol
     # struct itself, so they are kept whether or not a standalone declaration exists.
+    # The question here is only whether ANY header declares the name, so it is asked of
+    # every declaration of it rather than of a map key: function_declares is keyed by
+    # (protocol, member) now, and `name not in function_declares` against a tuple key is
+    # false for everything -- which would have dropped every directly-called function.
     undeclarable = [
         name for name, block in processed_data.items()
         if 'protocol' not in (getattr(block, 'service', '') or '').lower()
-        and name not in function_declares
+        and not declarations_named(function_declares, name)
     ]
     for name in undeclarable:
         print(f'INFO: dropping {name} -- called directly but declared in no includable header')

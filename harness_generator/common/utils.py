@@ -31,6 +31,39 @@ CHARACTER_DATA_TYPES = {
     'char': 'CHAR8',
 }
 
+# Suffixes of a parameter that names an address on a BUS rather than an index into the
+# caller's own memory.
+#
+# The blanket arm in harnesses_template reads "this call takes a raw buffer, so its
+# integer arguments are the sizes and offsets into it". That is true of a size and of an
+# offset and it is not true of an address: EFI_CPU_IO2_PROTOCOL.Read takes
+# (This, Width, Address, Count, Buffer), and bounding Address by the size of Buffer put
+# every access into 0x0000-0x1000 -- which, through the Io arm of that protocol, is the
+# legacy I/O page: the PIC at 0x20/0xA0, the PIT at 0x40-0x43, CMOS/RTC at 0x70/0x71 and
+# the keyboard controller at 0x60/0x64. The EfiCpuIo2 campaign of sweep 43454245046
+# managed 111 iterations of an 1800s budget, 0.065 exec/s, and reported nothing for its
+# last 27 minutes: it had wedged the guest it was fuzzing.
+#
+# "No bound" is what the generator already does with this same parameter everywhere else.
+# Across the 142 cached campaigns of runs 43454245046 and 43452927684 there are 62
+# address-named argument positions and only six carried the buffer bound -- Read and Write
+# of EFI_CPU_IO2_PROTOCOL, EFI_MM_CPU_IO_PROTOCOL and EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL, the
+# three raw-bus accessors. EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL.PollMem and .PollIo take the
+# same UINT64 Address, do not carry a raw buffer beside it, were never bounded, and that
+# campaign ran 2830 iterations: the unbounded form is the one with the evidence behind it.
+#
+# Shared with analyze.py, which asks the same question of a recorded constant, so it lives
+# here rather than beside DIMENSION_NAME_SUFFIXES in the template -- an address table in
+# the template would make the analysis import the harness writer.
+ADDRESS_NAME_SUFFIXES = ('ADDRESS', 'ADDR')
+
+
+def is_address_name(name: str) -> bool:
+    """Whether this parameter names a bus address rather than a size or an offset."""
+    if not name:
+        return False
+    return name.strip().upper().endswith(ADDRESS_NAME_SUFFIXES)
+
 
 def edk2_typedef_for(raw_type: str, declared_type: str = "", data_type: str = "") -> str:
     """The EDK2 name for a type the analyser recorded in raw C, or "" for anything else.
