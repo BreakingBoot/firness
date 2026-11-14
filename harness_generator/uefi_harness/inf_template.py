@@ -120,7 +120,15 @@ def gen_firness_inf(uuid: str,
 
     output.append("")
     output.append("[LibraryClasses]")
-    for lib in libraries.keys():
+    # sorted, not the order the mapping happens to have. The classes arrive from
+    # update_libs, which builds its answer by iterating a SET of strings, so two runs of
+    # identical code over identical inputs emitted the same lines in a different order and
+    # the .inf of a regenerated harness could not be compared with the one it replaced.
+    # The include list was fixed this way already (analyze_smi: "sorted, not list"); the
+    # .inf was missed, and so were the two guid sections below, which come from
+    # classify_guids' sets. The FILE_GUID is a uuid4 and genuinely differs per run; these
+    # three sections were the only other thing that moved.
+    for lib in sorted(libraries):
         if lib == "NULL":
             continue
         # A DXE_DRIVER's entry point comes from UefiDriverEntryPoint. Leaving the
@@ -137,12 +145,12 @@ def gen_firness_inf(uuid: str,
 
     output.append("")
     output.append("[Guids]")
-    for guid in driver_guids:
+    for guid in sorted(driver_guids or []):
         output.append(f'  {guid}')
 
     output.append("")
     output.append("[Protocols]")
-    for guid in protocol_guids:
+    for guid in sorted(protocol_guids or []):
         output.append(f'  {guid}')
 
     if dxe:

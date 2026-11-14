@@ -83,6 +83,23 @@ def end_device_path(variable: str) -> List[str]:
     return [f'FirnessMakeDevicePath ({variable}, {FIRNESS_BUFFER_BYTES});']
 
 
+def base_type_of(arg_type: str) -> str:
+    """The name of what this points at, with the stars and any CONST qualifier removed.
+
+    Argument.__init__ strips a lower case "const ", and EDK2 writes CONST in capitals, so
+    the qualifier arrives attached to the type: EFI_ACPI_SDT_PROTOCOL.GetOption declares
+    OUT CONST VOID **Data, and a base of "CONST VOID" matches none of the byte-buffer
+    tests below -- the answer falls through to sizeof(CONST VOID), which is sizeof of an
+    incomplete type and does not compile. Nothing had reached it while that argument's
+    size was the one kind of size nobody bounded.
+    """
+    base = remove_ref_symbols(arg_type or '').strip()
+    for qualifier in ('CONST ', 'const '):
+        while base.startswith(qualifier):
+            base = base[len(qualifier):].strip()
+    return base
+
+
 def allocation_bytes(arg_type: str, array_like: bool = False, span: int = 0) -> str:
     """How many bytes the harness gives a pointer argument, as the C it emits.
 
@@ -121,7 +138,7 @@ def allocation_bytes(arg_type: str, array_like: bool = False, span: int = 0) -> 
     # would answer four bytes and unmark the part of the path the fuzzer wrote.
     if is_device_path(arg_type):
         return str(FIRNESS_BUFFER_BYTES)
-    if base.strip().upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
+    if base_type_of(arg_type).upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
         return str(FIRNESS_BUFFER_BYTES)
     return f'sizeof({base})'
 
@@ -147,6 +164,10 @@ def generate_outputs(function: str,
         # an arg whose recorded usage is empty is indistinguishable from a normal one, and
         # cast_arg falls back to naming it, so it still needs its declaration here
         if "OUT" == arguments[0].arg_dir and not (arguments[0].variable == '__GEN_INPUT__' and arguments[0].usage):
+            # the key the arguments map is keyed by: arg_key carries the prefix of an
+            # unrolled struct argument a line later and no longer names anything in the
+            # map, which is what a size argument needs to find the buffer it describes
+            original_key = arg_key
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
             tmp.extend(declare_var(function, arg_key, arguments, arg_type_list, False, False, False, False))
@@ -157,6 +178,26 @@ def generate_outputs(function: str,
             tmp.append("{")
             if arguments[0].pointer_count > 0:
                 tmp.append(f"    ReadBytes(Input, sizeof(*{function}_{arg_key}), (VOID *){function}_{arg_key});")
+                # ...and bound it the way the input section bounds the IN and IN OUT ones.
+                # This section bounded nothing at all, and an OUT size is filled from the
+                # same input: eight fuzzed bytes make an OUT *BufferSize 2^64-1 against a
+                # buffer the harness allocated 4096 bytes for, so the callee is told to
+                # fill memory that does not exist. Nothing downstream clamps it -- the
+                # reallocation pass takes by-value sizes only -- so this is the only place
+                # the bound can come from.
+                #
+                # pointer_size_clamp states the bound once for both sections, and takes it
+                # from allocation_bytes through buffer_capacity rather than restating a
+                # constant. The type is the one declare_var just emitted, because the
+                # allocation follows the declaration: a VOID * is declared UINTN *.
+                declared_type = arguments[0].arg_type
+                for tracked in arg_type_list:
+                    if tracked.name == arg_key:
+                        declared_type = tracked.arg_type
+                        break
+                tmp.extend('    ' + line for line in pointer_size_clamp(
+                    f'*{function}_{arg_key}', arguments[0].param_name, all_args,
+                    arg_type_list, declared_type, function, prefix, original_key))
             else:
                 tmp.append(f"    ReadBytes(Input, sizeof({function}_{arg_key}), (VOID *)&{function}_{arg_key});")
             tmp.append("}") 
@@ -751,6 +792,23 @@ def buffer_for_size(size_name: str, all_args) -> str:
             name = (other[0].param_name or '').upper()
             if other[0].pointer_count == 0:
                 continue
+            # An argument that is itself a size or a count is never the buffer a size
+            # describes -- the rule buffer_for_count already states, and the one missing
+            # here. The candidate it reached first was the SIZE ITSELF whenever the size
+            # is handed over by pointer, because its own name begins with its own stem:
+            # "ADDRESSSIZE".startswith("ADDRESS"), so *AddressSize paired with
+            # *AddressSize and was bounded by sizeof its own pointee.
+            #
+            # That answer is a buffer nobody passed, and it hid the real pair. Measured
+            # over the 138 analyses of sweep 43454245046, it was 25 arguments, 8 of which
+            # had a buffer to find: SNP's Statistics got *StatisticsSize bounded at 4096
+            # against a table allocated as sizeof (EFI_NETWORK_STATISTICS) -- the exact
+            # 4KB overflow the StatisticsSize/StatisticsTable fallback below was added to
+            # close, still open because the self-match came first -- and PXE's UdpRead
+            # and UdpWrite missed HeaderPtr and BufferPtr the same way. The other 17 were
+            # already answering with their own allocation and stay where they were.
+            if name.endswith(SIZE_NAME_SUFFIXES) or name.endswith(COUNT_NAME_SUFFIXES):
+                continue
             if name == stem:
                 return other_key
             # SNP spells the pair StatisticsSize/StatisticsTable, so an exact stem match
@@ -822,7 +880,7 @@ def size_limit_for(paired: str, all_args) -> str:
     if not paired or not all_args or paired not in all_args:
         return str(FIRNESS_BUFFER_BYTES)
     paired_type = all_args[paired][0].arg_type
-    base = remove_ref_symbols(paired_type).strip().upper()
+    base = base_type_of(paired_type).upper()
     if is_string_pointer(paired_type):
         return f'({FIRNESS_STRING_CHARS} * sizeof({remove_ref_symbols(paired_type)}))'
     if base in ('VOID', 'UINT8', 'UINTN', 'CHAR8'):
@@ -880,6 +938,26 @@ BYTE_ELEMENT_TYPES = ('UINT8', 'INT8', 'CHAR8')
 # OptionList, both of which the stem "OPTION" prefixes, and the count counts the list --
 # the other is one option, not an array of them.
 COLLECTION_NAME_SUFFIXES = ('S', 'ES', 'LIST', 'ARRAY', 'BUFFER', 'TABLE', 'ENTRIES')
+
+
+def names_a_size(name: str) -> bool:
+    """Whether this argument's name says it is a size or a count OF something.
+
+    The declaration is the only thing that says so, which is why every decision in this
+    file about a size argument is made by name. This one exists because the blanket arm --
+    "the call takes a raw buffer, so its integers are sizes and offsets into it" -- is
+    true of the integers and not of the buffer, and a buffer handed over as VOID * is
+    declared UINTN *, so by the time that arm runs the two are the same shape.
+
+    EfiCpuIo2 is the measured case: Read_Arg_4 IS the VOID *Buffer, and the arm emitted
+    "*Read_Arg_4 = *Read_Arg_4 % (4096 + 1)" -- clamping the first UINTN of the buffer's
+    CONTENTS as though it were a length. Harmless and meaningless, and it costs the first
+    eight bytes of content diversity on every member that takes a raw buffer.
+    """
+    upper = (name or '').strip().upper()
+    if not upper:
+        return False
+    return upper.endswith(SIZE_NAME_SUFFIXES) or upper.endswith(COUNT_NAME_SUFFIXES)
 
 
 def counts_elements(name: str) -> bool:
@@ -1207,6 +1285,59 @@ def takes_raw_buffer(arg_type_list) -> bool:
     return False
 
 
+def pointer_size_clamp(target: str,
+                       own_name: str,
+                       all_args,
+                       arg_type_list: List[TypeTracker],
+                       declared_type: str,
+                       function: str = '',
+                       prefix: str = '',
+                       size_key: str = '') -> List[str]:
+    """The bound a size or a count handed over by POINTER gets, as the C it emits.
+
+    One statement of it, because two sections fill one of these from the input and both
+    have to say the same thing. The input section does the IN and IN OUT ones; the output
+    section does the OUT-only ones, and it had no bound at all -- eight fuzzed bytes made
+    an OUT *BufferSize 2^64-1 over a 4096 byte buffer, and nothing downstream clamps it.
+
+    `target` is the C expression for the value, so the caller decides whether that is
+    *Fuzz_Arg_3 or something else, and `declared_type` is the type declare_var emitted
+    rather than the parameter's own: a VOID * is declared UINTN *, and only a numeric
+    pointee can be bounded -- *p % N does not compile when p points at an EFI_GUID.
+
+    Returns the lines to emit, or nothing when this argument is not a size the harness
+    can bound. The arms, and the reasons they are in this order, are the ones
+    fuzzable_args has carried: a dimension is squared before it indexes the buffer, so it
+    cannot be bounded by a byte count; an element count is bounded in elements, which is
+    the allocation divided by the stride; and a byte size is bounded by the allocation of
+    the buffer it names.
+    """
+    pointee = remove_ref_symbols(declared_type).strip().upper()
+    if pointee not in INTEGER_ARG_TYPES:
+        return []
+    paired = buffer_for_size(own_name, all_args)
+    counted, element, how = buffer_and_element_for(own_name, all_args, function, prefix,
+                                                  size_key)
+    output = []
+    if is_dimension_name(own_name):
+        output.append(f'{target} = {target} % ({FIRNESS_DIMENSION_MAX} + 1);')
+    elif element != '1' and (counted or takes_raw_buffer(arg_type_list)):
+        if how == 'unknown':
+            output.append(f'// nothing in this call names the '
+                          f'stride of {own_name or "this count"}: bounded '
+                          f'by the widest stride a UEFI accessor steps '
+                          f'by, {FIRNESS_UNKNOWN_STRIDE} bytes')
+        capacity = (buffer_capacity(counted, all_args, arg_type_list, prefix)
+                    if counted else str(FIRNESS_BUFFER_BYTES))
+        output.append(f'{target} = {target} % ({element_limit(capacity, element)} + 1);')
+    elif names_a_size(own_name) and (paired or takes_raw_buffer(arg_type_list)):
+        # names_a_size is what keeps this arm off the raw buffer itself. The buffer is a
+        # VOID * declared UINTN *, so without it "the call takes a raw buffer" clamped
+        # the first UINTN of the buffer's own contents -- see names_a_size.
+        output.append(f'{target} = {target} % ({size_limit_for(paired, all_args)} + 1);')
+    return output
+
+
 def fuzzable_args(function: str,
                   arg: str, 
                   indent: bool,
@@ -1341,32 +1472,16 @@ def fuzzable_args(function: str,
                         bare = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
                         if bare in all_args:
                             own_name = all_args[bare][0].param_name
-                    paired = buffer_for_size(own_name, all_args)
                     size_key = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
-                    counted, element, how = buffer_and_element_for(
-                        own_name, all_args, function, prefix, size_key)
-                    # only a numeric pointee can be bounded: *p % N does not compile when p
-                    # points at EFI_GUID or EFI_DEVICE_PATH_PROTOCOL
-                    pointee = remove_ref_symbols(arg_type.arg_type).strip().upper()
-                    if is_dimension_name(own_name) and pointee in INTEGER_ARG_TYPES:
-                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
-                                      f'({FIRNESS_DIMENSION_MAX} + 1);')
-                    elif (element != '1' and pointee in INTEGER_ARG_TYPES
-                            and (counted or takes_raw_buffer(arg_type_list))):
-                        # the same bound as the by-value branch, in the same unit. One of
-                        # these two branches has been the unbounded one twice now
-                        if how == 'unknown':
-                            output.append(f'        // nothing in this call names the '
-                                          f'stride of {own_name or "this count"}: bounded '
-                                          f'by the widest stride a UEFI accessor steps '
-                                          f'by, {FIRNESS_UNKNOWN_STRIDE} bytes')
-                        capacity = (buffer_capacity(counted, all_args, arg_type_list, prefix)
-                                    if counted else str(FIRNESS_BUFFER_BYTES))
-                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
-                                      f'({element_limit(capacity, element)} + 1);')
-                    elif (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
-                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
-                                      f'({size_limit_for(paired, all_args)} + 1);')
+                    # the same bound as the by-value branch, in the same unit, and the
+                    # same bound the output section gives an OUT-only one. One of these
+                    # readers has been the unbounded one twice now, so there is one
+                    # statement of it and three callers
+                    clamp = pointer_size_clamp(f'*{function}_{arg}', own_name, all_args,
+                                               arg_type_list, arg_type.arg_type, function,
+                                               prefix, size_key)
+                    if clamp:
+                        output.extend('        ' + line for line in clamp)
                     elif is_device_path(arg_type.arg_type):
                         # the fill above overwrote the End node declare_var wrote, so the
                         # path the callee walks has Length 0 again

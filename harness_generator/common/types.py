@@ -258,9 +258,19 @@ class FieldInfo:
         self.type = type
 
 class TypeInfo:
-    def __init__(self, name: str = "", fields: List[FieldInfo] = [], file: str = ""):
+    # fields defaults to None, not []. A list in a default argument is created once, at
+    # definition time, and every default-constructed TypeInfo shared that one list --
+    # three places build one as a `.get` fallback to read "no fields" off, and a single
+    # append anywhere would have given a type the fields of another. Nothing appends to
+    # .fields today, so this never fired; TypeMap.__missing__ already passes an explicit
+    # [] for the same reason, which is a workaround for this line rather than a fix of it.
+    #
+    # An explicit list is still shared with the caller, deliberately: load_types builds
+    # fields_list and hands it over, and copying it here would quietly give two owners two
+    # answers if either ever did start appending.
+    def __init__(self, name: str = "", fields: List[FieldInfo] = None, file: str = ""):
         self.name = name
-        self.fields = fields
+        self.fields = fields if fields is not None else []
         self.file = file
 
 

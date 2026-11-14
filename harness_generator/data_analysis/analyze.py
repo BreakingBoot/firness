@@ -1166,7 +1166,8 @@ def load_data(json_file: str,
     return filtered_function_dict, function_template
 
 def load_generators(json_file: str,
-                    macros: Dict[str, Macros]) -> Dict[str, List[FunctionBlock]]:
+                    macros: Dict[str, Macros],
+                    generator_decl: Dict[str, Function] = None) -> Dict[str, List[FunctionBlock]]:
 
     if os.stat(json_file).st_size <= 4:
         print("WARNING: No generator functions were captured!!\n")
@@ -1183,6 +1184,33 @@ def load_generators(json_file: str,
             # not cover, and there is no handler here to absorb it
             for arg_key, raw_argument in (raw_function_block.get('Arguments') or {}).items()
         }
+        # Put the EDK2 name back on a type the call site recorded in raw C, exactly as
+        # load_data does for the functions under test -- this was the one loader that did
+        # not, and a generator argument is declared from the type it carries. FileExplorer-
+        # Lib's ChooseFile takes CHAR16 *FileType, every recorded call site passes the
+        # literal L".efi" and so records "unsigned short *", and the generated harness
+        # declared
+        #     unsigned short * ChooseFile_Arg_1 =
+        #         (unsigned short *)AllocateZeroPool(sizeof(unsigned short))
+        # It keeps its star, so it compiles and nothing fails: is_string_pointer answers
+        # no for "unsigned short *", so the string gets two bytes with no terminator and
+        # the callee walks it past the allocation. That is the silent form of the defect
+        # that stopped EdkiiVariableLock building at all.
+        #
+        # Which EDK2 name is a choice, not a lookup -- UINT16 and CHAR16 are both
+        # "unsigned short" -- so the declaration settles it where there is one, and the
+        # recorded data_type of "wchar_t *" where there is not.
+        declaration = (generator_decl or {}).get(raw_function_block.get('Function'))
+        declared_arguments = getattr(declaration, 'arguments', None) or {}
+        for arg_key, argument in arguments.items():
+            declared_type = (declared_arguments.get(arg_key) or [None])[0]
+            edk2_name = edk2_typedef_for(
+                argument[0].arg_type,
+                declared_type.arg_type if declared_type is not None else "",
+                argument[0].data_type)
+            if edk2_name:
+                argument[0].arg_type = argument[0].arg_type.replace(
+                    remove_ref_symbols(argument[0].arg_type), edk2_name)
         function_block = FunctionBlock(arguments, raw_function_block.get(
             'Function'), raw_function_block.get('Service'), raw_function_block.get('Include'), raw_function_block.get('ReturnType'))
         if function_block.service == "protocol":
@@ -2290,11 +2318,13 @@ def analyze_data(macro_file: str,
     global total_generators
     cast_map = load_castings(cast_file)
     enum_map = load_enums(enum_file)
-    generators = load_generators(generator_file, macros_val)
+    # before load_generators, which needs it: the declaration is what tells a recorded
+    # "unsigned short *" apart as a CHAR16 * rather than a UINT16 *
+    generator_declares = load_generator_declares(generator_decl)
+    generators = load_generators(generator_file, macros_val, generator_declares)
     harness_functions = load_functions(input_file)
     libmap = load_libmap(edk2_dir, os.path.join('/'.join(data_file.split("/")[:-1]), 'libmap.json'))
     function_declares = load_function_declares(functions)
-    generator_declares = load_generator_declares(generator_decl)
     include_deps = load_include_deps(include_deps_file)
     data, function_template = load_data(
         data_file, harness_functions, macros_val, random, best_guess, function_declares)
