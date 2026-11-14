@@ -83,7 +83,7 @@ def end_device_path(variable: str) -> List[str]:
     return [f'FirnessMakeDevicePath ({variable}, {FIRNESS_BUFFER_BYTES});']
 
 
-def allocation_bytes(arg_type: str, array_like: bool = False) -> str:
+def allocation_bytes(arg_type: str, array_like: bool = False, span: int = 0) -> str:
     """How many bytes the harness gives a pointer argument, as the C it emits.
 
     This is the one statement of how big these buffers are. It was two: the allocation
@@ -98,9 +98,18 @@ def allocation_bytes(arg_type: str, array_like: bool = False) -> str:
         # room for a string, not for one character
         return f'{FIRNESS_STRING_CHARS} * sizeof({base})'
     if array_like:
-        # the call carries dimensions, so the callee walks this pointer as an array.
-        # Over-allocating can never produce a false overflow; under-allocating always can
-        return str(FIRNESS_BUFFER_BYTES)
+        # the call carries dimensions or a count, so the callee walks this pointer as an
+        # array. Over-allocating can never produce a false overflow; under-allocating
+        # always can -- and a page is only enough while the element is small. `span` is how
+        # many elements the call's own bounds let it reach, so the allocation is whichever
+        # is larger, the page or that span. Both sides are compile-time constants and the
+        # compiler folds the comparison; a buffer with no element size to multiply (a VOID
+        # or byte buffer, where the span is counted in bytes already) keeps the page.
+        element = remove_ref_symbols(arg_type).strip()
+        if not span or element.upper() in ('VOID', 'UINT8', 'UINTN', 'CHAR8', ''):
+            return str(FIRNESS_BUFFER_BYTES)
+        reach = f'{span} * sizeof({element})'
+        return f'({FIRNESS_BUFFER_BYTES} > {reach} ? {FIRNESS_BUFFER_BYTES} : {reach})'
     # A raw buffer gets a page whichever direction it is. declare_var only page-sized
     # the OUT half, so an IN VOID*/UINT8* got sizeof(base) -- 8 bytes, or 1 -- while its
     # size argument was still bounded to FIRNESS_BUFFER_BYTES, telling the callee to
@@ -117,9 +126,9 @@ def allocation_bytes(arg_type: str, array_like: bool = False) -> str:
     return f'sizeof({base})'
 
 
-def set_undefined_constants(arg_type: str, array_like: bool = False) -> str:
+def set_undefined_constants(arg_type: str, array_like: bool = False, span: int = 0) -> str:
     if has_pointer(arg_type):
-        return f'({arg_type})AllocateZeroPool({allocation_bytes(arg_type, array_like)})'
+        return f'({arg_type})AllocateZeroPool({allocation_bytes(arg_type, array_like, span)})'
     elif "bool" in arg_type.lower():
         return "FALSE"
     else:
@@ -376,7 +385,8 @@ def call_function(function: str,
     registered = 0
     # the same thing declare_var is told, so the extent below is the allocation that
     # declaration made and not a second opinion about it
-    array_like = has_dimension_arg(function_block.arguments)
+    span = (dimension_span(function_block.arguments)
+            if has_dimension_arg(function_block.arguments) else 0)
     for arg_key, arguments in function_block.arguments.items():
         if registered >= 4:
             break
@@ -385,6 +395,9 @@ def call_function(function: str,
                 and has_declared_variable(argument)
                 and not is_function_pointer(argument.arg_type)):
             name = f'{prefix}_{arg_key}' if prefix else arg_key
+            # the same thing declare_var is told about THIS argument, so the extent below
+            # is the allocation that declaration made and not a second opinion about it
+            array_like = walks_as_array(function_block.arguments, arg_key)
             # The buffer's real extent, not the blanket constant. A paired size resizes
             # the allocation -- DoubleFetch's buffer is reallocated to its SharedSize,
             # which can be one byte -- and registering 4096 of it declares memory past
@@ -396,6 +409,15 @@ def call_function(function: str,
                 if other[0].pointer_count == 0 and \
                         buffer_for_size(other[0].param_name,
                                         function_block.arguments) == arg_key:
+                    # A count of elements wider than a byte is not an extent in bytes, and
+                    # the buffer is not reallocated to it: registering AddressCount would
+                    # hand the sanitizer sixteen bytes of a page the fuzzer filled, and
+                    # registering count * stride would describe an allocation that was
+                    # never made. The allocation is the extent for these.
+                    if buffer_and_element_for(other[0].param_name,
+                                              function_block.arguments,
+                                              size_key=other_key)[1] != '1':
+                        break
                     paired_size = f'{function}_{prefix}_{other_key}' if prefix \
                         else f'{function}_{other_key}'
                     break
@@ -413,7 +435,7 @@ def call_function(function: str,
                     declared_type = tracked.arg_type
                     break
             extent = (paired_size if paired_size
-                      else allocation_bytes(declared_type, array_like))
+                      else allocation_bytes(declared_type, array_like, span))
             output.append(f'FirnessUntrusted({function}_{name}, {extent});')
             registered += 1
     output.append("FirnessSanitizer(TRUE);")
@@ -502,7 +524,8 @@ def declare_var(function: str,
                 fuzzable: bool,
                 isStruct: bool,
                 random,
-                array_like: bool = False) -> List[str]:
+                array_like: bool = False,
+                span: int = 0) -> List[str]:
     output = []
     if arguments[0].pointer_count > 2:
         arg_type = add_ptrs(arguments[0].arg_type, arguments[0].pointer_count-1) if "void" in arguments[0].arg_type.lower() else arguments[0].arg_type
@@ -543,7 +566,8 @@ def declare_var(function: str,
         raw_buffer = ('void' in arguments[0].arg_type.lower()
                       or base.strip().upper() in ('UINT8', 'UINTN', 'CHAR8')
                       or array_like)
-        allocation = (str(FIRNESS_BUFFER_BYTES) if raw_buffer else f'sizeof({base})')
+        allocation = (allocation_bytes(arg_type, True, span) if raw_buffer
+                      else f'sizeof({base})')
         output.append(f'{arg_type} {function}_{arg_key} = ({arg_type})AllocateZeroPool({allocation});')
     elif arguments[0].pointer_count == 0:
         # a struct passed by value has no pointer to allocate and cannot be assigned 0.
@@ -552,7 +576,7 @@ def declare_var(function: str,
         # EFI_80211_MAC_ADDRESS. {0} initialises a scalar just as well as an aggregate.
         output.append(f'{arg_type} {function}_{arg_key} = {{0}};')
     else:
-        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type, array_like)};")
+        output.append(f"{arg_type} {function}_{arg_key} = {set_undefined_constants(arg_type, array_like, span)};")
         # if fuzzable :
         #     # output.append(f'{arg_type} {function}_{arg_key} = NULL;')
             
@@ -580,6 +604,29 @@ DIMENSION_NAME_SUFFIXES = ('WIDTH', 'HEIGHT', 'DELTA', 'ROWS', 'COLUMNS', 'PIXEL
 # bounded by the buffer size the way a byte count is: 16 * 16 * 16 == FIRNESS_BUFFER_BYTES
 FIRNESS_DIMENSION_MAX = 16
 
+# Dimensions multiply into a count of ELEMENTS, and the element can be bigger than the
+# constant above assumes. 16 x 16 pixels of EFI_GRAPHICS_OUTPUT_BLT_PIXEL is 1024 bytes and
+# fits in a page; 16 x 16 of a 32 byte element is 8192 and does not, and the overrun would
+# be the harness asking for it. The two dimensions are bounded by the constant, so the
+# allocation is what has to carry the element size: a dimensioned buffer gets whichever is
+# larger, a page or the span the dimensions can actually reach. Over-allocating can never
+# produce a false overflow, and under-allocating always can.
+#
+# The span is the constant doubled when the call also carries coordinates, because
+# DestinationY + Height indexes the buffer, not Height alone -- and squared rather than
+# raised to the number of dimensions, because DELTA is a byte stride rather than a third
+# dimension: the bytes a Blt touches are Height * max(Delta, Width * sizeof(element)), and
+# with Delta bounded by the same constant the Width term dominates for any element at all.
+FIRNESS_DIMENSION_SLOTS = 2
+
+
+def dimension_span(all_args) -> int:
+    """How far the dimensions of this call can reach into the buffer, in elements."""
+    span = FIRNESS_DIMENSION_MAX
+    if any(is_coordinate_name((args[0].param_name or '')) for args in (all_args or {}).values()):
+        span *= 2
+    return span ** FIRNESS_DIMENSION_SLOTS
+
 
 # Width and Height bound the extent, but the coordinates offset where that extent starts,
 # and for the buffer side of a Blt they index the harness's allocation just as directly. A
@@ -605,15 +652,23 @@ def is_optional_arg(arg, all_args, prefix: str = "") -> bool:
     return bool(entry and getattr(entry[0], 'is_optional', False))
 
 
+def is_coordinate_name(name: str) -> bool:
+    """Whether this argument offsets where an extent starts rather than sizing it."""
+    if not name:
+        return False
+    upper = name.strip().upper()
+    # only SourceX/DestinationY and friends, never anything that merely ends in x -- Index
+    # would otherwise qualify
+    return upper.startswith(COORDINATE_PREFIXES) and upper.endswith(('X', 'Y'))
+
+
 def is_dimension_name(name: str) -> bool:
     if not name:
         return False
     upper = name.strip().upper()
     if upper.endswith(DIMENSION_NAME_SUFFIXES):
         return True
-    # only SourceX/DestinationY and friends, never anything that merely ends in x -- Index
-    # would otherwise qualify
-    return upper.startswith(COORDINATE_PREFIXES) and upper.endswith(('X', 'Y'))
+    return is_coordinate_name(upper)
 
 
 def has_dimension_arg(all_args) -> bool:
@@ -775,6 +830,309 @@ def size_limit_for(paired: str, all_args) -> str:
     return f'sizeof({remove_ref_symbols(paired_type)})'
 
 
+# Suffixes of a size argument that counts ELEMENTS of the buffer it describes rather than
+# bytes of it. The two cannot share a bound, and they did: every size argument was bounded
+# by the buffer's size in BYTES, so an element count of N told the callee to walk N strides
+# -- N * sizeof(element) bytes -- through an allocation of N.
+#
+# EFI_CPU_IO2_PROTOCOL.Mem.Read is the measured case. The harness allocated 4096 bytes for
+# its VOID *Buffer and bounded Count at 4096, and CpuIo2Dxe advances the buffer by
+# mOutStride[Width] per step: with EfiCpuIoWidthUint64 that is eight bytes a step, so a
+# Count the harness called legal wrote 32768 bytes into 4096. CpuIoCheckParameter validates
+# Width, Address, Count and Buffer != NULL and cannot check the capacity, because the PI
+# spec makes that the caller's duty -- the firmware is correct and the harness overran its
+# own allocation. On the 138-target sweep 43454245046 that was 12 reports of a severity 5
+# heap-buffer-overflow WRITE at CpuIo2Dxe.c:254-256, 6 of a read at 335-337, 3 more at 548,
+# and a #DE: the top of the severity table, all of it the harness.
+#
+# Decided by name because the declaration is the only thing that says which unit the callee
+# will use. A BYTES/SIZE/LENGTH name is a byte count and keeps the byte bound; nothing is
+# read into this set that is not a count, so a name this does not recognise is treated as
+# bytes, which is what it was before.
+COUNT_NAME_SUFFIXES = ('COUNT', 'ENTRIES', 'ELEMENTS', 'ITEMS')
+
+# A count whose stride nothing in the call names. Eight bytes is the widest stride a UEFI
+# accessor steps by (UINT64, and the Uint64 arm of every PI width enum), so bounding the
+# count by capacity / 8 cannot ask for an overflow whatever the real element turns out to
+# be. It costs coverage on a narrower element and that is the right way round: a bound that
+# is too small costs coverage, a bound that is too large manufactures a severity 5.
+FIRNESS_UNKNOWN_STRIDE = 8
+
+# The PI I/O width enums -- EFI_CPU_IO_PROTOCOL_WIDTH, EFI_PCI_IO_PROTOCOL_WIDTH,
+# EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH, EFI_MM_IO_WIDTH, EFI_SMM_IO_WIDTH. Every one of
+# them orders its enumerators Uint8, Uint16, Uint32, Uint64 inside each class, which is why
+# the drivers themselves index their stride tables with `Width & 0x03` and why the low two
+# bits are the log2 of the stride. CpuIo2Dxe.c does exactly that twice, once to validate
+# and once to walk:
+#
+#     OperationWidth = (EFI_CPU_IO_PROTOCOL_WIDTH)(Width & 0x03);
+#     for (Uint8Buffer = Buffer; Count > 0; ... Uint8Buffer += OutStride, Count--)
+#
+# so the stride is 1 << (Width & 0x03) for the Uint and Fifo classes and 0 for Fill, and
+# the shift is the conservative answer for all three.
+IO_WIDTH_TYPE_SUFFIX = '_WIDTH'
+
+
+BYTE_ELEMENT_TYPES = ('UINT8', 'INT8', 'CHAR8')
+
+# Names of the collection a count counts, for the fallback that picks between several
+# candidates. EFI_DHCP6_PROTOCOL.InfoRequest takes OptionCount with OptionRequest AND
+# OptionList, both of which the stem "OPTION" prefixes, and the count counts the list --
+# the other is one option, not an array of them.
+COLLECTION_NAME_SUFFIXES = ('S', 'ES', 'LIST', 'ARRAY', 'BUFFER', 'TABLE', 'ENTRIES')
+
+
+def counts_elements(name: str) -> bool:
+    """Whether this size argument counts elements of its buffer rather than bytes."""
+    upper = (name or '').strip().upper()
+    if not upper:
+        return False
+    # a byte count wins, however it is spelled: NumberOfBytes ends with BYTES and
+    # PayloadBufferSize with SIZE, and both are already bounded in the right unit
+    if upper.endswith(('BYTES', 'SIZE', 'LENGTH', 'LEN')):
+        return False
+    return upper.endswith(COUNT_NAME_SUFFIXES)
+
+
+def buffer_for_count(size_name: str, all_args) -> str:
+    """The arg_key of the buffer an ELEMENT count counts, among several candidates.
+
+    buffer_for_size answers the first argument whose name the stem prefixes, which is the
+    right answer for a byte size and is a coin toss for a count: InfoRequest's OptionCount
+    landed on OptionRequest, one option, rather than on OptionList, the array of them, and
+    the element size came out of the wrong type. An exact stem match still wins, then the
+    name that says it is a collection, and only then the first prefix.
+
+    An argument that is itself a size or a count is never the buffer. ARP's Find declares
+    EntryLength beside EntryCount and nothing else shares the stem, so the count was
+    paired with the out-parameter holding the other number and bounded by sizeof (UINT32).
+    """
+    upper = (size_name or '').strip().upper()
+    for suffix in COUNT_NAME_SUFFIXES:
+        if not upper.endswith(suffix) or len(upper) == len(suffix):
+            continue
+        stem = upper[:-len(suffix)]
+        exact = collection = prefixed = ''
+        for other_key, other in (all_args or {}).items():
+            name = (other[0].param_name or '').upper()
+            if other[0].pointer_count == 0 or is_function_pointer(other[0].arg_type):
+                continue
+            if name.endswith(SIZE_NAME_SUFFIXES) or name.endswith(COUNT_NAME_SUFFIXES):
+                continue
+            if name == stem:
+                exact = exact or other_key
+            elif name.startswith(stem):
+                if not collection and name[len(stem):].endswith(COLLECTION_NAME_SUFFIXES):
+                    collection = other_key
+                prefixed = prefixed or other_key
+        if exact or collection or prefixed:
+            return exact or collection or prefixed
+    return ''
+
+
+def pointee_type(arg_type: str) -> str:
+    """The type one element of this buffer has: the declared type less one star."""
+    text = (arg_type or '').strip()
+    if not text.endswith('*'):
+        return ''
+    return text[:-1].strip()
+
+
+def io_width_arg(all_args, before: str = '') -> str:
+    """The arg_key of the sibling width enum that names this count's stride, if any.
+
+    `before` is the count's own key: the bound is emitted where the count is initialised,
+    so a width initialised after it would still be zero there. The declarations all come
+    first, so reading it either way compiles; reading it early would read {0}, give a
+    stride of one and quietly restore the byte bound. Answering nothing instead sends the
+    caller to the conservative stride, which is bounded rather than quiet.
+    """
+    if not all_args:
+        return ''
+    keys = list(all_args.keys())
+    for key, arguments in all_args.items():
+        argument = arguments[0]
+        if argument.pointer_count != 0:
+            continue
+        base = remove_ref_symbols(argument.arg_type).strip().upper()
+        # an enum, not an integer: a UINTN named Width is a graphics dimension, and a
+        # dimension is bounded as a dimension. the width that names a stride is an enum
+        # typedef, and the generator records it as one
+        if base in INTEGER_ARG_TYPES or not base.endswith(IO_WIDTH_TYPE_SUFFIX):
+            continue
+        if before and key in keys and keys.index(key) > keys.index(before):
+            continue
+        return key
+    return ''
+
+
+def element_size_for(size_name: str, paired: str, all_args, function: str = '',
+                     prefix: str = '', size_key: str = ''):
+    """How many bytes one unit of this size argument advances, as the C it emits.
+
+    Returns (expression, how it was decided). The expression is '1' for a byte count,
+    which is what every size argument used to get, so the bound and the reallocation it
+    feeds come out byte for byte identical for those.
+
+    The element is read off the PARAMETER's type, not the one declare_var emitted. A VOID *
+    is declared UINTN * because the fuzzer has to read into something, and that says
+    nothing about the stride the callee will use -- taking UINTN from it would answer
+    eight for CPU I/O 2 by luck and one for a UINT8 accessor by the same luck.
+    """
+    if not counts_elements(size_name):
+        return '1', 'bytes'
+    width = io_width_arg(all_args, before=size_key)
+    if width:
+        name = f'{function}_{prefix}_{width}' if prefix else f'{function}_{width}'
+        return f'(1 << ({name} & 0x03))', 'runtime'
+    if paired and all_args and paired in all_args:
+        element = pointee_type(all_args[paired][0].arg_type)
+        base = remove_ref_symbols(element).strip().upper()
+        # a count of bytes, whatever its name: an array of UINT8 advances one byte a step,
+        # so the bound, the reallocation and the extent are all what they were for a size
+        if base in BYTE_ELEMENT_TYPES and not has_pointer(element):
+            return '1', 'bytes'
+        if element and base and base != 'VOID':
+            return f'sizeof({element})', 'static'
+    return str(FIRNESS_UNKNOWN_STRIDE), 'unknown'
+
+
+def element_limit(capacity: str, element: str) -> str:
+    """The bound a size argument gets, in its own unit: elements of its buffer.
+
+    capacity is the buffer's allocation in bytes. One byte per element divides by one, so
+    a byte count keeps the bound it had and the emitted C does not move.
+    """
+    if element == '1':
+        return capacity
+    # a capacity that is itself a product -- a string's 32 * sizeof(CHAR8) -- divides
+    # correctly by left association and reads as though it might not
+    if not capacity.startswith('(') and any(op in capacity for op in (' * ', ' + ', ' - ')):
+        capacity = f'({capacity})'
+    return f'({capacity} / {element})'
+
+
+def buffer_capacity(paired: str, all_args, arg_type_list=None, prefix: str = '') -> str:
+    """The bytes the harness gave this buffer, as the C it emits.
+
+    allocation_bytes, not size_limit_for: an element count is bounded by what was really
+    allocated, and for a buffer the call counts the elements of that is now an array of a
+    page rather than one element. size_limit_for answers sizeof(EFI_IPv6_ADDRESS) for
+    Decline's Addresses, which was true when the allocation was one address and is a
+    needless bound of one element now that it is a page of them.
+
+    The type is the one declare_var emitted, because the allocation follows the
+    declaration: a VOID * is declared UINTN *.
+    """
+    if not paired or not all_args or paired not in all_args:
+        return str(FIRNESS_BUFFER_BYTES)
+    declared_type = all_args[paired][0].arg_type
+    for tracked in (arg_type_list or []):
+        if tracked.name == paired or (prefix and tracked.name == f'{prefix}_{paired}'):
+            declared_type = tracked.arg_type
+            break
+    span = dimension_span(all_args) if has_dimension_arg(all_args) else 0
+    return allocation_bytes(declared_type, walks_as_array(all_args, paired), span)
+
+
+def sole_buffer_arg(all_args) -> str:
+    """The arg_key of the one buffer of this call, when there is exactly one.
+
+    A count does not have to be spelled after its buffer. CPU I/O 2 takes (Width, Address,
+    Count, Buffer), and buffer_for_size pairs by stem, so "Count" -- whose stem is empty --
+    paired with nothing and fell through to the blanket byte bound against the very buffer
+    it counts. With one buffer in the call there is no ambiguity about which pointer an
+    element count counts; with more than one there is, so this answers nothing and the
+    count is bounded by the conservative stride instead.
+
+    The protocol instance and a handle are not buffers: they are spelled straight into the
+    call and the harness allocates nothing for them.
+
+    A count handed over by pointer IS counted as a candidate, deliberately. EBC_VM_TEST
+    _EXECUTE takes (VM_CONTEXT *VmPtr, IN OUT UINTN *InstructionCount), and the count
+    counts EBC instructions the VM runs, not VM_CONTEXTs -- it describes no buffer in the
+    call at all. Two candidates means "cannot say", which is the right answer there, and
+    excluding the count would make VmPtr the sole one and bound an instruction count by
+    sizeof (VM_CONTEXT). Where a call really does spell (Buffer, UINTN *Count) this costs
+    the element bound and takes the conservative stride instead, which is the cheap way
+    round.
+    """
+    if not all_args:
+        return ''
+    found = ''
+    for key, arguments in all_args.items():
+        argument = arguments[0]
+        if argument.pointer_count < 1 or is_function_pointer(argument.arg_type):
+            continue
+        if argument.variable in ('__PROTOCOL__', '__HANDLE__'):
+            continue
+        if is_opaque_handle(argument.arg_type):
+            continue
+        if found:
+            return ''
+        found = key
+    return found
+
+
+def buffer_and_element_for(size_name: str, all_args, function: str = '',
+                           prefix: str = '', size_key: str = ''):
+    """(buffer this size names, one element's size in C, how it was decided).
+
+    One entry point, because four places decide this and they have to agree: the bound in
+    the by-value branch, the bound in the by-pointer branch, the reallocation, and the
+    extent the call registers. The first two disagreed once already.
+    """
+    paired = buffer_for_size(size_name, all_args)
+    if counts_elements(size_name):
+        # NOT buffer_for_size's answer as a fallback: for ARP's EntryCount that is
+        # EntryLength, the other out-parameter, and pairing a count with a number gives a
+        # bound of one element and an element size that means nothing
+        paired = buffer_for_count(size_name, all_args) or sole_buffer_arg(all_args)
+    element, how = element_size_for(size_name, paired, all_args, function, prefix,
+                                    size_key)
+    return paired, element, how
+
+
+def counted_buffers(all_args) -> set:
+    """The buffers this call states an element count of, so the callee walks an array.
+
+    Dimensions were the only way the generator knew a pointer was an array. An element
+    count says it just as plainly, and the buffer it counts was being allocated as one
+    element: EFI_DHCP6_PROTOCOL.Decline takes (AddressCount, EFI_IPv6_ADDRESS *Addresses)
+    and the addresses got sizeof (EFI_IPv6_ADDRESS) -- sixteen bytes, one address -- with
+    AddressCount bounded at sixteen, so sixteen addresses were read out of room for one.
+    Allocating the array is what buys the count back: a page holds 256 of them.
+
+    Only the buffer the count names, not every pointer of the call: a page for an argument
+    nothing counts registers 4096 untrusted bytes where the fuzzer filled sizeof(*p).
+
+    Only a stride of more than one byte, too. A count of UINT8 elements is a byte count
+    under another name, and those keep the bound, the reallocation and the extent they
+    already had.
+    """
+    counted = set()
+    for key, arguments in (all_args or {}).items():
+        argument = arguments[0]
+        # by value or by pointer: UEFI spells a good half of these as IN OUT UINTN *Count
+        # beside the buffer, and the buffer is an array of elements either way
+        if argument.pointer_count > 1 or not counts_elements(argument.param_name):
+            continue
+        if remove_ref_symbols(argument.arg_type).strip().upper() not in INTEGER_ARG_TYPES:
+            continue
+        paired, element, _how = buffer_and_element_for(argument.param_name, all_args,
+                                                       size_key=key)
+        if paired and element != '1':
+            counted.add(paired)
+    return counted
+
+
+def walks_as_array(all_args, arg_key: str = '') -> bool:
+    """Whether the callee walks this pointer as an array of elements it was told to."""
+    if has_dimension_arg(all_args):
+        return True
+    return bool(arg_key) and arg_key in counted_buffers(all_args)
+
+
 # Types that are a pointer wearing an opaque name. Filling one from the input produces a
 # wild pointer and nothing else: the firmware can NULL check it and then has to
 # dereference, so every value except NULL and a real one is a #GP with no bug behind it.
@@ -880,11 +1238,38 @@ def fuzzable_args(function: str,
                         if bare in all_args:
                             own_name = all_args[bare][0].param_name
                     paired = buffer_for_size(own_name, all_args)
+                    size_key = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
+                    counted, element, how = buffer_and_element_for(
+                        own_name, all_args, function, prefix, size_key)
                     if is_dimension_name(own_name):
                         # bounding a dimension by the buffer size would still allow
-                        # Width * Height to run far past it, so cap the dimension itself
+                        # Width * Height to run far past it, so cap the dimension itself.
+                        # The element size is carried by the allocation instead -- see
+                        # dimension_span -- because this cap cannot state it
                         output.append(f'{function}_{arg} = {function}_{arg} % '
                                       f'({FIRNESS_DIMENSION_MAX} + 1);')
+                    elif (element != '1'
+                            and (counted or takes_raw_buffer(arg_type_list))):
+                        # An element count is bounded in ELEMENTS: the bytes the harness
+                        # allocated divided by the stride the callee will advance by. The
+                        # byte bound below told CpuIo2Dxe to walk 4096 strides of up to
+                        # eight bytes through 4096 bytes.
+                        #
+                        # The buffer is NOT reallocated to it, which is why the bound has
+                        # to be right. A reallocation would have to be count * stride, and
+                        # the fill that comes after it writes sizeof(*Buffer) bytes into
+                        # whatever is left -- eight, into an allocation that a count of
+                        # one makes one byte long. The allocation stays at its full size
+                        # and the count is what is bounded.
+                        if how == 'unknown':
+                            output.append(f'// nothing in this call names the stride of '
+                                          f'{own_name or "this count"}: bounded by the '
+                                          f'widest stride a UEFI accessor steps by, '
+                                          f'{FIRNESS_UNKNOWN_STRIDE} bytes')
+                        capacity = (buffer_capacity(counted, all_args, arg_type_list, prefix)
+                                    if counted else str(FIRNESS_BUFFER_BYTES))
+                        output.append(f'{function}_{arg} = {function}_{arg} % '
+                                      f'({element_limit(capacity, element)} + 1);')
                     elif paired:
                         # bound it by the allocation of the buffer it names, so the size the
                         # callee is given actually describes the memory it is handed
@@ -957,12 +1342,28 @@ def fuzzable_args(function: str,
                         if bare in all_args:
                             own_name = all_args[bare][0].param_name
                     paired = buffer_for_size(own_name, all_args)
+                    size_key = arg[len(prefix) + 1:] if prefix and arg.startswith(prefix) else arg
+                    counted, element, how = buffer_and_element_for(
+                        own_name, all_args, function, prefix, size_key)
                     # only a numeric pointee can be bounded: *p % N does not compile when p
                     # points at EFI_GUID or EFI_DEVICE_PATH_PROTOCOL
                     pointee = remove_ref_symbols(arg_type.arg_type).strip().upper()
                     if is_dimension_name(own_name) and pointee in INTEGER_ARG_TYPES:
                         output.append(f'        *{function}_{arg} = *{function}_{arg} % '
                                       f'({FIRNESS_DIMENSION_MAX} + 1);')
+                    elif (element != '1' and pointee in INTEGER_ARG_TYPES
+                            and (counted or takes_raw_buffer(arg_type_list))):
+                        # the same bound as the by-value branch, in the same unit. One of
+                        # these two branches has been the unbounded one twice now
+                        if how == 'unknown':
+                            output.append(f'        // nothing in this call names the '
+                                          f'stride of {own_name or "this count"}: bounded '
+                                          f'by the widest stride a UEFI accessor steps '
+                                          f'by, {FIRNESS_UNKNOWN_STRIDE} bytes')
+                        capacity = (buffer_capacity(counted, all_args, arg_type_list, prefix)
+                                    if counted else str(FIRNESS_BUFFER_BYTES))
+                        output.append(f'        *{function}_{arg} = *{function}_{arg} % '
+                                      f'({element_limit(capacity, element)} + 1);')
                     elif (paired or takes_raw_buffer(arg_type_list)) and pointee in INTEGER_ARG_TYPES:
                         output.append(f'        *{function}_{arg} = *{function}_{arg} % '
                                       f'({size_limit_for(paired, all_args)} + 1);')
@@ -1080,6 +1481,12 @@ def resize_paired_buffers(function_block, arg_type_list, declares, prefix: str =
             continue
         if is_dimension_name(arguments[0].param_name):
             continue
+        # ...and a count of elements wider than a byte is not a byte count either.
+        # Reallocating to it would leave the buffer a stride too short per element, which
+        # is the same overflow the byte bound asked for, moved into the allocation
+        if buffer_and_element_for(arguments[0].param_name, all_args,
+                                  size_key=arg_key)[1] != '1':
+            continue
         output.extend(resize_paired_buffer(function, paired, arg, all_args,
                                            arg_type_list, prefix))
     if output:
@@ -1118,10 +1525,16 @@ def generate_inputs(function_block: FunctionBlock,
                 and not arguments[0].variable == "__PROTOCOL__"
                 and not is_function_pointer(arguments[0].arg_type)):
             is_struct = remove_ref_symbols(arguments[0].arg_type) in types.keys() or aliases_map.get(remove_ref_symbols(arguments[0].arg_type), "") in types.keys()
+            # the key the arguments map is keyed by, which is what names a buffer to the
+            # size argument that counts its elements. arg_key carries the prefix of an
+            # unrolled struct a moment later and no longer matches anything in the map
+            original_key = arg_key
             if prefix != "":
                 arg_key = f'{prefix}_{arg_key}'
             tmp.extend(declare_var(function_block.function, arg_key, arguments, arg_type_list, False, arguments[0].variable == "__FUZZABLE__", is_struct, random,
-                                   has_dimension_arg(function_block.arguments)))
+                                   walks_as_array(function_block.arguments, original_key),
+                                   dimension_span(function_block.arguments)
+                                   if has_dimension_arg(function_block.arguments) else 0))
 
     if len(tmp) > 0:
         output.append("/*")
