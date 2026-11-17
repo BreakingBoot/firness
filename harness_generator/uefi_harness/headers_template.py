@@ -83,7 +83,17 @@ def harness_header(functions: List[str],
     # NULL is normal here: an OPTIONAL argument the fuzzer chose to pass as NULL has no
     # buffer to declare, and registering a zero base would make the whole first page
     # untrusted.
-    output.append('static inline VOID FirnessUntrusted(VOID *Buffer, UINTN Size)')
+    # CONST VOID *, not VOID *. The helper records a base and a length and never writes
+    # through the pointer, and a const-qualified pointer argument is ordinary:
+    # EFI_PCD_PROTOCOL.GetNextTokenSpace takes CONST EFI_GUID **, so the harness declares
+    # "CONST EFI_GUID * GetNextTokenSpace_Arg_0" and registering it discarded the
+    # qualifier. Under the production CLANGSAN toolchain that is
+    # -Werror,-Wincompatible-pointer-types-discards-qualifiers and the module does not
+    # build: EfiPcd and Pcd failed to compile on all four upstream refs of sweep
+    # 43704163314, identically, at FirnessHarnesses.c:966 and :1468. Fixed on the
+    # declaration rather than with a (VOID *) at the call site, because a cast there also
+    # silences a genuinely wrong argument type, and the extent beside it is computed.
+    output.append('static inline VOID FirnessUntrusted(CONST VOID *Buffer, UINTN Size)')
     output.append('{')
     output.append('    if ((Buffer != NULL) && (AsanRegisterUntrusted != NULL)) {')
     output.append('        AsanRegisterUntrusted((UINT64)(UINTN)Buffer, (UINT64)Size);')

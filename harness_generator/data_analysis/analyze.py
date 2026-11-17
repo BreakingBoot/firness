@@ -245,7 +245,16 @@ GUID_DECL = re.compile(r'extern\s+EFI_GUID\s+(g\w+)\s*;')
 #
 # The declarations are in the headers this pass already reads, so read them here.
 FUNC_TYPEDEF = re.compile(r'\(\s*EFIAPI\s*\*\s*(\w+)\s*\)\s*\(([^;]*?)\)\s*;', re.S)
-STRUCT_MEMBER = re.compile(r'^\s*(\w+)\s+(\w+)\s*;\s*$', re.M)
+# the trailing comment is part of the member line. edk2 documents a struct member with
+# `///< ...` or `// ...` after the semicolon, and anchored straight at end-of-line this
+# pattern saw no members at all in a struct whose members are ALL documented that way --
+# so the guid got no optional_params entry and every pointer argument of every one of its
+# members went back to having a NULL arm, which is the contract break this map exists to
+# stop. Measured over the 356 protocol headers of edk2-master: 20 function-pointer
+# members in 3 headers, SwapAddressRange.h (6), IpSec.h (Process) and
+# EfiShellEnvironment2.h (13). The first two are exactly the protocols
+# scripts/gen_protocol_inputs.py now emits a request file for.
+STRUCT_MEMBER = re.compile(r'^\s*(\w+)\s+(\w+)\s*;\s*(?://[^\n]*|/\*.*)?$', re.M)
 # guid -> {member function name: {parameter name: accepts NULL}}
 optional_params = {}
 
@@ -299,6 +308,9 @@ def build_guid_struct_map(edk2_dir: str):
     if guid_struct_map or not edk2_dir or not os.path.isdir(edk2_dir):
         return
     for package in sorted(os.listdir(edk2_dir)):
+        # what an angle-bracket include in any of those headers is resolved against
+        if os.path.isdir(os.path.join(edk2_dir, package, 'Include')):
+            include_roots.add(os.path.join(edk2_dir, package, 'Include'))
         for section in ('Protocol', 'Guid', 'Ppi'):
             root = os.path.join(edk2_dir, package, 'Include', section)
             if not os.path.isdir(root):
@@ -521,6 +533,9 @@ def protocol_member_kind(source: str, protocol_name: str, member: str, depth: in
 
 
 _header_source = {}
+# (protocol, member, typedef) already reported unresolvable, so the warning below is said
+# once rather than once per read
+_unresolved_member_kinds = set()
 
 
 def header_source(header_path: str) -> str:
@@ -531,6 +546,62 @@ def header_source(header_path: str) -> str:
         except OSError:
             _header_source[header_path] = ''
     return _header_source[header_path]
+
+
+# A protocol header names its members' function-pointer typedefs but does not always
+# DECLARE them. The second revision of a protocol includes the first and re-uses its
+# typedefs: FormBrowserEx2.h writes "REGISTER_EXIT_HANDLER RegiserExitHandler;" while
+# <Protocol/FormBrowserEx.h> is where REGISTER_EXIT_HANDLER is declared. Both readers
+# below searched the member's own header text and nothing else, and failed two different
+# ways. protocol_member_params returned None, so the member was dropped with
+# "WARNING: <name> was not able to be harnessed!!" -- 3 of EdkiiFormBrowserEx2's 6
+# members (SetScope, RegisterHotKey, RegiserExitHandler) and all 3 of
+# EdkiiSmmVarCheck's, whose campaign then resolved no target at all and exited 1.
+# protocol_member_return returned its EFI_STATUS default and said NOTHING, so
+# RegiserExitHandler -- declared VOID -- had its result assigned to Status.
+#
+# INCLUDE_DEPTH is 2 for the measured reason scripts/gen_protocol_inputs.py uses 2: every
+# typedef the hole hid sits in a header the protocol header includes DIRECTLY, and the
+# second hop is there for a shared typedef reached through an intermediate. The closure
+# keeps growing past that without buying anything, and every extra header read is another
+# chance to match a same-named typedef from somewhere unrelated.
+INCLUDE_DEPTH = 2
+INCLUDE_RE = re.compile(r'^[ \t]*#[ \t]*include[ \t]*[<"]([^>"]+)[>"]', re.M)
+# <package>/Include, for resolving an angle-bracket include. Filled while the guid map is
+# built, because that walk already has the tree root in hand.
+include_roots = set()
+
+
+def _declaring_source(header_path: str, source: str, kind: str,
+                      depth: int = INCLUDE_DEPTH, seen=None) -> str:
+    """`source`, or the text of the header that really declares typedef `kind`.
+
+    Falls back to `source` when nothing in scope declares it, so a caller that cannot
+    resolve a typedef behaves exactly as it did before this existed.
+    """
+    declares = re.compile(r'\(\s*EFIAPI\s*\*\s*' + re.escape(kind) + r'\s*\)')
+    if not kind or declares.search(source) or depth <= 0:
+        return source
+    seen = seen if seen is not None else {os.path.realpath(header_path)}
+    for spelled in INCLUDE_RE.findall(source):
+        # the including header's own directory first, which is what a quoted include
+        # means, then the Include roots an angle-bracket include is resolved against
+        for root in [os.path.dirname(header_path)] + sorted(include_roots):
+            candidate = os.path.join(root, spelled.replace('\\', '/'))
+            if not os.path.isfile(candidate):
+                continue
+            real = os.path.realpath(candidate)
+            # the include guards make a pair of headers that include each other legal and
+            # common, so a header already on this walk ends it rather than spending depth
+            if real in seen:
+                break
+            seen.add(real)
+            found = _declaring_source(candidate, header_source(candidate), kind,
+                                      depth - 1, seen)
+            if declares.search(found):
+                return found
+            break
+    return source
 
 
 def nested_member_paths(header_path: str, protocol_name: str, member: str) -> list:
@@ -549,10 +620,8 @@ def nested_member_paths(header_path: str, protocol_name: str, member: str) -> li
 
 def protocol_member_return(header_path: str, protocol_name: str, member: str,
                            kind: str = "") -> str:
-    try:
-        with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
-            source = handle.read()
-    except OSError:
+    source = header_source(header_path)
+    if not source:
         return 'EFI_STATUS'
     kind = kind or protocol_member_kind(source, protocol_name, member)
     if not kind:
@@ -566,8 +635,16 @@ def protocol_member_return(header_path: str, protocol_name: str, member: str,
     # looked like it returned EFI_STATUS and the harness assigned a pointer to Status
     typed = re.search(r'typedef\s+((?:[A-Za-z_]\w*\s+)*[A-Za-z_]\w*(?:\s*\*)*)\s*'
                       r'\(\s*EFIAPI\s*\*\s*'
-                      + re.escape(kind) + r'\s*\)', source)
+                      + re.escape(kind) + r'\s*\)',
+                      _declaring_source(header_path, source, kind))
+    # EFI_STATUS is a guess, and it used to be a silent one: a member declared VOID had
+    # its result assigned to Status and nothing said the typedef had not been found. Said
+    # once per member so that a header read for every requested member cannot storm.
     if not typed:
+        if (protocol_name, member, kind) not in _unresolved_member_kinds:
+            _unresolved_member_kinds.add((protocol_name, member, kind))
+            print(f'WARNING: {protocol_name}.{member} is {kind}, which no header in '
+                  f'scope declares; assuming it returns EFI_STATUS!!')
         return 'EFI_STATUS'
     return re.sub(r'\s*\*', ' *', typed.group(1).strip()).strip()
 
@@ -663,10 +740,8 @@ def param_type(spec: str) -> str:
 
 def protocol_member_params(header_path: str, protocol_name: str, member: str,
                            kind: str = ""):
-    try:
-        with open(header_path, 'r', encoding='utf-8', errors='ignore') as handle:
-            source = handle.read()
-    except OSError:
+    source = header_source(header_path)
+    if not source:
         return None
     # A member reachable by more than one path is not always reachable by more than one
     # SIGNATURE. EFI_PCI_IO_PROTOCOL reaches Read through Mem and Io as
@@ -676,7 +751,8 @@ def protocol_member_params(header_path: str, protocol_name: str, member: str,
     if not kind:
         return None
     signature = re.search(r'\(\s*EFIAPI\s*\*\s*' + re.escape(kind) +
-                          r'\s*\)\s*\((.*?)\)\s*;', source, re.S)
+                          r'\s*\)\s*\((.*?)\)\s*;',
+                          _declaring_source(header_path, source, kind), re.S)
     if not signature:
         return None
     params = signature.group(1).strip()
@@ -1560,6 +1636,29 @@ def find_enum(argument: Argument, enums: Dict[str, EnumDef]) -> str:
     return argument.usage
 
 
+def enum_type_name(arg_type: str, enums: Dict[str, EnumDef],
+                   aliases: Dict[str, str], macros: Dict[str, Macros]) -> str:
+    """The enums.json entry an argument's OWN type names, or ''.
+
+    Exact match, where find_enum() above tests `arg_type in enum_name` as a substring.
+    A substring test cannot be used to decide whether a type IS an enum: it answers
+    EFI_IO_WIDTH for an argument typed EFI_MM_IO_WIDTH, and that enum's enumerators are
+    not the ones this parameter accepts.
+    """
+    seen = set()
+    for candidate in (remove_ref_symbols(arg_type),
+                      remove_ref_symbols(get_underlying_type(arg_type, aliases, macros))):
+        name = (candidate or '').strip().upper()
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        for enum_name, enum_values in enums.items():
+            if enum_name.upper() == name:
+                all_includes.add(enum_values.file)
+                return enum_name
+    return ''
+
+
 #
 # Filters out any arguments that are not IN and CONSTANT values, but making sure
 # to not keep duplicates
@@ -1674,6 +1773,43 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
                                 # current_args_dict[function].append(arg_key)
                                 usage_seen[function][arg_key].append(
                                     get_stripped_usage(argument_value, macros, aliases))
+                    # An enum-typed argument no call site taught us anything about. A
+                    # member built from the protocol header has no call site by
+                    # definition, and the block synthesised for it leaves `variable`
+                    # empty, so none of the branches above claims it: an enum typedef is
+                    # not in scalable_params either, so get_directly_fuzzable passes too
+                    # and handle_optional_arguments ends up spelling it straight into the
+                    # call as (EFI_PCI_IO_PROTOCOL_WIDTH){0} -- a value the fuzzer never
+                    # chooses. That is EFI_PCI_IO_PROTOCOL.PollIo, PollMem and CopyMem,
+                    # whose Width is the one argument that decides which accessor and
+                    # which stride the callee uses, and it also sends io_width_arg() to
+                    # the conservative 8-byte stride because there is no variable to read.
+                    # The enum is in enums.json; nothing was asking it for this type.
+                    # Last in the chain, after the potential-outputs arm and not before
+                    # it, so an argument any earlier branch recognises is still
+                    # classified exactly as it was: an enum argument with more than one
+                    # recorded output gets an arm per output, as it did.
+                    #
+                    # The guard is "no marker of the generator's own", not "no variable
+                    # at all". Every marker is spelled __NAME__; anything else is a name
+                    # read off a C declaration or a call site, which says where the value
+                    # came from and nothing about what the value may be. PollIo is the
+                    # measured difference: the same protocol, the same typedef and the
+                    # same Width as PollMem, but its block was built from a declaration,
+                    # so variable holds the parameter name "Width" where PollMem's is
+                    # empty -- and an emptiness test fixed PollMem and left PollIo
+                    # spelling (EFI_PCI_IO_PROTOCOL_WIDTH){0} into the call.
+                    elif (argument[0].pointer_count == 0
+                            and not argument[0].variable.startswith('__')
+                            and usage_seen[function][arg_key] == []
+                            and enum_type_name(argument[0].arg_type, enums,
+                                               aliases, macros)):
+                        argument[0].variable = "__ENUM_ARG__"
+                        argument[0].usage = enum_type_name(argument[0].arg_type, enums,
+                                                           aliases, macros)
+                        pre_processed_data[function].arguments.setdefault(
+                            arg_key, []).append(argument[0])
+                        usage_seen[function][arg_key].append(argument[0].usage)
                     # elif not contains_usage(argument[0].usage, usage_seen[function][arg_key], macros, aliases):
                     #     pre_processed_data[function].arguments.setdefault(
                     #         arg_key, []).append(argument[0])
@@ -1687,8 +1823,13 @@ def collect_known_constants(input_data: Dict[str, List[FunctionBlock]],
     for function, function_block in pre_processed_data.items():
         for arg_key, argument in function_block.arguments.items():
             if len(argument) < 3 and (argument[0].variable != "__ENUM_ARG__" and argument[0].variable != "__PROTOCOL__" and argument[0].variable != "__HANDLE__" and argument[0].variable != "__GUID__"):
-                for arg in argument:
-                    argument.remove(arg)
+                # clear(), not "for arg in argument: argument.remove(arg)". Removing from
+                # the list being iterated skips alternate elements: a 1-entry list came
+                # out empty by luck and a 2-entry list was left with ONE constant arm
+                # standing, which is an argument pinned to a single recorded value where
+                # the rule says there is not enough evidence to pin it at all and the
+                # later passes should fuzz it.
+                argument.clear()
                 # current_args_dict[function].remove(arg_key)
     return pre_processed_data, matched_macros, protocol_guids, driver_guids
 
