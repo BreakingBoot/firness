@@ -810,6 +810,25 @@ _SW_DEFINE = r'^[ \t]*#[ \t]*define[ \t]+{name}[ \t]+(.+?)[ \t]*(?:/\*|//|$)'
 SW_VALUE_MIN = 1
 SW_VALUE_MAX = 0xFF
 
+#
+# Why a registration has no command byte. One sentence per cause, because the two causes
+# want opposite things from the reader: the first is upstream edk2 working as designed and
+# there is nothing to do about it, the second is two drivers this tree cannot both address
+# under one name. These are the two reasons scripts/discover_smi.py reports beside the
+# request file, and they have to be reported here as well -- that pass guards the request
+# FILE, and this one is what puts a byte in the harness. A handler the request file refuses
+# is still in the union this pass takes, so a clash the request file dropped arrives here
+# with nothing said about it unless this pass finds it too.
+#
+SW_RUNTIME_REASON = ('its registration asks the dispatcher for the next free command byte '
+                     '({spelling}) instead of naming one, so no static pass can say which '
+                     'byte addresses it and the DiscoveredSwSmi target leaves it out '
+                     'rather than guessing')
+SW_CLASH_REASON = ('two registrations claim this handler name for different command bytes '
+                   '-- {spelling} at {where} and {other_spelling} at {other} -- so either '
+                   'byte would be written against the other registration\'s handler, and '
+                   'neither is written. Port 0x{port:02X} is shared with the platform')
+
 
 def _sw_unwrap(expr: str) -> str:
     """An initialiser with its casts and wrapping parentheses taken off."""
@@ -884,22 +903,29 @@ def _sw_constant(expr: str, text: str, index=None):
     return None
 
 
-def sw_smi_commands(edk2_dir: str) -> Tuple[Dict[str, dict], Dict[str, str]]:
-    """Every software SMI registration in the tree: the ones with an address and the rest.
+def sw_smi_registrations(edk2_dir: str) -> List[tuple]:
+    """Every software SMI registration in the tree, one entry per CALL SITE.
 
-    Returns ({handler: {value, file, spelling}}, {handler: why it has no address}). The
-    second half is why this exists at all beside discover_smi.py: a handler whose command
-    byte the dispatcher picks at run time IS reachable on this channel, and reporting it as
-    though no channel reached it is the same mistake the comm-buffer reason was making.
+    A sorted list of (handler, where, spelling, value), value None for a registration this
+    pass cannot resolve to a byte the dispatcher would accept. A list rather than a dict
+    keyed by handler name, and that is the whole point: a handler name is not unique across
+    an edk2 tree. SecurityPkg registers PhysicalPresenceCallback from both
+    Tcg/Tcg2Smm/Tcg2Smm.c and Tcg/TcgSmm/TcgSmm.c, and MemoryClearCallback from both as
+    well, so a name-keyed walk keeps whichever of the pair os.walk reached first and cannot
+    see that the other one exists -- which is the whole of how a clashing name got a byte.
+
+    Sorted, and the walk sorted with it, for the reason scripts/discover_smi.py sorts: the
+    citation that ends up in the generated harness beside the command byte must not depend
+    on the order a filesystem hands directories back.
     """
     import re as _re
     register = _re.compile(_SW_REGISTER)
     assign = _re.compile(_SW_VALUE)
-    found, stuck = {}, {}
+    sites = []
     index = None
     for base, dirs, files in os.walk(edk2_dir or '.'):
-        dirs[:] = [d for d in dirs if d not in ('.git', 'Build', 'BaseTools')]
-        for entry in files:
+        dirs[:] = sorted(d for d in dirs if d not in ('.git', 'Build', 'BaseTools'))
+        for entry in sorted(files):
             if not entry.endswith('.c'):
                 continue
             path = os.path.join(base, entry)
@@ -928,12 +954,52 @@ def sw_smi_commands(edk2_dir: str) -> Tuple[Dict[str, dict], Dict[str, str]]:
                     if index is None:
                         index = _sw_define_index(edk2_dir)
                     value = _sw_constant(source.group(2), text, index)
-                if value is None or not SW_VALUE_MIN <= value <= SW_VALUE_MAX:
-                    stuck.setdefault(handler, spelling)
-                    continue
+                if value is not None and not SW_VALUE_MIN <= value <= SW_VALUE_MAX:
+                    value = None
                 line = text.count('\n', 0, source.start()) + 1
-                found.setdefault(handler, {'value': value, 'file': f'{path}:{line}',
-                                           'spelling': spelling})
+                sites.append((handler, f'{path}:{line}', spelling, value))
+    return sorted(sites, key=lambda site: site[:3])
+
+
+def sw_smi_commands(edk2_dir: str) -> Tuple[Dict[str, dict], Dict[str, str]]:
+    """Every software SMI registration in the tree: the ones with an address and the rest.
+
+    Returns ({handler: {value, file, spelling}}, {handler: why it has no address}). The
+    second half is why this exists at all beside discover_smi.py: a handler whose command
+    byte the dispatcher picks at run time IS reachable on this channel, and reporting it as
+    though no channel reached it is the same mistake the comm-buffer reason was making.
+
+    By handler name, because that is what a target and a harness address a handler by,
+    which leaves one case to decide rather than drop: two registrations claiming one name
+    for two DIFFERENT command bytes. Either byte would be written against the other
+    registration's handler, so neither is written and the name is reported unaddressable.
+    This is the same rule scripts/discover_smi.py applies to the request file, and it has
+    to be applied here too rather than inherited from there: the request file simply has no
+    line for a name that pass refused, and analyze_sw_smi() takes the union of the file and
+    this scan, so a name missing from the file is one this scan puts back. Keyed by name
+    with a setdefault and no clash test, this pass emitted 0x55 for a fixture whose two
+    registrations claim 0x70 and 0x55 -- a byte aimed at a handler other than the one the
+    harness is named after, on a port where 0x04 is ICH9_APM_CNT_CPU_HOTPLUG and 0x00 is
+    what OVMF's own SmmControl2 Trigger writes.
+    """
+    found, stuck = {}, {}
+    clash = {}
+    for handler, where, spelling, value in sw_smi_registrations(edk2_dir):
+        if value is None:
+            stuck.setdefault(handler, SW_RUNTIME_REASON.format(spelling=spelling))
+            continue
+        if handler in found and found[handler]['value'] != value:
+            clash.setdefault(handler, (where, spelling))
+            continue
+        found.setdefault(handler, {'value': value, 'file': where, 'spelling': spelling})
+    for handler, (where, spelling) in clash.items():
+        first = found.pop(handler)
+        # Assigned, not setdefault: a name with a run-time registration as well as two
+        # clashing constants is unaddressable for the clash, and sending the reader to look
+        # for a (UINTN)-1 is sending them to the wrong file.
+        stuck[handler] = SW_CLASH_REASON.format(
+            spelling=first['spelling'], where=first['file'],
+            other_spelling=spelling, other=where, port=SW_COMMAND_PORT)
     for handler in found:
         stuck.pop(handler, None)
     return found, stuck
@@ -1037,8 +1103,8 @@ def _sw_smi_reason(name: str, sw_commands) -> str:
     """Why a comm-buffer run leaves a software SMI handler alone, naming what does reach it.
 
     sw_commands is the pair sw_smi_commands() returns: the handlers with a statically
-    resolvable command byte, and the ones whose byte the dispatcher picks at registration
-    time. Both are reachable on the port channel and only the first is addressable, which
+    resolvable command byte, and the ones with none, each carrying the reason it has none.
+    Both halves are reachable on the port channel and only the first is addressable, which
     is a different sentence from either "unharnessable" or "harnessed".
     """
     found, stuck = (sw_commands or ({}, {}))
@@ -1051,11 +1117,12 @@ def _sw_smi_reason(name: str, sw_commands) -> str:
                 f'0x{SW_COMMAND_PORT:02X}. This target fills comm buffers and cannot '
                 f'raise it')
     if name in (stuck or {}):
-        return (f'reached by the software SMI port channel, not by a comm buffer, but its '
-                f'registration asks the dispatcher for the next free command byte '
-                f'({stuck[name]}) instead of naming one, so no static pass can say which '
-                f'byte addresses it and the DiscoveredSwSmi target leaves it out rather '
-                f'than guessing')
+        # The reason comes from the pass that decided it, not from a second sentence
+        # written here. There are two causes now and they send the reader to different
+        # files: a run-time assignment is upstream edk2 working as designed, and a clash is
+        # two of this tree's own drivers claiming one name.
+        return (f'reached by the software SMI port channel, not by a comm buffer, but '
+                f'{stuck[name]}')
     return ''
 
 
@@ -1375,6 +1442,24 @@ def analyze_sw_smi(discovered_values: Dict[str, dict],
     for name in sorted(set(discovered_values or {}) | set(discovered or ()) | set(found)):
         asked = (discovered_values or {}).get(name)
         seen = found.get(name)
+        #
+        # A name the tree scan refuses is refused, whatever any file says about it. The
+        # union above is what makes this load-bearing rather than defensive: a name with no
+        # addressable byte has no line in the request file by construction, so if a line
+        # for one ever appears -- a file carried over from another tree, a file written by
+        # a discovery that predates the clash rule, a file edited by hand -- `asked` is the
+        # only thing left and `seen or asked` would hand it to the harness. The tree is the
+        # authority on both sides of the disagreement, not just where it has an answer.
+        #
+        if name in stuck:
+            if asked:
+                print(f'INFO: sw smi handler {name} -- the request file says '
+                      f'0x{int(asked["value"]):02X} and the tree says no byte addresses '
+                      f'it: {stuck[name]}; using the tree, so it is not a target')
+            else:
+                print(f'INFO: sw smi handler {name} -- {stuck[name]}, so it is not a '
+                      f'target')
+            continue
         if asked and seen and int(asked['value']) != int(seen['value']):
             print(f'INFO: sw smi handler {name} -- the request file says '
                   f'0x{int(asked["value"]):02X} and the tree says '
@@ -1382,13 +1467,8 @@ def analyze_sw_smi(discovered_values: Dict[str, dict],
             asked = None
         info = seen or asked
         if not info:
-            if name in stuck:
-                print(f'INFO: sw smi handler {name} is registered for {stuck[name]}, a '
-                      f'value the dispatcher picks at registration time -- no command '
-                      f'byte addresses it statically, so it is not a target')
-            else:
-                print(f'INFO: sw smi handler {name} has no registered command byte in '
-                      f'this tree -- not a target')
+            print(f'INFO: sw smi handler {name} has no registered command byte in '
+                  f'this tree -- not a target')
             continue
         smi_data[name] = SmiInfo(name, '', '', info.get('file', ''),
                                  sw_smi_value=int(info['value']),
@@ -1397,11 +1477,12 @@ def analyze_sw_smi(discovered_values: Dict[str, dict],
               f'0x{int(info["value"]):02X} from {info.get("file") or "the request file"}')
 
     #
-    # `stuck` goes into the name set, not only into the narration. A handler whose command
-    # byte the dispatcher picks at run time IS reached by this channel and is left out of
-    # the target list for a reason that is about the registration, not about the handler
-    # -- and a handler missing from the inventory altogether reads as a tree that has no
-    # such handler. It was absent before: the request file has no line for it, by
+    # `stuck` goes into the name set, not only into the narration. A handler with no static
+    # command byte -- because the dispatcher picks one at run time, or because two
+    # registrations claim its name for different bytes -- IS reached by this channel and is
+    # left out of the target list for a reason that is about the registration, not about
+    # the handler; and a handler missing from the inventory altogether reads as a tree that
+    # has no such handler. It was absent before: the request file has no line for it, by
     # construction, because the line would need a value.
     #
     accounted = sorted(set(discovered or ()) | set(stuck))
